@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import ProcessDataImage from '../../assets/process-data.png';
+import ProcessDataImage1 from '../../assets/process-data-1.png';
+import ProcessDataImage2 from '../../assets/process-data-2.png';
 import Button, { ButtonType } from '../component/button';
 import Page from '../component/page';
 
 const HomePage = styled(Page)`
 	> div {
-		padding: calc(var(--page-margin) * 2) 0;
+		padding: calc(var(--page-margin) * 4) 0;
 	}
 `;
 const Slide = styled.div`
@@ -16,8 +17,17 @@ const Slide = styled.div`
 	justify-content: center;
 	min-height: 400px;
 	padding: 0 var(--page-margin);
+	&:not(:last-child) {
+		padding-bottom: calc(var(--page-margin) * 4);
+	}
 	& > img {
 		margin: 0 150px;
+		&:first-child {
+			margin-left: 50px;
+		}
+		&:last-child {
+			margin-right: 50px;
+		}
 	}
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		& > img {
@@ -67,7 +77,21 @@ export default () => {
 				</Description>
 				<StartButton type={ButtonType.PRIMARY}>Try Online</StartButton>
 			</SlideContent>
-			<img src={ProcessDataImage} alt=""/>
+			<img src={ProcessDataImage1} alt=""/>
+		</Slide>
+		<Slide>
+			<img src={ProcessDataImage2} alt=""/>
+			<SlideContent>
+				<Title>
+					Domain Oriented Perspectives
+				</Title>
+				<Description>
+					Dedicated groups of experts continually working to create domain oriented indicators and reports
+					that
+					are accurate and easier to use.
+				</Description>
+				<StartButton type={ButtonType.PRIMARY}>Try Online</StartButton>
+			</SlideContent>
 		</Slide>
 	</HomePage>;
 }
