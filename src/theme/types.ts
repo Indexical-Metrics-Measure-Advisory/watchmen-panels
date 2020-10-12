@@ -1,3 +1,3 @@
-export interface Theme {
-	primaryColor: string;
-}
+import DefaultTheme from './default-theme';
+
+export type Theme = typeof DefaultTheme;

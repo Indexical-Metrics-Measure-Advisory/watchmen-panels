@@ -8,7 +8,7 @@ const WelcomeContainer = styled.div`
 	text-align: center;
 `;
 const Header = styled.div`
-    background-color: #282c34;
+    background-color: var(--invert-bg-color);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -21,7 +21,7 @@ const Image = styled.img`
     height: 40vmin;
 `;
 const Href = styled(Link)`
-	color: #61dafb;
+	color: var(--primary-color);
 	text-transform: uppercase;
 `;
 
@@ -29,9 +29,7 @@ export default () => {
 	return <WelcomeContainer>
 		<Header>
 			<Image src={logo} alt="Welcome to WATCHMEN"/>
-			<p>
-				Welcome to Watchmen.
-			</p>
+			<p>Welcome to Watchmen.</p>
 			<Href to={Path.HOME}>
 				Start
 			</Href>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { RouteChildrenProps } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 import DefaultTheme from './default-theme';
 import ThemeIndex from './theme-index';
@@ -21,7 +20,7 @@ const Context = React.createContext<ThemeContext>({
 });
 
 
-export const ThemeContextProvider = (props: { children?: ((props: RouteChildrenProps<any>) => React.ReactNode) | React.ReactNode }) => {
+export const ThemeContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
 	const [ theme, switchTheme ] = React.useState(DefaultTheme);
