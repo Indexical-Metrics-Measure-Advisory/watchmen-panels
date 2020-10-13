@@ -7,6 +7,7 @@ import ProcessDataImage3 from '../../assets/process-data-3.png';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
 import Page from '../component/page';
+import { useNotImplemented } from '../context/not-implemented';
 
 const HomePage = styled(Page)`
 	> main {
@@ -63,6 +64,8 @@ const Description = styled.div`
 
 export default () => {
 	const history = useHistory();
+	const notImpl = useNotImplemented();
+
 	const onStartTryClicked = () => {
 		history.push(Path.DOMAIN_SELECT);
 	};
@@ -106,7 +109,7 @@ export default () => {
 					Pipelines on data lake or stream, continuous investigating constructive and valuable indicators
 					extracting and recognizing dynamically.
 				</Description>
-				<BigButton inkType={ButtonType.PRIMARY}>Contact Us</BigButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={notImpl.show}>Contact Us</BigButton>
 			</SlideContent>
 		</Slide>
 	</HomePage>;

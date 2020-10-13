@@ -5,11 +5,11 @@ import styled from 'styled-components';
 
 export enum Step {
 	DOMAIN_SELECT,
-	IMPORT,
-	MAPPING,
-	MEASURE,
-	METRICS,
-	EXPORT
+	IMPORT_DATA,
+	MAPPING_FACTORS,
+	MEASURE_INDICATORS,
+	BUILD_METRICS,
+	EXPORT_REPORTS
 }
 
 const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Metrics Reporting', 'Export' ];
@@ -88,7 +88,7 @@ export default (props: { step: Step }) => {
 				let icon;
 				if (index === step) {
 					icon = <FontAwesomeIcon icon={faTruckPickup}/>;
-				} else if (index === Step.EXPORT) {
+				} else if (index === Step.EXPORT_REPORTS) {
 					icon = <FontAwesomeIcon icon={faFlagCheckered}/>;
 				}
 

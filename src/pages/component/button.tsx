@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 export enum ButtonType {
@@ -22,7 +21,6 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 	transition: all 300ms ease-in-out;
 	font-size: var(--font-size);
 	line-height: var(--line-height);
-	
 	&[data-ink-type=default] {
 		color: var(--font-color);
 		background-color: transparent;
@@ -50,5 +48,8 @@ export const BigButton = styled(Button)`
 	font-weight: var(--font-boldest);
 	font-size: 1.15em;
 	line-height: 2.2em;
+	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
+		min-width: unset;
+	}
 `;
 

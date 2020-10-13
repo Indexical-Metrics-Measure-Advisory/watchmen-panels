@@ -28,6 +28,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--border: ${({ theme }) => theme.border};
 		--border-radius: ${({ theme }) => theme.borderRadius}px;
 		
+		--dialog-box-shadow: ${({ theme }) => theme.dialogBoxShadow};
+		
 		--header-bg-color: ${({ theme }) => theme.headerBgColor};
 		--header-box-shadow: ${({ theme }) => theme.headerBoxShadow};
 		--header-z-index: ${({ theme }) => theme.headerZIndex};
@@ -53,6 +55,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	    -moz-osx-font-smoothing: grayscale;
 	    position: relative;
 	    background-color: var(--bg-color);
+	    overflow-x: hidden;
 	}
 	
 	code {

@@ -1,7 +1,7 @@
 export default {
 	// color
-	primaryColor: '#03338f',
-	primaryHoverColor: '#0556f3',
+	primaryColor: 'rgba(23,105,176,0.8)',
+	primaryHoverColor: 'rgba(11,80,171,0.8)',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
 	invertBgColor: '#282c34',
@@ -27,6 +27,12 @@ export default {
 	minDeskWidth: 600,
 	mobilePageMargin: 16,
 	deskPageMargin: 32,
+
+	// dialog
+	dialogBoxShadow: '0 4px 12px rgba(37, 38, 94, 0.3),' +
+		'4px 0 12px rgba(37, 38, 94, 0.3),' +
+		'-4px 0 12px rgba(37, 38, 94, 0.3),' +
+		'0 -4px 12px rgba(37, 38, 94, 0.3)',
 
 	// header
 	headerBgColor: '#fff',
