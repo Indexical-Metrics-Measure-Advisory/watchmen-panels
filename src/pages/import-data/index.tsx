@@ -56,7 +56,7 @@ export default () => {
 		history.push(Path.GUIDE_DOMAIN_SELECT);
 	};
 	const onNextClicked = () => {
-		history.push(Path.GUIDE_MAPPING_FACTORS);
+		history.push(Path.GUIDE_MAPPING_FACTOR);
 	};
 
 	return <Fragment>

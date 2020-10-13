@@ -92,8 +92,7 @@ export default () => {
 				</Title>
 				<Description>
 					Dedicated groups of experts continually working to create domain oriented indicators and reports
-					that
-					are accurate and easier to use.
+					that are accurate and easier to use.
 				</Description>
 				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
 			</SlideContent>

@@ -1,15 +1,23 @@
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import BuildMetricsImage from '../../assets/build-metrics.png';
 import DomainSelectImage from '../../assets/domain-select.png';
+import ExportReportImage from '../../assets/export-report.png';
 import ImportDataImage from '../../assets/import-data.png';
+import MappingFactorImage from '../../assets/mapping-factor.png';
+import MeasureIndicatorImage from '../../assets/measure-indicator.png';
 import Path from '../../common/path';
+import BuildMetrics from '../build-metrics';
 import Page from '../component/page';
 import Steps, { Step } from '../component/steps';
 import DomainSelect from '../domain-select';
+import ExportReport from '../export-report';
 import ImportData from '../import-data';
+import MappingFactor from '../mapping-factor';
+import MeasureIndicator from '../measure-indicator';
 
-const BackgroundImages = [ DomainSelectImage, ImportDataImage ];
+const BackgroundImages = [ DomainSelectImage, ImportDataImage, MappingFactorImage, MeasureIndicatorImage, BuildMetricsImage, ExportReportImage ];
 const HomePage = styled(Page)<{ step: Step }>`
 	& > main {
 		width: 1000px;
@@ -41,6 +49,14 @@ export default () => {
 		step = Step.DOMAIN_SELECT;
 	} else if (useRouteMatch(Path.GUIDE_IMPORT_DATA)) {
 		step = Step.IMPORT_DATA;
+	} else if (useRouteMatch(Path.GUIDE_MAPPING_FACTOR)) {
+		step = Step.MAPPING_FACTORS;
+	} else if (useRouteMatch(Path.GUIDE_MEASURE_INDICATOR)) {
+		step = Step.MEASURE_INDICATORS;
+	} else if (useRouteMatch(Path.GUIDE_BUILD_METRICS)) {
+		step = Step.BUILD_METRICS;
+	} else if (useRouteMatch(Path.GUIDE_EXPORT_REPORT)) {
+		step = Step.EXPORT_REPORT;
 	}
 
 	return <HomePage step={step}>
@@ -48,6 +64,10 @@ export default () => {
 		<Switch>
 			<Route path={Path.GUIDE_DOMAIN_SELECT}><DomainSelect/></Route>
 			<Route path={Path.GUIDE_IMPORT_DATA}><ImportData/></Route>
+			<Route path={Path.GUIDE_MAPPING_FACTOR}><MappingFactor/></Route>
+			<Route path={Path.GUIDE_MEASURE_INDICATOR}><MeasureIndicator/></Route>
+			<Route path={Path.GUIDE_BUILD_METRICS}><BuildMetrics/></Route>
+			<Route path={Path.GUIDE_EXPORT_REPORT}><ExportReport/></Route>
 			<Route><Redirect to={Path.GUIDE_DOMAIN_SELECT}/></Route>
 		</Switch>
 	</HomePage>;

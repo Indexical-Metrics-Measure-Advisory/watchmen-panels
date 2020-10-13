@@ -1,7 +1,9 @@
 import { faFlagCheckered, faTruckPickup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import Path from '../../common/path';
 
 export enum Step {
 	DOMAIN_SELECT,
@@ -9,10 +11,10 @@ export enum Step {
 	MAPPING_FACTORS,
 	MEASURE_INDICATORS,
 	BUILD_METRICS,
-	EXPORT_REPORTS
+	EXPORT_REPORT
 }
 
-const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Metrics Reporting', 'Export' ];
+const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Build Metrics', 'Export Report' ];
 
 const Steps = styled.div`
 	position: relative;
@@ -22,9 +24,35 @@ const Steps = styled.div`
 	padding-bottom: 1em;
 `;
 const CurrentStep = styled.div`
-	font-size: 1.7em;
-	line-height: 1.7em;
-	font-weight: var(--font-boldest);
+	display: flex;
+	flex-direction: column;
+	> span:first-child {
+		display: flex;
+		position: relative;
+		opacity: 0.5;
+		> span > a {
+			text-decoration: none;
+			color: var(--font-color);
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		> span:not(:first-child) {
+			&:before {
+				content: '/';
+    			padding: 0.5em;
+			}
+		}
+		> span:last-child {
+			user-select: none;
+		}
+	}
+	> span:last-child {
+		font-size: 1.7em;
+		line-height: 1.7em;
+		font-weight: var(--font-boldest);
+		user-select: none;
+	}
 `;
 const StepDots = styled.ul`
 	list-style-type: none;
@@ -58,24 +86,34 @@ const StepDot = styled.li`
 			height: 1px;
 			background-color: var(--border-color);
 			z-index: -1;
+			transition: background-color 300ms ease-in-out;
 		}
+	}
+	&[data-performed=true] {
+		background-color: var(--font-color);
+		border-color: var(--font-color);
 	}
 	&[data-current=true],
 	&[data-performed=true] {
-		color: var(--font-color);
-		background-color: var(--font-color);
-		border-color: var(--font-color);
 		&:before {
 			background-color: var(--font-color);
 		}
 	}
 	&:nth-last-child(2),
 	&[data-current=true] {
-		 border-color: transparent;
-		 background-color: transparent;
+		border-color: transparent;
+		background-color: transparent;
+	}
+	&[data-current=true] {
+		> svg {
+			opacity: 0;
+		}
 	}
 	> svg {
+		color: var(--border-color);
+		opacity: 1;
 		transform: translateY(-4px);
+		transition: all 300ms ease-in-out;
 	}
 `;
 const Current = styled.div<{ step: number }>`
@@ -88,17 +126,17 @@ export default (props: { step: Step }) => {
 	const { step } = props;
 
 	return <Steps>
-		<CurrentStep>{StepLabels[step]}</CurrentStep>
+		<CurrentStep>
+			<span>
+				<span><Link to={Path.HOME}>Home</Link></span>
+				<span>Step by Step Guide</span>
+			</span>
+			<span>{StepLabels[step]}</span>
+		</CurrentStep>
 		<StepDots>
 			{StepLabels.map((label, index) => {
-				let icon;
-				if (index === step) {
-				} else if (index === Step.EXPORT_REPORTS) {
-					icon = <FontAwesomeIcon icon={faFlagCheckered}/>;
-				}
-
 				return <StepDot key={label} title={label} data-current={index === step} data-performed={index < step}>
-					{icon}
+					{index === Step.EXPORT_REPORT ? <FontAwesomeIcon icon={faFlagCheckered}/> : null}
 				</StepDot>;
 			})}
 			<Current step={step}><FontAwesomeIcon icon={faTruckPickup}/></Current>

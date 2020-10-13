@@ -1,7 +1,7 @@
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import Button from './button';
@@ -57,17 +57,17 @@ const HeaderButton = styled(Button)`
 
 export default () => {
 	const isHome = useRouteMatch(Path.HOME);
-	const history = useHistory();
-
-	const onBackToHomeClicked = () => {
-		history.push(Path.HOME);
-	};
 
 	return <Header>
 		<ProductLogo/>
 		<ProductName>Watchmen</ProductName>
 		<Placeholder/>
-		{isHome ? null : <HeaderButton title="Back to Home" onClick={onBackToHomeClicked}><FontAwesomeIcon
-			icon={faHome}/></HeaderButton>}
+		{isHome
+			? null
+			: <Link to={Path.HOME}>
+				<HeaderButton title="Back to Home">
+					<FontAwesomeIcon icon={faHome}/>
+				</HeaderButton>
+			</Link>}
 	</Header>;
 }
