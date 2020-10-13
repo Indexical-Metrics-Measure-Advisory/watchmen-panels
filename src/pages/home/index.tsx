@@ -67,7 +67,7 @@ export default () => {
 	const notImpl = useNotImplemented();
 
 	const onStartTryClicked = () => {
-		history.push(Path.DOMAIN_SELECT);
+		history.push(Path.GUIDE);
 	};
 
 	return <HomePage>

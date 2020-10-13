@@ -1,10 +1,10 @@
 export default {
 	// color
-	primaryColor: 'rgba(23,105,176,0.8)',
-	primaryHoverColor: 'rgba(11,80,171,0.8)',
+	primaryColor: 'rgba(43,80,174,1)',
+	primaryHoverColor: 'rgba(3,51,141,1)',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
-	invertBgColor: '#282c34',
+	invertBgColor: 'rgb(1,34,96,0.9)',
 
 	// font
 	fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
@@ -40,6 +40,6 @@ export default {
 	headerZIndex: 10001,
 
 	// footer
-	footerBgColor: '#282c34',
+	footerBgColor: 'rgba(3,51,141,1)',
 	footerColor: 'var(--bg-color)'
 };

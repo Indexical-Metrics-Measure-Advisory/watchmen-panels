@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import logo from '../../assets/logo.svg';
 import Path from '../../common/path';
+import Logo from '../component/logo';
 
 const WelcomeContainer = styled.div`
 	text-align: center;
@@ -17,7 +17,7 @@ const Header = styled.div`
     font-size: calc(10px + 2vmin);
     color: var(--invert-color);
 `;
-const Image = styled.img`
+const Image = styled(Logo)`
     height: 40vmin;
 `;
 const Href = styled(Link)`
@@ -28,7 +28,9 @@ const Href = styled(Link)`
 export default () => {
 	return <WelcomeContainer>
 		<Header>
-			<Image src={logo} alt="Welcome to WATCHMEN"/>
+			<div>
+				<Image/>
+			</div>
 			<p>Welcome to Watchmen.</p>
 			<Href to={Path.HOME}>
 				Start

@@ -1,5 +1,10 @@
+import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import Path from '../../common/path';
+import Button from './button';
 import Logo from './logo';
 
 const Header = styled.header`
@@ -34,11 +39,35 @@ const ProductName = styled.span`
 const Placeholder = styled.div`
 	flex-grow: 1;
 `;
+const HeaderButton = styled(Button)`
+	border-radius: 100%;
+	height: 40px;
+	width: 40px;
+	margin-left: 12px;
+	@media (min-width: ${({ theme }) => theme.minDeskWidth}px) {
+		&:hover {
+			background-color: var(--primary-hover-color);
+			border-color: var(--primary-hover-color);
+			color: var(--invert-color);
+			opacity: 1;
+			transform: scale(1.1);
+		}
+	}
+`;
 
 export default () => {
+	const isHome = useRouteMatch(Path.HOME);
+	const history = useHistory();
+
+	const onBackToHomeClicked = () => {
+		history.push(Path.HOME);
+	};
+
 	return <Header>
 		<ProductLogo/>
 		<ProductName>Watchmen</ProductName>
 		<Placeholder/>
+		{isHome ? null : <HeaderButton title="Back to Home" onClick={onBackToHomeClicked}><FontAwesomeIcon
+			icon={faHome}/></HeaderButton>}
 	</Header>;
 }

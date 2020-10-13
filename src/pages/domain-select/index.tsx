@@ -1,40 +1,13 @@
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import DomainSelectImage from '../../assets/domain-select.png';
 import Path from '../../common/path';
 import { Domain, listTopDomains, TopDomains } from '../../services/domain';
 import { BigButton, ButtonType } from '../component/button';
-import Page from '../component/page';
-import Steps, { Step } from '../component/steps';
 import { useNotImplemented } from '../context/not-implemented';
 
-const HomePage = styled(Page)`
-	& > main {
-		width: 1000px;
-		&:before {
-			content: '';
-			position: absolute;
-			left: calc(var(--page-margin) * 3);
-			bottom: calc(var(--page-margin) * 3);
-			width: 100%;
-			height: 100%;
-			z-index: -1;
-			pointer-events: none;
-			user-select: none;
-			filter: brightness(1.5) opacity(0.1);
-			background-image: url(${DomainSelectImage});
-			background-repeat: no-repeat;
-			background-position: left bottom;
-			background-size: 200px;
-		}
-		@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
-			width: 100%;
-		}
-	}
-`;
 const Domains = styled.div`
 	padding: var(--page-margin) var(--page-margin) 0;
 	display: grid;
@@ -58,10 +31,10 @@ const DomainButton = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	&:hover {
-		background-color: var(--primary-color);
-		border-color: var(--primary-color);
-		color: var(--invert-color);
+	@media (min-width: ${({ theme }) => theme.minDeskWidth}px) {
+		&:hover {
+			transform: scale(1.05);
+		}
 	}
 	> svg {
 		opacity: 0;
@@ -78,7 +51,7 @@ const DomainButton = styled.div`
 const MoreDomainsButton = styled(DomainButton)`
 	opacity: 0.5;
 	&:hover {
-		opacity: 1;
+		opacity: 0.7;
 	}
 `;
 const Operations = styled.div`
@@ -122,17 +95,16 @@ export default () => {
 	};
 	const onNextClicked = () => {
 		if (selectedDomain) {
-			history.push(Path.IMPORT_DATA);
+			history.push(Path.GUIDE_IMPORT_DATA);
 		} else {
-			history.push(Path.IMPORT_DATA);
+			history.push(Path.GUIDE_IMPORT_DATA);
 		}
 	};
 
 	const buttonLabel = !!selectedDomain ? 'Next' : 'Ignore';
 	const buttonType = !!selectedDomain ? ButtonType.PRIMARY : ButtonType.DEFAULT;
 
-	return <HomePage>
-		<Steps step={Step.DOMAIN_SELECT}/>
+	return <Fragment>
 		<Domains>
 			{data.domains.map(domain => {
 				return <DomainButton key={domain.code} data-selected={domain === selectedDomain}
@@ -148,5 +120,5 @@ export default () => {
 			<Placeholder/>
 			<BigButton inkType={buttonType} onClick={onNextClicked}>{buttonLabel}</BigButton>
 		</Operations>
-	</HomePage>;
+	</Fragment>;
 }

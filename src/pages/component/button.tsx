@@ -21,20 +21,23 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 	transition: all 300ms ease-in-out;
 	font-size: var(--font-size);
 	line-height: var(--line-height);
+	border: var(--border);
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 	&[data-ink-type=default] {
 		color: var(--font-color);
 		background-color: transparent;
+		border-color: var(--border-color);
 		opacity: 0.5;
-		&:hover {
-			background-color: var(--border-color);
-			opacity: 0.7;
-		}
 	}
 	&[data-ink-type=primary] {
 		background-color: var(--primary-color);
 		color: var(--invert-color);
+	}
+	@media (min-width: ${({ theme }) => theme.minDeskWidth}px) {
 		&:hover {
-			background-color: var(--primary-hover-color);
+			transform: scale(1.05);
 		}
 	}
 `;

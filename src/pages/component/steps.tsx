@@ -42,8 +42,8 @@ const StepDot = styled.li`
 	background-color: var(--border-color);
 	color: var(--border-color);
 	border: var(--border);
-	cursor: pointer;
 	font-size: 12px;
+	transition: all 300ms 100ms ease-in-out;
 	&:not(:first-child) {
 		position: relative;
 		margin-left: calc(var(--page-margin) * 2);
@@ -69,15 +69,21 @@ const StepDot = styled.li`
 			background-color: var(--font-color);
 		}
 	}
-	&:last-child,
+	&:nth-last-child(2),
 	&[data-current=true] {
-		 border: 0;
+		 border-color: transparent;
 		 background-color: transparent;
 	}
 	> svg {
 		transform: translateY(-4px);
 	}
 `;
+const Current = styled.div<{ step: number }>`
+	position: absolute;
+	left: calc((8px + var(--page-margin) * 2) * ${({ step }) => step} - 1px);
+	transition: left 300ms ease-in-out;
+`;
+
 export default (props: { step: Step }) => {
 	const { step } = props;
 
@@ -87,7 +93,6 @@ export default (props: { step: Step }) => {
 			{StepLabels.map((label, index) => {
 				let icon;
 				if (index === step) {
-					icon = <FontAwesomeIcon icon={faTruckPickup}/>;
 				} else if (index === Step.EXPORT_REPORTS) {
 					icon = <FontAwesomeIcon icon={faFlagCheckered}/>;
 				}
@@ -96,6 +101,7 @@ export default (props: { step: Step }) => {
 					{icon}
 				</StepDot>;
 			})}
+			<Current step={step}><FontAwesomeIcon icon={faTruckPickup}/></Current>
 		</StepDots>
 	</Steps>;
 }
