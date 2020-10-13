@@ -24,7 +24,13 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 	line-height: var(--line-height);
 	
 	&[data-ink-type=default] {
-		
+		color: var(--font-color);
+		background-color: transparent;
+		opacity: 0.5;
+		&:hover {
+			background-color: var(--border-color);
+			opacity: 0.7;
+		}
 	}
 	&[data-ink-type=primary] {
 		background-color: var(--primary-color);
@@ -37,3 +43,12 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 
 
 export default Button;
+
+export const BigButton = styled(Button)`
+	align-self: center;
+	min-width: 230px;
+	font-weight: var(--font-boldest);
+	font-size: 1.15em;
+	line-height: 2.2em;
+`;
+

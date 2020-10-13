@@ -5,7 +5,7 @@ import ProcessDataImage1 from '../../assets/process-data-1.png';
 import ProcessDataImage2 from '../../assets/process-data-2.png';
 import ProcessDataImage3 from '../../assets/process-data-3.png';
 import Path from '../../common/path';
-import Button, { ButtonType } from '../component/button';
+import { BigButton, ButtonType } from '../component/button';
 import Page from '../component/page';
 
 const HomePage = styled(Page)`
@@ -60,13 +60,6 @@ const Description = styled.div`
 	opacity: 0.7;
 	margin-bottom: 56px;
 `;
-const StartButton = styled(Button)`
-	align-self: center;
-	min-width: 230px;
-	font-weight: var(--font-boldest);
-	font-size: 1.15em;
-	line-height: 2.2em;
-`;
 
 export default () => {
 	const history = useHistory();
@@ -84,7 +77,7 @@ export default () => {
 					Measure your business with our beginner-friendly step-by-step guide. Import data, try metrics,
 					choose indicators, and measure your business.
 				</Description>
-				<StartButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</StartButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
 			</SlideContent>
 			<img src={ProcessDataImage1} alt=""/>
 		</Slide>
@@ -99,7 +92,7 @@ export default () => {
 					that
 					are accurate and easier to use.
 				</Description>
-				<StartButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</StartButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
 			</SlideContent>
 		</Slide>
 		<Slide>
@@ -113,7 +106,7 @@ export default () => {
 					Pipelines on data lake or stream, continuous investigating constructive and valuable indicators
 					extracting and recognizing dynamically.
 				</Description>
-				<StartButton inkType={ButtonType.PRIMARY}>Contact Us</StartButton>
+				<BigButton inkType={ButtonType.PRIMARY}>Contact Us</BigButton>
 			</SlideContent>
 		</Slide>
 	</HomePage>;

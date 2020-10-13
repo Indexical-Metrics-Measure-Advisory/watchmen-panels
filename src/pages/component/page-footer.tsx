@@ -10,11 +10,10 @@ const Footer = styled.footer`
 	flex-direction: column;
 	align-items: center;
 	padding: 0 var(--page-margin);
-	
+	width: 100%;
 	& > * {
 		width: 100%;
 	}
-	
 	// @media (min-width: ${({ theme }) => theme.minDeskWidth}px) {
 	//     padding-top: 120px;
 	// }

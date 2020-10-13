@@ -7,8 +7,10 @@ const Page = styled.div`
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	align-items: center;
 `;
 export const Main = styled.main`
+	position: relative;
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;

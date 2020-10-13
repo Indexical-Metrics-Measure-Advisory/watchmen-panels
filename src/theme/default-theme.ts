@@ -1,7 +1,7 @@
 export default {
 	// color
-	primaryColor: '#0556f3',
-	primaryHoverColor: '#03338f',
+	primaryColor: '#03338f',
+	primaryHoverColor: '#0556f3',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
 	invertBgColor: '#282c34',
