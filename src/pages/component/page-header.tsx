@@ -16,7 +16,7 @@ const Header = styled.header`
 	height: 60px;
 	padding: 0 var(--page-margin);
 	border-bottom: var(--border);
-	& + * {
+	& + main {
 		margin-top: 60px;
 	}
 `;

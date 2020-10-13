@@ -1,7 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = styled.button`
+export enum ButtonType {
+	DEFAULT = 'default',
+	PRIMARY = 'primary'
+}
+
+interface ButtonProps {
+	inkType?: ButtonType
+}
+
+const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT }) => ({
+	'data-ink-type': inkType
+}))<ButtonProps>`
 	border: 0;
 	appearance: none;
 	outline: none;
@@ -12,10 +23,10 @@ const Button = styled.button`
 	font-size: var(--font-size);
 	line-height: var(--line-height);
 	
-	&[data-type=default] {
+	&[data-ink-type=default] {
 		
 	}
-	&[data-type=primary] {
+	&[data-ink-type=primary] {
 		background-color: var(--primary-color);
 		color: var(--invert-color);
 		&:hover {
@@ -24,18 +35,5 @@ const Button = styled.button`
 	}
 `;
 
-export enum ButtonType {
-	DEFAULT = 'default',
-	PRIMARY = 'primary'
-}
 
-export default (props: {
-	className?: string,
-	type?: ButtonType,
-	children?: ((props: any) => React.ReactNode) | React.ReactNode
-}) => {
-	const { className, type = ButtonType.DEFAULT, children } = props;
-	return <Button className={className} data-type={type}>
-		{children}
-	</Button>;
-}
+export default Button;

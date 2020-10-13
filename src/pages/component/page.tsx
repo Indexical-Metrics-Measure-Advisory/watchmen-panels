@@ -8,7 +8,7 @@ const Page = styled.div`
 	flex-direction: column;
 	min-height: 100vh;
 `;
-const PlaceHolder = styled.div`
+export const Main = styled.main`
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
@@ -25,9 +25,9 @@ export default (props: {
 
 	return <Page className={className}>
 		{header || null}
-		<PlaceHolder>
+		<Main>
 			{children}
-		</PlaceHolder>
+		</Main>
 		{footer || null}
 	</Page>;
 }

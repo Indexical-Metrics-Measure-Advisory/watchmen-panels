@@ -1,13 +1,15 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import ProcessDataImage1 from '../../assets/process-data-1.png';
 import ProcessDataImage2 from '../../assets/process-data-2.png';
 import ProcessDataImage3 from '../../assets/process-data-3.png';
+import Path from '../../common/path';
 import Button, { ButtonType } from '../component/button';
 import Page from '../component/page';
 
 const HomePage = styled(Page)`
-	> div {
+	> main {
 		padding: calc(var(--page-margin) * 4) 0;
 	}
 `;
@@ -65,7 +67,13 @@ const StartButton = styled(Button)`
 	font-size: 1.15em;
 	line-height: 2.2em;
 `;
+
 export default () => {
+	const history = useHistory();
+	const onStartTryClicked = () => {
+		history.push(Path.DOMAIN_SELECT);
+	};
+
 	return <HomePage>
 		<Slide>
 			<SlideContent>
@@ -76,7 +84,7 @@ export default () => {
 					Measure your business with our beginner-friendly step-by-step guide. Import data, try metrics,
 					choose indicators, and measure your business.
 				</Description>
-				<StartButton type={ButtonType.PRIMARY}>Try Online</StartButton>
+				<StartButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</StartButton>
 			</SlideContent>
 			<img src={ProcessDataImage1} alt=""/>
 		</Slide>
@@ -91,7 +99,7 @@ export default () => {
 					that
 					are accurate and easier to use.
 				</Description>
-				<StartButton type={ButtonType.PRIMARY}>Try Online</StartButton>
+				<StartButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</StartButton>
 			</SlideContent>
 		</Slide>
 		<Slide>
@@ -105,7 +113,7 @@ export default () => {
 					Pipelines on data lake or stream, continuous investigating constructive and valuable indicators
 					extracting and recognizing dynamically.
 				</Description>
-				<StartButton type={ButtonType.PRIMARY}>Contact Us</StartButton>
+				<StartButton inkType={ButtonType.PRIMARY}>Contact Us</StartButton>
 			</SlideContent>
 		</Slide>
 	</HomePage>;
