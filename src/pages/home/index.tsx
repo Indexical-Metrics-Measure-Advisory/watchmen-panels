@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import ProcessDataImage1 from '../../assets/process-data-1.png';
 import ProcessDataImage2 from '../../assets/process-data-2.png';
+import ProcessDataImage3 from '../../assets/process-data-3.png';
 import Button, { ButtonType } from '../component/button';
 import Page from '../component/page';
 
@@ -43,7 +44,7 @@ const Slide = styled.div`
 const SlideContent = styled.div`
 	display: flex;
 	flex-direction: column;
-	max-width: 450px;
+	max-width: 500px;
 `;
 const Title = styled.div`
 	font-size: var(--title-font-size);
@@ -91,6 +92,20 @@ export default () => {
 					are accurate and easier to use.
 				</Description>
 				<StartButton type={ButtonType.PRIMARY}>Try Online</StartButton>
+			</SlideContent>
+		</Slide>
+		<Slide>
+			<img src={ProcessDataImage3} alt=""/>
+			<SlideContent>
+				<Title>
+					Sustainability made easy<br/>
+					on Enterprise Edition
+				</Title>
+				<Description>
+					Pipelines on data lake or stream, continuous investigating constructive and valuable indicators
+					extracting and recognizing dynamically.
+				</Description>
+				<StartButton type={ButtonType.PRIMARY}>Contact Us</StartButton>
 			</SlideContent>
 		</Slide>
 	</HomePage>;
