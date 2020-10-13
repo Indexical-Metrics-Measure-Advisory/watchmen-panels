@@ -123,6 +123,8 @@ export default () => {
 	const onNextClicked = () => {
 		if (selectedDomain) {
 			history.push(Path.IMPORT_DATA);
+		} else {
+			history.push(Path.IMPORT_DATA);
 		}
 	};
 
