@@ -29,6 +29,7 @@ const SelectedFiles = styled.div<{ itemCount: number }>`
 		& + div {
 			border-top-left-radius: 0;
 			border-top-right-radius: 0;
+			min-height: ${({ itemCount }) => Math.max(100, 200 - itemCount * 32)}px;
 		}
 	}
 `;
@@ -81,7 +82,7 @@ const Files = styled.div`
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate(-50%);
+		transform: translate(-50%, -50%);
 		font-size: 1.2em;
 		font-weight: var(--font-bold);
 	}
@@ -114,24 +115,18 @@ export default () => {
 	const [ files, setFiles ] = useState<Array<SelectedFile>>([]);
 
 	const onFilesSelected = async () => {
-		console.log(fileRef.current!.value);
 		const selectedFiles = fileRef.current!.files || [];
 		const data = [];
 		for (let index = 0, count = selectedFiles.length; index < count; index++) {
 			data.push(selectedFiles[index]);
 		}
-		const allFiles = [ ...files, ...data.map(file => {
+		setFiles([ ...files, ...data.map(file => {
 			return {
 				name: file.name,
 				size: toReadableFileSize(file.size),
 				file
 			};
-		}) ];
-		const fileMap = allFiles.reduce((map, file) => {
-			map[file.name] = file;
-			return map;
-		}, {} as { [key in string]: SelectedFile });
-		setFiles([ ...new Set(allFiles.map(file => fileMap[file.name])) ]);
+		}) ]);
 	};
 	const onRemoveClicked = (removeFile: SelectedFile) => () => {
 		setFiles(files.filter(file => file !== removeFile));
@@ -145,8 +140,8 @@ export default () => {
 
 	return <Fragment>
 		<SelectedFiles data-visible={files.length !== 0} itemCount={files.length}>
-			{files.map(file => {
-				return <SelectedFileRow key={file.name}>
+			{files.map((file, index) => {
+				return <SelectedFileRow key={`${file.name}-${index}`}>
 					<div>{file.name}</div>
 					<div>{file.size}</div>
 					<div><Button onClick={onRemoveClicked(file)}><FontAwesomeIcon icon={faTimes}/></Button></div>
@@ -154,7 +149,8 @@ export default () => {
 			})}
 		</SelectedFiles>
 		<Files>
-			<input type="file" multiple accept=".json" title={"Only JSON file is supported in step by step guide."}
+			<input type="file" multiple accept=".json,.csv"
+			       title={"Only JSON/CSV file is supported in step by step guide."}
 			       onChange={onFilesSelected} ref={fileRef}/>
 		</Files>
 		<Operations>
