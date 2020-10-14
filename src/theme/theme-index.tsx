@@ -4,6 +4,8 @@ import { Theme } from './types';
 
 const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	* {
+		margin: 0;
+		padding: 0;
 		box-sizing: border-box;
 	}
 	
