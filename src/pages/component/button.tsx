@@ -17,7 +17,7 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 	appearance: none;
 	outline: none;
 	cursor: pointer;
-	padding: 6px 16px;
+	padding: 6px calc(var(--margin) / 2);
 	border-radius: var(--border-radius);
 	transition: all 300ms ease-in-out;
 	font-size: var(--font-size);

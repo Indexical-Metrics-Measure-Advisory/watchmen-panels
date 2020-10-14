@@ -1,13 +1,14 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 export interface Responsive {
 	mobile: boolean
 }
 
 const Context = React.createContext<Responsive>({ mobile: false });
+Context.displayName = 'ResponsiveContext';
 
 const isMobile = () => window.matchMedia('(max-width: 599px)').matches;
-export const ResponsiveProvider = (props: { children?: ReactNode }) => {
+export const ResponsiveProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
 	const [ responsive, setResponsive ] = React.useState(() => ({ mobile: isMobile() }));

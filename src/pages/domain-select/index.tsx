@@ -7,6 +7,7 @@ import Path from '../../common/path';
 import { Domain, listTopDomains, TopDomains } from '../../services/domain';
 import { BigButton, ButtonType } from '../component/button';
 import { useNotImplemented } from '../context/not-implemented';
+import { useGuideContext } from '../guide/guide-context';
 
 const Domains = styled.div`
 	padding: var(--margin) var(--margin) 0;
@@ -69,9 +70,9 @@ const Placeholder = styled.div`
 export default () => {
 	const history = useHistory();
 	const notImpl = useNotImplemented();
+	const guide = useGuideContext();
 
 	const [ data, setData ] = useState<TopDomains>({ domains: [], hasMore: false });
-	const [ selectedDomain, setSelectedDomain ] = useState<Domain | null>(null);
 
 	const fetchDomains = async () => {
 		try {
@@ -86,11 +87,13 @@ export default () => {
 		fetchDomains();
 	}, []);
 
+	const selectedDomain = guide.getDomain();
+	const equals = (domain: Domain) => selectedDomain && domain.id === selectedDomain.id;
 	const onDomainClicked = (domain: Domain) => () => {
-		if (domain === selectedDomain) {
-			setSelectedDomain(null);
+		if (equals(domain)) {
+			guide.clearDomain();
 		} else {
-			setSelectedDomain(domain);
+			guide.setDomain(domain);
 		}
 	};
 	const onNextClicked = () => {
@@ -107,7 +110,7 @@ export default () => {
 	return <Fragment>
 		<Domains>
 			{data.domains.map(domain => {
-				return <DomainButton key={domain.code} data-selected={domain === selectedDomain}
+				return <DomainButton key={domain.code} data-selected={equals(domain)}
 				                     onClick={onDomainClicked(domain)}>
 					<span>{domain.label}</span>
 					<FontAwesomeIcon icon={faCheck}/>

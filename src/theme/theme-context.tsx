@@ -18,7 +18,7 @@ interface ThemeContext {
 const Context = React.createContext<ThemeContext>({
 	switch: () => console.info('Theme switch is not supported yet.')
 });
-
+Context.displayName = 'ThemeContext';
 
 export const ThemeContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;

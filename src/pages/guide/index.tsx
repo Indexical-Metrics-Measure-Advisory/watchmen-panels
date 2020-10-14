@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { matchPath, Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import BuildMetricsImage from '../../assets/build-metrics.png';
 import DomainSelectImage from '../../assets/domain-select.png';
@@ -16,6 +16,7 @@ import ExportReport from '../export-report';
 import ImportData from '../import-data';
 import MappingFactor from '../mapping-factor';
 import MeasureIndicator from '../measure-indicator';
+import { GuideContextProvider } from './guide-context';
 
 const BackgroundImages = [ DomainSelectImage, ImportDataImage, MappingFactorImage, MeasureIndicatorImage, BuildMetricsImage, ExportReportImage ];
 const HomePage = styled(Page)<{ step: Step }>`
@@ -45,30 +46,34 @@ const HomePage = styled(Page)<{ step: Step }>`
 
 export default () => {
 	let step = Step.DOMAIN_SELECT;
-	if (useRouteMatch(Path.GUIDE_DOMAIN_SELECT)) {
+	const location = useLocation();
+
+	if (matchPath(location.pathname, Path.GUIDE_DOMAIN_SELECT)) {
 		step = Step.DOMAIN_SELECT;
-	} else if (useRouteMatch(Path.GUIDE_IMPORT_DATA)) {
+	} else if (matchPath(location.pathname, Path.GUIDE_IMPORT_DATA)) {
 		step = Step.IMPORT_DATA;
-	} else if (useRouteMatch(Path.GUIDE_MAPPING_FACTOR)) {
+	} else if (matchPath(location.pathname, Path.GUIDE_MAPPING_FACTOR)) {
 		step = Step.MAPPING_FACTORS;
-	} else if (useRouteMatch(Path.GUIDE_MEASURE_INDICATOR)) {
+	} else if (matchPath(location.pathname, Path.GUIDE_MEASURE_INDICATOR)) {
 		step = Step.MEASURE_INDICATORS;
-	} else if (useRouteMatch(Path.GUIDE_BUILD_METRICS)) {
+	} else if (matchPath(location.pathname, Path.GUIDE_BUILD_METRICS)) {
 		step = Step.BUILD_METRICS;
-	} else if (useRouteMatch(Path.GUIDE_EXPORT_REPORT)) {
+	} else if (matchPath(location.pathname, Path.GUIDE_EXPORT_REPORT)) {
 		step = Step.EXPORT_REPORT;
 	}
 
-	return <HomePage step={step}>
-		<Steps step={step}/>
-		<Switch>
-			<Route path={Path.GUIDE_DOMAIN_SELECT}><DomainSelect/></Route>
-			<Route path={Path.GUIDE_IMPORT_DATA}><ImportData/></Route>
-			<Route path={Path.GUIDE_MAPPING_FACTOR}><MappingFactor/></Route>
-			<Route path={Path.GUIDE_MEASURE_INDICATOR}><MeasureIndicator/></Route>
-			<Route path={Path.GUIDE_BUILD_METRICS}><BuildMetrics/></Route>
-			<Route path={Path.GUIDE_EXPORT_REPORT}><ExportReport/></Route>
-			<Route><Redirect to={Path.GUIDE_DOMAIN_SELECT}/></Route>
-		</Switch>
-	</HomePage>;
+	return <GuideContextProvider>
+		<HomePage step={step}>
+			<Steps step={step}/>
+			<Switch>
+				<Route path={Path.GUIDE_DOMAIN_SELECT}><DomainSelect/></Route>
+				<Route path={Path.GUIDE_IMPORT_DATA}><ImportData/></Route>
+				<Route path={Path.GUIDE_MAPPING_FACTOR}><MappingFactor/></Route>
+				<Route path={Path.GUIDE_MEASURE_INDICATOR}><MeasureIndicator/></Route>
+				<Route path={Path.GUIDE_BUILD_METRICS}><BuildMetrics/></Route>
+				<Route path={Path.GUIDE_EXPORT_REPORT}><ExportReport/></Route>
+				<Route><Redirect to={Path.GUIDE_DOMAIN_SELECT}/></Route>
+			</Switch>
+		</HomePage>
+	</GuideContextProvider>;
 }

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button, { ButtonType } from '../component/button';
 
@@ -10,6 +10,7 @@ const Context = React.createContext<NotImplemented>({
 	show: () => {
 	}
 });
+Context.displayName = 'NotImplementedContext';
 
 const DialogContainer = styled.div`
 	position: fixed;
@@ -56,11 +57,11 @@ const Placeholder = styled.div`
 	flex-grow: 1;
 `;
 
-export const NotImplementedProvider = (props: { children?: ReactNode }) => {
+export const NotImplementedProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
 	const [ visible, setVisible ] = useState(false);
-	const [ state ] = useState<NotImplemented>(() => ({
+	const context = {
 		show: () => {
 			if (visible) {
 				return;
@@ -72,14 +73,14 @@ export const NotImplementedProvider = (props: { children?: ReactNode }) => {
 			document.body.style.overflowY = 'hidden';
 			setVisible(true);
 		}
-	}));
+	};
 	const hide = () => {
 		document.body.style.paddingRight = '';
 		document.body.style.overflowY = '';
 		setVisible(false);
 	};
 
-	return <Context.Provider value={state}>
+	return <Context.Provider value={context}>
 		{children}
 		<DialogContainer data-visible={visible}>
 			<Dialog>
