@@ -6,7 +6,7 @@ import Home from './home';
 import Welcome from './welcome';
 
 export default () => {
-	return <BrowserRouter>
+	return <BrowserRouter basename={process.env.REACT_APP_WEB_CONTEXT}>
 		<Switch>
 			<Route path={Path.HOME}><Home/></Route>
 			<Route path={Path.GUIDE}><Guide/></Route>
