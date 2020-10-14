@@ -12,7 +12,7 @@ const Header = styled.header`
 	left: 0;
 	position: fixed;
 	box-shadow: var(--header-box-shadow);
-	width: 100%;
+	width: 100vw;
 	background-color: var(--header-bg-color);
 	z-index: var(--header-z-index);
 	display: flex;

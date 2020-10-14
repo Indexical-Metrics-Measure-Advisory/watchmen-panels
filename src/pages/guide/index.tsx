@@ -39,7 +39,7 @@ const HomePage = styled(Page)<{ step: Step }>`
 			background-image: url(${({ step }) => BackgroundImages[step]});
 		}
 		@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
-			width: 100%;
+			width: 100vw;
 		}
 	}
 `;

@@ -48,6 +48,12 @@ const SelectedFileRow = styled.div`
 	&:hover {
 		background-color: var(--hover-color);
 	}
+	> div:first-child {
+		white-space: nowrap;
+	    text-overflow: ellipsis;
+	    overflow: hidden;
+	    direction: rtl;
+	}
 	> div:nth-child(2) {
 		flex-grow: 1;
 		font-size: 0.8em;
