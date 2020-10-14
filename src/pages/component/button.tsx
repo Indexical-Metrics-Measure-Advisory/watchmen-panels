@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 export enum ButtonType {
 	DEFAULT = 'default',
-	PRIMARY = 'primary'
+	PRIMARY = 'primary',
+	DANGER = 'danger'
 }
 
 interface ButtonProps {
@@ -33,6 +34,10 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 	}
 	&[data-ink-type=primary] {
 		background-color: var(--primary-color);
+		color: var(--invert-color);
+	}
+	&[data-ink-type=danger] {
+		background-color: var(--danger-color);
 		color: var(--invert-color);
 	}
 	@media (min-width: ${({ theme }) => theme.minDeskWidth}px) {

@@ -14,7 +14,7 @@ export const Main = styled.main`
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
-	padding: var(--page-margin) 0;
+	padding: var(--margin) 0;
 `;
 
 export default (props: {

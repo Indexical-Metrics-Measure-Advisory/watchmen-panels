@@ -1,19 +1,77 @@
-import React, { Fragment } from 'react';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { Fragment, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
-import { BigButton, ButtonType } from '../component/button';
+import { toReadableFileSize } from '../../common/utils';
+import Button, { BigButton, ButtonType } from '../component/button';
 
+interface SelectedFile {
+	name: string;
+	size: string;
+	file: File;
+}
+
+const SelectedFiles = styled.div<{ itemCount: number }>`
+	margin: var(--margin) var(--margin) 0;
+	display: flex;
+	flex-direction: column;
+	border-top-left-radius: calc(var(--border-radius) * 2);
+	border-top-right-radius: calc(var(--border-radius) * 2);
+	height: 0;
+	overflow: hidden;
+	transition: all 300ms ease-in-out;
+	&[data-visible=true] {
+		height: calc(1px + 32px * ${({ itemCount }) => itemCount});
+		border: var(--border);
+		border-bottom: 0;
+		& + div {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
+`;
+const SelectedFileRow = styled.div`
+	display: flex;
+	padding: 0 var(--margin);
+	height: 32px;
+	align-items: center;
+	transition: all 300ms ease-in-out;
+	&:not(:last-child) {
+		border-bottom: var(--border);
+	}
+	&:hover {
+		background-color: var(--hover-color);
+	}
+	> div:nth-child(2) {
+		flex-grow: 1;
+		font-size: 0.8em;
+		padding-left: calc(var(--margin) / 2);
+		transform-origin: bottom left;
+	    transform: scale(0.7);
+	    opacity: 0.7;
+	}
+	> div:last-child {
+		> button {
+			border: 0;
+			&:hover {
+				color: var(--danger-hover-color);
+			}
+		}
+	}
+`;
 const Files = styled.div`
-	margin: var(--page-margin) var(--page-margin) 0;
+	margin: 0 var(--margin);
 	display: grid;
 	position: relative;
 	grid-template-columns: 1fr 1fr;
-	grid-column-gap: calc(var(--page-margin) * 2);
-	grid-row-gap: calc(var(--page-margin));
+	grid-column-gap: calc(var(--margin) * 2);
+	grid-row-gap: calc(var(--margin));
 	border: var(--border);
 	border-radius: calc(var(--border-radius) * 2);
 	min-height: 200px;
+	transition: all 300ms ease-in-out;
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		grid-template-columns: 1fr;
 	}
@@ -33,16 +91,16 @@ const Files = styled.div`
 		position: absolute;
 		width: 100%;
 		height: 100%;
-	cursor: pointer;
+		cursor: pointer;
 	}
 `;
 
 const Operations = styled.div`
 	display: flex;
-	margin-top: var(--page-margin);
-	padding: 0 var(--page-margin);
+	margin-top: var(--margin);
+	padding: 0 var(--margin);
 	> button:not(:first-child) {
-		margin-left: var(--page-margin);
+		margin-left: var(--margin);
 	}
 `;
 const Placeholder = styled.div`
@@ -51,7 +109,33 @@ const Placeholder = styled.div`
 
 export default () => {
 	const history = useHistory();
+	const fileRef = useRef<HTMLInputElement>(null);
 
+	const [ files, setFiles ] = useState<Array<SelectedFile>>([]);
+
+	const onFilesSelected = async () => {
+		console.log(fileRef.current!.value);
+		const selectedFiles = fileRef.current!.files || [];
+		const data = [];
+		for (let index = 0, count = selectedFiles.length; index < count; index++) {
+			data.push(selectedFiles[index]);
+		}
+		const allFiles = [ ...files, ...data.map(file => {
+			return {
+				name: file.name,
+				size: toReadableFileSize(file.size),
+				file
+			};
+		}) ];
+		const fileMap = allFiles.reduce((map, file) => {
+			map[file.name] = file;
+			return map;
+		}, {} as { [key in string]: SelectedFile });
+		setFiles([ ...new Set(allFiles.map(file => fileMap[file.name])) ]);
+	};
+	const onRemoveClicked = (removeFile: SelectedFile) => () => {
+		setFiles(files.filter(file => file !== removeFile));
+	};
 	const onChangeDomainClicked = () => {
 		history.push(Path.GUIDE_DOMAIN_SELECT);
 	};
@@ -60,8 +144,18 @@ export default () => {
 	};
 
 	return <Fragment>
+		<SelectedFiles data-visible={files.length !== 0} itemCount={files.length}>
+			{files.map(file => {
+				return <SelectedFileRow key={file.name}>
+					<div>{file.name}</div>
+					<div>{file.size}</div>
+					<div><Button onClick={onRemoveClicked(file)}><FontAwesomeIcon icon={faTimes}/></Button></div>
+				</SelectedFileRow>;
+			})}
+		</SelectedFiles>
 		<Files>
-			<input type="file" multiple/>
+			<input type="file" multiple accept=".json" title={"Only JSON file is supported in step by step guide."}
+			       onChange={onFilesSelected} ref={fileRef}/>
 		</Files>
 		<Operations>
 			<BigButton onClick={onChangeDomainClicked}>Change Domain</BigButton>

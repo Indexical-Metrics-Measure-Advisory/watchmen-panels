@@ -6,10 +6,10 @@ import { BigButton, ButtonType } from '../component/button';
 
 const Operations = styled.div`
 	display: flex;
-	margin-top: var(--page-margin);
-	padding: 0 var(--page-margin);
+	margin-top: var(--margin);
+	padding: 0 var(--margin);
 	> button:not(:first-child) {
-		margin-left: var(--page-margin);
+		margin-left: var(--margin);
 	}
 `;
 const Placeholder = styled.div`

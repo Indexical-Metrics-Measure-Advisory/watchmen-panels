@@ -24,8 +24,8 @@ const HomePage = styled(Page)<{ step: Step }>`
 		&:before {
 			content: '';
 			position: absolute;
-			left: calc(var(--page-margin) * 3);
-			bottom: calc(var(--page-margin) * 3);
+			left: calc(var(--margin) * 3);
+			bottom: calc(var(--margin) * 3);
 			width: 100%;
 			height: 100%;
 			z-index: -1;

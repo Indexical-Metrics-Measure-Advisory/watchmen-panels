@@ -9,11 +9,11 @@ import { BigButton, ButtonType } from '../component/button';
 import { useNotImplemented } from '../context/not-implemented';
 
 const Domains = styled.div`
-	padding: var(--page-margin) var(--page-margin) 0;
+	padding: var(--margin) var(--margin) 0;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-column-gap: calc(var(--page-margin) * 2);
-	grid-row-gap: calc(var(--page-margin));
+	grid-column-gap: calc(var(--margin) * 2);
+	grid-row-gap: calc(var(--margin));
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		grid-template-columns: 1fr;
 	}
@@ -56,10 +56,10 @@ const MoreDomainsButton = styled(DomainButton)`
 `;
 const Operations = styled.div`
 	display: flex;
-	margin-top: var(--page-margin);
-	padding: 0 var(--page-margin);
+	margin-top: var(--margin);
+	padding: 0 var(--margin);
 	> button:not(:first-child) {
-		margin-left: var(--page-margin);
+		margin-left: var(--margin);
 	}
 `;
 const Placeholder = styled.div`

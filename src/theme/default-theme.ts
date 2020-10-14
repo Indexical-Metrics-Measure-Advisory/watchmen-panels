@@ -2,8 +2,11 @@ export default {
 	// color
 	primaryColor: 'rgba(43,80,174,1)',
 	primaryHoverColor: 'rgba(3,51,141,1)',
+	dangerColor: 'rgb(246,31,81,1)',
+	dangerHoverColor: 'rgb(214,30,72,1)',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
+	hoverColor: '#d3dce6',
 	invertBgColor: 'rgb(1,34,96,0.9)',
 
 	// font

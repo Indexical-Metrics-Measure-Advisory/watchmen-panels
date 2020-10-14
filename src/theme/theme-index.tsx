@@ -10,8 +10,11 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	html {
 		--primary-color: ${({ theme }) => theme.primaryColor};
 		--primary-hover-color: ${({ theme }) => theme.primaryHoverColor};
+		--danger-color: ${({ theme }) => theme.dangerColor};
+		--danger-hover-color: ${({ theme }) => theme.dangerHoverColor};
 		--invert-color: ${({ theme }) => theme.invertColor};
 		--bg-color:  ${({ theme }) => theme.bgColor};
+		--hover-color: ${({ theme }) => theme.hoverColor};
 		--invert-bg-color: ${({ theme }) => theme.invertBgColor};
 		
 		--font-family: ${({ theme }) => theme.fontFamily};
@@ -37,12 +40,12 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--footer-bg-color: ${({ theme }) => theme.footerBgColor};
 		--footer-color: ${({ theme }) => theme.footerColor};
 		
-		--page-margin: ${({ theme }) => theme.deskPageMargin}px;
+		--margin: ${({ theme }) => theme.deskPageMargin}px;
 	}
 	
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		html {
-			--page-margin: ${({ theme }) => theme.mobilePageMargin}px;
+			--margin: ${({ theme }) => theme.mobilePageMargin}px;
 		}
 	}
 	

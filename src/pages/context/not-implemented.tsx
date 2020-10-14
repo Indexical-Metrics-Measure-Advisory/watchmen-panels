@@ -33,7 +33,7 @@ const Dialog = styled.div`
 	margin-top: 25vh;
 	width: 400px;
 	margin-left: calc(50% - 200px);
-	padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) / 2) var(--page-margin);
+	padding: var(--margin) var(--margin) calc(var(--margin) / 2) var(--margin);
 	display: flex;
 	flex-direction: column;
 	background-color: var(--bg-color);

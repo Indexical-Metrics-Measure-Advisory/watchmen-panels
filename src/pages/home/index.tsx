@@ -11,7 +11,7 @@ import { useNotImplemented } from '../context/not-implemented';
 
 const HomePage = styled(Page)`
 	> main {
-		padding: calc(var(--page-margin) * 4) 0;
+		padding: calc(var(--margin) * 4) 0;
 	}
 `;
 const Slide = styled.div`
@@ -20,9 +20,9 @@ const Slide = styled.div`
 	align-items: center;
 	justify-content: center;
 	min-height: 400px;
-	padding: 0 var(--page-margin);
+	padding: 0 var(--margin);
 	&:not(:last-child) {
-		padding-bottom: calc(var(--page-margin) * 4);
+		padding-bottom: calc(var(--margin) * 4);
 	}
 	& > img {
 		margin: 0 150px;
@@ -36,7 +36,7 @@ const Slide = styled.div`
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		& > img {
 			order: 1;
-			margin: 0 0 calc(var(--page-margin) * 2) 0;
+			margin: 0 0 calc(var(--margin) * 2) 0;
 			height: 130px;
 		}
 		& > div {

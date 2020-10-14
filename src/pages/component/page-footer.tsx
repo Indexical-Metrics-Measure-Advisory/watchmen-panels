@@ -9,7 +9,7 @@ const Footer = styled.footer`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 var(--page-margin);
+	padding: 0 var(--margin);
 	width: 100%;
 	& > * {
 		width: 100%;

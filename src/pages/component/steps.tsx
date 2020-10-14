@@ -18,7 +18,7 @@ const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure
 
 const Steps = styled.div`
 	position: relative;
-	padding: 0 var(--page-margin);
+	padding: 0 var(--margin);
 	display: flex;
 	flex-direction: column;
 	padding-bottom: 1em;
@@ -74,15 +74,15 @@ const StepDot = styled.li`
 	transition: all 300ms 100ms ease-in-out;
 	&:not(:first-child) {
 		position: relative;
-		margin-left: calc(var(--page-margin) * 2);
+		margin-left: calc(var(--margin) * 2);
 		&:before {
 			content: '';
 			display: block;
 			position: absolute;
-			left: calc(var(--page-margin) * -2 - 1px);
+			left: calc(var(--margin) * -2 - 1px);
 			top: 50%;
 			transform: translateY(-50%);
-			width: calc(var(--page-margin) * 2);
+			width: calc(var(--margin) * 2);
 			height: 1px;
 			background-color: var(--border-color);
 			z-index: -1;
@@ -118,7 +118,7 @@ const StepDot = styled.li`
 `;
 const Current = styled.div<{ step: number }>`
 	position: absolute;
-	left: calc((8px + var(--page-margin) * 2) * ${({ step }) => step} - 1px);
+	left: calc((8px + var(--margin) * 2) * ${({ step }) => step} - 1px);
 	transition: left 300ms ease-in-out;
 `;
 

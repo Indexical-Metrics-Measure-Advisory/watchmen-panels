@@ -19,7 +19,7 @@ const Header = styled.header`
 	justify-content: center;
 	align-items: center;
 	height: 60px;
-	padding: 0 var(--page-margin);
+	padding: 0 var(--margin);
 	border-bottom: var(--border);
 	& + main {
 		margin-top: 60px;
