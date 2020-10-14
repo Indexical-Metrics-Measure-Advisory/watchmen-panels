@@ -22,6 +22,7 @@ const BackgroundImages = [ DomainSelectImage, ImportDataImage, MappingFactorImag
 const HomePage = styled(Page)<{ step: Step }>`
 	& > main {
 		width: 1000px;
+		overflow: hidden;
 		&:before {
 			content: '';
 			position: absolute;
