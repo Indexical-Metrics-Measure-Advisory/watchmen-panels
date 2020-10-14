@@ -43,6 +43,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--footer-color: ${({ theme }) => theme.footerColor};
 		
 		--margin: ${({ theme }) => theme.deskPageMargin}px;
+		
+		width: 100%;
 	}
 	
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
@@ -61,6 +63,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	    position: relative;
 	    background-color: var(--bg-color);
 	    overflow-x: hidden;
+	    width: 100%;
 	}
 	
 	code {
