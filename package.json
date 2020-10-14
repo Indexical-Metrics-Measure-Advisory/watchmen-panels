@@ -1,7 +1,8 @@
 {
   "name": "watchmen-panels",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "homepage": "https://insurance-metrics-measure-advisory.github.io/watchmen-panels",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
