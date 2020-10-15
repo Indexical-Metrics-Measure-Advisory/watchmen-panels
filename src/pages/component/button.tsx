@@ -45,6 +45,9 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 			transform: scale(1.05);
 		}
 	}
+	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
+		padding: 6px var(--margin);
+	}
 `;
 
 
@@ -57,7 +60,7 @@ export const BigButton = styled(Button)`
 	font-size: 1.15em;
 	line-height: 2.2em;
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
-		min-width: unset;
+		min-width: 120px;
 	}
 `;
 
