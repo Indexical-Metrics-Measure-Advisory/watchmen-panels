@@ -30,6 +30,9 @@ const SelectedFiles = styled.div<{ itemCount: number }>`
 			border-top-left-radius: 0;
 			border-top-right-radius: 0;
 			min-height: ${({ itemCount }) => Math.max(100, 200 - itemCount * 32)}px;
+			@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
+				min-height: ${({ itemCount }) => Math.max(160, 200 - itemCount * 32)}px;
+			}
 			&:after {
 				opacity: 0.7;
 			}
