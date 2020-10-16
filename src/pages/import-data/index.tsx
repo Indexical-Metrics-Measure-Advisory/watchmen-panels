@@ -100,8 +100,13 @@ const Files = styled.div`
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
+		transform-origin: center;
 		font-size: 1.2em;
 		font-weight: var(--font-bold);
+		transition: transform 300ms ease-in-out;
+	}
+	&:hover:before {
+		transform: translate(-50%, -50%) scale(1.05);
 	}
 	&:after {
 		content: 'According to security reason, same file cannot be addressed correctly when it is selected in two or more times, try to avoid this please.';
