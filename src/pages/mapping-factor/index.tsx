@@ -10,7 +10,7 @@ const ObjectsContainer = styled.div`
 	margin: 0 var(--margin);
 	border-radius: calc(var(--border-radius) * 2);
 	border: var(--border);
-	min-height: 300px;
+	min-height: 350px;
 	overflow: hidden;
 `;
 const ObjectsList = styled.div`
@@ -32,7 +32,7 @@ const ObjectItem = styled.div`
 	text-overflow: ellipsis;
 	overflow-x: hidden;
 	border-bottom: var(--border);
-	&:nth-child(n + 10):last-child {
+	&:nth-child(n + 11):last-child {
 		border-bottom: transparent;
 	}
 	&:hover {
@@ -68,7 +68,7 @@ export default () => {
 		history.push(Path.GUIDE_MEASURE_INDICATOR);
 	};
 
-	const data = guide.getData() || { "No Data": [] };
+	const data = guide.getData() || { "No Data": { data: [], columns: [] } };
 	const onObjectSelected = (key: string) => () => setActiveKey(key);
 
 	return <Fragment>

@@ -2,7 +2,33 @@ import React from 'react';
 import { emptyGetter, emptySetter } from '../../common/utils';
 import { Domain } from '../../services/domain';
 
-export type GuideData = { [key in string]: Array<any> };
+export enum GuideDataColumnType {
+	TEXT = 'text',
+	NUMERIC = 'numeric',
+	BOOLEAN = 'boolean',
+	DATE = 'date',
+	TIME = 'time',
+	DATETIME = 'datetime',
+	OBJECT = 'object',
+	ARRAY = 'array'
+}
+
+export interface GuideDataColumn {
+	name: string;
+	label: string;
+	type: GuideDataColumnType;
+}
+
+export interface GuideDataObjectColumn extends GuideDataColumn {
+	childTypes: Array<GuideDataColumn>;
+}
+
+export type GuideData = {
+	[key in string]: {
+		columns: Array<GuideDataColumn>,
+		data: Array<any>
+	}
+};
 
 export interface GuideContext {
 	domain?: Domain,

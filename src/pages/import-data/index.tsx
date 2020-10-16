@@ -187,7 +187,12 @@ export default () => {
 	};
 	const onNextClicked = async () => {
 		if (files.length === 0) {
-			alert.show('No data file selected.');
+			if (guide.getData()) {
+				// no new file selected
+				history.push(Path.GUIDE_MAPPING_FACTOR);
+			} else {
+				alert.show('No data file selected.');
+			}
 			return;
 		}
 
@@ -215,7 +220,10 @@ export default () => {
 					name = file.file.name.replace(/^(.*)\.(json|csv)$/, `$1_${index}`);
 					index += 1;
 				}
-				data[name] = file.data;
+				data[name] = {
+					data: file.data,
+					columns: []
+				};
 				return data;
 			}, {} as GuideData));
 		history.push(Path.GUIDE_MAPPING_FACTOR);
