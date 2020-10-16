@@ -7,6 +7,7 @@ export default {
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
 	hoverColor: '#d3dce6',
+	activeColor: 'rgba(43,80,174,0.5)',
 	invertBgColor: 'rgb(1,34,96,0.9)',
 
 	// font
@@ -30,6 +31,11 @@ export default {
 	minDeskWidth: 600,
 	mobilePageMargin: 16,
 	deskPageMargin: 32,
+
+	// scroll
+	scrollbarBgColor: 'rgba(229,229,229,0.5)',
+	scrollbarThumbBgColor: 'rgba(198,198,198,1)',
+	scrollbarBorderColor: 'transparent',
 
 	// dialog
 	dialogBoxShadow: '0 4px 12px rgba(37, 38, 94, 0.3),' +

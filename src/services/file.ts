@@ -1,5 +1,11 @@
 import crypto from 'crypto';
 
+export interface ParsedFile {
+	hash: string;
+	data: Array<any>;
+	file: File;
+}
+
 /**
  * Parse file context,<br>
  * Extension name must be '.json', otherwise, will be treated as csv file.<br>
@@ -18,16 +24,16 @@ import crypto from 'crypto';
  * </ul>
  * @param file
  */
-export const parseFile = async (file: File): Promise<{ hash: string, data: Array<any> }> => {
+export const parseFile = async (file: File): Promise<ParsedFile> => {
 	const isJSON = file.name.endsWith('.json');
 	const text = await file.text();
 	const hash = crypto.createHash('md5').update(text).digest('hex');
 	if (isJSON) {
 		const data = JSON.parse(text);
 		if (Array.isArray(data)) {
-			return { hash, data };
+			return { hash, data, file };
 		} else {
-			return { hash, data: [ data ] };
+			return { hash, data: [ data ], file };
 		}
 	} else {
 		return {
@@ -46,7 +52,8 @@ export const parseFile = async (file: File): Promise<{ hash: string, data: Array
 						}, {} as { [key in string]: any }));
 					}
 					return data;
-				}, { columns: [] as Array<string>, data: [] as Array<any> }).data
+				}, { columns: [] as Array<string>, data: [] as Array<any> }).data,
+			file
 		};
 	}
 };

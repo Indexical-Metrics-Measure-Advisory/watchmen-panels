@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--invert-color: ${({ theme }) => theme.invertColor};
 		--bg-color:  ${({ theme }) => theme.bgColor};
 		--hover-color: ${({ theme }) => theme.hoverColor};
+		--active-color: ${({ theme }) => theme.activeColor};
 		--invert-bg-color: ${({ theme }) => theme.invertBgColor};
 		
 		--font-family: ${({ theme }) => theme.fontFamily};
@@ -33,6 +34,10 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--border: ${({ theme }) => theme.border};
 		--border-radius: ${({ theme }) => theme.borderRadius}px;
 		
+		--scrollbar-background-color: ${({ theme }) => theme.scrollbarBgColor};
+		--scrollbar-thumb-background-color: ${({ theme }) => theme.scrollbarThumbBgColor};
+		--scrollbar-border-color: ${({ theme }) => theme.scrollbarBorderColor};
+		
 		--dialog-box-shadow: ${({ theme }) => theme.dialogBoxShadow};
 		
 		--header-bg-color: ${({ theme }) => theme.headerBgColor};
@@ -45,6 +50,19 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--margin: ${({ theme }) => theme.deskPageMargin}px;
 		
 		width: 100%;
+		
+		//&::-webkit-scrollbar {
+		//	background-color: var(--scrollbar-background-color);
+		//	width: 15px;
+		//	height: 15px;
+		//}
+		//&::-webkit-scrollbar-thumb {
+		//	background-color: var(--scrollbar-thumb-background-color);
+		//	border: 1px solid var(--scrollbar-border-color);
+		//}
+		//&::-webkit-scrollbar-corner {
+		//	background-color: var(--scrollbar-background-color);
+		//}
 	}
 	
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {

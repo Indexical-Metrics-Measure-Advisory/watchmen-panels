@@ -5,7 +5,10 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { toReadableFileSize } from '../../common/utils';
+import { parseFile } from '../../services/file';
 import Button, { BigButton, ButtonType } from '../component/button';
+import { useAlert } from '../context/alert';
+import { GuideData, useGuideContext } from '../guide/guide-context';
 
 interface SelectedFile {
 	name: string;
@@ -136,6 +139,8 @@ const Placeholder = styled.div`
 
 export default () => {
 	const history = useHistory();
+	const alert = useAlert();
+	const guide = useGuideContext();
 
 	const [ files, setFiles ] = useState<Array<SelectedFile>>([]);
 
@@ -180,10 +185,39 @@ export default () => {
 	const onChangeDomainClicked = () => {
 		history.push(Path.GUIDE_DOMAIN_SELECT);
 	};
-	const onNextClicked = () => {
+	const onNextClicked = async () => {
 		if (files.length === 0) {
-
+			alert.show('No data file selected.');
+			return;
 		}
+
+		const parsedFiles = await Promise.all(files.map(async file => await parseFile(file.file)));
+		const allHash = [ ...new Set(parsedFiles.map(file => file.hash)) ]
+			.reduce((all, hash) => {
+				all[hash] = true;
+				return all;
+			}, {} as { [key in string]: true });
+		guide.setData(parsedFiles
+			.sort((f1, f2) => f1.file.name.localeCompare(f2.file.name))
+			// filter content with same hash
+			.filter(file => {
+				if (allHash[file.hash]) {
+					delete allHash[file.hash];
+					return true;
+				} else {
+					return false;
+				}
+			})
+			.reduce((data, file) => {
+				let name = file.file.name.replace(/^(.*)\.(json|csv)$/, '$1') || 'Noname';
+				let index = 1;
+				while (data[name]) {
+					name = file.file.name.replace(/^(.*)\.(json|csv)$/, `$1_${index}`);
+					index += 1;
+				}
+				data[name] = file.data;
+				return data;
+			}, {} as GuideData));
 		history.push(Path.GUIDE_MAPPING_FACTOR);
 	};
 
