@@ -48,17 +48,6 @@ const SelectedFiles = styled.div<{ itemCount: number }>`
 		height: calc(1px + 32px * ${({ itemCount }) => itemCount});
 		border: var(--border);
 		border-bottom: 0;
-		& + div {
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
-			min-height: ${({ itemCount }) => Math.max(100, 200 - itemCount * 32)}px;
-			@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
-				min-height: ${({ itemCount }) => Math.max(160, 200 - itemCount * 32)}px;
-			}
-			&:after {
-				opacity: 0.7;
-			}
-		}
 	}
 `;
 const SelectedFileRow = styled.div`
@@ -97,7 +86,7 @@ const SelectedFileRow = styled.div`
 		}
 	}
 `;
-const Files = styled.div`
+const Files = styled.div<{ itemCount: number }>`
 	margin: 0 var(--margin);
 	display: grid;
 	position: relative;
@@ -106,9 +95,20 @@ const Files = styled.div`
 	grid-row-gap: calc(var(--margin));
 	border: var(--border);
 	border-radius: calc(var(--border-radius) * 2);
-	min-height: 200px;
+	min-height: 350px;
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
+	&[data-has-data=true] {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		min-height: ${({ itemCount }) => Math.max(100, 350 - itemCount * 32)}px;
+		@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
+			min-height: ${({ itemCount }) => Math.max(160, 350 - itemCount * 32)}px;
+		}
+		&:after {
+			opacity: 0.7;
+		}
+	}
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		grid-template-columns: 1fr;
 	}
@@ -294,7 +294,9 @@ export default () => {
 				</SelectedFileRow>;
 			})}
 		</SelectedFiles>
-		<Files onClick={onFilesShouldSelect}/>
+		<Files data-has-data={existsDataCount !== 0 || files.length !== 0}
+		       itemCount={existsDataCount + files.length}
+		       onClick={onFilesShouldSelect}/>
 		<Operations>
 			<BigButton onClick={onChangeDomainClicked}>Change Domain</BigButton>
 			<Placeholder/>
