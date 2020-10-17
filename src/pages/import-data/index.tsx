@@ -16,8 +16,27 @@ interface SelectedFile {
 	file: File;
 }
 
-const SelectedFiles = styled.div<{ itemCount: number }>`
+const ExistsFiles = styled.div<{ itemCount: number }>`
 	margin: var(--margin) var(--margin) 0;
+	display: flex;
+	flex-direction: column;
+	border-top-left-radius: calc(var(--border-radius) * 2);
+	border-top-right-radius: calc(var(--border-radius) * 2);
+	height: 0;
+	overflow: hidden;
+	transition: all 300ms ease-in-out;
+	&[data-visible=true] {
+		height: calc(1px + 32px * ${({ itemCount }) => itemCount});
+		border: var(--border);
+		border-bottom: 0;
+		& ~ div {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
+`;
+const SelectedFiles = styled.div<{ itemCount: number }>`
+	margin: 0 var(--margin);
 	display: flex;
 	flex-direction: column;
 	border-top-left-radius: calc(var(--border-radius) * 2);
@@ -201,6 +220,8 @@ export default () => {
 			return;
 		}
 
+		const existsData = (guide.getData() || {});
+		const allExistsHash = Object.values(existsData).map(data => data.hash);
 		const parsedFiles = await Promise.all(files.map(async file => await parseFile(file.file)));
 		const allHash = [ ...new Set(parsedFiles.map(file => file.hash)) ]
 			.reduce((all, hash) => {
@@ -211,10 +232,16 @@ export default () => {
 			.sort((f1, f2) => f1.file.name.localeCompare(f2.file.name))
 			// filter content with same hash
 			.filter(file => {
+				if (allExistsHash.includes(file.hash)) {
+					// already in exists data
+					return false;
+				}
 				if (allHash[file.hash]) {
+					// first match
 					delete allHash[file.hash];
 					return true;
 				} else {
+					// already matched
 					return false;
 				}
 			})
@@ -227,14 +254,36 @@ export default () => {
 				}
 				data[name] = {
 					data: file.data,
-					columns: []
+					columns: [],
+					hash: file.hash
 				};
 				return data;
-			}, {} as GuideData));
+			}, existsData));
 		history.push(Path.GUIDE_MAPPING_FACTOR);
 	};
 
+	const existsData = guide.getData() || {};
+	const existsDataCount = Object.keys(existsData).length;
+	const onExistsDataRemoveClicked = (key: string) => () => {
+		guide.setData(Object.keys(existsData).filter(name => name !== key).reduce((all, key) => {
+			all[key] = existsData[key];
+			return all;
+		}, {} as GuideData));
+	};
+
 	return <Fragment>
+		<ExistsFiles data-visible={existsDataCount !== 0} itemCount={existsDataCount}>
+			{Object.keys(existsData)
+				.sort((k1, k2) => k1.localeCompare(k2))
+				.map((key, index) => {
+					return <SelectedFileRow key={`${key}-${index}`}>
+						<div>{key}</div>
+						<div>{(existsData[key].data || []).length} item(s)</div>
+						<div><Button onClick={onExistsDataRemoveClicked(key)}><FontAwesomeIcon icon={faTimes}/></Button>
+						</div>
+					</SelectedFileRow>;
+				})}
+		</ExistsFiles>
 		<SelectedFiles data-visible={files.length !== 0} itemCount={files.length}>
 			{files.map((file, index) => {
 				return <SelectedFileRow key={`${file.name}-${index}`}>

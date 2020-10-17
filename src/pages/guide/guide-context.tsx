@@ -26,7 +26,8 @@ export interface GuideDataObjectColumn extends GuideDataColumn {
 export type GuideData = {
 	[key in string]: {
 		columns: Array<GuideDataColumn>,
-		data: Array<any>
+		data: Array<any>,
+		hash: string;
 	}
 };
 
