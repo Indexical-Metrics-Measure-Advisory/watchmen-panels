@@ -24,7 +24,7 @@ const Slide = styled.div`
 	&:not(:last-child) {
 		padding-bottom: calc(var(--margin) * 4);
 	}
-	& > img {
+	> img {
 		margin: 0 150px;
 		&:first-child {
 			margin-left: 50px;
@@ -34,12 +34,12 @@ const Slide = styled.div`
 		}
 	}
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
-		& > img {
+		> img {
 			order: 1;
 			margin: 0 0 calc(var(--margin) * 2) 0;
 			height: 130px;
 		}
-		& > div {
+		> div {
 			order: 2;
 		}
 	}

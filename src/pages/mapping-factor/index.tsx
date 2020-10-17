@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
@@ -22,17 +22,11 @@ const ObjectsList = styled.div`
 	&[data-has-data=false] {
 		width: 100%;
 		border-right: 0;
-		& + div {
-			display: none;
+		> div {
+			display: flex;
 		}
-		&:before {
-			content: 'No Data Imported';
-			font-weight: var(--font-bold);
-			display: block;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
+		+ div {
+			display: none;
 		}
 	}
 `;
@@ -57,6 +51,21 @@ const ObjectItem = styled.div`
 	&[data-active=true] {
 		background-color: var(--active-color);
 		color: var(--invert-color);
+	}
+`;
+const NoObjects = styled.div`
+	display: none;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2em;
+	font-weight: var(--font-bold);
+	transition: all 300ms ease-in-out;
+	&:hover {
+		transform: scale(1.05);
+	}
+	> a {
+		margin: 0 calc(var(--margin) / 4);
 	}
 `;
 const ObjectDetail = styled.div`
@@ -111,11 +120,16 @@ export default () => {
 	return <Fragment>
 		<ObjectsContainer>
 			<ObjectsList data-has-data={Object.keys(data).length !== 0} data-has-active={activeKey != null}>
-				{Object.keys(data).sort((k1, k2) => k1.localeCompare(k2)).map((key, index) => {
-					return <ObjectItem key={key} onClick={onObjectSelected(key)} data-active={key === activeKey}>
-						{key}
-					</ObjectItem>;
-				})}
+				{Object.keys(data)
+					.sort((k1, k2) => k1.localeCompare(k2))
+					.map(key => {
+						return <ObjectItem key={key} onClick={onObjectSelected(key)} data-active={key === activeKey}>
+							{key}
+						</ObjectItem>;
+					})}
+				<NoObjects>
+					No valid data imported, back and <Link to={Path.GUIDE_IMPORT_DATA}>Import Data</Link> again.
+				</NoObjects>
 			</ObjectsList>
 			<ObjectDetail data-visible={activeKey != null}>
 				<ObjectDetailHeader>

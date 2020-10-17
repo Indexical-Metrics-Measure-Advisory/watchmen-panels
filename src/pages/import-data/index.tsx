@@ -122,6 +122,7 @@ const Files = styled.div`
 		transform-origin: center;
 		font-size: 1.2em;
 		font-weight: var(--font-bold);
+		text-decoration: underline;
 		transition: transform 300ms ease-in-out;
 	}
 	&:hover:before {
@@ -211,7 +212,7 @@ export default () => {
 	};
 	const onNextClicked = async () => {
 		if (files.length === 0) {
-			if (guide.getData()) {
+			if (Object.keys(guide.getData() || {}).length !== 0) {
 				// no new file selected
 				history.push(Path.GUIDE_MAPPING_FACTOR);
 			} else {

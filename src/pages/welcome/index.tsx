@@ -16,11 +16,15 @@ const Header = styled.div`
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: var(--invert-color);
+	> p {
+		margin-top: var(--margin);
+	}
 `;
 const Image = styled(Logo)`
     height: 40vmin;
 `;
 const Href = styled(Link)`
+	margin-top: var(--margin);
 	color: var(--invert-color);
 	text-transform: uppercase;
 `;

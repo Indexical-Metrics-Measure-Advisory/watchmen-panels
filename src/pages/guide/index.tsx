@@ -20,7 +20,7 @@ import { GuideContextProvider } from './guide-context';
 
 const BackgroundImages = [ DomainSelectImage, ImportDataImage, MappingFactorImage, MeasureIndicatorImage, BuildMetricsImage, ExportReportImage ];
 const HomePage = styled(Page)<{ step: Step }>`
-	& > main {
+	> main {
 		width: 1000px;
 		overflow: hidden;
 		&:before {

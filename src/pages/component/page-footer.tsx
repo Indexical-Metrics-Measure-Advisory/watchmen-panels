@@ -11,7 +11,7 @@ const Footer = styled.footer`
 	align-items: center;
 	padding: 0 var(--margin);
 	width: 100vw;
-	& > * {
+	> * {
 		width: 100%;
 	}
 	// @media (min-width: ${({ theme }) => theme.minDeskWidth}px) {
@@ -32,7 +32,7 @@ const LastLine = styled.div`
 `;
 const SocialIcons = styled.div`
 	display: flex;
-	& > a {
+	> a {
 		font-size: 1.4em;
 		color: var(--footer-color);
 		padding: 0 4px;
