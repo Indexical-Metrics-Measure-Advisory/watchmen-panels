@@ -13,7 +13,6 @@ interface ButtonProps {
 const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT }) => ({
 	'data-ink-type': inkType
 }))<ButtonProps>`
-	border: 0;
 	appearance: none;
 	outline: none;
 	cursor: pointer;

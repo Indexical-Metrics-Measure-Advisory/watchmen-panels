@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
+import Input from '../component/input';
 import { GuideData, GuideDataColumn, GuideDataObjectColumn, useGuideContext } from '../guide/guide-context';
 
 const ObjectsContainer = styled.div`
@@ -99,6 +100,9 @@ const ObjectDetailBodyRow = styled.div`
 	}
 	&:hover {
 		background-color: var(--hover-color);
+		> div > input:focus {
+			border-color: var(--primary-color);
+		}
 	}
 `;
 const ObjectDetailBodyCell = styled.div<{ indent?: number }>`
@@ -112,6 +116,19 @@ const ObjectDetailBodyCell = styled.div<{ indent?: number }>`
 	text-overflow: ellipsis;
 	&:last-child {
 		text-transform: capitalize;
+	}
+`;
+const LabelInput = styled(Input)`
+	height: 27px;
+	margin-left: calc(var(--input-indent) * -1);
+	border-color: transparent;
+	transition: all 300ms ease-in-out;
+	font-size: 0.8em;
+	&:hover {
+		border-color: var(--primary-color);
+	}
+	&:focus {
+		border-color: var(--border-color);
 	}
 `;
 const Operations = styled.div`
@@ -154,7 +171,9 @@ export default () => {
 	const data = (guide.getData() || {}) as GuideData;
 	const onObjectSelected = (key: string) => () => setActiveKey(key);
 	const activeObject = activeKey ? data[activeKey!] : null;
-
+	const onColumnLabelChange = (column: GuideDataColumn) => (evt: React.ChangeEvent<HTMLInputElement>) => {
+		column.label = evt.target.value;
+	};
 	const renderColumns = (columns: Array<GuideDataColumn> = []) => {
 		return columns.map(column => {
 			const name = asDisplayName(column);
@@ -165,7 +184,10 @@ export default () => {
 			return <Fragment key={column.name}>
 				<ObjectDetailBodyRow>
 					<ObjectDetailBodyCell indent={indent}>{name}</ObjectDetailBodyCell>
-					<ObjectDetailBodyCell>{label}</ObjectDetailBodyCell>
+					<ObjectDetailBodyCell>
+						<LabelInput type='text' value={label} placeholder={name}
+						            onChange={onColumnLabelChange(column)}/>
+					</ObjectDetailBodyCell>
 					<ObjectDetailBodyCell>{type}</ObjectDetailBodyCell>
 				</ObjectDetailBodyRow>
 				{childTypes.length !== 0 ? renderColumns(childTypes) : null}

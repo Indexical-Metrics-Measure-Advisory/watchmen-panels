@@ -38,6 +38,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--scrollbar-thumb-background-color: ${({ theme }) => theme.scrollbarThumbBgColor};
 		--scrollbar-border-color: ${({ theme }) => theme.scrollbarBorderColor};
 		
+		--input-indent: ${({ theme }) => theme.inputIndent}px;
+		
 		--dialog-box-shadow: ${({ theme }) => theme.dialogBoxShadow};
 		
 		--header-bg-color: ${({ theme }) => theme.headerBgColor};

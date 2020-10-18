@@ -37,6 +37,9 @@ export default {
 	scrollbarThumbBgColor: 'rgba(198,198,198,1)',
 	scrollbarBorderColor: 'transparent',
 
+	// input
+	inputIndent: 10,
+
 	// dialog
 	dialogBoxShadow: '0 4px 12px rgba(37, 38, 94, 0.3),' +
 		'4px 0 12px rgba(37, 38, 94, 0.3),' +
