@@ -10,7 +10,8 @@ export enum GuideDataColumnType {
 	TIME = 'time',
 	DATETIME = 'datetime',
 	OBJECT = 'object',
-	ARRAY = 'array'
+	ARRAY = 'array',
+	UNKNOWN = 'unknown'
 }
 
 export interface GuideDataColumn {

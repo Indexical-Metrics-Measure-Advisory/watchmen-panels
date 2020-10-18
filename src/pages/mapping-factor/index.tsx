@@ -3,7 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
-import { GuideData, useGuideContext } from '../guide/guide-context';
+import { GuideData, GuideDataColumn, GuideDataObjectColumn, useGuideContext } from '../guide/guide-context';
 
 const ObjectsContainer = styled.div`
 	display: flex;
@@ -89,6 +89,31 @@ const ObjectDetailHeaderCell = styled.div`
 	display: flex;
 	align-items: center;
 `;
+const ObjectDetailBodyRow = styled.div`
+	display: grid;
+	grid-template-columns: 40% 35% 25%;
+	border-bottom: var(--border);
+	font-size: 0.8em;
+	&:nth-child(n + 10):last-child {
+		border-bottom-color: transparent;
+	}
+	&:hover {
+		background-color: var(--hover-color);
+	}
+`;
+const ObjectDetailBodyCell = styled.div<{ indent?: number }>`
+	height: 31px;
+	padding: 0 calc(var(--margin) / 2);
+	display: flex;
+	align-items: center;
+	text-indent: calc(0.8em * ${({ indent }) => indent || 0});
+	overflow-x: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	&:last-child {
+		text-transform: capitalize;
+	}
+`;
 const Operations = styled.div`
 	display: flex;
 	margin-top: var(--margin);
@@ -100,6 +125,18 @@ const Operations = styled.div`
 const Placeholder = styled.div`
 	flex-grow: 1;
 `;
+
+const asDisplayName = (column: GuideDataColumn): string => {
+	const name = column.name || '';
+	if (name.indexOf('.') !== -1) {
+		return name.split('.').reverse()[0];
+	} else {
+		return name || 'Nonamed';
+	}
+};
+const asDisplayType = (column: GuideDataColumn): string => {
+	return column.type;
+};
 
 export default () => {
 	const history = useHistory();
@@ -116,6 +153,25 @@ export default () => {
 
 	const data = (guide.getData() || {}) as GuideData;
 	const onObjectSelected = (key: string) => () => setActiveKey(key);
+	const activeObject = activeKey ? data[activeKey!] : null;
+
+	const renderColumns = (columns: Array<GuideDataColumn> = []) => {
+		return columns.map(column => {
+			const name = asDisplayName(column);
+			const label = column.label;
+			const type = asDisplayType(column);
+			const indent = (column.name || '').split('').filter(ch => ch === '.').length;
+			const childTypes = (column as GuideDataObjectColumn).childTypes || [];
+			return <Fragment key={column.name}>
+				<ObjectDetailBodyRow>
+					<ObjectDetailBodyCell indent={indent}>{name}</ObjectDetailBodyCell>
+					<ObjectDetailBodyCell>{label}</ObjectDetailBodyCell>
+					<ObjectDetailBodyCell>{type}</ObjectDetailBodyCell>
+				</ObjectDetailBodyRow>
+				{childTypes.length !== 0 ? renderColumns(childTypes) : null}
+			</Fragment>;
+		});
+	};
 
 	return <Fragment>
 		<ObjectsContainer>
@@ -137,6 +193,7 @@ export default () => {
 					<ObjectDetailHeaderCell>Label</ObjectDetailHeaderCell>
 					<ObjectDetailHeaderCell>Type</ObjectDetailHeaderCell>
 				</ObjectDetailHeader>
+				{renderColumns(activeObject?.columns)}
 			</ObjectDetail>
 		</ObjectsContainer>
 		<Operations>

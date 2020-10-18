@@ -9,6 +9,7 @@ import { parseFile } from '../../services/file';
 import Button, { BigButton, ButtonType } from '../component/button';
 import { useAlert } from '../context/alert';
 import { GuideData, useGuideContext } from '../guide/guide-context';
+import { parseData } from './parse-data';
 
 interface SelectedFile {
 	name: string;
@@ -255,7 +256,7 @@ export default () => {
 				}
 				data[name] = {
 					data: file.data,
-					columns: [],
+					columns: parseData(file.data),
 					hash: file.hash
 				};
 				return data;

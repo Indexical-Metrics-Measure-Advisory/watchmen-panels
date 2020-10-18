@@ -84,6 +84,11 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	    width: 100%;
 	}
 	
+	a,
+	a:visited {
+		color: var(--font-color);
+	}
+	
 	code {
 	    font-family: var(--code-font-family);
 	}
