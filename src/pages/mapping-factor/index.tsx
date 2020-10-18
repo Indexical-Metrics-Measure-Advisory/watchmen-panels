@@ -173,6 +173,7 @@ export default () => {
 	const activeObject = activeKey ? data[activeKey!] : null;
 	const onColumnLabelChange = (column: GuideDataColumn) => (evt: React.ChangeEvent<HTMLInputElement>) => {
 		column.label = evt.target.value;
+		guide.setData(guide.getData()!);
 	};
 	const renderColumns = (columns: Array<GuideDataColumn> = []) => {
 		return columns.map(column => {
