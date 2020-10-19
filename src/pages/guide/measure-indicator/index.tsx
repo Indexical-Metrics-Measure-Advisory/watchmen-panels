@@ -26,7 +26,7 @@ import {
 	GuideDataObjectColumn,
 	useGuideContext
 } from '../guide-context';
-import { asDisplayName, asDisplayType } from '../utils';
+import { asDisplayName, asDisplayType, generateUniqueLabel, generateUniqueName } from '../utils';
 
 const MeasureObjectItem = styled(ObjectItem)`
 	&[data-active=false] + div {
@@ -130,19 +130,8 @@ export default () => {
 	const onCalcTypeChanged = (columns: Array<GuideDataColumn>, column: GuideCalcDataColumn) => async (option: DropdownOption) => {
 		const expression = option as unknown as DomainExpression;
 		column.expressionCode = option.value as string;
-		const allNames = columns.filter(existsColumn => existsColumn !== column)
-			.reduce((allNames, column) => {
-				allNames[column.name] = column;
-				return allNames;
-			}, {} as { [key in string]: GuideDataColumn });
-		let name = column.name || expression.name;
-		let index = 1;
-		while (allNames[name]) {
-			name = (column.name || expression.name).replace(/^(.*)(_{\d}+)*$/, `$1_${index}`);
-			index += 1;
-		}
-		column.name = name;
-		column.label = column.label || option.label;
+		column.name = generateUniqueName(columns, column, column.name || expression.name);
+		column.label = generateUniqueLabel(columns, column, column.label || expression.label);
 		if (!columns.includes(column)) {
 			columns.push(column);
 		}
