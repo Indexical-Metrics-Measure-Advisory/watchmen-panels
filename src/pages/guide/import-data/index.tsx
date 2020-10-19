@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path, { toDomain } from '../../common/path';
-import { toReadableFileSize } from '../../common/utils';
-import { parseFile } from '../../services/file';
-import Button, { BigButton, ButtonType } from '../component/button';
-import { useAlert } from '../context/alert';
-import { GuideData, useGuideContext } from '../guide/guide-context';
+import Path, { toDomain } from '../../../common/path';
+import { toReadableFileSize } from '../../../common/utils';
+import { parseFile } from '../../../services/file';
+import Button, { BigButton, ButtonType } from '../../component/button';
+import { useAlert } from '../../context/alert';
+import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
+import { GuideData, useGuideContext } from '../guide-context';
 import { parseData } from './parse-data';
 
 interface SelectedFile {
@@ -151,18 +152,6 @@ const Files = styled.div<{ itemCount: number }>`
 	}
 `;
 
-const Operations = styled.div`
-	display: flex;
-	margin-top: var(--margin);
-	padding: 0 var(--margin);
-	> button:not(:first-child) {
-		margin-left: var(--margin);
-	}
-`;
-const Placeholder = styled.div`
-	flex-grow: 1;
-`;
-
 export default () => {
 	const history = useHistory();
 	const alert = useAlert();
@@ -298,10 +287,10 @@ export default () => {
 		<Files data-has-data={existsDataCount !== 0 || files.length !== 0}
 		       itemCount={existsDataCount + files.length}
 		       onClick={onFilesShouldSelect}/>
-		<Operations>
+		<OperationBar>
 			<BigButton onClick={onChangeDomainClicked}>Change Domain</BigButton>
-			<Placeholder/>
+			<OperationBarPlaceholder/>
 			<BigButton inkType={ButtonType.PRIMARY} onClick={onNextClicked}>Next</BigButton>
-		</Operations>
+		</OperationBar>
 	</Fragment>;
 }

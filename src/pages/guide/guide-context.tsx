@@ -18,10 +18,15 @@ export interface GuideDataColumn {
 	name: string;
 	label: string;
 	type: GuideDataColumnType;
+	native: boolean;
 }
 
 export interface GuideDataObjectColumn extends GuideDataColumn {
 	childTypes: Array<GuideDataColumn>;
+}
+
+export interface GuideCalcDataColumn extends GuideDataColumn {
+	expressionCode: string;
 }
 
 export type GuideData = {

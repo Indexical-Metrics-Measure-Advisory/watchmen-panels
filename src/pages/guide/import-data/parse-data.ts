@@ -1,4 +1,4 @@
-import { GuideDataColumn, GuideDataColumnType, GuideDataObjectColumn } from '../guide/guide-context';
+import { GuideDataColumn, GuideDataColumnType, GuideDataObjectColumn } from '../guide-context';
 
 const BOOLEAN_TEXTS = [ 'TRUE', 'T', 'FALSE', 'F', 'YES', 'Y', 'NO', 'N' ];
 const NUMBER_PATTERN = /^(-?\d+)(\.\d+)?$/;
@@ -43,12 +43,17 @@ export const parseArray = (data: Array<any>, types: Array<GuideDataColumn>, pare
 };
 export const parseData = (data: Array<any>, types: Array<GuideDataColumn> = [], parentKey: string = ''): Array<GuideDataColumn> => {
 	return data.reduce((columns: Array<GuideDataColumn>, row) => {
-		const columnsMap = columns.reduce((map, column) => {
-			map[column.name] = column;
-			return map;
-		}, {} as { [key in string]: GuideDataColumn });
+		const columnsMap = columns
+			.filter(column => column.native)
+			.reduce((map, column) => {
+				map[column.name] = column;
+				return map;
+			}, {} as { [key in string]: GuideDataColumn });
 		Object.keys(row || {}).forEach(key => {
-			const column = columnsMap[key] || { name: parentKey ? `${parentKey}.${key}` : key } as GuideDataColumn;
+			const column = columnsMap[key] || {
+				name: parentKey ? `${parentKey}.${key}` : key,
+				native: true
+			} as GuideDataColumn;
 			switch (column.type) {
 				case GuideDataColumnType.OBJECT:
 				case GuideDataColumnType.ARRAY:

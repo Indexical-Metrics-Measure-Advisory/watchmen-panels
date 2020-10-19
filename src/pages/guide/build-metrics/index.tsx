@@ -1,21 +1,9 @@
 import React, { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-import Path, { toDomain } from '../../common/path';
-import { BigButton, ButtonType } from '../component/button';
-import { useGuideContext } from '../guide/guide-context';
-
-const Operations = styled.div`
-	display: flex;
-	margin-top: var(--margin);
-	padding: 0 var(--margin);
-	> button:not(:first-child) {
-		margin-left: var(--margin);
-	}
-`;
-const Placeholder = styled.div`
-	flex-grow: 1;
-`;
+import Path, { toDomain } from '../../../common/path';
+import { BigButton, ButtonType } from '../../component/button';
+import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
+import { useGuideContext } from '../guide-context';
 
 export default () => {
 	const history = useHistory();
@@ -29,10 +17,10 @@ export default () => {
 	};
 
 	return <Fragment>
-		<Operations>
+		<OperationBar>
 			<BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>
-			<Placeholder/>
+			<OperationBarPlaceholder/>
 			<BigButton inkType={ButtonType.PRIMARY} onClick={onNextClicked}>Next</BigButton>
-		</Operations>
+		</OperationBar>
 	</Fragment>;
 }

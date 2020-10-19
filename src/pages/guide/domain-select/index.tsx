@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path, { toDomain } from '../../common/path';
-import { Domain, listTopDomains, TopDomains } from '../../services/domain';
-import { BigButton, ButtonType } from '../component/button';
-import { useNotImplemented } from '../context/not-implemented';
-import { useGuideContext } from '../guide/guide-context';
+import Path, { toDomain } from '../../../common/path';
+import { Domain, listTopDomains, TopDomains } from '../../../services/domain';
+import { BigButton, ButtonType } from '../../component/button';
+import { useNotImplemented } from '../../context/not-implemented';
+import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
+import { useGuideContext } from '../guide-context';
 
 const Domains = styled.div`
 	padding: var(--margin) var(--margin) 0;
@@ -55,17 +56,6 @@ const MoreDomainsButton = styled(DomainButton)`
 		opacity: 0.7;
 	}
 `;
-const Operations = styled.div`
-	display: flex;
-	margin-top: var(--margin);
-	padding: 0 var(--margin);
-	> button:not(:first-child) {
-		margin-left: var(--margin);
-	}
-`;
-const Placeholder = styled.div`
-	flex-grow: 1;
-`;
 
 export default () => {
 	const history = useHistory();
@@ -84,6 +74,7 @@ export default () => {
 	};
 
 	useEffect(() => {
+		// noinspection JSIgnoredPromiseFromCall
 		fetchDomains();
 	}, []);
 
@@ -115,9 +106,9 @@ export default () => {
 			{data.hasMore ?
 				<MoreDomainsButton onClick={notImpl.show}>Explore More...</MoreDomainsButton> : null}
 		</Domains>
-		<Operations>
-			<Placeholder/>
+		<OperationBar>
+			<OperationBarPlaceholder/>
 			<BigButton inkType={buttonType} onClick={onNextClicked}>{buttonLabel}</BigButton>
-		</Operations>
+		</OperationBar>
 	</Fragment>;
 }
