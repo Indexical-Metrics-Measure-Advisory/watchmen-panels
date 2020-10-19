@@ -1,6 +1,6 @@
 import React from 'react';
 import { emptyGetter, emptySetter } from '../../common/utils';
-import { Domain } from '../../services/domain';
+import { Domain, NoDomain } from '../../services/domain';
 
 export enum GuideDataColumnType {
 	TEXT = 'text',
@@ -33,13 +33,13 @@ export type GuideData = {
 };
 
 export interface GuideContext {
-	domain?: Domain,
+	domain: Domain,
 	data?: GuideData;
 }
 
 export interface GuideContextOperator {
 	setDomain: (domain: Domain) => void;
-	getDomain: () => Domain | undefined;
+	getDomain: () => Domain;
 	clearDomain: () => void;
 	setData: (data: GuideData) => void;
 	getData: () => GuideData | undefined;
@@ -48,7 +48,7 @@ export interface GuideContextOperator {
 
 const Context = React.createContext<GuideContextOperator>({
 	setDomain: emptySetter,
-	getDomain: emptyGetter,
+	getDomain: () => NoDomain,
 	clearDomain: emptySetter,
 	setData: emptySetter,
 	getData: emptyGetter,
@@ -59,12 +59,12 @@ Context.displayName = 'GuideContext';
 export const GuideContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
-	const [ context, setContext ] = React.useState<GuideContext>({});
+	const [ context, setContext ] = React.useState<GuideContext>({ domain: NoDomain });
 
 	const operator = {
 		setDomain: (domain: Domain) => setContext({ ...context, domain }),
 		getDomain: () => context.domain,
-		clearDomain: () => setContext({ ...context, domain: undefined }),
+		clearDomain: () => setContext({ ...context, domain: NoDomain }),
 		setData: (data: GuideData) => setContext({ ...context, data }),
 		getData: () => context.data,
 		clearData: () => setContext({ ...context, data: undefined })

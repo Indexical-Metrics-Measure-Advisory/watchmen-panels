@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path from '../../common/path';
+import Path, { toDomain } from '../../common/path';
 import { toReadableFileSize } from '../../common/utils';
 import { parseFile } from '../../services/file';
 import Button, { BigButton, ButtonType } from '../component/button';
@@ -215,7 +215,7 @@ export default () => {
 		if (files.length === 0) {
 			if (Object.keys(guide.getData() || {}).length !== 0) {
 				// no new file selected
-				history.push(Path.GUIDE_MAPPING_FACTOR);
+				history.push(toDomain(Path.GUIDE_MAPPING_FACTOR, guide.getDomain().code));
 			} else {
 				alert.show('No data file selected.');
 			}
@@ -261,7 +261,7 @@ export default () => {
 				};
 				return data;
 			}, existsData));
-		history.push(Path.GUIDE_MAPPING_FACTOR);
+		history.push(toDomain(Path.GUIDE_MAPPING_FACTOR, guide.getDomain().code));
 	};
 
 	const existsData = guide.getData() || {};

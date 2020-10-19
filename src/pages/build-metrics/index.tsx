@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path from '../../common/path';
+import Path, { toDomain } from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
+import { useGuideContext } from '../guide/guide-context';
 
 const Operations = styled.div`
 	display: flex;
@@ -18,12 +19,13 @@ const Placeholder = styled.div`
 
 export default () => {
 	const history = useHistory();
+	const guide = useGuideContext();
 
 	const onMeasureIndicatorsClicked = () => {
-		history.push(Path.GUIDE_MEASURE_INDICATOR);
+		history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 	};
 	const onNextClicked = () => {
-		history.push(Path.GUIDE_EXPORT_REPORT);
+		history.push(toDomain(Path.GUIDE_EXPORT_REPORT, guide.getDomain().code));
 	};
 
 	return <Fragment>

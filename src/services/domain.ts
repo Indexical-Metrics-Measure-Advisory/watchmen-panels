@@ -1,8 +1,9 @@
 export interface Domain {
-	id: number;
 	code: string;
 	label: string;
 }
+
+export const NoDomain = { code: 'no-domain', label: 'No Domain' };
 
 export interface TopDomains {
 	domains: Array<Domain>;
@@ -12,11 +13,11 @@ export interface TopDomains {
 export const listTopDomains = async (): Promise<TopDomains> => {
 	return {
 		domains: [
-			{ id: 1, code: 'IV01', label: 'Insurance Visualization' },
-			{ id: 2, code: 'MI01', label: 'Marketing Investigating' },
-			{ id: 3, code: 'SP01', label: 'Sales Planning' },
-			{ id: 4, code: 'AM01', label: 'Assets Management' },
-			{ id: 5, code: 'SI01', label: 'Software Implementation' }
+			{ code: 'insurance-visualization', label: 'Insurance Visualization' },
+			{ code: 'marketing-investigating', label: 'Marketing Investigating' },
+			{ code: 'sales-planning', label: 'Sales Planning' },
+			{ code: 'assets-management', label: 'Assets Management' },
+			{ code: 'software-implementation', label: 'Software Implementation' }
 		],
 		hasMore: true
 	};

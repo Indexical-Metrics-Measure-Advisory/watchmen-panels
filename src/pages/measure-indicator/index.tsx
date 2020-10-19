@@ -1,10 +1,10 @@
-import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
+import { faAngleUp, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path from '../../common/path';
-import { BigButton, ButtonType } from '../component/button';
+import Path, { toDomain } from '../../common/path';
+import Button, { BigButton, ButtonType } from '../component/button';
 import Input from '../component/input';
 import { GuideData, GuideDataColumn, GuideDataObjectColumn, useGuideContext } from '../guide/guide-context';
 
@@ -110,6 +110,40 @@ const ObjectColumn = styled.div<{ indent?: number }>`
 		text-transform: capitalize;
 	}
 `;
+const ObjectDetail = styled.div`
+	width: 70%;
+	display: flex;
+	flex-direction: column;
+	opacity: 0;
+	transition: all 300ms ease-in-out;
+	&[data-visible=true] {
+		opacity: 1;
+	}
+`;
+const ObjectDetailHeader = styled.div`
+	display: grid;
+	grid-template-columns: 30% 30% calc(40% - 32px) 32px;
+	border-bottom: var(--border);
+	align-items: center;
+	> button {
+		border-radius: 100%;
+		height: 27px;
+		width: 27px;
+		padding: 6px 0;
+		&:hover {
+			border-color: var(--primary-color);
+			background-color: var(--primary-color);
+			color: var(--invert-color);
+			opacity: 1;
+		}
+	}
+`;
+const ObjectDetailHeaderCell = styled.div`
+	height: 31px;
+	padding: 0 calc(var(--margin) / 2);
+	display: flex;
+	align-items: center;
+`;
 const LabelInput = styled(Input)`
 	height: 27px;
 	margin-left: calc(var(--input-indent) * -1);
@@ -157,9 +191,9 @@ export default () => {
 
 	const [ activeKey, setActiveKey ] = useState<string | null>(objectKeys.length !== 0 ? objectKeys[0] : null);
 
-	const onNoObjectsClicked = () => history.push(Path.GUIDE_IMPORT_DATA);
-	const onMappingFactorsClicked = () => history.push(Path.GUIDE_MAPPING_FACTOR);
-	const onNextClicked = () => history.push(Path.GUIDE_BUILD_METRICS);
+	const onNoObjectsClicked = () => history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
+	const onMappingFactorsClicked = () => history.push(toDomain(Path.GUIDE_MAPPING_FACTOR, guide.getDomain().code));
+	const onNextClicked = () => history.push(toDomain(Path.GUIDE_BUILD_METRICS, guide.getDomain().code));
 
 	const onObjectClicked = (key: string) => () => {
 		if (key === activeKey) {
@@ -203,6 +237,14 @@ export default () => {
 					No valid data imported, back and <span>Import Data</span> again.
 				</NoObjects>
 			</ObjectsList>
+			<ObjectDetail data-visible={activeKey != null}>
+				<ObjectDetailHeader>
+					<ObjectDetailHeaderCell>Name</ObjectDetailHeaderCell>
+					<ObjectDetailHeaderCell>Label</ObjectDetailHeaderCell>
+					<ObjectDetailHeaderCell>Calc.</ObjectDetailHeaderCell>
+					<Button><FontAwesomeIcon icon={faPlus}/></Button>
+				</ObjectDetailHeader>
+			</ObjectDetail>
 		</ObjectsContainer>
 		<Operations>
 			<BigButton onClick={onMappingFactorsClicked}>Check Factors</BigButton>

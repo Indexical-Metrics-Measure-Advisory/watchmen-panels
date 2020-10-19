@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path from '../../common/path';
+import Path, { toDomain } from '../../common/path';
 import { Domain, listTopDomains, TopDomains } from '../../services/domain';
 import { BigButton, ButtonType } from '../component/button';
 import { useNotImplemented } from '../context/not-implemented';
@@ -88,7 +88,7 @@ export default () => {
 	}, []);
 
 	const selectedDomain = guide.getDomain();
-	const equals = (domain: Domain) => selectedDomain && domain.id === selectedDomain.id;
+	const equals = (domain: Domain) => selectedDomain && domain.code === selectedDomain.code;
 	const onDomainClicked = (domain: Domain) => () => {
 		if (equals(domain)) {
 			guide.clearDomain();
@@ -97,11 +97,7 @@ export default () => {
 		}
 	};
 	const onNextClicked = () => {
-		if (selectedDomain) {
-			history.push(Path.GUIDE_IMPORT_DATA);
-		} else {
-			history.push(Path.GUIDE_IMPORT_DATA);
-		}
+		history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
 	};
 
 	const buttonLabel = !!selectedDomain ? 'Next' : 'Ignore';

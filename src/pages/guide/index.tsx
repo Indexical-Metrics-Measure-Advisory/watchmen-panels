@@ -1,5 +1,5 @@
-import React from 'react';
-import { matchPath, Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { matchPath, Redirect, Route, Switch, useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import BuildMetricsImage from '../../assets/build-metrics.png';
 import DomainSelectImage from '../../assets/domain-select.png';
@@ -10,13 +10,13 @@ import MeasureIndicatorImage from '../../assets/measure-indicator.png';
 import Path from '../../common/path';
 import BuildMetrics from '../build-metrics';
 import Page from '../component/page';
-import Steps, { Step } from '../component/steps';
 import DomainSelect from '../domain-select';
 import ExportReport from '../export-report';
 import ImportData from '../import-data';
 import MappingFactor from '../mapping-factor';
 import MeasureIndicator from '../measure-indicator';
-import { GuideContextProvider } from './guide-context';
+import { GuideContextProvider, useGuideContext } from './guide-context';
+import Steps, { Step } from './steps';
 
 const BackgroundImages = [ DomainSelectImage, ImportDataImage, MappingFactorImage, MeasureIndicatorImage, BuildMetricsImage, ExportReportImage ];
 const HomePage = styled(Page)<{ step: Step }>`
@@ -45,6 +45,17 @@ const HomePage = styled(Page)<{ step: Step }>`
 	}
 `;
 
+const DomainChecker = (props: { children: ((props: any) => React.ReactNode) | React.ReactNode }) => {
+	const { domain: domainCode } = useParams<{ domain: string }>();
+	const guide = useGuideContext();
+	if (guide.getDomain().code !== domainCode) {
+		return <Redirect to={Path.GUIDE_DOMAIN_SELECT}/>;
+	} else {
+		const { children } = props;
+		return <Fragment>{children}</Fragment>;
+	}
+};
+
 export default () => {
 	let step = Step.DOMAIN_SELECT;
 	const location = useLocation();
@@ -68,11 +79,11 @@ export default () => {
 			<Steps step={step}/>
 			<Switch>
 				<Route path={Path.GUIDE_DOMAIN_SELECT}><DomainSelect/></Route>
-				<Route path={Path.GUIDE_IMPORT_DATA}><ImportData/></Route>
-				<Route path={Path.GUIDE_MAPPING_FACTOR}><MappingFactor/></Route>
-				<Route path={Path.GUIDE_MEASURE_INDICATOR}><MeasureIndicator/></Route>
-				<Route path={Path.GUIDE_BUILD_METRICS}><BuildMetrics/></Route>
-				<Route path={Path.GUIDE_EXPORT_REPORT}><ExportReport/></Route>
+				<Route path={Path.GUIDE_IMPORT_DATA}><DomainChecker><ImportData/></DomainChecker></Route>
+				<Route path={Path.GUIDE_MAPPING_FACTOR}><DomainChecker><MappingFactor/></DomainChecker></Route>
+				<Route path={Path.GUIDE_MEASURE_INDICATOR}><DomainChecker><MeasureIndicator/></DomainChecker></Route>
+				<Route path={Path.GUIDE_BUILD_METRICS}><DomainChecker><BuildMetrics/></DomainChecker></Route>
+				<Route path={Path.GUIDE_EXPORT_REPORT}><DomainChecker><ExportReport/></DomainChecker></Route>
 				<Route><Redirect to={Path.GUIDE_DOMAIN_SELECT}/></Route>
 			</Switch>
 		</HomePage>

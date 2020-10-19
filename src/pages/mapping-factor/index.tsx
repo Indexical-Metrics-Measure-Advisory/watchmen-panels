@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Path from '../../common/path';
+import Path, { toDomain } from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
 import Dropdown, { DropdownOption } from '../component/dropdown';
 import Input from '../component/input';
@@ -195,9 +195,6 @@ const asDisplayName = (column: GuideDataColumn): string => {
 		return name || 'Nonamed';
 	}
 };
-const asDisplayType = (column: GuideDataColumn): string => {
-	return column.type;
-};
 const typeOptions = Object.keys(GuideDataColumnType).filter(k =>
 	// @ts-ignore
 	typeof GuideDataColumnType[k] === "number" || GuideDataColumnType[k] === k || GuideDataColumnType[GuideDataColumnType[k]]?.toString() !== k
@@ -220,11 +217,11 @@ export default () => {
 
 	const [ activeKey, setActiveKey ] = useState<string | null>(objectKeys.length !== 0 ? objectKeys[0] : null);
 
-	const onNoObjectsClicked = () => history.push(Path.GUIDE_IMPORT_DATA);
-	const onImportDataClicked = () => history.push(Path.GUIDE_IMPORT_DATA);
+	const onNoObjectsClicked = () => history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
+	const onImportDataClicked = () => history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
 	const onNextClicked = () => {
 		if (objectKeys.length !== 0) {
-			history.push(Path.GUIDE_MEASURE_INDICATOR);
+			history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 		} else {
 			alert.show('No factor described.');
 		}

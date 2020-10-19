@@ -1,9 +1,10 @@
 import { faFlagCheckered, faTruckPickup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, matchPath, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
+import { useGuideContext } from './guide-context';
 
 export enum Step {
 	DOMAIN_SELECT,
@@ -124,12 +125,20 @@ const Current = styled.div<{ step: number }>`
 
 export default (props: { step: Step }) => {
 	const { step } = props;
+	const location = useLocation();
+	const showDomain = !matchPath(location.pathname, Path.GUIDE_DOMAIN_SELECT);
+	const guide = useGuideContext();
+
+	const domain = guide.getDomain();
 
 	return <Steps>
 		<CurrentStep>
 			<span>
 				<span><Link to={Path.HOME}>Home</Link></span>
-				<span>Step by Step Guide</span>
+				<span>
+					{showDomain ? <Link to={Path.GUIDE_DOMAIN_SELECT}>Step by Step Guide</Link> : "Step by Step Guide"}
+				</span>
+				{showDomain ? <span>{domain.label}</span> : null}
 			</span>
 			<span>{StepLabels[step]}</span>
 		</CurrentStep>
