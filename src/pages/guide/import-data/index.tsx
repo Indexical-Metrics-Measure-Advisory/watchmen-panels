@@ -90,11 +90,7 @@ const SelectedFileRow = styled.div`
 `;
 const Files = styled.div<{ itemCount: number }>`
 	margin: 0 var(--margin);
-	display: grid;
 	position: relative;
-	grid-template-columns: 1fr 1fr;
-	grid-column-gap: calc(var(--margin) * 2);
-	grid-row-gap: calc(var(--margin));
 	border: var(--border);
 	border-radius: calc(var(--border-radius) * 2);
 	min-height: 350px;
