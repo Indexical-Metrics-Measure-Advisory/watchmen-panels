@@ -39,6 +39,9 @@ const SocialIcons = styled.div`
 		&:hover {
 			opacity: 0.8;
 		}
+		&:visited {
+			color: var(--footer-color);
+		}
 		&:first-child {
 			padding-left: 0;
 		}

@@ -51,7 +51,7 @@ const ObjectItem = styled.div`
 	overflow-x: hidden;
 	border-bottom: var(--border);
 	transition: all 300ms ease-in-out;
-	&:nth-child(n + 11):last-child {
+	&:nth-child(n + 11):nth-last-child(2) {
 		border-bottom-color: transparent;
 	}
 	&:hover {

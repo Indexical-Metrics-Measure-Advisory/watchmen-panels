@@ -32,6 +32,9 @@ const ObjectsList = styled.div`
 			display: none;
 		}
 	}
+	> div:nth-child(n + 11):nth-last-child(2) {
+		border-bottom-color: transparent;
+	}
 `;
 const ObjectItem = styled.div`
 	display: flex;
@@ -65,29 +68,12 @@ const ObjectItem = styled.div`
 		transition: all 300ms ease-in-out;
 	}
 `;
-const NoObjects = styled.div`
-	display: none;
-	height: 100%;
-	align-items: center;
-	justify-content: center;
-	font-size: 1.2em;
-	font-weight: var(--font-bold);
-	cursor: pointer;
-	transition: all 300ms ease-in-out;
-	&:hover {
-		transform: scale(1.05);
-	}
-	> span {
-		margin: 0 var(--letter-gap);
-		text-decoration: underline;
-	}
-`;
 const ObjectColumn = styled.div<{ indent?: number }>`
 	display: flex;
 	align-items: center;
 	border-bottom: var(--border);
 	font-size: 0.8em;
-	height: 27px;
+	height: 32px;
 	padding: 0 calc(var(--margin) / 2);
 	text-indent: calc(0.8em * ${({ indent }) => (indent || 0) + 1});
 	overflow: hidden;
@@ -110,6 +96,23 @@ const ObjectColumn = styled.div<{ indent?: number }>`
 		text-transform: capitalize;
 	}
 `;
+const NoObjects = styled.div`
+	display: none;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2em;
+	font-weight: var(--font-bold);
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	&:hover {
+		transform: scale(1.05);
+	}
+	> span {
+		margin: 0 var(--letter-gap);
+		text-decoration: underline;
+	}
+`;
 const ObjectDetail = styled.div`
 	width: 70%;
 	display: flex;
@@ -122,7 +125,7 @@ const ObjectDetail = styled.div`
 `;
 const ObjectDetailHeader = styled.div`
 	display: grid;
-	grid-template-columns: 30% 30% calc(40% - 32px) 32px;
+	grid-template-columns: calc(50% - 16px) calc(50% - 16px) 32px;
 	border-bottom: var(--border);
 	align-items: center;
 	> button {
@@ -241,7 +244,6 @@ export default () => {
 				<ObjectDetailHeader>
 					<ObjectDetailHeaderCell>Name</ObjectDetailHeaderCell>
 					<ObjectDetailHeaderCell>Label</ObjectDetailHeaderCell>
-					<ObjectDetailHeaderCell>Calc.</ObjectDetailHeaderCell>
 					<Button><FontAwesomeIcon icon={faPlus}/></Button>
 				</ObjectDetailHeader>
 			</ObjectDetail>
