@@ -20,6 +20,7 @@ export default {
 	fontBoldest: 900,
 	titleFontSize: 36,
 	titleLineHeight: 54,
+	letterGap: 4,
 
 	// border
 	borderColor: '#d3dce6',

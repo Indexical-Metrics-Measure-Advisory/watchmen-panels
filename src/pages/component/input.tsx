@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export default styled.input`
 	appearance: none;
 	outline: none;
-	padding: 6px 10px;
+	padding: 6px var(--input-indent);
 	border: var(--border);
 	border-radius: var(--border-radius);
 	font-size: var(--font-size);

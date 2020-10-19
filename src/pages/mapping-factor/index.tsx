@@ -3,8 +3,15 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
+import Dropdown, { DropdownOption } from '../component/dropdown';
 import Input from '../component/input';
-import { GuideData, GuideDataColumn, GuideDataObjectColumn, useGuideContext } from '../guide/guide-context';
+import {
+	GuideData,
+	GuideDataColumn,
+	GuideDataColumnType,
+	GuideDataObjectColumn,
+	useGuideContext
+} from '../guide/guide-context';
 
 const ObjectsContainer = styled.div`
 	display: flex;
@@ -66,7 +73,7 @@ const NoObjects = styled.div`
 		transform: scale(1.05);
 	}
 	> a {
-		margin: 0 calc(var(--margin) / 4);
+		margin: 0 var(--letter-gap);
 	}
 `;
 const ObjectDetail = styled.div`
@@ -100,8 +107,17 @@ const ObjectDetailBodyRow = styled.div`
 	}
 	&:hover {
 		background-color: var(--hover-color);
-		> div > input:focus {
-			border-color: var(--primary-color);
+		> div {
+			> input:hover:focus,
+			> div[data-widget=dropdown]:hover:focus {
+				border-color: var(--primary-color);
+				> div:last-child {
+					border-color: var(--primary-color);
+				}
+				> svg {
+					color: var(--primary-color);
+				}
+			}
 		}
 	}
 `;
@@ -131,6 +147,31 @@ const LabelInput = styled(Input)`
 		border-color: var(--border-color);
 	}
 `;
+const TypeInput = styled(Dropdown)`
+	height: 27px;
+	margin-left: calc(var(--input-indent) * -1);
+	border-color: transparent;
+	transition: all 300ms ease-in-out;
+	font-size: 0.8em;
+	> div:last-child > span {
+		height: 27px;
+	}
+	&:hover {
+		border-color: var(--primary-color);
+		> svg {
+			color: var(--primary-color);
+		}
+	}
+	&:focus {
+		border-color: var(--border-color);
+		> div:last-child {
+			border-color: var(--border-color);
+		}
+		> svg {
+			color: var(--border-color);
+		}
+	}
+`;
 const Operations = styled.div`
 	display: flex;
 	margin-top: var(--margin);
@@ -154,6 +195,17 @@ const asDisplayName = (column: GuideDataColumn): string => {
 const asDisplayType = (column: GuideDataColumn): string => {
 	return column.type;
 };
+const typeOptions = Object.keys(GuideDataColumnType).filter(k =>
+	// @ts-ignore
+	typeof GuideDataColumnType[k] === "number" || GuideDataColumnType[k] === k || GuideDataColumnType[GuideDataColumnType[k]]?.toString() !== k
+).map(key => {
+	return {
+		// @ts-ignore
+		value: GuideDataColumnType[key],
+		// @ts-ignore
+		label: GuideDataColumnType[key] as string
+	};
+});
 
 export default () => {
 	const history = useHistory();
@@ -175,6 +227,10 @@ export default () => {
 		column.label = evt.target.value;
 		guide.setData(guide.getData()!);
 	};
+	const onTypeChanged = (column: GuideDataColumn) => async (option: DropdownOption) => {
+		column.type = option.value as GuideDataColumnType;
+		guide.setData(guide.getData()!);
+	};
 	const renderColumns = (columns: Array<GuideDataColumn> = []) => {
 		return columns.map(column => {
 			const name = asDisplayName(column);
@@ -189,7 +245,9 @@ export default () => {
 						<LabelInput type='text' value={label} placeholder={name}
 						            onChange={onColumnLabelChange(column)}/>
 					</ObjectDetailBodyCell>
-					<ObjectDetailBodyCell>{type}</ObjectDetailBodyCell>
+					<ObjectDetailBodyCell>
+						<TypeInput options={typeOptions} onChange={onTypeChanged(column)} value={type}/>
+					</ObjectDetailBodyCell>
 				</ObjectDetailBodyRow>
 				{childTypes.length !== 0 ? renderColumns(childTypes) : null}
 			</Fragment>;

@@ -29,6 +29,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--font-boldest: ${({ theme }) => theme.fontBoldest};
 		--title-font-size: ${({ theme }) => theme.titleFontSize}px;
 		--title-line-height: ${({ theme }) => theme.titleLineHeight}px;
+		--letter-gap: ${({ theme }) => theme.letterGap}px;
 		
 		--border-color: ${({ theme }) => theme.borderColor};
 		--border: ${({ theme }) => theme.border};
