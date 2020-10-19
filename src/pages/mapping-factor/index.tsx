@@ -1,10 +1,11 @@
 import React, { Fragment, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
 import Dropdown, { DropdownOption } from '../component/dropdown';
 import Input from '../component/input';
+import { useAlert } from '../context/alert';
 import {
 	GuideData,
 	GuideDataColumn,
@@ -68,12 +69,14 @@ const NoObjects = styled.div`
 	justify-content: center;
 	font-size: 1.2em;
 	font-weight: var(--font-bold);
+	cursor: pointer;
 	transition: all 300ms ease-in-out;
 	&:hover {
 		transform: scale(1.05);
 	}
-	> a {
+	> span {
 		margin: 0 var(--letter-gap);
+		text-decoration: underline;
 	}
 `;
 const ObjectDetail = styled.div`
@@ -209,18 +212,24 @@ const typeOptions = Object.keys(GuideDataColumnType).filter(k =>
 
 export default () => {
 	const history = useHistory();
+	const alert = useAlert();
 	const guide = useGuideContext();
 
-	const [ activeKey, setActiveKey ] = useState<string | null>(null);
-
-	const onImportDataClicked = () => {
-		history.push(Path.GUIDE_IMPORT_DATA);
-	};
-	const onNextClicked = () => {
-		history.push(Path.GUIDE_MEASURE_INDICATOR);
-	};
-
 	const data = (guide.getData() || {}) as GuideData;
+	const objectKeys = Object.keys(data).sort((k1, k2) => k1.localeCompare(k2));
+
+	const [ activeKey, setActiveKey ] = useState<string | null>(objectKeys.length !== 0 ? objectKeys[0] : null);
+
+	const onNoObjectsClicked = () => history.push(Path.GUIDE_IMPORT_DATA);
+	const onImportDataClicked = () => history.push(Path.GUIDE_IMPORT_DATA);
+	const onNextClicked = () => {
+		if (objectKeys.length !== 0) {
+			history.push(Path.GUIDE_MEASURE_INDICATOR);
+		} else {
+			alert.show('No factor described.');
+		}
+	};
+
 	const onObjectSelected = (key: string) => () => setActiveKey(key);
 	const activeObject = activeKey ? data[activeKey!] : null;
 	const onColumnLabelChange = (column: GuideDataColumn) => (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,7 +244,6 @@ export default () => {
 		return columns.map(column => {
 			const name = asDisplayName(column);
 			const label = column.label;
-			const type = asDisplayType(column);
 			const indent = (column.name || '').split('').filter(ch => ch === '.').length;
 			const childTypes = (column as GuideDataObjectColumn).childTypes || [];
 			return <Fragment key={column.name}>
@@ -246,7 +254,7 @@ export default () => {
 						            onChange={onColumnLabelChange(column)}/>
 					</ObjectDetailBodyCell>
 					<ObjectDetailBodyCell>
-						<TypeInput options={typeOptions} onChange={onTypeChanged(column)} value={type}/>
+						<TypeInput options={typeOptions} onChange={onTypeChanged(column)} value={column.type}/>
 					</ObjectDetailBodyCell>
 				</ObjectDetailBodyRow>
 				{childTypes.length !== 0 ? renderColumns(childTypes) : null}
@@ -256,16 +264,14 @@ export default () => {
 
 	return <Fragment>
 		<ObjectsContainer>
-			<ObjectsList data-has-data={Object.keys(data).length !== 0} data-has-active={activeKey != null}>
-				{Object.keys(data)
-					.sort((k1, k2) => k1.localeCompare(k2))
-					.map(key => {
-						return <ObjectItem key={key} onClick={onObjectSelected(key)} data-active={key === activeKey}>
-							{key}
-						</ObjectItem>;
-					})}
-				<NoObjects>
-					No valid data imported, back and <Link to={Path.GUIDE_IMPORT_DATA}>Import Data</Link> again.
+			<ObjectsList data-has-data={objectKeys.length !== 0} data-has-active={activeKey != null}>
+				{objectKeys.map(key => {
+					return <ObjectItem key={key} onClick={onObjectSelected(key)} data-active={key === activeKey}>
+						{key}
+					</ObjectItem>;
+				})}
+				<NoObjects onClick={onNoObjectsClicked}>
+					No valid data imported, back and <span>Import Data</span> again.
 				</NoObjects>
 			</ObjectsList>
 			<ObjectDetail data-visible={activeKey != null}>
