@@ -21,7 +21,7 @@ import Steps, { Step } from './steps';
 const BackgroundImages = [ DomainSelectImage, ImportDataImage, MappingFactorImage, MeasureIndicatorImage, BuildMetricsImage, ExportReportImage ];
 const HomePage = styled(Page)<{ step: Step }>`
 	> main {
-		width: 1000px;
+		width: ${({ step }) => step === Step.BUILD_METRICS ? 'calc(100% - var(--margin) * 2)' : '1000px'};
 		overflow: hidden;
 		&:before {
 			content: '';

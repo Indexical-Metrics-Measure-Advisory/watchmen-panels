@@ -91,7 +91,7 @@ export default () => {
 		history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
 	};
 
-	const buttonLabel = !!selectedDomain ? 'Let\'s GO' : 'Ignore';
+	const buttonLabel = !!selectedDomain ? 'Next' : 'Ignore';
 	const buttonType = !!selectedDomain ? ButtonType.PRIMARY : ButtonType.DEFAULT;
 
 	return <Fragment>

@@ -1,4 +1,5 @@
 // @ts-ignore
+import dayjs from 'dayjs';
 import SoftwareImplementationTasks from './software-implementation.csv';
 
 export interface DomainExpression {
@@ -6,6 +7,10 @@ export interface DomainExpression {
 	name: string;
 	label: string;
 	body: string;
+}
+
+export interface PredefinedExpression extends DomainExpression {
+	func: () => any;
 }
 
 export const CustomDomainExpression: DomainExpression = {
@@ -31,11 +36,38 @@ export const SoftwareImplementation = {
 	code: 'software-implementation',
 	label: 'Software Implementation',
 	expressions: [
-		{ code: 'workdays', name: 'workdays', label: 'Workdays', body: '{{EndDate}} - {{StartDate}}' }
+		{
+			code: 'workdays', name: 'workdays', label: 'Workdays', body: '{{EndDate}} - {{StartDate}}',
+			func: (item: { EndDate: string, StartDate: string }) => {
+				const { EndDate: end, StartDate: start } = item;
+
+				const endDate = dayjs(end);
+				const startDate = dayjs(start);
+
+				let days = endDate.diff(startDate, 'day') + 1;
+
+				switch (startDate.day()) {
+					case 0:
+						days -= 1;
+						break;
+					case 6:
+						days -= 2;
+						break;
+					default:
+				}
+				return days - Math.floor(days / 7) * 2 - ((days) % 7 - 5);
+			}
+		} as PredefinedExpression
 	],
 	demo: {
 		tasks: SoftwareImplementationTasks
-	}
+	},
+	charts: [
+		{
+			name: 'Categorical'
+
+		}
+	]
 };
 
 export interface TopDomains {

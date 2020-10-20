@@ -1,5 +1,10 @@
 Task,Owner,StartDate,EndDate,Percentage,Category
 Dashboard Requirement Doc,Michelle,2020/10/18,2020/10/25,0.2,Requirement
+Dashboard UI Design,Leslie,2020/10/21,2020/10/25,0.1,UX
 Dashboard UI Dev,Daniel,2020/10/26,2020/11/05,0,Dev
 Dashboard Backend Dev,Thomes,2020/10/26,2020/11/05,0,Dev
 Dashboard Test,Linda,2020/11/06,2020/11/10,0,Test
+Sign-in Requirement Doc,Michelle,2020/10/18,2020/10/25,0.2,Requirement
+Sign-in Dev,Sam,2020/10/26,2020/10/31,0,Dev
+Integration Fundamental Design,Daniel,2020/10/18,2020/10/25,0.2,Design
+Integration Fundamental Dev,Daniel,2020/11/06,2020/11/30,0,Dev
