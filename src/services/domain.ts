@@ -1,3 +1,6 @@
+// @ts-ignore
+import SoftwareImplementationTasks from './software-implementation.csv';
+
 export interface DomainExpression {
 	code: string;
 	name: string;
@@ -15,7 +18,8 @@ export const CustomDomainExpression: DomainExpression = {
 export interface Domain {
 	code: string;
 	label: string;
-	expressions?: Array<DomainExpression>
+	expressions?: Array<DomainExpression>;
+	demo?: { [key in string]: string }
 }
 
 export const NoDomain = { code: 'no-domain', label: 'No Domain' };
@@ -28,7 +32,10 @@ export const SoftwareImplementation = {
 	label: 'Software Implementation',
 	expressions: [
 		{ code: 'workdays', name: 'workdays', label: 'Workdays', body: '{{End Date}} - {{Start Date}}' }
-	]
+	],
+	demo: {
+		tasks: SoftwareImplementationTasks
+	}
 };
 
 export interface TopDomains {
@@ -47,4 +54,9 @@ export const listTopDomains = async (): Promise<TopDomains> => {
 		],
 		hasMore: true
 	};
+};
+
+export const getDomainDemoData = async (location: string): Promise<string> => {
+	const response = await fetch(location);
+	return await response.text();
 };

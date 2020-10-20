@@ -3,7 +3,12 @@ import crypto from 'crypto';
 export interface ParsedFile {
 	hash: string;
 	data: Array<any>;
-	file: File;
+	filename: string;
+}
+
+export interface FileLike {
+	name: string;
+	text: () => Promise<string>;
 }
 
 /**
@@ -24,16 +29,16 @@ export interface ParsedFile {
  * </ul>
  * @param file
  */
-export const parseFile = async (file: File): Promise<ParsedFile> => {
+export const parseFile = async (file: FileLike): Promise<ParsedFile> => {
 	const isJSON = file.name.endsWith('.json');
 	const text = await file.text();
 	const hash = crypto.createHash('md5').update(text).digest('hex');
 	if (isJSON) {
 		const data = JSON.parse(text);
 		if (Array.isArray(data)) {
-			return { hash, data, file };
+			return { hash, data, filename: file.name };
 		} else {
-			return { hash, data: [ data ], file };
+			return { hash, data: [ data ], filename: file.name };
 		}
 	} else {
 		return {
@@ -53,7 +58,7 @@ export const parseFile = async (file: File): Promise<ParsedFile> => {
 					}
 					return data;
 				}, { columns: [] as Array<string>, data: [] as Array<any> }).data,
-			file
+			filename: file.name
 		};
 	}
 };

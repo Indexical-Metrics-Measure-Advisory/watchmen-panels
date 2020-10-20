@@ -1,11 +1,12 @@
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
 import { toReadableFileSize } from '../../../common/utils';
-import { parseFile } from '../../../services/file';
+import { getDomainDemoData } from '../../../services/domain';
+import { ParsedFile, parseFile } from '../../../services/file';
 import Button, { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
@@ -89,8 +90,9 @@ const SelectedFileRow = styled.div`
 	}
 `;
 const Files = styled.div<{ itemCount: number }>`
-	margin: 0 var(--margin);
+	display: flex;
 	position: relative;
+	margin: 0 var(--margin);
 	border: var(--border);
 	border-radius: calc(var(--border-radius) * 2);
 	min-height: 350px;
@@ -138,13 +140,24 @@ const Files = styled.div<{ itemCount: number }>`
 		padding-right: var(--margin);
 		transition: all 300ms ease-in-out;
 	}
-	> input[type=file] {
-		opacity: 0;
-		display: block;
+	> div {
 		position: absolute;
+		bottom: 0;
+		left: 0;
 		width: 100%;
-		height: 100%;
+		font-size: 1.2em;
+		font-weight: var(--font-bold);
+		line-height: 2em;
+		padding: 0 var(--margin);
+		border-top: var(--border);
 		cursor: pointer;
+		&:hover {
+			background-color: var(--hover-color);
+			text-decoration: underline;
+		}
+		> svg {
+			margin-right: calc(var(--margin) / 2);
+		}
 	}
 `;
 
@@ -196,27 +209,17 @@ export default () => {
 	const onChangeDomainClicked = () => {
 		history.push(Path.GUIDE_DOMAIN_SELECT);
 	};
-	const onNextClicked = async () => {
-		if (files.length === 0) {
-			if (Object.keys(guide.getData() || {}).length !== 0) {
-				// no new file selected
-				history.push(toDomain(Path.GUIDE_MAPPING_FACTOR, guide.getDomain().code));
-			} else {
-				alert.show('No data file selected.');
-			}
-			return;
-		}
 
+	const syncNewData = (parsedFiles: Array<ParsedFile>) => {
 		const existsData = (guide.getData() || {});
 		const allExistsHash = Object.values(existsData).map(data => data.hash);
-		const parsedFiles = await Promise.all(files.map(async file => await parseFile(file.file)));
 		const allHash = [ ...new Set(parsedFiles.map(file => file.hash)) ]
 			.reduce((all, hash) => {
 				all[hash] = true;
 				return all;
 			}, {} as { [key in string]: true });
 		guide.setData(parsedFiles
-			.sort((f1, f2) => f1.file.name.localeCompare(f2.file.name))
+			.sort((f1, f2) => f1.filename.localeCompare(f2.filename))
 			// filter content with same hash
 			.filter(file => {
 				if (allExistsHash.includes(file.hash)) {
@@ -233,10 +236,10 @@ export default () => {
 				}
 			})
 			.reduce((data, file) => {
-				let name = file.file.name.replace(/^(.*)\.(json|csv)$/, '$1') || 'Noname';
+				let name = file.filename.replace(/^(.*)\.(json|csv)$/, '$1') || 'Noname';
 				let index = 1;
 				while (data[name]) {
-					name = file.file.name.replace(/^(.*)\.(json|csv)$/, `$1_${index}`);
+					name = file.filename.replace(/^(.*)\.(json|csv)$/, `$1_${index}`);
 					index += 1;
 				}
 				data[name] = {
@@ -246,6 +249,21 @@ export default () => {
 				};
 				return data;
 			}, existsData));
+	};
+
+	const onNextClicked = async () => {
+		if (files.length === 0) {
+			if (Object.keys(guide.getData() || {}).length !== 0) {
+				// no new file selected
+				history.push(toDomain(Path.GUIDE_MAPPING_FACTOR, guide.getDomain().code));
+			} else {
+				alert.show('No data file selected.');
+			}
+			return;
+		}
+
+		const parsedFiles = await Promise.all(files.map(async file => await parseFile(file.file)));
+		syncNewData(parsedFiles);
 		history.push(toDomain(Path.GUIDE_MAPPING_FACTOR, guide.getDomain().code));
 	};
 
@@ -257,6 +275,31 @@ export default () => {
 			return all;
 		}, {} as GuideData));
 	};
+
+	const onUseSampleClicked = async (evt: React.MouseEvent) => {
+		evt.stopPropagation();
+		const domain = guide.getDomain();
+		const demoDef = domain.demo || {};
+		if (Object.keys(demoDef).length === 0) {
+			alert.show('No sample data found for this domain.');
+			return;
+		}
+
+		const parsedFiles = await Promise.all(Object.keys(demoDef).map(async key => {
+			const location = demoDef[key];
+			const ext = location.substr(location.lastIndexOf('.') + 1);
+			return await parseFile({
+				name: `${key}.${ext}`,
+				text: async () => await getDomainDemoData(location)
+			});
+		}));
+		if (parsedFiles.length !== 0) {
+			guide.clearData();
+			syncNewData(parsedFiles);
+		}
+	};
+
+	const hasData = existsDataCount !== 0 || files.length !== 0;
 
 	return <Fragment>
 		<ExistsFiles data-visible={existsDataCount !== 0} itemCount={existsDataCount}>
@@ -280,9 +323,14 @@ export default () => {
 				</SelectedFileRow>;
 			})}
 		</SelectedFiles>
-		<Files data-has-data={existsDataCount !== 0 || files.length !== 0}
+		<Files data-has-data={hasData}
 		       itemCount={existsDataCount + files.length}
-		       onClick={onFilesShouldSelect}/>
+		       onClick={onFilesShouldSelect}>
+			<div onClick={onUseSampleClicked}>
+				<FontAwesomeIcon icon={faBook}/>
+				<span>Or learning from samples.</span>
+			</div>
+		</Files>
 		<OperationBar>
 			<BigButton onClick={onChangeDomainClicked}>Change Domain</BigButton>
 			<OperationBarPlaceholder/>
