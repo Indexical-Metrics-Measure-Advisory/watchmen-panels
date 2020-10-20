@@ -1,5 +1,5 @@
-// @ts-ignore
 import dayjs from 'dayjs';
+// @ts-ignore
 import SoftwareImplementationTasks from './software-implementation.csv';
 
 export interface DomainExpression {
