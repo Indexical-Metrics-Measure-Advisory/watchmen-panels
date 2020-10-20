@@ -31,7 +31,7 @@ export const SoftwareImplementation = {
 	code: 'software-implementation',
 	label: 'Software Implementation',
 	expressions: [
-		{ code: 'workdays', name: 'workdays', label: 'Workdays', body: '{{End Date}} - {{Start Date}}' }
+		{ code: 'workdays', name: 'workdays', label: 'Workdays', body: '{{EndDate}} - {{StartDate}}' }
 	],
 	demo: {
 		tasks: SoftwareImplementationTasks

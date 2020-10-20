@@ -7,6 +7,7 @@ export const DropdownInGrid = styled(Dropdown)`
 	border-color: transparent;
 	transition: all 300ms ease-in-out;
 	font-size: 0.8em;
+	width: calc(100% + var(--input-indent));
 	> div:last-child > span {
 		height: 27px;
 	}

@@ -2,8 +2,10 @@ export default {
 	// color
 	primaryColor: 'rgba(43,80,174,1)',
 	primaryHoverColor: 'rgba(3,51,141,1)',
-	dangerColor: 'rgb(246,31,81,1)',
-	dangerHoverColor: 'rgb(214,30,72,1)',
+	dangerColor: 'rgba(246,31,81,1)',
+	dangerHoverColor: 'rgba(214,30,72,1)',
+	successColor: 'rgba(30,207,10,1)',
+	successHoverColor: 'rgba(22,160,7,1)',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
 	hoverColor: '#d3dce6',

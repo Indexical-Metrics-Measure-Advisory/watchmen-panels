@@ -33,15 +33,15 @@ const detectType = (value: any): GuideDataColumnType => {
 		return GuideDataColumnType.OBJECT;
 	}
 };
-export const parseObject = (data: any, types: Array<GuideDataColumn>, parentKey: string): Array<GuideDataColumn> => {
-	return parseData([ data ], types, parentKey);
+export const parseObject = (data: any, types: Array<GuideDataColumn>): Array<GuideDataColumn> => {
+	return parseData([ data ], types);
 };
-export const parseArray = (data: Array<any>, types: Array<GuideDataColumn>, parentKey: string): Array<GuideDataColumn> => {
+export const parseArray = (data: Array<any>, types: Array<GuideDataColumn>): Array<GuideDataColumn> => {
 	return (data || []).reduce((types, row) => {
-		return parseObject(row, types, parentKey);
+		return parseObject(row, types);
 	}, types);
 };
-export const parseData = (data: Array<any>, types: Array<GuideDataColumn> = [], parentKey: string = ''): Array<GuideDataColumn> => {
+export const parseData = (data: Array<any>, types: Array<GuideDataColumn> = []): Array<GuideDataColumn> => {
 	return data.reduce((columns: Array<GuideDataColumn>, row) => {
 		const columnsMap = columns
 			.filter(column => column.native)
@@ -51,7 +51,7 @@ export const parseData = (data: Array<any>, types: Array<GuideDataColumn> = [], 
 			}, {} as { [key in string]: GuideDataColumn });
 		Object.keys(row || {}).forEach(key => {
 			const column = columnsMap[key] || {
-				name: parentKey ? `${parentKey}.${key}` : key,
+				name: key,
 				native: true
 			} as GuideDataColumn;
 			switch (column.type) {
@@ -69,10 +69,10 @@ export const parseData = (data: Array<any>, types: Array<GuideDataColumn> = [], 
 			}
 			switch (column.type) {
 				case GuideDataColumnType.OBJECT:
-					(column as GuideDataObjectColumn).childTypes = parseObject(row[key], (column as GuideDataObjectColumn).childTypes || [], key);
+					(column as GuideDataObjectColumn).childTypes = parseObject(row[key], (column as GuideDataObjectColumn).childTypes || []);
 					break;
 				case GuideDataColumnType.ARRAY:
-					(column as GuideDataObjectColumn).childTypes = parseArray(row[key], (column as GuideDataObjectColumn).childTypes || [], key);
+					(column as GuideDataObjectColumn).childTypes = parseArray(row[key], (column as GuideDataObjectColumn).childTypes || []);
 					break;
 				default:
 					// do nothing

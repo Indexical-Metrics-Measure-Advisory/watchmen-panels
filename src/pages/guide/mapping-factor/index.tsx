@@ -80,11 +80,10 @@ export default () => {
 		column.type = option.value as GuideDataColumnType;
 		guide.setData(guide.getData()!);
 	};
-	const renderColumns = (columns: Array<GuideDataColumn> = []) => {
+	const renderColumns = (columns: Array<GuideDataColumn> = [], indent: number = 0) => {
 		return columns.map(column => {
 			const name = asDisplayName(column);
 			const label = column.label;
-			const indent = (column.name || '').split('').filter(ch => ch === '.').length;
 			const childTypes = (column as GuideDataObjectColumn).childTypes || [];
 			return <Fragment key={column.name}>
 				<DetailBodyRow>
@@ -97,7 +96,7 @@ export default () => {
 						<DropdownInGrid options={typeOptions} onChange={onTypeChanged(column)} value={column.type}/>
 					</DetailBodyCell>
 				</DetailBodyRow>
-				{childTypes.length !== 0 ? renderColumns(childTypes) : null}
+				{childTypes.length !== 0 ? renderColumns(childTypes, indent + 1) : null}
 			</Fragment>;
 		});
 	};

@@ -27,14 +27,17 @@ export interface GuideDataObjectColumn extends GuideDataColumn {
 
 export interface GuideCalcDataColumn extends GuideDataColumn {
 	expressionCode: string;
+	expression: string;
 }
 
+export type GuideTopic = {
+	columns: Array<GuideDataColumn>,
+	data: Array<any>,
+	hash: string;
+};
+
 export type GuideData = {
-	[key in string]: {
-		columns: Array<GuideDataColumn>,
-		data: Array<any>,
-		hash: string;
-	}
+	[key in string]: GuideTopic
 };
 
 export interface GuideContext {

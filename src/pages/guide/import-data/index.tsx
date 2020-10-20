@@ -108,6 +108,9 @@ const Files = styled.div<{ itemCount: number }>`
 		&:after {
 			opacity: 0.7;
 		}
+		> div {
+			opacity: 0;
+		}
 	}
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		grid-template-columns: 1fr;
@@ -151,6 +154,7 @@ const Files = styled.div<{ itemCount: number }>`
 		padding: 0 var(--margin);
 		border-top: var(--border);
 		cursor: pointer;
+		transition: all 300ms ease-in-out;
 		&:hover {
 			background-color: var(--hover-color);
 			text-decoration: underline;

@@ -7,6 +7,7 @@ export const InputInGrid = styled(Input)`
 	border-color: transparent;
 	transition: all 300ms ease-in-out;
 	font-size: 0.8em;
+	width: calc(100% + var(--input-indent));
 	&:hover {
 		border-color: var(--primary-color);
 	}
