@@ -1,4 +1,4 @@
-import { faCog, faCompressArrowsAlt, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faCompressArrowsAlt, faDownload, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -126,6 +126,7 @@ const ChartSettingsItemLabel = styled.div`
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	font-size: 0.8em;
+	font-weight: var(--font-bold);
 `;
 const ChartSettingsItemEditor = styled.div`
 	display: flex;
@@ -211,6 +212,8 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 		return () => resizeObserver.disconnect();
 	});
 
+	const onDownloadClicked = () => {
+	};
 	const onSettingsToggleClicked = () => setSettingsVisible(!settingsVisible);
 	const onChartExpandClicked = () => setExpanded(true);
 	const onChartCollapseClicked = () => setExpanded(false);
@@ -222,6 +225,9 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 		<ChartHeader>
 			<ChartTitle>{chart.name}</ChartTitle>
 			<ChartOperators>
+				<Button onClick={onDownloadClicked}>
+					<FontAwesomeIcon icon={faDownload}/>
+				</Button>
 				<Button onClick={onSettingsToggleClicked} data-visible={hasSettings} data-active={settingsVisible}>
 					<FontAwesomeIcon icon={faCog}/>
 				</Button>
