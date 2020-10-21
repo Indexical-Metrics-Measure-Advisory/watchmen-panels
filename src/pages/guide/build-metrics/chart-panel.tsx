@@ -1,6 +1,6 @@
 import { faCog, faCompressArrowsAlt, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../services/domain';
 import Button from '../../component/button';
@@ -110,6 +110,9 @@ const ChartSettings = styled.div`
 		padding-top: calc(var(--margin) / 2);
 		padding-bottom: calc(var(--margin) / 2);
 	}
+	&[data-columns="2"] {
+		grid-template-columns: 1fr 1fr;
+	}
 `;
 const ChartSettingItem = styled.div`
 	display: grid;
@@ -188,6 +191,25 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 	const [ expanded, setExpanded ] = useState<boolean>(false);
 	const [ settingsVisible, setSettingsVisible ] = useState<boolean>(false);
 	const [ options, setOptions ] = useState(buildChartOptions(chart.options));
+	const [ settingsColumns, setSettingsColumns ] = useState(1);
+	const settingsRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		if (!settingsRef.current) {
+			return;
+		}
+
+		// @ts-ignore
+		const resizeObserver = new ResizeObserver(() => {
+			if (!settingsRef.current) {
+				return;
+			}
+
+			const rect = settingsRef.current.getBoundingClientRect();
+			setSettingsColumns(rect.width > 600 ? 2 : 1);
+		});
+		resizeObserver.observe(settingsRef.current);
+		return () => resizeObserver.disconnect();
+	});
 
 	const onSettingsToggleClicked = () => setSettingsVisible(!settingsVisible);
 	const onChartExpandClicked = () => setExpanded(true);
@@ -213,7 +235,8 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 				</Button>
 			</ChartOperators>
 		</ChartHeader>
-		<ChartSettings data-visible={settingsVisible}>
+		<ChartSettings data-visible={settingsVisible} data-columns={settingsColumns}
+		               ref={settingsRef}>
 			<GroupBy def={chart.options?.groupBy} options={options} onChange={setOptions}/>
 		</ChartSettings>
 		<Chart data={guide.getData()!.tasks.data} options={options}/>
