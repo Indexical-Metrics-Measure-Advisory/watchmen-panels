@@ -27,6 +27,9 @@ const Href = styled(Link)`
 	margin-top: var(--margin);
 	color: var(--invert-color);
 	text-transform: uppercase;
+	&:visited {
+		color: var(--invert-color);
+	}
 `;
 
 export default () => {

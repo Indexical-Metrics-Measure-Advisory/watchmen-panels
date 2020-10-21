@@ -55,7 +55,7 @@ const DetailBodyOperationCell = styled(ObjectDetailBodyCell)`
 		height: 27px;
 		padding: 0;
 		&:hover {
-			background-color: var(--primary-color);
+			background-color: var(--primary-hover-color);
 			color: var(--invert-color);
 		}
 	}

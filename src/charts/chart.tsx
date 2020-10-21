@@ -1,31 +1,51 @@
-import { EChartOption, EChartsResponsiveOption } from 'echarts';
-// import 'echarts/lib/chart/effectScatter';
-// import 'echarts/lib/chart/scatter';
-// import 'echarts/lib/component/calendar';
-// import 'echarts/lib/component/legend';
-// import 'echarts/lib/component/title';
-// import 'echarts/lib/component/toolbox';
-// import 'echarts/lib/component/tooltip';
+import { ECharts } from 'echarts';
 import echarts from "echarts/lib/echarts";
-import React, { useRef } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useRef, useState } from 'react';
+import styled, { useTheme } from 'styled-components';
+import { Theme } from '../theme/types';
 
-const ChartContainer = styled.div`
+const ChartContainer = styled.div.attrs({
+	'data-widget': 'chart'
+})`
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+`;
+const Chart = styled.div`
+	flex-grow: 1;
 	overflow: hidden;
 `;
 
 export const EChart = (props: {
-	chartOptions: EChartOption | EChartsResponsiveOption,
+	options: any,
 	className?: string
 }) => {
-	const { className, chartOptions } = props;
+	const { className, options } = props;
 
+	const theme = useTheme() as Theme;
 	const rootRef = useRef<HTMLDivElement>(null);
+	const [ chart, setChart ] = useState<ECharts | null>(null);
 
-	React.useEffect(() => {
-		const chart = echarts.init(rootRef.current!, 'dark');
-		chart.setOption(chartOptions);
-	}, [ chartOptions ]);
+	useEffect(() => {
+		if (rootRef.current) {
+			// @ts-ignore
+			const resizeObserver = new ResizeObserver(() => {
+				if (chart) {
+					chart.resize();
+				}
+			});
+			resizeObserver.observe(rootRef.current);
+			return () => resizeObserver.disconnect();
+		}
+	});
+	useEffect(() => {
+		const chart = echarts.init(rootRef.current!);
+		options.backgroundColor = options.backgroundColor ?? theme.chartBgColorLight;
+		chart.setOption(options);
+		setChart(chart);
+	}, [ options, theme ]);
 
-	return <ChartContainer className={className} ref={rootRef}/>;
+	return <ChartContainer>
+		<Chart className={className} ref={rootRef}/>
+	</ChartContainer>;
 };

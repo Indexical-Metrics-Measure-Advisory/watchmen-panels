@@ -18,6 +18,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--success-hover-color: ${({ theme }) => theme.successHoverColor};
 		--invert-color: ${({ theme }) => theme.invertColor};
 		--bg-color:  ${({ theme }) => theme.bgColor};
+		--bg-color-opacity:  ${({ theme }) => theme.bgColorOpacity};
 		--hover-color: ${({ theme }) => theme.hoverColor};
 		--active-color: ${({ theme }) => theme.activeColor};
 		--invert-bg-color: ${({ theme }) => theme.invertBgColor};

@@ -1,5 +1,10 @@
 import color from 'color';
 import 'echarts/lib/chart/pie';
+import 'echarts/lib/component/title';
+import React from 'react';
+import { useTheme } from 'styled-components';
+import { Theme } from '../theme/types';
+import { EChart } from './chart';
 import { BaseColors12, BaseColors24, BaseColors6 } from './color-theme';
 
 // // [ {
@@ -22,18 +27,9 @@ import { BaseColors12, BaseColors24, BaseColors6 } from './color-theme';
 // // 	'value': 9
 // // } ]
 
-export interface NightingaleRoseDataItem {
+export interface DoughnutDataItem {
 	name: string;
 	value: number;
-}
-
-interface PieDataItem extends NightingaleRoseDataItem {
-	labelLine: {
-		lineStyle: {
-			width: number;
-			color: string;
-		}
-	}
 }
 
 interface DotStyle {
@@ -108,8 +104,8 @@ const buildItemStyle = (colors: Array<string>) => {
 	});
 };
 
-const decorate = (data: Array<NightingaleRoseDataItem>): Array<NightingaleRoseDataItem> => {
-	const map: { [key in string]: NightingaleRoseDataItem } = {};
+const decorate = (data: Array<DoughnutDataItem>): Array<DoughnutDataItem> => {
+	const map: { [key in string]: DoughnutDataItem } = {};
 
 	data.forEach(item => {
 		if (map[item.name]) {
@@ -124,35 +120,39 @@ const decorate = (data: Array<NightingaleRoseDataItem>): Array<NightingaleRoseDa
 		.sort(({ value: v1 }, { value: v2 }) => v2 - v1);
 };
 
-const decorateLineStyles = (data: Array<NightingaleRoseDataItem>, colors: Array<string>): Array<PieDataItem> => {
-	const colorCount = colors.length;
-	return data.map((item, index) => {
-		return {
-			...item,
-			labelLine: {
-				lineStyle: {
-					width: 1,
-					color: colors[index % colorCount]
-				}
-			}
-		};
-	});
-};
-
-export const useDoughnut = (options: {
-	data: Array<NightingaleRoseDataItem>
+const buildOptions = (options: {
+	data: Array<DoughnutDataItem>,
+	theme: Theme,
+	title?: string
 }) => {
-	let { data } = options;
+	let { data, theme, title } = options;
 	data = decorate(data);
-
 	const colors = data.length > 18 ? BaseColors24 : (data.length > 6 ? BaseColors12 : BaseColors6);
 	const colorCount = colors.length;
 
-	data = decorateLineStyles(data, colors);
+	const count = data.reduce((count, item) => count + item.value, 0);
 
 	const itemStyles = buildItemStyle(colors);
+	const buildTitle = (title?: string) => {
+		if (!title) {
+			return;
+		}
 
+		return {
+			text: title.replace('{{count}}', `${count}`),
+			bottom: '5%',
+			left: '50%',
+			textAlign: 'center',
+			textStyle: {
+				color: theme.fontColor,
+				fontSize: theme.fontSize,
+				lineHeight: theme.fontSize,
+				fontWeight: theme.fontBold
+			}
+		};
+	};
 	return {
+		title: buildTitle(title),
 		series: [ {
 			type: 'pie',
 			radius: [ '30%', '60%' ],
@@ -171,6 +171,11 @@ export const useDoughnut = (options: {
 				},
 				rich: buildRichLabel(colors)
 			},
+			labelLine: {
+				length: 10,
+				length2: 100,
+				show: true
+			},
 			itemStyle: {
 				normal: {
 					color: function (params: RenderItem) {
@@ -181,4 +186,16 @@ export const useDoughnut = (options: {
 			data
 		} ]
 	};
+};
+export const CountDoughnut = (props: {
+	className?: string,
+	data: Array<DoughnutDataItem>,
+	title?: string;
+}) => {
+	const { className, data, title } = props;
+
+	const theme = useTheme() as Theme;
+	const options = buildOptions({ data, theme, title });
+
+	return <EChart className={className} options={options}/>;
 };

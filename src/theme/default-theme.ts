@@ -8,6 +8,7 @@ export default {
 	successHoverColor: 'rgba(22,160,7,1)',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
+	bgColorOpacity: 'rgba(249,250,252,0.9)',
 	hoverColor: '#d3dce6',
 	activeColor: 'rgba(43,80,174,0.5)',
 	invertBgColor: 'rgb(1,34,96,0.9)',
@@ -56,5 +57,9 @@ export default {
 
 	// footer
 	footerBgColor: 'rgba(3,51,141,1)',
-	footerColor: 'var(--bg-color)'
+	footerColor: 'var(--bg-color)',
+
+	// chart
+	chartBgColorLight: 'rgba(249,250,252,0.7)',
+	chartBgColorDark: '#333333'
 };

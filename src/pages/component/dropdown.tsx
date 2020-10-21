@@ -8,7 +8,9 @@ export interface DropdownOption {
 	label: string;
 }
 
-const DropdownContainer = styled.div`
+const DropdownContainer = styled.div.attrs({
+	'data-widget': 'dropdown'
+})`
 	position: relative;
 	padding: 6px var(--input-indent);
 	outline: none;
@@ -127,7 +129,7 @@ const Dropdown = (props: {
 	};
 
 	return <DropdownContainer className={className}
-	                          data-widget="dropdown" data-options-visible={state.active}
+	                          data-options-visible={state.active}
 	                          ref={containerRef}
 	                          role="input" tabIndex={0} onClick={onClicked}>
 		<Label>{selectedLabel}</Label>
