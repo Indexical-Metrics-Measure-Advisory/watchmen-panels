@@ -1,6 +1,7 @@
 import React from 'react';
 import { emptyGetter, emptySetter } from '../../common/utils';
-import { Domain, NoDomain } from '../../services/domain';
+import { NoDomain } from '../../services/domain';
+import { Domain } from '../../services/types';
 
 export enum GuideDataColumnType {
 	TEXT = 'text',

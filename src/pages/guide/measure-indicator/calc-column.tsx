@@ -2,7 +2,7 @@ import { faCheck, faEquals, faExclamation, faTimes } from '@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import { DomainExpression } from '../../../services/domain';
+import { DomainExpression } from '../../../services/types';
 import Button from '../../component/button';
 import { DropdownOption } from '../../component/dropdown';
 import { DropdownInGrid } from '../component/dropdown-in-grid';

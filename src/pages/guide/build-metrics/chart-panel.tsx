@@ -2,7 +2,7 @@ import { faCog, faCompressArrowsAlt, faDownload, faExpandArrowsAlt } from '@fort
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../services/domain';
+import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../services/types';
 import Button from '../../component/button';
 import Dropdown, { DropdownOption } from '../../component/dropdown';
 import { useGuideContext } from '../guide-context';
