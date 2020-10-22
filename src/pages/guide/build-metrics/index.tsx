@@ -5,7 +5,9 @@ import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
 import { useGuideContext } from '../guide-context';
-import { ChartPanel } from './chart-panel';
+import { ChartContextProvider } from './chart-context';
+import { CustomChartPanel } from './custom-chart-panel';
+import { PredefinedChartPanel } from './predefined-chart-panel';
 
 const MetricsContainer = styled.div`
 	display: grid;
@@ -38,7 +40,12 @@ export default () => {
 
 	return <Fragment>
 		<MetricsContainer>
-			{charts.map(chart => <ChartPanel key={chart.name} chart={chart}/>)}
+			{charts.map(chart => <ChartContextProvider>
+				<PredefinedChartPanel key={chart.name} chart={chart}/>
+			</ChartContextProvider>)}
+			<ChartContextProvider>
+				<CustomChartPanel/>
+			</ChartContextProvider>
 		</MetricsContainer>
 		<OperationBar>
 			<BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>
