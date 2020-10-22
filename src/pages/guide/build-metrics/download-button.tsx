@@ -9,6 +9,7 @@ export const DownloadButton = (props: { visible: boolean }) => {
 
 	const notImpl = useNotImplemented();
 	const onDownloadClicked = () => {
+		// TODO download chart clicked
 		notImpl.show();
 	};
 	return <Button onClick={onDownloadClicked} data-visible={visible}>

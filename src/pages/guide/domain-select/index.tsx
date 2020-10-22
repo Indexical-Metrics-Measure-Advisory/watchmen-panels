@@ -104,6 +104,9 @@ export default () => {
 					<FontAwesomeIcon icon={faCheck}/>
 				</DomainButton>;
 			})}
+			{
+				// TODO explore more clicked
+			}
 			{data.hasMore ?
 				<MoreDomainsButton onClick={notImpl.show}>Explore More...</MoreDomainsButton> : null}
 		</Domains>

@@ -11,9 +11,10 @@ import { ObjectDetailBodyCell, ObjectDetailBodyRow } from '../component/object-d
 import { GuideCalcDataColumn, GuideDataColumn, GuideTopic, useGuideContext } from '../guide-context';
 import { asDisplayName, generateUniqueLabel, generateUniqueName } from '../utils';
 
+// EXPLAIN use variable to avoid webstorm inspection errors, @supports is not supported yet
 const DetailBodyRow = styled(ObjectDetailBodyRow)`
 	grid-template-columns: 30% calc(35% - 32px) calc(35% - 32px) 32px 32px;
-	@supports selector(:focus-within) {
+	${'@supports selector(:focus-within)'} {
 		&:not(:focus-within) {
 			> div:last-child:not(:first-child) {
 				height: 0;
@@ -128,6 +129,9 @@ export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, 
 	const created = topic.columns.includes(column);
 	const incorrect = isExpressionIncorrect(calcColumn, allColumnNames);
 
+	//TODO expression result values on data should be changed:
+	// 1. column name changed
+	// 2. expression changed
 	const onColumnNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		column.name = evt.target.value;
 		guide.setData(guide.getData()!);
