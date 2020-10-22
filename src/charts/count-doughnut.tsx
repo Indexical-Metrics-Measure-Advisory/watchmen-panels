@@ -151,6 +151,9 @@ const buildOptions = (options: {
 	};
 	return {
 		title: buildTitle(title),
+		grid: {
+			top: '3%'
+		},
 		series: [ {
 			type: 'pie',
 			radius: [ '30%', '60%' ],

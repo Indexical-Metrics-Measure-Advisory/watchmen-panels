@@ -2,6 +2,7 @@ import { ECharts } from 'echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/chart/custom';
 import 'echarts/lib/chart/pie';
+import 'echarts/lib/component/dataZoom';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/tooltip';
 import echarts from "echarts/lib/echarts";

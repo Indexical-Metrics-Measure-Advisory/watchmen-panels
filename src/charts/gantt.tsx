@@ -14,15 +14,12 @@ export interface GanttDataItem {
 	endDate: string;
 }
 
-interface RenderItem {
-	dataIndex: number;
-}
-
 const renderItem = (params: any, api: any) => {
 	// value index as below
 	// 0: start date
 	// 1: end date
 	// 2: yAxis (owner)
+	// 3: name
 	const categoryIndex = api.value(2);
 	const start = api.coord([ api.value(0), categoryIndex ]);
 	const end = api.coord([ api.value(1), categoryIndex ]);
@@ -32,7 +29,7 @@ const renderItem = (params: any, api: any) => {
 		x: start[0],
 		y: start[1] - height / 2,
 		width: end[0] - start[0],
-		height: height
+		height
 	}, {
 		x: params.coordSys.x,
 		y: params.coordSys.y,
@@ -80,7 +77,7 @@ const buildOptions = (options: {
 
 		return {
 			text: title.replace('{{tasks}}', `${taskCount}`).replace('{{members}}', `${memberCount}`),
-			bottom: '5%',
+			bottom: '3%',
 			left: '50%',
 			textAlign: 'center',
 			textStyle: {
@@ -101,8 +98,30 @@ const buildOptions = (options: {
 				return `${params.name}<br>${startDate} - ${endDate}`;
 			}
 		},
+		dataZoom: [ {
+			type: 'slider',
+			filterMode: 'weakFilter',
+			showDataShadow: false,
+			top: 5,
+			height: 2,
+			borderColor: 'transparent',
+			backgroundColor: theme.chartZoomSliderBgColor,
+			handleIcon: theme.chartZoomHandlerIcon,
+			handleSize: 10,
+			// handleStyle: {
+			// 	shadowBlur: 6,
+			// 	shadowOffsetX: 1,
+			// 	shadowOffsetY: 2,
+			// 	shadowColor: theme.chartZoomSliderShadowColor
+			// },
+			labelFormatter: ''
+		}, {
+			type: 'inside',
+			filterMode: 'weakFilter'
+		} ],
 		grid: {
 			left: '5%',
+			top: '3%',
 			bottom: '12%',
 			containLabel: true
 		},
@@ -124,7 +143,7 @@ const buildOptions = (options: {
 					const colour = color(colors[itemIndex % colorCount]);
 					return {
 						name: item.name,
-						value: [ item.startDate, item.endDate, item.owner ],
+						value: [ item.startDate, item.endDate, item.owner, item.name ],
 						itemStyle: {
 							normal: {
 								color: {
