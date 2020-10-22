@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../services/types';
 import Button from '../../component/button';
 import Dropdown, { DropdownOption } from '../../component/dropdown';
+import { useNotImplemented } from '../../context/not-implemented';
 import { useGuideContext } from '../guide-context';
 
 const ChartContainer = styled.div`
@@ -230,10 +231,12 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 	const { chart } = props;
 
 	const guide = useGuideContext();
+	const notImpl = useNotImplemented();
 	const [ expanded, setExpanded ] = useState<boolean>(false);
 	const [ settingsVisible, setSettingsVisible ] = useState<boolean>(false);
 	const [ options, setOptions ] = useState(buildChartOptions(chart.options));
 	const [ settingsColumns, setSettingsColumns ] = useState(1);
+	const containerRef = useRef<HTMLDivElement>(null);
 	const settingsRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (!settingsRef.current) {
@@ -254,17 +257,22 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 	});
 
 	const onDownloadClicked = () => {
+		notImpl.show();
 	};
 	const onSettingsToggleClicked = () => setSettingsVisible(!settingsVisible);
-	const onChartExpandClicked = () => setExpanded(true);
-	const onChartCollapseClicked = () => setExpanded(false);
+	const onChartExpandableToggleClicked = () => {
+		setExpanded(!expanded);
+		setTimeout(() => {
+			containerRef.current!.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+		}, 300);
+	};
 
 	const Chart = chart.chart;
 	const data = guide.getData()!.tasks.data;
 	const hasSettings = !!chart.options?.groupBy;
 	const chartEnabled = chart.enabled ? chart.enabled(data) : { enabled: true, reason: null };
 
-	return <ChartContainer data-expanded={expanded}>
+	return <ChartContainer data-expanded={expanded} ref={containerRef}>
 		<ChartHeader>
 			<ChartTitle>{chart.name}</ChartTitle>
 			<ChartOperators>
@@ -275,11 +283,11 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 				        data-active={settingsVisible}>
 					<FontAwesomeIcon icon={faCog}/>
 				</Button>
-				<Button onClick={onChartExpandClicked} data-visible={!expanded && chartEnabled.enabled}
+				<Button onClick={onChartExpandableToggleClicked} data-visible={!expanded && chartEnabled.enabled}
 				        data-size-fixed-visible={false}>
 					<FontAwesomeIcon icon={faExpandArrowsAlt}/>
 				</Button>
-				<Button onClick={onChartCollapseClicked} data-visible={expanded && chartEnabled.enabled}
+				<Button onClick={onChartExpandableToggleClicked} data-visible={expanded && chartEnabled.enabled}
 				        data-size-fixed-visible={false}>
 					<FontAwesomeIcon icon={faCompressArrowsAlt}/>
 				</Button>

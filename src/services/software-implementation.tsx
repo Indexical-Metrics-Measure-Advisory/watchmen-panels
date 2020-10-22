@@ -108,8 +108,8 @@ export const SoftwareImplementation: Domain = {
 			}
 		},
 		{
-			key: 'workdays-segmental',
-			name: 'Workdays - Segmental',
+			key: 'schedule-risk-management',
+			name: 'Schedule - Risk Management',
 			enabled: (data: Array<any>) => {
 				const enabled = data && -1 === data.findIndex(item => typeof item.Workdays !== 'number');
 				return { enabled, reason: 'Factor "Workdays" missing.' };
@@ -120,8 +120,8 @@ export const SoftwareImplementation: Domain = {
 				const segments = [
 					{ name: '5-', label: 'Perfect', take: (value: number) => value <= 5 },
 					{ name: '6 ~ 10', label: 'Good', take: (value: number) => value > 5 && value <= 10 },
-					{ name: '11 ~ 20', label: 'Notable', take: (value: number) => value > 10 && value <= 20 },
-					{ name: '21+', label: 'Poor', take: (value: number) => value > 20 }
+					{ name: '11 ~ 20', label: 'Cautious', take: (value: number) => value > 10 && value <= 20 },
+					{ name: '21+', label: 'Wild', take: (value: number) => value > 20 }
 				];
 				const chartData = data.map(item => {
 					return {

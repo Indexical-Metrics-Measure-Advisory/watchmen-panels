@@ -103,7 +103,8 @@ const buildOptions = (options: {
 			type: 'bar',
 			label: {
 				show: true,
-				formatter: '{@[2]}'
+				formatter: '{@[2]}',
+				color: theme.fontColor
 			},
 			encode: { x: 0, y: 1 },
 			data: decoratedData
