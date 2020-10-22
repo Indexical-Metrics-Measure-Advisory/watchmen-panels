@@ -145,6 +145,11 @@ export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, 
 		if (!columns.includes(column)) {
 			columns.push(column);
 		}
+		if ((expression as any).func) {
+			(topic.data || []).forEach(item => {
+				item[column.name] = (expression as any).func(item);
+			});
+		}
 		guide.setData(guide.getData()!);
 	};
 	const onColumnExpressionChange = (evt: React.ChangeEvent<HTMLInputElement>) => {

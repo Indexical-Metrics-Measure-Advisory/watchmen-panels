@@ -1,4 +1,10 @@
-import { faCog, faCompressArrowsAlt, faDownload, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+	faChartBar,
+	faCog,
+	faCompressArrowsAlt,
+	faDownload,
+	faExpandArrowsAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -14,7 +20,8 @@ const ChartContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	> div[data-widget="chart"] {
+	> div[data-widget="chart"],
+	> div[data-widget="chart-disabled"] {
 		flex-grow: 1;
 		height: 300px;
 	}
@@ -32,13 +39,15 @@ const ChartContainer = styled.div`
 					height: calc(100% - 48px);
 				}
 			}
-			> div[data-widget="chart"] {
+			> div[data-widget="chart"],
+			> div[data-widget="chart-disabled"] {
 				height: 500px;
 			}
 		}
 		@media (min-width: 1600px) {
 			grid-column: span 4;
-			> div[data-widget="chart"] {
+			> div[data-widget="chart"],
+			> div[data-widget="chart-disabled"] {
 				height: 650px;
 			}
 		}
@@ -150,6 +159,24 @@ const ChartSettingsItemEditor = styled.div`
 		font-size: 0.8em;
 	}
 `;
+const Disabled = styled.div.attrs({
+	'data-widget': 'chart-disabled'
+})`
+	flex-grow: 1;
+	height: 300px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	> svg {
+		font-size: 64px;
+		opacity: 0.2;
+	}
+	> div {
+		font-size: 0.8em;
+		opacity: 0.8;
+	}
+`;
 
 const GroupBy = (props: {
 	def?: Array<DomainChartGroupBy>,
@@ -233,23 +260,26 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 	const onChartCollapseClicked = () => setExpanded(false);
 
 	const Chart = chart.chart;
+	const data = guide.getData()!.tasks.data;
 	const hasSettings = !!chart.options?.groupBy;
+	const chartEnabled = chart.enabled ? chart.enabled(data) : { enabled: true, reason: null };
 
 	return <ChartContainer data-expanded={expanded}>
 		<ChartHeader>
 			<ChartTitle>{chart.name}</ChartTitle>
 			<ChartOperators>
-				<Button onClick={onDownloadClicked}>
+				<Button onClick={onDownloadClicked} data-visible={chartEnabled.enabled}>
 					<FontAwesomeIcon icon={faDownload}/>
 				</Button>
-				<Button onClick={onSettingsToggleClicked} data-visible={hasSettings} data-active={settingsVisible}>
+				<Button onClick={onSettingsToggleClicked} data-visible={hasSettings && chartEnabled.enabled}
+				        data-active={settingsVisible}>
 					<FontAwesomeIcon icon={faCog}/>
 				</Button>
-				<Button onClick={onChartExpandClicked} data-visible={!expanded}
+				<Button onClick={onChartExpandClicked} data-visible={!expanded && chartEnabled.enabled}
 				        data-size-fixed-visible={false}>
 					<FontAwesomeIcon icon={faExpandArrowsAlt}/>
 				</Button>
-				<Button onClick={onChartCollapseClicked} data-visible={expanded}
+				<Button onClick={onChartCollapseClicked} data-visible={expanded && chartEnabled.enabled}
 				        data-size-fixed-visible={false}>
 					<FontAwesomeIcon icon={faCompressArrowsAlt}/>
 				</Button>
@@ -259,6 +289,12 @@ export const ChartPanel = (props: { chart: DomainChart }) => {
 		               ref={settingsRef}>
 			<GroupBy def={chart.options?.groupBy} options={options} onChange={setOptions}/>
 		</ChartSettings>
-		<Chart data={guide.getData()!.tasks.data} options={options}/>
+		{chartEnabled.enabled
+			? <Chart data={data} options={options}/>
+			: <Disabled>
+				<FontAwesomeIcon icon={faChartBar}/>
+				<div>{chartEnabled.reason}</div>
+			</Disabled>
+		}
 	</ChartContainer>;
 };

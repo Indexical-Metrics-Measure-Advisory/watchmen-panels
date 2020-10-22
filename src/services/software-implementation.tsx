@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { CountDoughnut } from '../charts/count-doughnut';
 import { Gantt } from '../charts/gantt';
+import { SegmentBar } from '../charts/segment-bar';
 // @ts-ignore
 import SoftwareImplementationTasks from './software-implementation.csv';
 import { Domain, PredefinedExpression } from './types';
@@ -11,25 +12,24 @@ export const SoftwareImplementation: Domain = {
 	label: 'Software Implementation',
 	expressions: [
 		{
-			code: 'workdays', name: 'workdays', label: 'Workdays', body: '{{EndDate}} - {{StartDate}}',
+			code: 'workdays', name: 'Workdays', label: 'Workdays', body: '{{EndDate}} - {{StartDate}}',
 			func: (item: { EndDate: string, StartDate: string }) => {
 				const { EndDate: end, StartDate: start } = item;
 
 				const endDate = dayjs(end);
+				const endWeekday = endDate.day();
 				const startDate = dayjs(start);
+				const startWeekday = startDate.day();
 
-				let days = endDate.diff(startDate, 'day') + 1;
-
-				switch (startDate.day()) {
-					case 0:
-						days -= 1;
-						break;
-					case 6:
-						days -= 2;
-						break;
-					default:
+				let diffDays = endDate.diff(startDate, 'day') + 1;
+				if (endWeekday >= startWeekday && diffDays <= 7) {
+					// same week
+					return endWeekday - startWeekday - (startWeekday === 0 ? 1 : 0) + (endWeekday === 6 ? 1 : 0);
+				} else if (endWeekday >= startWeekday) {
+					return Math.floor(diffDays / 7) * 5 + ((endWeekday === 6 ? 5 : endWeekday) - startWeekday);
+				} else {
+					return Math.floor(diffDays / 7) * 5 + (6 - (startWeekday === 0 ? 1 : startWeekday)) + endWeekday;
 				}
-				return days - Math.floor(days / 7) * 2 - ((days) % 7 - 5);
 			}
 		} as PredefinedExpression
 	],
@@ -105,6 +105,34 @@ export const SoftwareImplementation: Domain = {
 				});
 
 				return <Gantt className={className} title={"{{tasks}} Tasks, {{members}} Members"} data={chartData}/>;
+			}
+		},
+		{
+			key: 'workdays-segmental',
+			name: 'Workdays - Segmental',
+			enabled: (data: Array<any>) => {
+				const enabled = data && -1 === data.findIndex(item => typeof item.Workdays !== 'number');
+				return { enabled, reason: 'Factor "Workdays" missing.' };
+			},
+			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
+				const { data, className } = props;
+
+				const segments = [
+					{ name: '5-', label: 'Perfect', take: (value: number) => value <= 5 },
+					{ name: '6 ~ 10', label: 'Good', take: (value: number) => value > 5 && value <= 10 },
+					{ name: '11 ~ 20', label: 'Notable', take: (value: number) => value > 10 && value <= 20 },
+					{ name: '21+', label: 'Poor', take: (value: number) => value > 20 }
+				];
+				const chartData = data.map(item => {
+					return {
+						name: item.Task,
+						value: item.Workdays
+					};
+				});
+
+				return <SegmentBar className={className} title={"{{count}} Tasks"}
+				                   segments={segments}
+				                   data={chartData}/>;
 			}
 		}
 	]

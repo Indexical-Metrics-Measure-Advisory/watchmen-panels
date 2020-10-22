@@ -8,7 +8,7 @@ export interface DomainExpression {
 }
 
 export interface PredefinedExpression extends DomainExpression {
-	func: () => any;
+	func: (item: any) => any;
 }
 
 export const CustomDomainExpression: DomainExpression = {
@@ -31,7 +31,8 @@ export interface DomainChartOptions {
 export interface DomainChart {
 	key: string;
 	name: string;
-	chart: ChartElement,
+	chart: ChartElement;
+	enabled?: (data: Array<any>) => { enabled: boolean, reason?: string };
 	options?: DomainChartOptions
 }
 
