@@ -22,6 +22,16 @@ const ChartContainer = styled.div`
 	&[data-expanded=true] {
 		@media (min-width: 800px) {
 			grid-column: span 3;
+			> div[data-widget="chart-header"] {
+				height: 48px;
+				padding: 0 var(--margin);
+			}
+			> div[data-widget="chart-settings"] {
+				top: 48px;
+				&[data-visible=true] {
+					height: calc(100% - 48px);
+				}
+			}
 			> div[data-widget="chart"] {
 				height: 500px;
 			}
@@ -37,7 +47,9 @@ const ChartContainer = styled.div`
 		}
 	}
 `;
-const ChartHeader = styled.div`
+const ChartHeader = styled.div.attrs({
+	'data-widget': 'chart-header'
+})`
 	display: flex;
 	padding: 0 calc(var(--margin) / 2);
 	align-items: center;
@@ -87,7 +99,9 @@ const ChartOperators = styled.div`
 		}
 	}
 `;
-const ChartSettings = styled.div`
+const ChartSettings = styled.div.attrs({
+	'data-widget': 'chart-settings'
+})`
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-column-gap: calc(var(--margin) / 2);

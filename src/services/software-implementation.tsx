@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import React from 'react';
 import { CountDoughnut } from '../charts/count-doughnut';
+import { Gantt } from '../charts/gantt';
 // @ts-ignore
 import SoftwareImplementationTasks from './software-implementation.csv';
 import { Domain, PredefinedExpression } from './types';
@@ -93,7 +94,17 @@ export const SoftwareImplementation: Domain = {
 			name: 'Task Gantt',
 			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
 				const { data, className } = props;
-				return <div/>;
+
+				const chartData = data.map(item => {
+					return {
+						name: item.Task,
+						owner: item.Owner,
+						startDate: item.StartDate,
+						endDate: item.EndDate
+					};
+				});
+
+				return <Gantt className={className} title={"{{tasks}} Tasks, {{members}} Members"} data={chartData}/>;
 			}
 		}
 	]

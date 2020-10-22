@@ -1,6 +1,4 @@
 import color from 'color';
-import 'echarts/lib/chart/pie';
-import 'echarts/lib/component/title';
 import React from 'react';
 import { useTheme } from 'styled-components';
 import { Theme } from '../theme/types';
