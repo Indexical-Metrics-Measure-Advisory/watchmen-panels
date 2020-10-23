@@ -117,12 +117,15 @@ export const SoftwareImplementation: Domain = {
 			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
 				const { data, className } = props;
 
-				const segments = [
-					{ name: '5-', label: 'Perfect', take: (value: number) => value <= 5 },
-					{ name: '6 ~ 10', label: 'Good', take: (value: number) => value > 5 && value <= 10 },
-					{ name: '11 ~ 20', label: 'Cautious', take: (value: number) => value > 10 && value <= 20 },
-					{ name: '21+', label: 'Wild', take: (value: number) => value > 20 }
-				];
+				const segments = {
+					label: 'Man day',
+					definition: [
+						{ name: '5-', label: 'Perfect', take: (value: number) => value <= 5 },
+						{ name: '6 ~ 10', label: 'Good', take: (value: number) => value > 5 && value <= 10 },
+						{ name: '11 ~ 20', label: 'Cautious', take: (value: number) => value > 10 && value <= 20 },
+						{ name: '21+', label: 'Wild', take: (value: number) => value > 20 }
+					]
+				};
 				const chartData = data.map(item => {
 					return {
 						name: item.Task,

@@ -29,7 +29,7 @@ const ExistsFiles = styled.div<{ itemCount: number }>`
 	overflow: hidden;
 	transition: all 300ms ease-in-out;
 	&[data-visible=true] {
-		height: calc(1px + 32px * ${({ itemCount }) => itemCount});
+		height: calc(1px + var(--height) * ${({ itemCount }) => itemCount});
 		border: var(--border);
 		border-bottom: 0;
 		& ~ div {
@@ -48,7 +48,7 @@ const SelectedFiles = styled.div<{ itemCount: number }>`
 	overflow: hidden;
 	transition: all 300ms ease-in-out;
 	&[data-visible=true] {
-		height: calc(1px + 32px * ${({ itemCount }) => itemCount});
+		height: calc(1px + var(--height) * ${({ itemCount }) => itemCount});
 		border: var(--border);
 		border-bottom: 0;
 	}
@@ -56,7 +56,7 @@ const SelectedFiles = styled.div<{ itemCount: number }>`
 const SelectedFileRow = styled.div`
 	display: flex;
 	padding: 0 var(--margin);
-	height: 32px;
+	height: var(--height);
 	align-items: center;
 	transition: all 300ms ease-in-out;
 	&:not(:last-child) {

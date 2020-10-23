@@ -137,6 +137,9 @@ export const ChartSettingsItemLabel = styled.div`
 	text-overflow: ellipsis;
 	font-size: 0.8em;
 	font-weight: var(--font-bold);
+	&[data-require=true] {
+		color: var(--primary-color);
+	}
 `;
 export const ChartSettingsItemEditor = styled.div`
 	display: flex;

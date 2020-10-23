@@ -40,8 +40,8 @@ export default () => {
 
 	return <Fragment>
 		<MetricsContainer>
-			{charts.map(chart => <ChartContextProvider>
-				<PredefinedChartPanel key={chart.name} chart={chart}/>
+			{charts.map(chart => <ChartContextProvider key={chart.name}>
+				<PredefinedChartPanel chart={chart}/>
 			</ChartContextProvider>)}
 			<ChartContextProvider>
 				<CustomChartPanel/>

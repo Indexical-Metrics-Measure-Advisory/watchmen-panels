@@ -32,7 +32,7 @@ export const ObjectItem = styled.div`
 	display: flex;
 	position: relative;
 	align-items: center;
-	height: 32px;
+	height: var(--height);
 	padding: 0 calc(var(--margin) / 2);
 	cursor: pointer;
 	white-space: nowrap;

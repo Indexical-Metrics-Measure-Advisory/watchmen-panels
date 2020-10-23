@@ -34,6 +34,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--title-line-height: ${({ theme }) => theme.titleLineHeight}px;
 		--letter-gap: ${({ theme }) => theme.letterGap}px;
 		
+		--height: ${({ theme }) => theme.height}px;
+		
 		--border-color: ${({ theme }) => theme.borderColor};
 		--border: ${({ theme }) => theme.border};
 		--border-radius: ${({ theme }) => theme.borderRadius}px;

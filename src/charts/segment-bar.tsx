@@ -11,6 +11,14 @@ export interface Segment {
 	take: (value: any) => boolean;
 }
 
+/**
+ * describe how to split data to segments
+ */
+export interface Segments {
+	label: string;
+	definition: Array<Segment>;
+}
+
 export interface BarDataItem {
 	name: string;
 	value: any;
@@ -18,7 +26,7 @@ export interface BarDataItem {
 
 const buildOptions = (options: {
 	data: Array<BarDataItem>,
-	segments: Array<Segment>,
+	segments: Segments,
 	theme: Theme,
 	title?: string
 }) => {
@@ -47,7 +55,7 @@ const buildOptions = (options: {
 		};
 	};
 
-	const groups = segments.reduce((decorated, segment) => {
+	const groups = segments.definition.reduce((decorated, segment) => {
 		data.forEach((item) => {
 			if (!segment.take(item.value)) {
 				return;
@@ -91,7 +99,8 @@ const buildOptions = (options: {
 		},
 		xAxis: {
 			type: 'category',
-			data: segments.map(segment => segment.name)
+			name: segments.label,
+			data: segments.definition.map(segment => segment.name)
 		},
 		yAxis: {
 			type: 'value',
@@ -114,7 +123,7 @@ const buildOptions = (options: {
 
 export const SegmentBar = (props: {
 	className?: string,
-	segments: Array<Segment>,
+	segments: Segments,
 	data: Array<BarDataItem>,
 	title?: string;
 }) => {

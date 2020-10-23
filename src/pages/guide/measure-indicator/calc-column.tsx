@@ -62,7 +62,7 @@ const DetailBodyOperationCell = styled(ObjectDetailBodyCell)`
 	}
 `;
 const DetailBodySettingCell = styled(ObjectDetailBodyCell)`
-	height: 32px;
+	height: var(--height);
 	border-top: var(--border);
 	border-top-color: transparent;
 	grid-column: span 4;

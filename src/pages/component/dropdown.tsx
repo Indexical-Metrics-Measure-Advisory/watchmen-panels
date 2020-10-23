@@ -18,6 +18,7 @@ const DropdownContainer = styled.div.attrs({
 	border: var(--border);
 	border-radius: var(--border-radius);
 	font-size: var(--font-size);
+	height: var(--height);
 	line-height: var(--line-height);
 	color: var(--font-color);
 	background-color: transparent;
@@ -54,7 +55,7 @@ const Label = styled.span`
 `;
 const Options = styled.div`
 	position: fixed;
-	max-height: calc(32px * 8 + 2px);
+	max-height: calc(var(--height) * 8 + 2px);
 	pointer-events: none;
 	opacity: 0;
 	background-color: var(--bg-color);
@@ -65,7 +66,7 @@ const Options = styled.div`
 	z-index: 1;
 	overflow-y: auto;
 	> span {
-		height: 32px;
+		height: var(--height);
 		display: flex;
 		align-items: center;
 		padding: 6px var(--input-indent);

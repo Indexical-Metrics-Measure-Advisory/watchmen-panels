@@ -25,6 +25,9 @@ export default {
 	titleLineHeight: 54,
 	letterGap: 4,
 
+	// input
+	height: 32,
+
 	// border
 	borderColor: '#d3dce6',
 	border: '1px solid var(--border-color)',

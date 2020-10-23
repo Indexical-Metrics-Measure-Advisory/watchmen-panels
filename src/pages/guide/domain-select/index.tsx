@@ -27,7 +27,7 @@ const DomainButton = styled.div`
 	line-height: 2.2em;
 	border: var(--border);
 	border-radius: calc(var(--border-radius) * 2);
-	padding: 16px 32px;
+	padding: calc(var(--margin) / 2) var(--margin);
 	transition: all 300ms ease-in-out;
 	cursor: pointer;
 	user-select: none;
@@ -47,7 +47,7 @@ const DomainButton = styled.div`
 		opacity: 1;
 	}
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
-		padding: 32px 32px;
+		padding: var(--margin) var(--margin);
 		line-height: 1.2em;
 	}
 `;

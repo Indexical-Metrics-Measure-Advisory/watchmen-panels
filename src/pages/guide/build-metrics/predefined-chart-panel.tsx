@@ -18,7 +18,7 @@ import { ResizeButtons } from './resize-buttons';
 import { SettingsButton } from './settings-button';
 import { SettingsContainer } from './settings-container';
 
-export const ChartDisabledPlaceholder = styled.div.attrs({
+const ChartDisabledPlaceholder = styled.div.attrs({
 	'data-widget': 'chart-disabled'
 })`
 	flex-grow: 1;
