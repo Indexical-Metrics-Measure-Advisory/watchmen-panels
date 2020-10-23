@@ -30,10 +30,11 @@ export const DropdownItem = (props: {
 	onOptionChanged: (options: DropdownOption) => Promise<void>,
 	removable?: boolean,
 	onRemove?: () => void;
+	className?: string;
 }) => {
-	const { label, value, please, require, options, onOptionChanged, removable = false, onRemove } = props;
+	const { label, value, please, require, options, onOptionChanged, removable = false, onRemove, className } = props;
 
-	return <ChartSettingItem>
+	return <ChartSettingItem className={className}>
 		<ChartSettingsItemLabel data-require={require}>{label}</ChartSettingsItemLabel>
 		<ChartSettingsItemEditor>
 			<DropdownInCell options={options} onChange={onOptionChanged} value={value} please={please}/>

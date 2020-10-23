@@ -50,6 +50,12 @@ const ChartBody = styled.div.attrs({
 	}
 	&[data-settings-active=true] {
 		border-top-color: var(--border-color);
+		> div[data-widget='chart-settings'] {
+			background-color: var(--bg-color-opacity7);
+			> div:last-child {
+				margin-bottom: calc(var(--margin) / 2);
+			}
+		}
 	}
 	&[data-settings-active=true][data-expanded=false] {
 	}
@@ -141,6 +147,14 @@ const SettingsLeading = styled.div`
 			background-color: var(--primary-color);
 			color: var(--invert-color);
 			opacity: 1;
+		}
+	}
+`;
+const FactorDropdown = styled(DropdownItem)`
+	div[data-widget="dropdown"] {
+		> span,
+		> div > span {
+			text-transform: capitalize;
 		}
 	}
 `;
@@ -239,12 +253,13 @@ export const CustomChartPanel = (props: {}) => {
 				{settings.indicators.map((indicator, index, indicators) => {
 					const { topicName = '', columnName = '' } = indicator;
 					const value = (topicName && columnName) ? `${topicName}.${columnName}` : '';
-					return <DropdownItem key={index}
-					                     label={index === 0 ? 'On' : 'And On'} value={value}
-					                     require={index === 0} please={'...'}
-					                     options={factorOptions}
-					                     onOptionChanged={onIndicatorDropdownValueChanged(indicator)}
-					                     removable={indicators.length !== 1} onRemove={onIndicatorRemove(indicator)}/>;
+					return <FactorDropdown key={index}
+					                       label={index === 0 ? 'On' : 'And On'} value={value}
+					                       require={index === 0} please={'...'}
+					                       options={factorOptions}
+					                       onOptionChanged={onIndicatorDropdownValueChanged(indicator)}
+					                       removable={indicators.length !== 1}
+					                       onRemove={onIndicatorRemove(indicator)}/>;
 				})}
 				<SettingsLeading>
 					<span>Dimensions</span>
@@ -253,12 +268,13 @@ export const CustomChartPanel = (props: {}) => {
 				{settings.dimensions.map((dimension, index, dimensions) => {
 					const { topicName = '', columnName = '' } = dimension;
 					const value = (topicName && columnName) ? `${topicName}.${columnName}` : '';
-					return <DropdownItem key={index}
-					                     label={index === 0 ? 'With' : 'And With'} value={value}
-					                     require={index === 0} please={'...'}
-					                     options={factorOptions}
-					                     onOptionChanged={onDimensionDropdownValueChanged(dimension)}
-					                     removable={dimensions.length !== 1} onRemove={onDimensionRemove(dimension)}/>;
+					return <FactorDropdown key={index}
+					                       label={index === 0 ? 'With' : 'And With'} value={value}
+					                       require={index === 0} please={'...'}
+					                       options={factorOptions}
+					                       onOptionChanged={onDimensionDropdownValueChanged(dimension)}
+					                       removable={dimensions.length !== 1}
+					                       onRemove={onDimensionRemove(dimension)}/>;
 				})}
 				<SettingsLeading>
 					<span>Save</span>

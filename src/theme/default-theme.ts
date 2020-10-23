@@ -9,6 +9,7 @@ export default {
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
 	bgColorOpacity: 'rgba(249,250,252,0.9)',
+	bgColorOpacity7: 'rgba(249,250,252,0.7)',
 	hoverColor: '#d3dce6',
 	activeColor: 'rgba(43,80,174,0.5)',
 	invertBgColor: 'rgb(1,34,96,0.9)',
