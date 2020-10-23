@@ -102,7 +102,7 @@ export const PredefinedChartPanel = (props: { chart: DomainChart }) => {
 			<ChartOperators>
 				<DownloadButton visible={chartEnabled.enabled}/>
 				<SettingsButton visible={hasSettings && chartEnabled.enabled}/>
-				<ResizeButtons/>
+				<ResizeButtons visible={chartEnabled.enabled}/>
 			</ChartOperators>
 		</ChartHeader>
 		<SettingsContainer>

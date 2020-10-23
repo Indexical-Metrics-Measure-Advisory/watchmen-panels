@@ -141,7 +141,7 @@ export const CustomChartPanel = (props: {}) => {
 			</ChartDisabledPlaceholder>
 			<SettingsContainer>
 				<DropdownItem label="Chart" value={settings.key}
-				              require={true} please={'Series...'}
+				              require={true} please={'Choose chart series...'}
 				              options={ChartDefOptions} onOptionChanged={onChartDefChanged}/>
 			</SettingsContainer>
 		</ChartBody>
