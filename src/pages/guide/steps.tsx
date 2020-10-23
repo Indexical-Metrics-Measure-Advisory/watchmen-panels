@@ -136,7 +136,7 @@ export default (props: { step: Step }) => {
 			<span>
 				<span><Link to={Path.HOME}>Home</Link></span>
 				<span>
-					{showDomain ? <Link to={Path.GUIDE_DOMAIN_SELECT}>Step by Step Guide</Link> : "Step by Step Guide"}
+					{showDomain ? <Link to={Path.GUIDE_DOMAIN_SELECT}>Step by Step Guide</Link> : 'Step by Step Guide'}
 				</span>
 				{showDomain ? <span>{domain.label}</span> : null}
 			</span>

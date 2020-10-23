@@ -1,19 +1,28 @@
-import { faChartArea, faChartBar, faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
+import { faChartArea, faChartBar, faChartLine, faChartPie, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import { DarkenColors24 } from '../../../charts/color-theme';
+import Button from '../../component/button';
 import { ChartHeader, ChartOperators, ChartTitle } from '../../component/chart';
 import { DropdownOption } from '../../component/dropdown';
+import { GuideData, GuideDataColumn, GuideTopic, useGuideContext } from '../guide-context';
 import { useChartContext } from './chart-context';
 import { ChartDefinitions } from './custom';
 import { DropdownItem } from './custom/dropdown-item';
-import { ChartKey, ChartSettings } from './custom/types';
+import { InputItem } from './custom/input-item';
+import { ChartKey, ChartSettings, ChartSettingsDimension, ChartSettingsIndicator } from './custom/types';
 import { DownloadButton } from './download-button';
 import { ResizeButtons } from './resize-buttons';
 import { SettingsButton } from './settings-button';
 import { SettingsContainer } from './settings-container';
 import { useChartSettingsContext } from './settings-context';
+
+interface FactorOption extends DropdownOption {
+	topicName: string;
+	topic: GuideTopic;
+	column: GuideDataColumn;
+}
 
 const ChartBody = styled.div.attrs({
 	'data-widget': 'chart-body'
@@ -22,20 +31,19 @@ const ChartBody = styled.div.attrs({
 	height: 300px;
 	border-top: var(--border);
 	border-top-color: transparent;
-	display: grid;
-	grid-template-columns: 1fr;
+	display: flex;
 	&[data-expanded=true] {
 		@media (min-width: 800px) {
 			height: 500px;
-			> div[data-widget="chart"],
-			> div[data-widget="chart-disabled"] {
+			> div[data-widget='chart'],
+			> div[data-widget='chart-disabled'] {
 				height: 500px;
 			}
 		}
 		@media (min-width: 1600px) {
 			height: 650px;
-			> div[data-widget="chart"],
-			> div[data-widget="chart-disabled"] {
+			> div[data-widget='chart'],
+			> div[data-widget='chart-disabled'] {
 				height: 650px;
 			}
 		}
@@ -46,13 +54,15 @@ const ChartBody = styled.div.attrs({
 	&[data-settings-active=true][data-expanded=false] {
 	}
 	&[data-settings-active=true][data-expanded=true] {
-		grid-template-columns: 70% 30%;
-		> div[data-widget="chart-settings"] {
-			display: block;
+		> div[data-widget='chart'],
+		> div[data-widget='chart-disabled'] {
+			width: 70%;
+		}
+		> div[data-widget='chart-settings'] {
 			position: relative;
 			top: unset;
 			left: unset;
-			width: unset;
+			width: 30%;
 			height: unset;
 			border-top: 0;
 			border-left: var(--border);
@@ -60,18 +70,24 @@ const ChartBody = styled.div.attrs({
 			background-color: var(--bg-color);
 		}
 	}
-	&[data-settings-active=false] {
-		> div[data-widget="chart-settings"] {
-			display: block;
+	&[data-settings-active=false][data-expanded=true] {
+		> div[data-widget='chart'],
+		> div[data-widget='chart-disabled'] {
+			width: 100%
+		}
+		> div[data-widget='chart-settings'] {
 			position: relative;
 			top: unset;
 			left: unset;
-			width: unset;
-			height: unset;
+			width: 0;
+			height: 0;
 			border-top: 0;
-			border-left: var(--border);
+			border-left: 0;
+			padding-left: 0;
+			padding-right: 0;
 			z-index: unset;
 			background-color: var(--bg-color);
+			overflow: hidden;
 		}
 	}
 `;
@@ -108,20 +124,88 @@ const ChartDisabledPlaceholder = styled.div.attrs({
 		}
 	}
 `;
+const SettingsLeading = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.8em;
+	font-weight: var(--font-bold);
+	height: var(--height);
+	border-bottom: var(--border);
+	> button:last-child {
+		min-width: 27px;
+		height: 27px;
+		padding: 0;
+		border: 0;
+		&:hover {
+			background-color: var(--primary-color);
+			color: var(--invert-color);
+			opacity: 1;
+		}
+	}
+`;
 
 const ChartDefOptions = ChartDefinitions.map(def => ({ label: def.name, value: def.key }));
 
 export const CustomChartPanel = (props: {}) => {
 	const chartContext = useChartContext();
 	const settingsContext = useChartSettingsContext();
-	const [ settings, setSettings ] = useState<ChartSettings>({});
+	const guideContext = useGuideContext();
+	const [ settings, setSettings ] = useState<ChartSettings>({
+		dimensions: [ {} ],
+		indicators: [ {} ]
+	});
 
-	const onChartDefChanged = async (option: DropdownOption) => {
+	const onDropdownValueChanged = (key: keyof ChartSettings) => async (option: DropdownOption) => {
 		setSettings({
 			...settings,
-			key: option.value as ChartKey
+			[key]: option.value as ChartKey
 		});
 	};
+	const onInputValueChanged = (key: keyof ChartSettings) => (value: string) => {
+		setSettings({
+			...settings,
+			[key]: value
+		});
+	};
+	const onIndicatorAddClicked = () => {
+		setSettings({ ...settings, indicators: [ ...settings.indicators, {} ] });
+	};
+	const onIndicatorDropdownValueChanged = (indicator: ChartSettingsIndicator) => async (option: DropdownOption) => {
+		const { topicName, column } = option as FactorOption;
+		indicator.topicName = topicName;
+		indicator.columnName = column.name;
+		setSettings({ ...settings });
+	};
+	const onIndicatorRemove = (indicator: ChartSettingsIndicator) => () => {
+		setSettings({ ...settings, dimensions: settings.indicators.filter(d => d !== indicator) });
+	};
+	const onDimensionAddClicked = () => {
+		setSettings({ ...settings, dimensions: [ ...settings.dimensions, {} ] });
+	};
+	const onDimensionDropdownValueChanged = (dimension: ChartSettingsDimension) => async (option: DropdownOption) => {
+		const { topicName, column } = option as FactorOption;
+		dimension.topicName = topicName;
+		dimension.columnName = column.name;
+		setSettings({ ...settings });
+	};
+	const onDimensionRemove = (dimension: ChartSettingsDimension) => () => {
+		setSettings({ ...settings, dimensions: settings.dimensions.filter(d => d !== dimension) });
+	};
+
+	const data: GuideData = guideContext.getData() || {};
+	const factorOptions: Array<FactorOption> = Object.keys(data).map(topicName => {
+		const topic: GuideTopic = data[topicName];
+		return topic.columns.map(column => {
+			return {
+				label: `${topicName}.${column.label || column.name}`,
+				value: `${topicName}.${column.name}`,
+				topicName,
+				topic,
+				column
+			};
+		});
+	}).flat().sort((a, b) => a.label.localeCompare(b.label));
 
 	return <Fragment>
 		<ChartHeader>
@@ -140,9 +224,47 @@ export const CustomChartPanel = (props: {}) => {
 				<FontAwesomeIcon icon={faChartLine}/>
 			</ChartDisabledPlaceholder>
 			<SettingsContainer>
-				<DropdownItem label="Chart" value={settings.key}
-				              require={true} please={'Choose chart series...'}
-				              options={ChartDefOptions} onOptionChanged={onChartDefChanged}/>
+				<SettingsLeading>
+					<span>Identity</span>
+				</SettingsLeading>
+				<InputItem label='Title' value={settings.title} require={true}
+				           onValueChanged={onInputValueChanged('title')}/>
+				<DropdownItem label='Chart' value={settings.key}
+				              require={true} please={'...'}
+				              options={ChartDefOptions} onOptionChanged={onDropdownValueChanged('key')}/>
+				<SettingsLeading>
+					<span>Indicators</span>
+					<Button onClick={onIndicatorAddClicked}><FontAwesomeIcon icon={faPlus}/></Button>
+				</SettingsLeading>
+				{settings.indicators.map((indicator, index, indicators) => {
+					const { topicName = '', columnName = '' } = indicator;
+					const value = (topicName && columnName) ? `${topicName}.${columnName}` : '';
+					return <DropdownItem key={index}
+					                     label={index === 0 ? 'On' : 'And On'} value={value}
+					                     require={index === 0} please={'...'}
+					                     options={factorOptions}
+					                     onOptionChanged={onIndicatorDropdownValueChanged(indicator)}
+					                     removable={indicators.length !== 1} onRemove={onIndicatorRemove(indicator)}/>;
+				})}
+				<SettingsLeading>
+					<span>Dimensions</span>
+					<Button onClick={onDimensionAddClicked}><FontAwesomeIcon icon={faPlus}/></Button>
+				</SettingsLeading>
+				{settings.dimensions.map((dimension, index, dimensions) => {
+					const { topicName = '', columnName = '' } = dimension;
+					const value = (topicName && columnName) ? `${topicName}.${columnName}` : '';
+					return <DropdownItem key={index}
+					                     label={index === 0 ? 'With' : 'And With'} value={value}
+					                     require={index === 0} please={'...'}
+					                     options={factorOptions}
+					                     onOptionChanged={onDimensionDropdownValueChanged(dimension)}
+					                     removable={dimensions.length !== 1} onRemove={onDimensionRemove(dimension)}/>;
+				})}
+				<SettingsLeading>
+					<span>Save</span>
+				</SettingsLeading>
+				<InputItem label='As' value={settings.name} require={true}
+				           onValueChanged={onInputValueChanged('name')}/>
 			</SettingsContainer>
 		</ChartBody>
 	</Fragment>;

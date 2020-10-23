@@ -40,7 +40,7 @@ const DetailBodyCell = styled(ObjectDetailBodyCell)<{ indent?: number }>`
 
 const typeOptions = Object.keys(GuideDataColumnType).filter(k =>
 	// @ts-ignore
-	typeof GuideDataColumnType[k] === "number" || GuideDataColumnType[k] === k || GuideDataColumnType[GuideDataColumnType[k]]?.toString() !== k
+	typeof GuideDataColumnType[k] === 'number' || GuideDataColumnType[k] === k || GuideDataColumnType[GuideDataColumnType[k]]?.toString() !== k
 ).map(key => {
 	return {
 		// @ts-ignore

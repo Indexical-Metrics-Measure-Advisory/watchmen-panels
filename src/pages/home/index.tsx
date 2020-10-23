@@ -82,10 +82,10 @@ export default () => {
 				</Description>
 				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
 			</SlideContent>
-			<img src={ProcessDataImage1} alt=""/>
+			<img src={ProcessDataImage1} alt=''/>
 		</Slide>
 		<Slide>
-			<img src={ProcessDataImage2} alt=""/>
+			<img src={ProcessDataImage2} alt=''/>
 			<SlideContent>
 				<Title>
 					Domain Oriented Perspectives
@@ -98,7 +98,7 @@ export default () => {
 			</SlideContent>
 		</Slide>
 		<Slide>
-			<img src={ProcessDataImage3} alt=""/>
+			<img src={ProcessDataImage3} alt=''/>
 			<SlideContent>
 				<Title>
 					Sustainability made easy<br/>

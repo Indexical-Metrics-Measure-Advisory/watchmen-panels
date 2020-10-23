@@ -65,7 +65,7 @@ export default () => {
 		{isHome
 			? null
 			: <Link to={Path.HOME}>
-				<HeaderButton title="Back to Home">
+				<HeaderButton title='Back to Home'>
 					<FontAwesomeIcon icon={faHome}/>
 				</HeaderButton>
 			</Link>}

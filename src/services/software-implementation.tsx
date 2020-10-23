@@ -46,7 +46,7 @@ export const SoftwareImplementation: Domain = {
 					return { name: item.Category, value: 1 };
 				});
 				return <CountDoughnut className={className}
-				                      title={"{{count}} Tasks"}
+				                      title={'{{count}} Tasks'}
 				                      data={chartData}/>;
 			}
 		},
@@ -59,7 +59,7 @@ export const SoftwareImplementation: Domain = {
 					return { name: item.Owner, value: 1 };
 				});
 				return <CountDoughnut className={className}
-				                      title={"{{count}} Tasks"}
+				                      title={'{{count}} Tasks'}
 				                      data={chartData}/>;
 			}
 		},
@@ -74,7 +74,7 @@ export const SoftwareImplementation: Domain = {
 				});
 
 				return <CountDoughnut className={className}
-				                      title={"{{count}} Tasks"}
+				                      title={'{{count}} Tasks'}
 				                      data={chartData}/>;
 			},
 			options: {
@@ -104,7 +104,7 @@ export const SoftwareImplementation: Domain = {
 					};
 				});
 
-				return <Gantt className={className} title={"{{tasks}} Tasks, {{members}} Members"} data={chartData}/>;
+				return <Gantt className={className} title={'{{tasks}} Tasks, {{members}} Members'} data={chartData}/>;
 			}
 		},
 		{
@@ -133,7 +133,7 @@ export const SoftwareImplementation: Domain = {
 					};
 				});
 
-				return <SegmentBar className={className} title={"{{count}} Tasks"}
+				return <SegmentBar className={className} title={'{{count}} Tasks'}
 				                   segments={segments}
 				                   data={chartData}/>;
 			}

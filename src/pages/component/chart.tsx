@@ -7,8 +7,8 @@ export const ChartContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	> div[data-widget="chart"],
-	> div[data-widget="chart-disabled"] {
+	> div[data-widget='chart'],
+	> div[data-widget='chart-disabled'] {
 		flex-grow: 1;
 		height: 300px;
 	}
@@ -16,29 +16,29 @@ export const ChartContainer = styled.div`
 	&[data-expanded=true] {
 		@media (min-width: 800px) {
 			grid-column: span 3;
-			> div[data-widget="chart-header"] {
+			> div[data-widget='chart-header'] {
 				height: 48px;
 				padding: 0 var(--margin);
 			}
-			> div[data-widget="chart-settings"] {
+			> div[data-widget='chart-settings'] {
 				top: 48px;
 				&[data-visible=true] {
 					height: calc(100% - 48px);
 				}
 			}
-			> div[data-widget="chart"],
-			> div[data-widget="chart-disabled"] {
+			> div[data-widget='chart'],
+			> div[data-widget='chart-disabled'] {
 				height: 500px;
 			}
 		}
 		@media (min-width: 1600px) {
 			grid-column: span 4;
-			> div[data-widget="chart"],
-			> div[data-widget="chart-disabled"] {
+			> div[data-widget='chart'],
+			> div[data-widget='chart-disabled'] {
 				height: 650px;
 			}
 		}
-		div[data-widget="chart-title"] {
+		div[data-widget='chart-title'] {
 			font-size: 1.4em;
 		}
 	}
@@ -101,8 +101,9 @@ export const ChartSettings = styled.div.attrs({
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-column-gap: calc(var(--margin) / 2);
-	grid-row-gap: calc(var(--margin) / 2);
+	grid-row-gap: calc(var(--margin) / 4);
 	align-items: baseline;
+	align-content: start;
 	position: absolute;
 	top: 40px;
 	left: 0;
@@ -116,17 +117,17 @@ export const ChartSettings = styled.div.attrs({
 	&[data-visible=true] {
 		height: calc(100% - 40px);
 		border-top: var(--border);
-		overflow-x: auto;
+		overflow-y: auto;
 		padding-top: calc(var(--margin) / 2);
 		padding-bottom: calc(var(--margin) / 2);
 	}
-	&[data-columns="2"] {
+	&[data-columns='2'] {
 		grid-template-columns: 1fr 1fr;
 	}
 `;
 export const ChartSettingItem = styled.div`
 	display: grid;
-	grid-template-columns: 40% 60%;
+	grid-template-columns: 35% 65%;
 	align-items: center;
 `;
 export const ChartSettingsItemLabel = styled.div`
@@ -138,7 +139,12 @@ export const ChartSettingsItemLabel = styled.div`
 	font-size: 0.8em;
 	font-weight: var(--font-bold);
 	&[data-require=true] {
-		color: var(--primary-color);
+		&:after {
+			content: '*';
+			margin-left: 4px;
+			transform: scale(0.8);
+			transform-origin: left bottom;
+		}
 	}
 `;
 export const ChartSettingsItemEditor = styled.div`
@@ -146,6 +152,21 @@ export const ChartSettingsItemEditor = styled.div`
 	align-items: center;
 	> input,
 	> div[data-widget=dropdown] {
+		flex-grow: 1;
 		font-size: 0.8em;
+	}
+	> button:last-child {
+		min-width: 27px;
+		height: var(--height);
+		padding: 0;
+		border: 0;
+		&:hover {
+			color: var(--primary-color);
+			transform: none;
+			opacity: 1;
+			> svg {
+				transform: scale(1.1);
+			}
+		}
 	}
 `;

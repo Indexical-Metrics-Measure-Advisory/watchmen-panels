@@ -10,7 +10,7 @@ export default () => {
 		<Switch>
 			<Route path={Path.HOME}><Home/></Route>
 			<Route path={Path.GUIDE}><Guide/></Route>
-			<Route path="*"><Welcome/></Route>
+			<Route path='*'><Welcome/></Route>
 		</Switch>
 	</HashRouter>;
 }

@@ -132,7 +132,7 @@ const Dropdown = (props: {
 	return <DropdownContainer className={className}
 	                          data-options-visible={state.active}
 	                          ref={containerRef}
-	                          role="input" tabIndex={0} onClick={onClicked}>
+	                          role='input' tabIndex={0} onClick={onClicked}>
 		<Label>{selectedLabel}</Label>
 		<FontAwesomeIcon icon={faCaretDown}/>
 		<Options style={{

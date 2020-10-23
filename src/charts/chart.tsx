@@ -5,7 +5,7 @@ import 'echarts/lib/chart/pie';
 import 'echarts/lib/component/dataZoom';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/tooltip';
-import echarts from "echarts/lib/echarts";
+import echarts from 'echarts/lib/echarts';
 import React, { useEffect, useRef, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Theme } from '../theme/types';

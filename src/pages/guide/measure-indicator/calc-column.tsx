@@ -168,18 +168,18 @@ export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, 
 	return <DetailBodyRow data-incorrect={incorrect}>
 		<ObjectDetailBodyCell>
 			<DropdownInGrid options={typeOptions} value={calcColumn.expressionCode}
-			                please={"New Indicator..."}
+			                please={'New Indicator...'}
 			                onChange={onCalcTypeChanged(topic.columns, calcColumn)}/>
 		</ObjectDetailBodyCell>
 		{created
 			? <ObjectDetailBodyCell>
-				<InputInGrid type="text" placeholder={name} value={name} onChange={onColumnNameChange}/>
+				<InputInGrid type='text' placeholder={name} value={name} onChange={onColumnNameChange}/>
 			</ObjectDetailBodyCell>
 			: null
 		}
 		{created
 			? <ObjectDetailBodyCell>
-				<InputInGrid type="text" placeholder={label || name} value={label} onChange={onColumnLabelChange}/>
+				<InputInGrid type='text' placeholder={label || name} value={label} onChange={onColumnLabelChange}/>
 			</ObjectDetailBodyCell>
 			: null
 		}
@@ -192,7 +192,7 @@ export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, 
 		}
 		{created
 			? <DetailBodyOperationCell>
-				<Button title={"Delete"} onClick={onColumnDeleteClicked}>
+				<Button title={'Delete'} onClick={onColumnDeleteClicked}>
 					<FontAwesomeIcon icon={faTimes}/>
 				</Button>
 			</DetailBodyOperationCell>
@@ -201,7 +201,7 @@ export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, 
 		{created
 			? <DetailBodySettingCell>
 				<FontAwesomeIcon icon={faEquals}/>
-				<InputInGrid type="text" placeholder={"Expression..."}
+				<InputInGrid type='text' placeholder={'Expression...'}
 				             value={calcColumn.expression}
 				             onChange={onColumnExpressionChange}/>
 			</DetailBodySettingCell>

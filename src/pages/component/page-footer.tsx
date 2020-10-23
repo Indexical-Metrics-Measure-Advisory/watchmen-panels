@@ -56,9 +56,9 @@ export default () => {
 		<LastLine>
 			<span>© IMMA Team. All rights reserved.</span>
 			<SocialIcons>
-				<a href={process.env.REACT_APP_GITHUB} target="_blank"
-				   rel="noopener noreferrer"
-				   title="IMMA in Github">
+				<a href={process.env.REACT_APP_GITHUB} target='_blank'
+				   rel='noopener noreferrer'
+				   title='IMMA in Github'>
 					<FontAwesomeIcon icon={faGithub}/>
 				</a>
 			</SocialIcons>

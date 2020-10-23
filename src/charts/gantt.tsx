@@ -1,6 +1,6 @@
 import color from 'color';
 import dayjs from 'dayjs';
-import echarts from "echarts/lib/echarts";
+import echarts from 'echarts/lib/echarts';
 import React from 'react';
 import { useTheme } from 'styled-components';
 import { Theme } from '../theme/types';
