@@ -69,6 +69,6 @@ export const CustomChart = (props: {
 	}
 
 	const options = ChartMap[settings.key].buildOptions({ data, theme, settings });
-	console.log(JSON.stringify(options));
+	// console.log(JSON.stringify(options));
 	return <EChart className={className} options={options}/>;
 };

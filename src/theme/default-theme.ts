@@ -8,7 +8,7 @@ export default {
 	successHoverColor: 'rgba(22,160,7,1)',
 	invertColor: '#fff',
 	bgColor: '#f9fafc',
-	bgColorOpacity: 'rgba(249,250,252,0.9)',
+	bgColorOpacity: 'rgba(249,250,252,0.95)',
 	bgColorOpacity7: 'rgba(249,250,252,0.7)',
 	hoverColor: '#d3dce6',
 	activeColor: 'rgba(43,80,174,0.5)',

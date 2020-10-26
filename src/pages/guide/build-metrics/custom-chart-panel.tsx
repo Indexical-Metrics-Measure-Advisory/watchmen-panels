@@ -59,8 +59,14 @@ const ChartBody = styled.div.attrs({
 				margin-bottom: calc(var(--margin) / 2);
 			}
 		}
+		> div[data-widget='chart'] + div[data-widget='chart-settings'] {
+			background-color: var(--bg-color-opacity);
+		}
 	}
 	&[data-settings-active=true][data-expanded=false] {
+		> div[data-widget='chart'] {
+			flex-grow: 1;
+		}
 	}
 	&[data-settings-active=true][data-expanded=true] {
 		> div[data-widget='chart'],
