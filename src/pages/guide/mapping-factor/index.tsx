@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
+import { DataColumn, DataColumnType, DataSet, ObjectDataColumn } from '../../../data/types';
 import { BigButton, ButtonType } from '../../component/button';
 import { DropdownOption } from '../../component/dropdown';
 import { useAlert } from '../../context/alert';
@@ -16,13 +17,7 @@ import {
 } from '../component/object-detail';
 import { NoObjects, ObjectItem, ObjectsContainer, ObjectsList } from '../component/object-list';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
-import {
-	GuideData,
-	GuideDataColumn,
-	GuideDataColumnType,
-	GuideDataObjectColumn,
-	useGuideContext
-} from '../guide-context';
+import { useGuideContext } from '../guide-context';
 import { asDisplayName } from '../utils';
 
 const DetailHeader = styled(ObjectDetailHeader)`
@@ -38,15 +33,15 @@ const DetailBodyCell = styled(ObjectDetailBodyCell)<{ indent?: number }>`
 	}
 `;
 
-const typeOptions = Object.keys(GuideDataColumnType).filter(k =>
+const typeOptions = Object.keys(DataColumnType).filter(k =>
 	// @ts-ignore
-	typeof GuideDataColumnType[k] === 'number' || GuideDataColumnType[k] === k || GuideDataColumnType[GuideDataColumnType[k]]?.toString() !== k
+	typeof DataColumnType[k] === 'number' || DataColumnType[k] === k || DataColumnType[DataColumnType[k]]?.toString() !== k
 ).map(key => {
 	return {
 		// @ts-ignore
-		value: GuideDataColumnType[key],
+		value: DataColumnType[key],
 		// @ts-ignore
-		label: GuideDataColumnType[key] as string
+		label: DataColumnType[key] as string
 	};
 });
 
@@ -55,7 +50,7 @@ export default () => {
 	const alert = useAlert();
 	const guide = useGuideContext();
 
-	const data = (guide.getData() || {}) as GuideData;
+	const data = (guide.getData() || {}) as DataSet;
 	const objectKeys = Object.keys(data).sort((k1, k2) => k1.localeCompare(k2));
 
 	const [ activeKey, setActiveKey ] = useState<string | null>(objectKeys.length !== 0 ? objectKeys[0] : null);
@@ -72,19 +67,19 @@ export default () => {
 
 	const onObjectSelected = (key: string) => () => setActiveKey(key);
 	const activeObject = activeKey ? data[activeKey!] : null;
-	const onColumnLabelChange = (column: GuideDataColumn) => (evt: React.ChangeEvent<HTMLInputElement>) => {
+	const onColumnLabelChange = (column: DataColumn) => (evt: React.ChangeEvent<HTMLInputElement>) => {
 		column.label = evt.target.value;
 		guide.setData(guide.getData()!);
 	};
-	const onTypeChanged = (column: GuideDataColumn) => async (option: DropdownOption) => {
-		column.type = option.value as GuideDataColumnType;
+	const onTypeChanged = (column: DataColumn) => async (option: DropdownOption) => {
+		column.type = option.value as DataColumnType;
 		guide.setData(guide.getData()!);
 	};
-	const renderColumns = (columns: Array<GuideDataColumn> = [], indent: number = 0) => {
+	const renderColumns = (columns: Array<DataColumn> = [], indent: number = 0) => {
 		return columns.map(column => {
 			const name = asDisplayName(column);
 			const label = column.label;
-			const childTypes = (column as GuideDataObjectColumn).childTypes || [];
+			const childTypes = (column as ObjectDataColumn).childTypes || [];
 			return <Fragment key={column.name}>
 				<DetailBodyRow>
 					<DetailBodyCell indent={indent}>{name}</DetailBodyCell>

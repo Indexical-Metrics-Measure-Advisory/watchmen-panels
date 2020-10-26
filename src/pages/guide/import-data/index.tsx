@@ -5,12 +5,13 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
 import { toReadableFileSize } from '../../../common/utils';
+import { DataSet } from '../../../data/types';
 import { getDomainDemoData } from '../../../services/domain';
 import { ParsedFile, parseFile } from '../../../services/file';
 import Button, { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
-import { GuideData, useGuideContext } from '../guide-context';
+import { useGuideContext } from '../guide-context';
 import { parseData } from './parse-data';
 
 interface SelectedFile {
@@ -277,7 +278,7 @@ export default () => {
 		guide.setData(Object.keys(existsData).filter(name => name !== key).reduce((all, key) => {
 			all[key] = existsData[key];
 			return all;
-		}, {} as GuideData));
+		}, {} as DataSet));
 	};
 
 	const onUseSampleClicked = async (evt: React.MouseEvent) => {

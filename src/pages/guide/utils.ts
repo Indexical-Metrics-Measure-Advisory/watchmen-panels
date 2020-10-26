@@ -1,6 +1,6 @@
-import { GuideDataColumn } from './guide-context';
+import { DataColumn } from '../../data/types';
 
-export const asDisplayName = (column: GuideDataColumn): string => {
+export const asDisplayName = (column: DataColumn): string => {
 	const name = column.name || '';
 	if (name.indexOf('.') !== -1) {
 		return name.split('.').reverse()[0];
@@ -8,20 +8,20 @@ export const asDisplayName = (column: GuideDataColumn): string => {
 		return name || 'Noname';
 	}
 };
-export const asDisplayType = (column: GuideDataColumn): string => {
+export const asDisplayType = (column: DataColumn): string => {
 	return column.type;
 };
 
-export const gatherAsColumnMap = (columns: Array<GuideDataColumn>, column: GuideDataColumn, key: 'name' | 'label'): { [key in string]: GuideDataColumn } => {
+export const gatherAsColumnMap = (columns: Array<DataColumn>, column: DataColumn, key: 'name' | 'label'): { [key in string]: DataColumn } => {
 	return columns.filter(existsColumn => existsColumn !== column)
 		.reduce((map, column) => {
 			map[column[key]] = column;
 			return map;
-		}, {} as { [key in string]: GuideDataColumn });
+		}, {} as { [key in string]: DataColumn });
 };
 export const generateUniqueKey = (
 	originKey: string,
-	exists: { [key in string]: GuideDataColumn },
+	exists: { [key in string]: DataColumn },
 	regexp: RegExp,
 	replacement: (index: number) => string
 ): string => {
@@ -33,9 +33,9 @@ export const generateUniqueKey = (
 	}
 	return key;
 };
-export const generateUniqueName = (columns: Array<GuideDataColumn>, column: GuideDataColumn, originName: string): string => {
+export const generateUniqueName = (columns: Array<DataColumn>, column: DataColumn, originName: string): string => {
 	return generateUniqueKey(originName, gatherAsColumnMap(columns, column, 'name'), /^(.*)(_{\d}+)*$/, (index) => `$1_${index}`);
 };
-export const generateUniqueLabel = (columns: Array<GuideDataColumn>, column: GuideDataColumn, originLabel: string): string => {
+export const generateUniqueLabel = (columns: Array<DataColumn>, column: DataColumn, originLabel: string): string => {
 	return generateUniqueKey(originLabel, gatherAsColumnMap(columns, column, 'label'), /^(.*)(\s{\d}+)*$/, (index) => `$1 ${index}`);
 };

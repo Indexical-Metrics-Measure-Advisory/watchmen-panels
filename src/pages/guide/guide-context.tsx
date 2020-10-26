@@ -1,57 +1,25 @@
 import React from 'react';
 import { emptyGetter, emptySetter } from '../../common/utils';
+import { DataColumn, DataSet } from '../../data/types';
 import { NoDomain } from '../../services/domain';
 import { Domain } from '../../services/types';
 
-export enum GuideDataColumnType {
-	TEXT = 'text',
-	NUMERIC = 'numeric',
-	BOOLEAN = 'boolean',
-	DATE = 'date',
-	TIME = 'time',
-	DATETIME = 'datetime',
-	OBJECT = 'object',
-	ARRAY = 'array',
-	UNKNOWN = 'unknown'
-}
-
-export interface GuideDataColumn {
-	name: string;
-	label: string;
-	type: GuideDataColumnType;
-	native: boolean;
-}
-
-export interface GuideDataObjectColumn extends GuideDataColumn {
-	childTypes: Array<GuideDataColumn>;
-}
-
-export interface GuideCalcDataColumn extends GuideDataColumn {
+export interface GuideCalcDataColumn extends DataColumn {
 	expressionCode: string;
 	expression: string;
 }
 
-export type GuideTopic = {
-	columns: Array<GuideDataColumn>,
-	data: Array<any>,
-	hash: string;
-};
-
-export type GuideData = {
-	[key in string]: GuideTopic
-};
-
 export interface GuideContext {
 	domain: Domain,
-	data?: GuideData;
+	data?: DataSet;
 }
 
 export interface GuideContextOperator {
 	setDomain: (domain: Domain) => void;
 	getDomain: () => Domain;
 	clearDomain: () => void;
-	setData: (data: GuideData) => void;
-	getData: () => GuideData | undefined;
+	setData: (data: DataSet) => void;
+	getData: () => DataSet | undefined;
 	clearData: () => void;
 }
 
@@ -74,7 +42,7 @@ export const GuideContextProvider = (props: { children?: ((props: any) => React.
 		setDomain: (domain: Domain) => setContext({ ...context, domain }),
 		getDomain: () => context.domain,
 		clearDomain: () => setContext({ ...context, domain: NoDomain }),
-		setData: (data: GuideData) => setContext({ ...context, data }),
+		setData: (data: DataSet) => setContext({ ...context, data }),
 		getData: () => context.data,
 		clearData: () => setContext({ ...context, data: undefined })
 	};

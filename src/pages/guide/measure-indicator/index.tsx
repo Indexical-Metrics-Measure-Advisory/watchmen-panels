@@ -4,13 +4,14 @@ import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
+import { DataColumn, DataSet, DataTopic } from '../../../data/types';
 import { CustomDomainExpression } from '../../../services/types';
 import { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
 import { ObjectDetail, ObjectDetailHeader, ObjectDetailHeaderCell } from '../component/object-detail';
 import { NoObjects, ObjectItem, ObjectsContainer, ObjectsList } from '../component/object-list';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
-import { GuideData, GuideDataColumn, GuideTopic, useGuideContext } from '../guide-context';
+import { useGuideContext } from '../guide-context';
 import { CalcColumn } from './calc-column';
 import { NativeColumn } from './native-column';
 
@@ -39,7 +40,7 @@ export default () => {
 	const alert = useAlert();
 	const guide = useGuideContext();
 
-	const data = (guide.getData() || {}) as GuideData;
+	const data = (guide.getData() || {}) as DataSet;
 	const objectKeys = Object.keys(data).sort((k1, k2) => k1.localeCompare(k2));
 
 	const [ activeKey, setActiveKey ] = useState<string | null>(objectKeys.length !== 0 ? objectKeys[0] : null);
@@ -62,7 +63,7 @@ export default () => {
 		}
 	};
 
-	const renderCalcColumns = (topic: GuideTopic) => {
+	const renderCalcColumns = (topic: DataTopic) => {
 		const calcColumnTypeOptions = [ ...(guide.getDomain().expressions || []), CustomDomainExpression ].map(option => {
 			return {
 				...option,
@@ -76,7 +77,7 @@ export default () => {
 				                   key={`${column.name}-${index}`}/>;
 			});
 
-		const newColumn = { native: false } as GuideDataColumn;
+		const newColumn = { native: false } as DataColumn;
 		return <Fragment>
 			{existsColumns}
 			<CalcColumn column={newColumn} topic={topic} typeOptions={calcColumnTypeOptions}/>

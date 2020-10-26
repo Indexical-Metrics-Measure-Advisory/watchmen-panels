@@ -2,13 +2,14 @@ import { faCheck, faEquals, faExclamation, faTimes } from '@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
+import { DataColumn, DataTopic } from '../../../data/types';
 import { DomainExpression } from '../../../services/types';
 import Button from '../../component/button';
 import { DropdownOption } from '../../component/dropdown';
 import { DropdownInGrid } from '../component/dropdown-in-grid';
 import { InputInGrid } from '../component/input-in-grid';
 import { ObjectDetailBodyCell, ObjectDetailBodyRow } from '../component/object-detail';
-import { GuideCalcDataColumn, GuideDataColumn, GuideTopic, useGuideContext } from '../guide-context';
+import { GuideCalcDataColumn, useGuideContext } from '../guide-context';
 import { asDisplayName, generateUniqueLabel, generateUniqueName } from '../utils';
 
 // EXPLAIN use variable to avoid webstorm inspection errors, @supports is not supported yet
@@ -112,7 +113,7 @@ export const isExpressionIncorrect = (column: GuideCalcDataColumn, allColumnName
 	});
 };
 
-export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, typeOptions: Array<DropdownOption> }) => {
+export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOptions: Array<DropdownOption> }) => {
 	const { column, topic, typeOptions } = props;
 
 	const guide = useGuideContext();
@@ -140,7 +141,7 @@ export const CalcColumn = (props: { column: GuideDataColumn, topic: GuideTopic, 
 		column.label = evt.target.value;
 		guide.setData(guide.getData()!);
 	};
-	const onCalcTypeChanged = (columns: Array<GuideDataColumn>, column: GuideCalcDataColumn) => async (option: DropdownOption) => {
+	const onCalcTypeChanged = (columns: Array<DataColumn>, column: GuideCalcDataColumn) => async (option: DropdownOption) => {
 		const expression = option as unknown as DomainExpression;
 		column.expressionCode = option.value as string;
 		column.name = generateUniqueName(columns, column, column.name || expression.name);

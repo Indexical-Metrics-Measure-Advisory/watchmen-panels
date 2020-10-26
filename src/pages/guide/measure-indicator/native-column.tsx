@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { DataColumn, ObjectDataColumn } from '../../../data/types';
 import { ObjectItem } from '../component/object-list';
-import { GuideDataColumn, GuideDataObjectColumn } from '../guide-context';
 import { asDisplayName, asDisplayType } from '../utils';
 
 const ObjectColumn = styled(ObjectItem)<{ indent?: number }>`
@@ -22,7 +22,7 @@ const ObjectColumn = styled(ObjectItem)<{ indent?: number }>`
 	}
 `;
 
-export const NativeColumn = (props: { column: GuideDataColumn, visible: boolean, indent?: number }) => {
+export const NativeColumn = (props: { column: DataColumn, visible: boolean, indent?: number }) => {
 	const { column, visible, indent = 0 } = props;
 
 	if (!column.native) {
@@ -37,7 +37,7 @@ export const NativeColumn = (props: { column: GuideDataColumn, visible: boolean,
 			<span>{label || name}</span>
 			<span>{type ? `(${type})` : null}</span>
 		</ObjectColumn>
-		{((column as GuideDataObjectColumn).childTypes || []).map(childColumn => {
+		{((column as ObjectDataColumn).childTypes || []).map(childColumn => {
 			return <NativeColumn column={childColumn} visible={visible} indent={indent + 1} key={childColumn.name}/>;
 		})}
 	</Fragment>;

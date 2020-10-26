@@ -47,7 +47,7 @@ export const EChart = (props: {
 	useEffect(() => {
 		const chart = echarts.init(rootRef.current!);
 		options.backgroundColor = options.backgroundColor ?? theme.chartBgColorLight;
-		chart.setOption(options);
+		chart.setOption(options, true);
 		setChart(chart);
 	}, [ options, theme ]);
 
