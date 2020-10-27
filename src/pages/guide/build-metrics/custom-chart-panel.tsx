@@ -168,8 +168,41 @@ const SettingsLeading = styled.div`
 		}
 	}
 `;
+const ChartErrorReminder = styled.div.attrs({
+	'data-widget': 'chart'
+})`
+	flex-grow: 1;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	opacity: 0.5;
+`;
 
 const ChartDefOptions = ChartDefinitions.map(def => ({ label: def.name, value: def.key }));
+
+const hasValidDimension = (settings: ChartSettings) => {
+	const { dimensions } = settings;
+	if (!dimensions) {
+		return false;
+	}
+	if (dimensions.length === 0) {
+		return false;
+	}
+	return dimensions.some(dimension => !!dimension.column);
+};
+
+const hasValidIndicators = (settings: ChartSettings) => {
+	const { indicators } = settings;
+	if (!indicators) {
+		return false;
+	}
+	if (indicators.length === 0) {
+		return false;
+	}
+	return indicators.some(indicator => !!indicator.column);
+};
 
 export const CustomChartPanel = (props: {}) => {
 	const chartContext = useChartContext();
@@ -228,17 +261,34 @@ export const CustomChartPanel = (props: {}) => {
 		});
 	}).flat().sort((a, b) => a.label.localeCompare(b.label));
 
+	const errors: Array<string> = [];
+	if (!hasValidDimension(settings)) {
+		errors.push('At least one dimension is required.');
+	}
+	if (!hasValidIndicators(settings)) {
+		errors.push('At lease one indicator is required.');
+	}
+
 	return <Fragment>
 		<ChartHeader>
 			<ChartTitle>Chart on You</ChartTitle>
 			<ChartOperators>
-				<DownloadButton visible={false}/>
+				<DownloadButton visible={!!settings.key && errors.length === 0}/>
 				<SettingsButton visible={true}/>
 				<ResizeButtons/>
 			</ChartOperators>
 		</ChartHeader>
 		<ChartBody data-expanded={chartContext.expanded} data-settings-active={settingsContext.active}>
-			<CustomChart data={data} settings={settings}/>
+			{!settings.key
+				? null
+				: (errors.length !== 0
+					? <ChartErrorReminder>
+						{errors.map(error => {
+							return <div key={error}>{error}</div>;
+						})}
+					</ChartErrorReminder>
+					: <CustomChart data={data} settings={settings}/>)
+			}
 			{settings.key
 				? null
 				: <ChartDisabledPlaceholder>
