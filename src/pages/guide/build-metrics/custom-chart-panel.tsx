@@ -5,26 +5,30 @@ import styled from 'styled-components';
 import { DarkenColors24 } from '../../../charts/color-theme';
 import { ChartDefinitions } from '../../../charts/custom';
 import { CustomChart } from '../../../charts/custom-chart';
-import { ChartKey, ChartSettings, ChartSettingsDimension, ChartSettingsIndicator } from '../../../charts/custom/types';
-import { DataColumn, DataSet, DataTopic } from '../../../data/types';
+import {
+	ChartKey,
+	ChartSettings,
+	ChartSettingsDimension,
+	ChartSettingsIndicator,
+	IndicatorAggregator
+} from '../../../charts/custom/types';
+import { DataSet, DataTopic } from '../../../data/types';
 import Button from '../../component/button';
 import { ChartHeader, ChartOperators, ChartTitle } from '../../component/chart';
 import { DropdownOption } from '../../component/dropdown';
 import { useGuideContext } from '../guide-context';
 import { useChartContext } from './chart-context';
+import { DimensionDropdown, DimensionInteractionType } from './custom/dimension-dropdown-item';
 import { DropdownItem } from './custom/dropdown-item';
+import { IndicatorDropdown, IndicatorInteractionType } from './custom/indicator-dropdown-item';
 import { InputItem } from './custom/input-item';
+import { FactorOption } from './custom/types';
 import { DownloadButton } from './download-button';
 import { ResizeButtons } from './resize-buttons';
 import { SettingsButton } from './settings-button';
 import { SettingsContainer } from './settings-container';
 import { useChartSettingsContext } from './settings-context';
 
-interface FactorOption extends DropdownOption {
-	topicName: string;
-	topic: DataTopic;
-	column: DataColumn;
-}
 
 const ChartBody = styled.div.attrs({
 	'data-widget': 'chart-body'
@@ -164,14 +168,6 @@ const SettingsLeading = styled.div`
 		}
 	}
 `;
-const FactorDropdown = styled(DropdownItem)`
-	div[data-widget="dropdown"] {
-		> span,
-		> div > span {
-			text-transform: capitalize;
-		}
-	}
-`;
 
 const ChartDefOptions = ChartDefinitions.map(def => ({ label: def.name, value: def.key }));
 
@@ -181,7 +177,7 @@ export const CustomChartPanel = (props: {}) => {
 	const guideContext = useGuideContext();
 	const [ settings, setSettings ] = useState<ChartSettings>({
 		dimensions: [ {} ],
-		indicators: [ {} ]
+		indicators: [ { aggregator: IndicatorAggregator.NONE } ]
 	});
 
 	const onDropdownValueChanged = (key: keyof ChartSettings) => async (option: DropdownOption) => {
@@ -196,32 +192,26 @@ export const CustomChartPanel = (props: {}) => {
 			[key]: value
 		});
 	};
+	// indicator
 	const onIndicatorAddClicked = () => {
-		setSettings({ ...settings, indicators: [ ...settings.indicators, {} ] });
+		setSettings({ ...settings, indicators: [ ...settings.indicators, { aggregator: IndicatorAggregator.NONE } ] });
 	};
-	const onIndicatorDropdownValueChanged = (indicator: ChartSettingsIndicator) => async (option: DropdownOption) => {
-		const { topicName, column } = option as FactorOption;
-		indicator.topicName = topicName;
-		indicator.column = column;
-		indicator.label = column.label || column.name;
-		setSettings({ ...settings });
-	};
-	const onIndicatorRemove = (indicator: ChartSettingsIndicator) => () => {
-		setSettings({ ...settings, indicators: settings.indicators.filter(d => d !== indicator) });
+	const onIndicatorChanged = (indicator: ChartSettingsIndicator, interactionType: IndicatorInteractionType) => {
+		if (interactionType === IndicatorInteractionType.REMOVE) {
+			setSettings({ ...settings, indicators: settings.indicators.filter(item => item !== indicator) });
+		} else if (interactionType === IndicatorInteractionType.CHANGE) {
+			setSettings({ ...settings });
+		}
 	};
 	const onDimensionAddClicked = () => {
 		setSettings({ ...settings, dimensions: [ ...settings.dimensions, {} ] });
 	};
-	const onDimensionDropdownValueChanged = (dimension: ChartSettingsDimension) => async (option: DropdownOption) => {
-		const { topicName, column } = option as FactorOption;
-		dimension.topicName = topicName;
-		dimension.column = column;
-		dimension.label = column.label || column.name;
-
-		setSettings({ ...settings });
-	};
-	const onDimensionRemove = (dimension: ChartSettingsDimension) => () => {
-		setSettings({ ...settings, dimensions: settings.dimensions.filter(d => d !== dimension) });
+	const onDimensionChanged = (dimension: ChartSettingsDimension, interactionType: DimensionInteractionType) => {
+		if (interactionType === DimensionInteractionType.REMOVE) {
+			setSettings({ ...settings, dimensions: settings.dimensions.filter(item => item !== dimension) });
+		} else if (interactionType === DimensionInteractionType.CHANGE) {
+			setSettings({ ...settings });
+		}
 	};
 
 	const data: DataSet = guideContext.getData() || {};
@@ -272,30 +262,26 @@ export const CustomChartPanel = (props: {}) => {
 					<Button onClick={onDimensionAddClicked}><FontAwesomeIcon icon={faPlus}/></Button>
 				</SettingsLeading>
 				{settings.dimensions.map((dimension, index, dimensions) => {
-					const { topicName = '', column: { name: columnName = '' } = { name: '' } } = dimension;
-					const value = (topicName && columnName) ? `${topicName}.${columnName}` : '';
-					return <FactorDropdown key={index}
-					                       label={index === 0 ? 'On' : 'And On'} value={value}
-					                       require={index === 0} please={'...'}
-					                       options={factorOptions}
-					                       onOptionChanged={onDimensionDropdownValueChanged(dimension)}
-					                       removable={dimensions.length !== 1}
-					                       onRemove={onDimensionRemove(dimension)}/>;
+					return <DimensionDropdown key={index}
+					                          label={index === 0 ? 'On' : 'And On'}
+					                          dimension={dimension}
+					                          require={index === 0} please={'...'}
+					                          options={factorOptions}
+					                          removable={dimensions.length !== 1}
+					                          onChanged={onDimensionChanged}/>;
 				})}
 				<SettingsLeading>
 					<span>Indicators</span>
 					<Button onClick={onIndicatorAddClicked}><FontAwesomeIcon icon={faPlus}/></Button>
 				</SettingsLeading>
 				{settings.indicators.map((indicator, index, indicators) => {
-					const { topicName = '', column: { name: columnName = '' } = { name: '' } } = indicator;
-					const value = (topicName && columnName) ? `${topicName}.${columnName}` : '';
-					return <FactorDropdown key={index}
-					                       label={index === 0 ? 'With' : 'And With'} value={value}
-					                       require={index === 0} please={'...'}
-					                       options={factorOptions}
-					                       onOptionChanged={onIndicatorDropdownValueChanged(indicator)}
-					                       removable={indicators.length !== 1}
-					                       onRemove={onIndicatorRemove(indicator)}/>;
+					return <IndicatorDropdown key={index}
+					                          label={index === 0 ? 'With' : 'And With'}
+					                          indicator={indicator}
+					                          require={index === 0} please={'...'}
+					                          options={factorOptions}
+					                          removable={indicators.length !== 1}
+					                          onChanged={onIndicatorChanged}/>;
 				})}
 			</SettingsContainer>
 		</ChartBody>

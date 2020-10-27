@@ -6,7 +6,7 @@ import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../se
 import {
 	ChartHeader,
 	ChartOperators,
-	ChartSettingItem,
+	ChartSettingsItem,
 	ChartSettingsItemEditor,
 	ChartSettingsItemLabel,
 	ChartTitle
@@ -60,12 +60,12 @@ const GroupBy = (props: {
 					value: option.value
 				};
 			});
-			return <ChartSettingItem key={item.label}>
+			return <ChartSettingsItem key={item.label}>
 				<ChartSettingsItemLabel>{item.label}</ChartSettingsItemLabel>
 				<ChartSettingsItemEditor>
 					<Dropdown options={groupByOptions} onChange={onGroupByChanged(item.key)} value={options[item.key]}/>
 				</ChartSettingsItemEditor>
-			</ChartSettingItem>;
+			</ChartSettingsItem>;
 		})}
 	</Fragment>;
 };

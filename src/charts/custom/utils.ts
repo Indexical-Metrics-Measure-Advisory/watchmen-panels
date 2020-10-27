@@ -1,6 +1,6 @@
 import { DataColumnType, DataSet } from '../../data/types';
 import { Theme } from '../../theme/types';
-import { ChartAxisType, ChartSettingsDimension, ChartSettingsIndicator } from './types';
+import { ChartAxisType, ChartSettingsDimension, ChartSettingsIndicator, IndicatorAggregator } from './types';
 
 export const detectDimensionCategory = (dimension: ChartSettingsDimension): ChartAxisType => {
 	switch (dimension.column?.type) {
@@ -19,16 +19,20 @@ export const detectDimensionCategory = (dimension: ChartSettingsDimension): Char
 };
 
 export const detectIndicatorCategory = (indicator: ChartSettingsIndicator): ChartAxisType => {
-	switch (indicator.column?.type) {
-		case DataColumnType.NUMERIC:
+	const { aggregator = IndicatorAggregator.NONE, column: { type } = { type: DataColumnType.UNKNOWN } } = indicator;
+	switch (true) {
+		case [ IndicatorAggregator.SUMMARY, IndicatorAggregator.MEDIAN, IndicatorAggregator.AVERAGE, IndicatorAggregator.COUNT ].includes(aggregator):
 			return ChartAxisType.VALUE;
-		case DataColumnType.DATE:
-		case DataColumnType.DATETIME:
-		case DataColumnType.TIME:
+		default:
+			// follow column type
+			break;
+	}
+	switch (true) {
+		case DataColumnType.NUMERIC === type:
+			return ChartAxisType.VALUE;
+		case [ DataColumnType.DATE, DataColumnType.DATETIME, DataColumnType.TIME ].includes(type):
 			return ChartAxisType.TIME;
-		case DataColumnType.BOOLEAN:
-		case DataColumnType.TEXT:
-		case DataColumnType.UNKNOWN:
+		case [ DataColumnType.BOOLEAN, DataColumnType.TEXT, DataColumnType.UNKNOWN ].includes(type):
 		default:
 			return ChartAxisType.CATEGORY;
 	}
@@ -123,4 +127,143 @@ export const getXAxisValue = (options: { data: DataSet, row: any, dimensions: Ar
 	// in real world, they might be found via relationships and other topics
 	const { row, dimensions } = options;
 	return dimensions.map(d => getDimensionValue(row, d)).join(', ');
+};
+
+export type YAxisSeriesDataItem = Array<any>;
+export type YAxisSeriesData = Array<YAxisSeriesDataItem>;
+const count = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
+	const [ key, , , label ] = items[0];
+	const final = items.reduce((final) => final + 1, 0);
+	return [ key, final, `${label}: ${final}`, label ];
+};
+const sum = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
+	const [ key, , , label ] = items[0];
+	const final = items.reduce((final, item) => (final || 0) + (item[1] || 0), 0);
+	return [ key, final, `${label}: ${final}`, label ];
+};
+const avg = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
+	const [ key, , , label ] = items[0];
+	const final = items.reduce((final, item) => (final || 0) + (item[1] || 0), 0) / items.length;
+	return [ key, final, `${label}: ${final}`, label ];
+};
+const med = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
+	const [ key, , , label ] = items[0];
+	const sorted = items.sort((a: YAxisSeriesDataItem, b: YAxisSeriesDataItem): number => {
+		if (a[1] == null) {
+			return b[1] == null ? 0 : -1;
+		} else if (b[1] == null) {
+			return 1;
+		} else {
+			const minus = (a[1] || 0) - (b[1] || 0);
+			if (isNaN(minus)) {
+				const x = (a[1] || '').toString();
+				const y = (b[1] || '').toString();
+				return x.localeCompare(y);
+			} else {
+				return minus * -1;
+			}
+		}
+	});
+	let final;
+	if (sorted.length % 2 === 1) {
+		final = sorted[Math.floor(sorted.length / 2)];
+	} else {
+		const one = sorted[sorted.length / 2 - 1];
+		const another = sorted[sorted.length / 2];
+		// to avoid compile warning here, use a variable instead of constant
+		const coefficient = 1;
+		final = ((one as unknown as number * coefficient) + (another as unknown as number * coefficient)) / 2;
+	}
+	return [ key, final, `${label}: ${final}`, label ];
+};
+const max = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
+	const [ key, , , label ] = items[0];
+	const final = items.reduce((final, item) => {
+		const minus = (final || 0) - (item[1] || 0);
+		if (isNaN(minus)) {
+			const a = (final || '').toString();
+			const b = (items[1] || '').toString();
+			return a.localeCompare(b) > 0 ? a : b;
+		} else {
+			return minus > 0 ? (final || 0) : (item[1] || 0);
+		}
+	}, 0);
+	return [ key, final, `${label}: ${final}`, label ];
+};
+const min = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
+	const [ key, , , label ] = items[0];
+	const final = items.reduce((final, item) => {
+		const minus = (final || 0) - (item[1] || 0);
+		if (isNaN(minus)) {
+			const a = (final || '').toString();
+			const b = (items[1] || '').toString();
+			return a.localeCompare(b) < 0 ? a : b;
+		} else {
+			return minus < 0 ? (final || 0) : (item[1] || 0);
+		}
+	}, 0);
+	return [ key, final, `${label}: ${final}`, label ];
+};
+
+export const getYAxisSeriesData = (options: {
+	data: DataSet,
+	indicator: ChartSettingsIndicator,
+	dimensions: Array<ChartSettingsDimension>,
+}): YAxisSeriesData => {
+	const { data, indicator, dimensions } = options;
+
+	const seriesData: Array<YAxisSeriesDataItem> = (data[indicator.topicName!].data || []).map(item => {
+		const label = getIndicatorLabel(indicator);
+		const column = indicator.column!;
+		const value = item[column.name!];
+		return [
+			// xAxis
+			getXAxisValue({ data, dimensions, row: item }),
+			// yAxis
+			value,
+			`${label}: ${value}`,
+			label
+		] as YAxisSeriesDataItem;
+	});
+
+	let aggregate: (((items: Array<YAxisSeriesDataItem>) => YAxisSeriesDataItem) | null) = null;
+	switch (indicator.aggregator) {
+		case IndicatorAggregator.COUNT:
+			aggregate = count;
+			break;
+		case IndicatorAggregator.SUMMARY:
+			aggregate = sum;
+			break;
+		case IndicatorAggregator.AVERAGE:
+			aggregate = avg;
+			break;
+		case IndicatorAggregator.MEDIAN:
+			aggregate = med;
+			break;
+		case IndicatorAggregator.MAXIMUM:
+			aggregate = max;
+			break;
+		case IndicatorAggregator.MINIMUM:
+			aggregate = min;
+			break;
+		case IndicatorAggregator.NONE:
+		default:
+			break;
+	}
+
+	if (aggregate == null) {
+		return seriesData;
+	} else {
+		const map = seriesData.reduce((map, item) => {
+			const [ key ] = item;
+			if (map.has(key)) {
+				map.get(key)!.push(item);
+			} else {
+				map.set(key, [ item ]);
+			}
+			return map;
+		}, new Map<string, Array<YAxisSeriesDataItem>>());
+
+		return Array.from(map.values()).map(values => aggregate!(values));
+	}
 };

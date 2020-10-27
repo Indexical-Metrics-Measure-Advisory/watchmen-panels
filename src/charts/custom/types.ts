@@ -7,10 +7,21 @@ export enum ChartAxisType {
 	VALUE = 'value'
 }
 
+export enum IndicatorAggregator {
+	NONE = 'none',
+	COUNT = 'count',
+	SUMMARY = 'sum',
+	AVERAGE = 'avg',
+	MEDIAN = 'med',
+	MAXIMUM = 'max',
+	MINIMUM = 'min'
+}
+
 export interface ChartSettingsIndicator {
 	topicName?: string;
 	column?: DataColumn;
 	label?: string;
+	aggregator?: IndicatorAggregator
 }
 
 export interface ChartSettingsDimension {

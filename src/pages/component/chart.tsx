@@ -125,12 +125,16 @@ export const ChartSettings = styled.div.attrs({
 		grid-template-columns: 1fr 1fr;
 	}
 `;
-export const ChartSettingItem = styled.div`
+export const ChartSettingsItem = styled.div.attrs({
+	'data-widget': 'chart-settings-item'
+})`
 	display: grid;
 	grid-template-columns: 35% 65%;
 	align-items: center;
 `;
-export const ChartSettingsItemLabel = styled.div`
+export const ChartSettingsItemLabel = styled.div.attrs({
+	'data-widget': 'chart-settings-item-label'
+})`
 	display: flex;
 	align-items: center;
 	overflow-x: hidden;
@@ -147,7 +151,9 @@ export const ChartSettingsItemLabel = styled.div`
 		}
 	}
 `;
-export const ChartSettingsItemEditor = styled.div`
+export const ChartSettingsItemEditor = styled.div.attrs({
+	'data-widget': 'chart-settings-item-editor'
+})`
 	display: flex;
 	align-items: center;
 	> input,

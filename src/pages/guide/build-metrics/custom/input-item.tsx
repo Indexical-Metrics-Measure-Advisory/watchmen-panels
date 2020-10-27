@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ChartSettingItem, ChartSettingsItemEditor, ChartSettingsItemLabel } from '../../../component/chart';
+import { ChartSettingsItem, ChartSettingsItemEditor, ChartSettingsItemLabel } from '../../../component/chart';
 import Input from '../../../component/input';
 
 const InputInCell = styled(Input)`
@@ -25,10 +25,10 @@ export const InputItem = (props: {
 		onValueChanged((event.target as HTMLInputElement).value);
 	};
 
-	return <ChartSettingItem>
+	return <ChartSettingsItem>
 		<ChartSettingsItemLabel data-require={require}>{label}</ChartSettingsItemLabel>
 		<ChartSettingsItemEditor>
 			<InputInCell onChange={onChanged} value={value} placeholder={placeholder}/>
 		</ChartSettingsItemEditor>
-	</ChartSettingItem>;
+	</ChartSettingsItem>;
 };
