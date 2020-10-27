@@ -27,7 +27,8 @@ export interface ChartSettings {
 }
 
 export enum ChartKey {
-	BAR = 'bar'
+	BAR = 'bar',
+	LINE = 'line',
 }
 
 export interface ChartOptions {
@@ -45,5 +46,9 @@ export interface ChartDefinition {
 
 export interface ChartBarDefinition extends ChartDefinition {
 	key: ChartKey.BAR
+}
+
+export interface ChartLineDefinition extends ChartDefinition {
+	key: ChartKey.LINE
 }
 

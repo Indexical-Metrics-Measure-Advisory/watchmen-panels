@@ -1,4 +1,5 @@
 import { Bar } from './bar';
+import { Line } from './line';
 import { ChartDefinition, ChartKey } from './types';
 // import { Line } from './line';
 // import { Pie } from './pie';
@@ -9,7 +10,8 @@ import { ChartDefinition, ChartKey } from './types';
 // import { HeatMap } from 'heat-map';
 
 export const ChartDefinitions: Array<ChartDefinition> = [
-	Bar
+	Bar,
+	Line
 ];
 export const ChartMap = ChartDefinitions.reduce((map, chart) => {
 	map[chart.key] = chart;
