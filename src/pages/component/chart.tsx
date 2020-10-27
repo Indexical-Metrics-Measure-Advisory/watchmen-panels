@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const ChartContainer = styled.div`
+export const ChartContainer = styled.div.attrs({
+	'data-widget': 'chart-container'
+})`
 	border-radius: calc(var(--border-radius) * 2);
 	border: var(--border);
 	overflow: hidden;

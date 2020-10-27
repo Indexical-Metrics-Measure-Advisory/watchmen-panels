@@ -9,7 +9,8 @@ export const SettingsButton = (props: { visible: boolean }) => {
 
 	const settings = useChartSettingsContext();
 
-	return <Button onClick={settings.toggleActive} data-visible={visible} data-active={settings.active}>
+	return <Button onClick={settings.toggleActive} data-visible={visible} data-active={settings.active}
+	               data-widget={'chart-settings-btn'}>
 		<FontAwesomeIcon icon={faCog}/>
 	</Button>;
 };

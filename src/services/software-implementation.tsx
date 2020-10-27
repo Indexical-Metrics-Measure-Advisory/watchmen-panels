@@ -3,6 +3,7 @@ import React from 'react';
 import { CountDoughnut } from '../charts/count-doughnut';
 import { Gantt } from '../charts/gantt';
 import { SegmentBar } from '../charts/segment-bar';
+import { DataSet } from '../data/types';
 // @ts-ignore
 import SoftwareImplementationTasks from './software-implementation.csv';
 import { Domain, PredefinedExpression } from './types';
@@ -110,8 +111,9 @@ export const SoftwareImplementation: Domain = {
 		{
 			key: 'schedule-risk-management',
 			name: 'Schedule - Risk Management',
-			enabled: (data: Array<any>) => {
-				const enabled = data && -1 === data.findIndex(item => typeof item.Workdays !== 'number');
+			enabled: (data?: DataSet) => {
+				const tasks: Array<any> = (data || {}).tasks?.data || [];
+				const enabled = tasks && -1 === tasks.findIndex(item => typeof item.Workdays !== 'number');
 				return { enabled, reason: 'Factor "Workdays" missing.' };
 			},
 			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {

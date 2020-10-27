@@ -10,11 +10,11 @@ export const ResizeButtons = (props: { visible?: boolean }) => {
 
 	return <Fragment>
 		<Button onClick={container.toggleExpanded} data-visible={visible && !container.expanded}
-		        data-size-fixed-visible={false}>
+		        data-size-fixed-visible={false} data-widget={'chart-resize-btn'}>
 			<FontAwesomeIcon icon={faExpandArrowsAlt}/>
 		</Button>
 		<Button onClick={container.toggleExpanded} data-visible={visible && container.expanded}
-		        data-size-fixed-visible={false}>
+		        data-size-fixed-visible={false} data-widget={'chart-resize-btn'}>
 			<FontAwesomeIcon icon={faCompressArrowsAlt}/>
 		</Button>
 	</Fragment>;

@@ -1,4 +1,5 @@
 import { ChartElement } from '../charts/types';
+import { DataSet } from '../data/types';
 
 export interface DomainExpression {
 	code: string;
@@ -32,7 +33,7 @@ export interface DomainChart {
 	key: string;
 	name: string;
 	chart: ChartElement;
-	enabled?: (data: Array<any>) => { enabled: boolean, reason?: string };
+	enabled?: (data?: DataSet) => { enabled: boolean, reason?: string };
 	options?: DomainChartOptions
 }
 

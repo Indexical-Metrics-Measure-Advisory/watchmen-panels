@@ -12,13 +12,21 @@ import { AutonomousCustomChartPanel, CustomChartPanel } from './custom-chart-pan
 import { PredefinedChartPanel } from './predefined-chart-panel';
 import { SavedCustomChartContextProvider, useSavedCustomChartContext } from './saved-custom-chart-context';
 
-const MetricsContainer = styled.div`
+const MetricsContainer = styled.div.attrs({
+	'data-widget': 'metrics-container'
+})`
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-column-gap: var(--margin);
 	grid-row-gap: var(--margin);
 	margin: var(--margin) var(--margin) 0;
-	flex-direction: column;
+	&[data-rnd=true] {
+		min-height: 26.4cm;
+		width: 18cm;
+		margin-right: auto;
+		border: 1px dashed var(--danger-color);
+		border-radius: 2px;
+	}
 	@media (min-width: 800px) {
 		grid-template-columns: repeat(3, 1fr);
 	}
@@ -27,27 +35,61 @@ const MetricsContainer = styled.div`
 	}
 `;
 
-const AsRnd = (props: { rnd: boolean, children: ((props: any) => React.ReactNode) | React.ReactNode }) => {
-	const { rnd, children } = props;
+const HideDiv = styled.div`
+	display: none;
+	overflow: hidden;
+`;
+
+const AsRnd = (props: {
+	rnd: boolean,
+	hidden?: boolean,
+	children: ((props: any) => React.ReactNode) | React.ReactNode
+}) => {
+	const { rnd, hidden = false, children } = props;
 	if (rnd) {
-		return <Rnd>
-			{children}
-		</Rnd>;
+		if (hidden) {
+			return <HideDiv>{children}</HideDiv>;
+		} else {
+			return <Rnd>{children}</Rnd>;
+		}
 	} else {
 		return <Fragment>{children}</Fragment>;
 	}
 };
 
-const CustomCharts = () => {
+const CustomCharts = (props: { rnd: boolean }) => {
+	const { rnd } = props;
+
 	const customCharts = useSavedCustomChartContext();
 
 	const onSettingsChanged = (replaced: ChartSettings) => (replacement: ChartSettings) => customCharts.replace(replacement, replaced);
 
 	return <Fragment>
 		{customCharts.get().map((settings, index) => {
-			return <ChartContextProvider key={`${settings.key}-${index}`}>
-				<CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged(settings)}/>
-			</ChartContextProvider>;
+			return <AsRnd rnd={rnd}>
+				<ChartContextProvider key={`${settings.key}-${index}`}>
+					<CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged(settings)}/>
+				</ChartContextProvider>
+			</AsRnd>;
+		})}
+	</Fragment>;
+};
+
+const PredefinedCharts = (props: { rnd: boolean }) => {
+	const { rnd } = props;
+
+	const guide = useGuideContext();
+	const domain = guide.getDomain();
+	const charts = domain.charts || [];
+
+	return <Fragment>
+		{charts.map(chart => {
+			const hidden = !(chart.enabled ? chart.enabled(guide.getData()) : { enabled: true }).enabled;
+			return <AsRnd rnd={rnd} hidden={hidden} key={chart.name}>
+				<ChartContextProvider>
+					<PredefinedChartPanel chart={chart}/>
+				</ChartContextProvider>
+			</AsRnd>;
 		})}
 	</Fragment>;
 };
@@ -62,26 +104,18 @@ export default () => {
 		history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 	};
 	const onSaveAsPdfClicked = () => guide.print();
-	const onRndClicked = () => {
-		// history.push(toDomain(Path.GUIDE_EXPORT_REPORT, guide.getDomain().code));
-		setRnd(!rnd);
-	};
-
-	const domain = guide.getDomain();
-	const charts = domain.charts || [];
+	const onRndClicked = () => setRnd(!rnd);
 
 	return <Fragment>
-		<MetricsContainer>
+		<MetricsContainer data-rnd={rnd}>
 			<SavedCustomChartContextProvider>
-				{charts.map(chart => <AsRnd rnd={rnd} key={chart.name}>
+				<PredefinedCharts rnd={rnd}/>
+				<CustomCharts rnd={rnd}/>
+				<AsRnd rnd={rnd} hidden={true}>
 					<ChartContextProvider>
-						<PredefinedChartPanel chart={chart}/>
+						<AutonomousCustomChartPanel/>
 					</ChartContextProvider>
-				</AsRnd>)}
-				<CustomCharts/>
-				<ChartContextProvider>
-					<AutonomousCustomChartPanel/>
-				</ChartContextProvider>
+				</AsRnd>
 			</SavedCustomChartContextProvider>
 		</MetricsContainer>
 		<OperationBar>

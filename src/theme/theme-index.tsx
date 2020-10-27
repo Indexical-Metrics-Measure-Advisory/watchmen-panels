@@ -74,16 +74,33 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		//}
 		
 		&[data-on-print='true'] {
+			body {
+				background-color: transparent;
+			}
 			header[data-widget='page-header'],
 			footer[data-widget='page-footer'] {
 				display: none;
 			}
 			header[data-widget='page-header'] + main[data-widget='page-body'] {
 				margin-top: 0;
+				&:before {
+					display: none;
+				}
 				div[data-widget='guide-steps'],
 				div[data-widget='guide-operation-bar'] {
 					display: none;
 				}
+				div[data-widget='metrics-container'][data-rnd=true] {
+					border-color: transparent;
+					transform: translate(-30px, -150px);
+				}
+			}
+		}
+	}
+	.react-draggable {
+		div[data-widget='chart-header'] {
+			button {
+				display: none;
 			}
 		}
 	}

@@ -22,7 +22,7 @@ export const DownloadButton = (props: { visible: boolean }) => {
 			alert.show('Failed to generate chart image.');
 		}
 	};
-	return <Button onClick={onDownloadClicked} data-visible={visible}>
+	return <Button onClick={onDownloadClicked} data-visible={visible} data-widget={'chart-download-btn'}>
 		<FontAwesomeIcon icon={faDownload}/>
 	</Button>;
 };

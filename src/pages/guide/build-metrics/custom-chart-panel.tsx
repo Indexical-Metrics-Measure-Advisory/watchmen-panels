@@ -208,7 +208,7 @@ const hasValidIndicators = (settings: ChartSettings) => {
 export const CustomChartPanel = (props: {
 	settings: ChartSettings,
 	onSettingsChanged: (settings: ChartSettings) => void,
-	canSave?: boolean
+	canSave?: boolean,
 }) => {
 	const { settings, onSettingsChanged, canSave = false } = props;
 
@@ -343,5 +343,6 @@ export const AutonomousCustomChartPanel = () => {
 
 	const onSettingsChanged = (settings: ChartSettings) => setSettings(settings);
 
-	return <CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged} canSave={true}/>;
+	return <CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged}
+	                         canSave={true}/>;
 };
