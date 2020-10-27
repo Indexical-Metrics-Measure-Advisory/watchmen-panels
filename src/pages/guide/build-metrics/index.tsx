@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { ChartInstanceContextProvider } from '../../../charts/chart-instance-context';
 import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
@@ -41,10 +42,14 @@ export default () => {
 	return <Fragment>
 		<MetricsContainer>
 			{charts.map(chart => <ChartContextProvider key={chart.name}>
-				<PredefinedChartPanel chart={chart}/>
+				<ChartInstanceContextProvider>
+					<PredefinedChartPanel chart={chart}/>
+				</ChartInstanceContextProvider>
 			</ChartContextProvider>)}
 			<ChartContextProvider>
-				<CustomChartPanel/>
+				<ChartInstanceContextProvider>
+					<CustomChartPanel/>
+				</ChartInstanceContextProvider>
 			</ChartContextProvider>
 		</MetricsContainer>
 		<OperationBar>

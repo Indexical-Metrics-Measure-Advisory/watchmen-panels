@@ -135,17 +135,17 @@ export type YAxisSeriesData = Array<YAxisSeriesDataItem>;
 const count = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
 	const [ key, , , label ] = items[0];
 	const final = items.reduce((final) => final + 1, 0);
-	return [ key, final, `${label}: ${final}`, label ];
+	return [ key, final, `Count: ${final}`, label ];
 };
 const sum = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
 	const [ key, , , label ] = items[0];
 	const final = items.reduce((final, item) => (final || 0) + (item[1] || 0), 0);
-	return [ key, final, `${label}: ${final}`, label ];
+	return [ key, final, `Sum: ${final}`, label ];
 };
 const avg = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
 	const [ key, , , label ] = items[0];
 	const final = items.reduce((final, item) => (final || 0) + (item[1] || 0), 0) / items.length;
-	return [ key, final, `${label}: ${final}`, label ];
+	return [ key, final, `Average: ${final}`, label ];
 };
 const med = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
 	const [ key, , , label ] = items[0];
@@ -175,7 +175,7 @@ const med = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
 		const coefficient = 1;
 		final = ((one as unknown as number * coefficient) + (another as unknown as number * coefficient)) / 2;
 	}
-	return [ key, final, `${label}: ${final}`, label ];
+	return [ key, final, `Median: ${final}`, label ];
 };
 const max = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicator): YAxisSeriesDataItem => {
 	const [ key, value, , label ] = items[0];
@@ -195,7 +195,7 @@ const max = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicato
 			}
 		}
 	}, value);
-	return [ key, final, `${label}: ${final}`, label ];
+	return [ key, final, `Max: ${final}`, label ];
 };
 const min = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicator): YAxisSeriesDataItem => {
 	const [ key, value, , label ] = items[0];
@@ -216,7 +216,7 @@ const min = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicato
 		}
 	}, value);
 	console.log(final);
-	return [ key, final, `${label}: ${final}`, label ];
+	return [ key, final, `Min: ${final}`, label ];
 };
 
 export const getYAxisSeriesData = (options: {

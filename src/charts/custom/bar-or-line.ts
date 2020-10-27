@@ -69,10 +69,11 @@ export const buildOptionsForBarOrLine = (defaultType: 'bar' | 'line') => (params
 		xAxis,
 		yAxis: validIndicators.map(indicator => {
 			const type = detectIndicatorCategory(indicator);
+			const axisData = type === ChartAxisType.CATEGORY ? asIndicatorData(indicator, data) : undefined;
 			return {
 				type,
 				name: getIndicatorLabel(indicator),
-				data: type === ChartAxisType.CATEGORY ? asIndicatorData(indicator, data) : undefined
+				data: axisData
 			};
 		}),
 		series

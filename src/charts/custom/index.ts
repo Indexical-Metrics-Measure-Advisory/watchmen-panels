@@ -1,7 +1,6 @@
 import { Bar } from './bar';
 import { Line } from './line';
 import { ChartDefinition, ChartKey } from './types';
-// import { Line } from './line';
 // import { Pie } from './pie';
 // import { Scatter } from './scatter';
 // import { Radar } from './radar';

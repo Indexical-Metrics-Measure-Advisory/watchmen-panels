@@ -10,6 +10,7 @@ import echarts from 'echarts/lib/echarts';
 import React, { useEffect, useRef, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Theme } from '../theme/types';
+import { ChartInstanceContextEvent, useChartInstanceContext } from './chart-instance-context';
 
 const ChartContainer = styled.div.attrs({
 	'data-widget': 'chart'
@@ -30,6 +31,7 @@ export const EChart = (props: {
 	const { className, options } = props;
 
 	const theme = useTheme() as Theme;
+	const chartInstance = useChartInstanceContext();
 	const rootRef = useRef<HTMLDivElement>(null);
 	const [ chart, setChart ] = useState<ECharts | null>(null);
 
@@ -51,6 +53,22 @@ export const EChart = (props: {
 		chart.setOption(options, true);
 		setChart(chart);
 	}, [ options, theme ]);
+	useEffect(() => {
+		const listener = () => {
+			const chart = echarts.init(rootRef.current!);
+			chart.setOption(options, true);
+			const dataUrl = chart.getDataURL({
+				type: 'png',
+				pixelRatio: window.devicePixelRatio,
+				backgroundColor: 'transparent'
+			});
+			chartInstance.sendImage(dataUrl);
+		};
+		chartInstance.on(ChartInstanceContextEvent.DOWNLOAD, listener);
+		return () => {
+			chartInstance.off(ChartInstanceContextEvent.DOWNLOAD, listener);
+		};
+	});
 
 	return <ChartContainer>
 		<Chart className={className} ref={rootRef}/>
