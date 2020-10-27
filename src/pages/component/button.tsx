@@ -49,7 +49,6 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 	}
 `;
 
-
 export default Button;
 
 export const BigButton = styled(Button)`

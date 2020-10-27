@@ -10,7 +10,7 @@ export interface ChartInstanceContext {
 }
 
 const Context = React.createContext<ChartInstanceContext>({} as ChartInstanceContext);
-Context.displayName = 'ChartContext';
+Context.displayName = 'ChartInstanceContext';
 
 export enum ChartInstanceContextEvent {
 	DOWNLOAD = 'download',

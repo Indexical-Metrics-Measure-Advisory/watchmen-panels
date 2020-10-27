@@ -1,14 +1,15 @@
 import React, { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { ChartInstanceContextProvider } from '../../../charts/chart-instance-context';
+import { ChartSettings } from '../../../charts/custom/types';
 import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
 import { useGuideContext } from '../guide-context';
 import { ChartContextProvider } from './chart-context';
-import { CustomChartPanel } from './custom-chart-panel';
+import { AutonomousCustomChartPanel, CustomChartPanel } from './custom-chart-panel';
 import { PredefinedChartPanel } from './predefined-chart-panel';
+import { SavedCustomChartContextProvider, useSavedCustomChartContext } from './saved-custom-chart-context';
 
 const MetricsContainer = styled.div`
 	display: grid;
@@ -24,6 +25,20 @@ const MetricsContainer = styled.div`
 		grid-template-columns: repeat(4, 1fr);
 	}
 `;
+
+const CustomCharts = () => {
+	const customCharts = useSavedCustomChartContext();
+
+	const onSettingsChanged = (replaced: ChartSettings) => (replacement: ChartSettings) => customCharts.replace(replacement, replaced);
+
+	return <Fragment>
+		{customCharts.get().map((settings, index) => {
+			return <ChartContextProvider key={`${settings.key}-${index}`}>
+				<CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged(settings)}/>
+			</ChartContextProvider>;
+		})}
+	</Fragment>;
+};
 
 export default () => {
 	const history = useHistory();
@@ -41,16 +56,15 @@ export default () => {
 
 	return <Fragment>
 		<MetricsContainer>
-			{charts.map(chart => <ChartContextProvider key={chart.name}>
-				<ChartInstanceContextProvider>
+			<SavedCustomChartContextProvider>
+				{charts.map(chart => <ChartContextProvider key={chart.name}>
 					<PredefinedChartPanel chart={chart}/>
-				</ChartInstanceContextProvider>
-			</ChartContextProvider>)}
-			<ChartContextProvider>
-				<ChartInstanceContextProvider>
-					<CustomChartPanel/>
-				</ChartInstanceContextProvider>
-			</ChartContextProvider>
+				</ChartContextProvider>)}
+				<CustomCharts/>
+				<ChartContextProvider>
+					<AutonomousCustomChartPanel/>
+				</ChartContextProvider>
+			</SavedCustomChartContextProvider>
 		</MetricsContainer>
 		<OperationBar>
 			<BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>

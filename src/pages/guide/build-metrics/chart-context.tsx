@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { ChartInstanceContextProvider } from '../../../charts/chart-instance-context';
 import { ChartContainer } from '../../component/chart';
 import { ChartSettingsContextProvider } from './settings-context';
 
@@ -26,7 +27,9 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 	return <Context.Provider value={context}>
 		<ChartContainer data-expanded={expanded} ref={containerRef}>
 			<ChartSettingsContextProvider>
-				{children}
+				<ChartInstanceContextProvider>
+					{children}
+				</ChartInstanceContextProvider>
 			</ChartSettingsContextProvider>
 		</ChartContainer>
 	</Context.Provider>;

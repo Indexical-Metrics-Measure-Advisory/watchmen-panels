@@ -25,6 +25,7 @@ import { InputItem } from './custom/input-item';
 import { FactorOption } from './custom/types';
 import { DownloadButton } from './download-button';
 import { ResizeButtons } from './resize-buttons';
+import { SaveButton } from './save-button';
 import { SettingsButton } from './settings-button';
 import { SettingsContainer } from './settings-container';
 import { useChartSettingsContext } from './settings-context';
@@ -204,46 +205,41 @@ const hasValidIndicators = (settings: ChartSettings) => {
 	return indicators.some(indicator => !!indicator.column);
 };
 
-export const CustomChartPanel = (props: {}) => {
+export const CustomChartPanel = (props: {
+	settings: ChartSettings,
+	onSettingsChanged: (settings: ChartSettings) => void,
+	canSave?: boolean
+}) => {
+	const { settings, onSettingsChanged, canSave = false } = props;
+
 	const chartContext = useChartContext();
 	const settingsContext = useChartSettingsContext();
 	const guideContext = useGuideContext();
-	const [ settings, setSettings ] = useState<ChartSettings>({
-		dimensions: [ {} ],
-		indicators: [ { aggregator: IndicatorAggregator.NONE } ]
-	});
 
 	const onDropdownValueChanged = (key: keyof ChartSettings) => async (option: DropdownOption) => {
-		setSettings({
-			...settings,
-			[key]: option.value as ChartKey
-		});
+		onSettingsChanged({ ...settings, [key]: option.value as ChartKey });
 	};
 	const onInputValueChanged = (key: keyof ChartSettings) => (value: string) => {
-		setSettings({
-			...settings,
-			[key]: value
-		});
+		onSettingsChanged({ ...settings, [key]: value });
 	};
 	// indicator
-	const onIndicatorAddClicked = () => {
-		setSettings({ ...settings, indicators: [ ...settings.indicators, { aggregator: IndicatorAggregator.NONE } ] });
-	};
+	const onIndicatorAddClicked = () => onSettingsChanged({
+		...settings,
+		indicators: [ ...settings.indicators, { aggregator: IndicatorAggregator.NONE } ]
+	});
 	const onIndicatorChanged = (indicator: ChartSettingsIndicator, interactionType: IndicatorInteractionType) => {
 		if (interactionType === IndicatorInteractionType.REMOVE) {
-			setSettings({ ...settings, indicators: settings.indicators.filter(item => item !== indicator) });
+			onSettingsChanged({ ...settings, indicators: settings.indicators.filter(item => item !== indicator) });
 		} else if (interactionType === IndicatorInteractionType.CHANGE) {
-			setSettings({ ...settings });
+			onSettingsChanged({ ...settings });
 		}
 	};
-	const onDimensionAddClicked = () => {
-		setSettings({ ...settings, dimensions: [ ...settings.dimensions, {} ] });
-	};
+	const onDimensionAddClicked = () => onSettingsChanged({ ...settings, dimensions: [ ...settings.dimensions, {} ] });
 	const onDimensionChanged = (dimension: ChartSettingsDimension, interactionType: DimensionInteractionType) => {
 		if (interactionType === DimensionInteractionType.REMOVE) {
-			setSettings({ ...settings, dimensions: settings.dimensions.filter(item => item !== dimension) });
+			onSettingsChanged({ ...settings, dimensions: settings.dimensions.filter(item => item !== dimension) });
 		} else if (interactionType === DimensionInteractionType.CHANGE) {
-			setSettings({ ...settings });
+			onSettingsChanged({ ...settings });
 		}
 	};
 
@@ -271,8 +267,9 @@ export const CustomChartPanel = (props: {}) => {
 
 	return <Fragment>
 		<ChartHeader>
-			<ChartTitle>Chart on You</ChartTitle>
+			<ChartTitle>{settings.title || 'Chart on You'}</ChartTitle>
 			<ChartOperators>
+				<SaveButton visible={canSave && !!settings.key && errors.length === 0} settings={settings}/>
 				<DownloadButton visible={!!settings.key && errors.length === 0}/>
 				<SettingsButton visible={true}/>
 				<ResizeButtons/>
@@ -336,4 +333,15 @@ export const CustomChartPanel = (props: {}) => {
 			</SettingsContainer>
 		</ChartBody>
 	</Fragment>;
+};
+
+export const AutonomousCustomChartPanel = () => {
+	const [ settings, setSettings ] = useState<ChartSettings>({
+		dimensions: [ {} ],
+		indicators: [ { aggregator: IndicatorAggregator.NONE } ]
+	});
+
+	const onSettingsChanged = (settings: ChartSettings) => setSettings(settings);
+
+	return <CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged} canSave={true}/>;
 };
