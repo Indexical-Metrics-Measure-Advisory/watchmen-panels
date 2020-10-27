@@ -1,37 +1,17 @@
 import { DataSet } from '../../data/types';
 import { Theme } from '../../theme/types';
 import { BaseColors24 } from '../color-theme';
+import { ChartAxisType, ChartBarDefinition, ChartKey, ChartOptions, ChartSettings } from './types';
 import {
-	ChartAxisType,
-	ChartBarDefinition,
-	ChartKey,
-	ChartOptions,
-	ChartSettings,
-	ChartSettingsDimension,
-	ChartSettingsIndicator
-} from './types';
-import { buildTitle, detectDimensionCategory, detectIndicatorCategory } from './utils';
-
-const isDimensionValid = (dimension: ChartSettingsDimension): boolean => !!dimension.column;
-const asDimensionData = (dimension: ChartSettingsDimension, data: DataSet) => {
-	const { topicName, column: { name: propName } = { name: '' } } = dimension;
-	const topic = data[topicName!];
-	return [ ...new Set((topic.data || []).map(item => item[propName])) ];
-};
-const getDimensionValue = (row: any, dimension: ChartSettingsDimension) => {
-	const { column: { name: propName } = { name: '' } } = dimension;
-	return row[propName];
-};
-
-const isIndicatorValid = (indicator: ChartSettingsIndicator): boolean => !!indicator.column;
-const asIndicatorData = (indicator: ChartSettingsIndicator, data: DataSet) => {
-	const { topicName, column: { name: propName } = { name: '' } } = indicator;
-	const topic = data[topicName!];
-	return [ ...new Set((topic.data || []).map(item => item[propName])) ];
-};
-const getIndicatorLabel = (indicator: ChartSettingsIndicator) => {
-	return indicator.label || indicator.column?.label || indicator.column?.name;
-};
+	asIndicatorData,
+	buildTitle,
+	buildXAxis,
+	detectIndicatorCategory,
+	getIndicatorLabel,
+	getXAxisValue,
+	isDimensionValid,
+	isIndicatorValid
+} from './utils';
 
 const buildOptions = (params: {
 	data: DataSet,
@@ -42,6 +22,44 @@ const buildOptions = (params: {
 
 	const validDimensions = dimensions.filter(isDimensionValid);
 	const validIndicators = indicators.filter(isIndicatorValid);
+
+	const xAxis = {
+		...buildXAxis({ data, dimensions: validDimensions }),
+		axisLabel: {
+			// force show all
+			interval: 0
+		}
+	};
+	const series = validIndicators.map(indicator => {
+		return {
+			type: 'bar',
+			encode: {
+				x: 0,
+				y: 1
+			},
+			data: (data[indicator.topicName!].data || []).map(item => {
+				const label = getIndicatorLabel(indicator);
+				const value = item[indicator.column!.name!];
+				return [
+					// xAxis
+					getXAxisValue({ data, dimensions: validDimensions, row: item }),
+					// yAxis
+					value,
+					`${label}: ${value}`
+				];
+			})
+		};
+	});
+	if (xAxis.type === ChartAxisType.CATEGORY && validDimensions.length !== 1 && xAxis.data) {
+		// compound dimensions
+		// remove the nonexistent categories
+		const map = series.reduce((map, s) => {
+			// index 0 in series value is a-axis category value
+			(s.data || []).forEach(v => map.set(v[0] as unknown as string, true));
+			return map;
+		}, new Map<string, boolean>());
+		xAxis.data = xAxis.data.filter(v => map.get(v as unknown as string));
+	}
 
 	return {
 		title: buildTitle({ title, theme }),
@@ -55,17 +73,10 @@ const buildOptions = (params: {
 			trigger: 'item',
 			formatter: function (params: any) {
 				const values: Array<any> = params.value;
-				return values[values.length - 1];
+				return `${values[0]}<br>${values[values.length - 1]}`;
 			}
 		},
-		xAxis: validDimensions.map(dimension => {
-			const type = detectDimensionCategory(dimension);
-			return {
-				type: detectDimensionCategory(dimension),
-				name: dimension.label || dimension.column?.label || dimension.column?.name,
-				data: type === ChartAxisType.CATEGORY ? asDimensionData(dimension, data) : undefined
-			};
-		}),
+		xAxis,
 		yAxis: validIndicators.map(indicator => {
 			const type = detectIndicatorCategory(indicator);
 			return {
@@ -74,26 +85,7 @@ const buildOptions = (params: {
 				data: type === ChartAxisType.CATEGORY ? asIndicatorData(indicator, data) : undefined
 			};
 		}),
-		series: validIndicators.map(indicator => {
-			return {
-				type: 'bar',
-				encode: {
-					x: validDimensions.map((x, index) => index),
-					y: validDimensions.length
-				},
-				data: (data[indicator.topicName!].data || []).map(item => {
-					const label = getIndicatorLabel(indicator);
-					const value = item[indicator.column!.name!];
-					return [
-						// xAxis
-						...(validDimensions.map(dimension => getDimensionValue(item, dimension))),
-						// yAxis
-						value,
-						`${label}: ${value}`
-					];
-				})
-			};
-		})
+		series
 	};
 };
 
