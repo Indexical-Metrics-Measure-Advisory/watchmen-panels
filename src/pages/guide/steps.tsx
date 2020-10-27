@@ -17,7 +17,9 @@ export enum Step {
 
 const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Build Metrics', 'Export Report' ];
 
-const Steps = styled.div`
+const Steps = styled.div.attrs({
+	'data-widget': 'guide-steps'
+})`
 	position: relative;
 	padding: 0 var(--margin);
 	display: flex;

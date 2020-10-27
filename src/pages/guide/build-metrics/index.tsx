@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
+import { Rnd } from 'react-rnd';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ChartSettings } from '../../../charts/custom/types';
@@ -26,6 +27,17 @@ const MetricsContainer = styled.div`
 	}
 `;
 
+const AsRnd = (props: { rnd: boolean, children: ((props: any) => React.ReactNode) | React.ReactNode }) => {
+	const { rnd, children } = props;
+	if (rnd) {
+		return <Rnd>
+			{children}
+		</Rnd>;
+	} else {
+		return <Fragment>{children}</Fragment>;
+	}
+};
+
 const CustomCharts = () => {
 	const customCharts = useSavedCustomChartContext();
 
@@ -44,11 +56,15 @@ export default () => {
 	const history = useHistory();
 	const guide = useGuideContext();
 
+	const [ rnd, setRnd ] = useState(false);
+
 	const onMeasureIndicatorsClicked = () => {
 		history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 	};
-	const onNextClicked = () => {
-		history.push(toDomain(Path.GUIDE_EXPORT_REPORT, guide.getDomain().code));
+	const onSaveAsPdfClicked = () => guide.print();
+	const onRndClicked = () => {
+		// history.push(toDomain(Path.GUIDE_EXPORT_REPORT, guide.getDomain().code));
+		setRnd(!rnd);
 	};
 
 	const domain = guide.getDomain();
@@ -57,9 +73,11 @@ export default () => {
 	return <Fragment>
 		<MetricsContainer>
 			<SavedCustomChartContextProvider>
-				{charts.map(chart => <ChartContextProvider key={chart.name}>
-					<PredefinedChartPanel chart={chart}/>
-				</ChartContextProvider>)}
+				{charts.map(chart => <AsRnd rnd={rnd} key={chart.name}>
+					<ChartContextProvider>
+						<PredefinedChartPanel chart={chart}/>
+					</ChartContextProvider>
+				</AsRnd>)}
 				<CustomCharts/>
 				<ChartContextProvider>
 					<AutonomousCustomChartPanel/>
@@ -69,7 +87,14 @@ export default () => {
 		<OperationBar>
 			<BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>
 			<OperationBarPlaceholder/>
-			<BigButton inkType={ButtonType.PRIMARY} onClick={onNextClicked}>Next</BigButton>
+			{
+				rnd
+					? <BigButton inkType={ButtonType.PRIMARY} onClick={onSaveAsPdfClicked}>Save as Pdf</BigButton>
+					: null
+			}
+			<BigButton inkType={ButtonType.PRIMARY} onClick={onRndClicked}>
+				{rnd ? 'Quit Export' : 'Export'}
+			</BigButton>
 		</OperationBar>
 	</Fragment>;
 }

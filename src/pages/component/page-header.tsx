@@ -7,7 +7,9 @@ import Path from '../../common/path';
 import Button from './button';
 import Logo from './logo';
 
-const Header = styled.header`
+const Header = styled.header.attrs({
+	'data-widget': 'page-header'
+})`
 	top: 0;
 	left: 0;
 	position: fixed;

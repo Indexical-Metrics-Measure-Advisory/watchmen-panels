@@ -3,7 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
 
-const Footer = styled.footer`
+const Footer = styled.footer.attrs({
+	'data-widget': 'page-footer'
+})`
 	background-color: var(--footer-bg-color);
 	color: var(--footer-color);
 	display: flex;

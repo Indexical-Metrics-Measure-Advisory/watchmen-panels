@@ -72,6 +72,20 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		//&::-webkit-scrollbar-corner {
 		//	background-color: var(--scrollbar-background-color);
 		//}
+		
+		&[data-on-print='true'] {
+			header[data-widget='page-header'],
+			footer[data-widget='page-footer'] {
+				display: none;
+			}
+			header[data-widget='page-header'] + main[data-widget='page-body'] {
+				margin-top: 0;
+				div[data-widget='guide-steps'],
+				div[data-widget='guide-operation-bar'] {
+					display: none;
+				}
+			}
+		}
 	}
 	
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {

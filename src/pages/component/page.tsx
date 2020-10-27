@@ -9,7 +9,9 @@ const Page = styled.div`
 	min-height: 100vh;
 	align-items: center;
 `;
-export const Main = styled.main`
+export const Main = styled.main.attrs({
+	'data-widget': 'page-body'
+})`
 	position: relative;
 	flex-grow: 1;
 	display: flex;

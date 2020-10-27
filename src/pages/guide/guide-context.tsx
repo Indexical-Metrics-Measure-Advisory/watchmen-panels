@@ -21,6 +21,7 @@ export interface GuideContextOperator {
 	setData: (data: DataSet) => void;
 	getData: () => DataSet | undefined;
 	clearData: () => void;
+	print: () => void;
 }
 
 const Context = React.createContext<GuideContextOperator>({
@@ -29,7 +30,8 @@ const Context = React.createContext<GuideContextOperator>({
 	clearDomain: emptySetter,
 	setData: emptySetter,
 	getData: emptyGetter,
-	clearData: emptySetter
+	clearData: emptySetter,
+	print: emptySetter
 });
 Context.displayName = 'GuideContext';
 
@@ -44,7 +46,16 @@ export const GuideContextProvider = (props: { children?: ((props: any) => React.
 		clearDomain: () => setContext({ ...context, domain: NoDomain }),
 		setData: (data: DataSet) => setContext({ ...context, data }),
 		getData: () => context.data,
-		clearData: () => setContext({ ...context, data: undefined })
+		clearData: () => setContext({ ...context, data: undefined }),
+		print: () => {
+			const onAfterPrint = () => {
+				document.documentElement.removeAttribute('data-on-print');
+				window.removeEventListener('afterprint', onAfterPrint);
+			};
+			window.addEventListener('afterprint', onAfterPrint);
+			document.documentElement.setAttribute('data-on-print', 'true');
+			window.print();
+		}
 	};
 
 	return <Context.Provider value={operator}>{children}</Context.Provider>;

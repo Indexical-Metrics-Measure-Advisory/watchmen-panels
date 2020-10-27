@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const OperationBar = styled.div`
+export const OperationBar = styled.div.attrs({
+	'data-widget': 'guide-operation-bar'
+})`
 	display: flex;
 	margin-top: var(--margin);
 	padding: 0 var(--margin);
