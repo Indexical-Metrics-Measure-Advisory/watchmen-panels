@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { DataColumnType, DataSet } from '../../data/types';
 import { Theme } from '../../theme/types';
 import { ChartAxisType, ChartSettingsDimension, ChartSettingsIndicator, IndicatorAggregator } from './types';
@@ -176,32 +177,45 @@ const med = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
 	}
 	return [ key, final, `${label}: ${final}`, label ];
 };
-const max = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
-	const [ key, , , label ] = items[0];
+const max = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicator): YAxisSeriesDataItem => {
+	const [ key, value, , label ] = items[0];
 	const final = items.reduce((final, item) => {
-		const minus = (final || 0) - (item[1] || 0);
-		if (isNaN(minus)) {
-			const a = (final || '').toString();
-			const b = (items[1] || '').toString();
-			return a.localeCompare(b) > 0 ? a : b;
+		if (indicator.column?.type === DataColumnType.NUMERIC) {
+			return ((final || 0) - (item[1] || 0) < 0) ? (item[1] || 0) : (final || 0);
 		} else {
-			return minus > 0 ? (final || 0) : (item[1] || 0);
+			// date, datetime, time
+			if (final == null) {
+				return item[1];
+			} else if (item[1] == null) {
+				return final;
+			} else {
+				const a = dayjs(final);
+				const b = dayjs(item[1]);
+				return a.isBefore(b) ? item[1] : final;
+			}
 		}
-	}, 0);
+	}, value);
 	return [ key, final, `${label}: ${final}`, label ];
 };
-const min = (items: Array<YAxisSeriesDataItem>): YAxisSeriesDataItem => {
-	const [ key, , , label ] = items[0];
+const min = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicator): YAxisSeriesDataItem => {
+	const [ key, value, , label ] = items[0];
 	const final = items.reduce((final, item) => {
-		const minus = (final || 0) - (item[1] || 0);
-		if (isNaN(minus)) {
-			const a = (final || '').toString();
-			const b = (items[1] || '').toString();
-			return a.localeCompare(b) < 0 ? a : b;
+		if (indicator.column?.type === DataColumnType.NUMERIC) {
+			return ((final || 0) - (item[1] || 0) > 0) ? (item[1] || 0) : (final || 0);
 		} else {
-			return minus < 0 ? (final || 0) : (item[1] || 0);
+			// date, datetime, time
+			if (final == null) {
+				return item[1];
+			} else if (item[1] == null) {
+				return final;
+			} else {
+				const a = dayjs(final);
+				const b = dayjs(item[1]);
+				return a.isBefore(b) ? final : item[1];
+			}
 		}
-	}, 0);
+	}, value);
+	console.log(final);
 	return [ key, final, `${label}: ${final}`, label ];
 };
 
@@ -226,7 +240,7 @@ export const getYAxisSeriesData = (options: {
 		] as YAxisSeriesDataItem;
 	});
 
-	let aggregate: (((items: Array<YAxisSeriesDataItem>) => YAxisSeriesDataItem) | null) = null;
+	let aggregate: (((items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicator) => YAxisSeriesDataItem) | null) = null;
 	switch (indicator.aggregator) {
 		case IndicatorAggregator.COUNT:
 			aggregate = count;
@@ -264,6 +278,6 @@ export const getYAxisSeriesData = (options: {
 			return map;
 		}, new Map<string, Array<YAxisSeriesDataItem>>());
 
-		return Array.from(map.values()).map(values => aggregate!(values));
+		return Array.from(map.values()).map(values => aggregate!(values, indicator));
 	}
 };
