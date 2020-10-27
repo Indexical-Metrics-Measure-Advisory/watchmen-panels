@@ -41,8 +41,8 @@ export const SoftwareImplementation: Domain = {
 		{
 			key: 'task-count-category',
 			name: 'Task - Count by Category',
-			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
-				const { data, className } = props;
+			chart: (props: { data: DataSet, className?: string }): JSX.Element => {
+				const { data: { tasks: { data } }, className } = props;
 				const chartData = data.map(item => {
 					return { name: item.Category, value: 1 };
 				});
@@ -54,8 +54,8 @@ export const SoftwareImplementation: Domain = {
 		{
 			key: 'task-count-owner',
 			name: 'Task - Count by Owner',
-			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
-				const { data, className } = props;
+			chart: (props: { data: DataSet, className?: string }): JSX.Element => {
+				const { data: { tasks: { data } }, className } = props;
 				const chartData = data.map(item => {
 					return { name: item.Owner, value: 1 };
 				});
@@ -67,8 +67,8 @@ export const SoftwareImplementation: Domain = {
 		{
 			key: 'task-count-categorical',
 			name: 'Task - Count Categorical',
-			chart: (props: { data: Array<any>, className?: string, options?: { categoryBy: string } }): JSX.Element => {
-				const { data, className, options: { categoryBy = 'Category' } = {} } = props;
+			chart: (props: { data: DataSet, className?: string, options?: { categoryBy: string } }): JSX.Element => {
+				const { data: { tasks: { data } }, className, options: { categoryBy = 'Category' } = {} } = props;
 
 				const chartData = data.map(item => {
 					return { name: item[categoryBy], value: 1 };
@@ -93,8 +93,8 @@ export const SoftwareImplementation: Domain = {
 		{
 			key: 'task-gantt',
 			name: 'Task Gantt',
-			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
-				const { data, className } = props;
+			chart: (props: { data: DataSet, className?: string }): JSX.Element => {
+				const { data: { tasks: { data } }, className } = props;
 
 				const chartData = data.map(item => {
 					return {
@@ -116,8 +116,8 @@ export const SoftwareImplementation: Domain = {
 				const enabled = tasks && -1 === tasks.findIndex(item => typeof item.Workdays !== 'number');
 				return { enabled, reason: 'Factor "Workdays" missing.' };
 			},
-			chart: (props: { data: Array<any>, className?: string }): JSX.Element => {
-				const { data, className } = props;
+			chart: (props: { data: DataSet, className?: string }): JSX.Element => {
+				const { data: { tasks: { data } }, className } = props;
 
 				const segments = {
 					label: 'Man day',

@@ -1,5 +1,7 @@
+import { DataSet } from '../data/types';
+
 export type ChartElement = (options: {
 	className?: string,
-	data: Array<any>,
+	data: DataSet,
 	options?: any
 }) => JSX.Element

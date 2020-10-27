@@ -109,8 +109,7 @@ export const PredefinedChartPanel = (props: { chart: DomainChart }) => {
 			<GroupBy def={chart.options?.groupBy} options={options} onChange={setOptions}/>
 		</SettingsContainer>
 		{chartEnabled.enabled
-			// TODO now it is fixed
-			? <Chart data={(data || {}).tasks?.data || []} options={options}/>
+			? <Chart data={data || {}} options={options}/>
 			: <ChartDisabledPlaceholder>
 				<FontAwesomeIcon icon={faChartBar}/>
 				<div>{chartEnabled.reason}</div>
