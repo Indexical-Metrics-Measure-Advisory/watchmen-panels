@@ -32,6 +32,9 @@ jobs:
       - name: Rename /build to /docs
         run: mv build docs
 
+      - name: Copy CNAME file
+        run: mv CNAME docs/CNAME
+
       - name: GitHub Commit & Push
         # You may pin to the exact commit or the version.
         # uses: actions-js/push@4decc2887d2770f29177082be3c8b04d342f5b64
