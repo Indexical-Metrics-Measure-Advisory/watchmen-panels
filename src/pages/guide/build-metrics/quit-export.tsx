@@ -13,7 +13,7 @@ const QuitButton = styled(Button).attrs({
 	line-height: 64px;
 	width: 64px;
 	right: 32px;
-	top: 240px;
+	top: 314px;
 	z-index: 10000;
 	padding: 0;
 	border: 0;

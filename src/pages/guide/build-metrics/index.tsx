@@ -98,7 +98,7 @@ export default () => {
 		</OperationBar>
 		<AddParagraphButton rnd={rnd} onClick={onAddParagraphClicked}/>
 		<PrintPdfButton rnd={rnd} onClick={onSaveAsPdfClicked}/>
-		<QuitExportButton rnd={rnd} onClick={onRndClicked}/>
 		<HiddenChartsStackButton rnd={rnd}/>
+		<QuitExportButton rnd={rnd} onClick={onRndClicked}/>
 	</HideOnPrintProvider>;
 }

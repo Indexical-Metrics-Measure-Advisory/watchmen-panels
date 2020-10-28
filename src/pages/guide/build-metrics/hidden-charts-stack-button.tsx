@@ -14,7 +14,7 @@ const TrashButton = styled(Button).attrs({
 	line-height: 64px;
 	width: 64px;
 	right: 32px;
-	top: 314px;
+	top: 240px;
 	z-index: 10000;
 	padding: 0;
 	border: 0;
