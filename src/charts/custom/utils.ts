@@ -215,7 +215,6 @@ const min = (items: Array<YAxisSeriesDataItem>, indicator: ChartSettingsIndicato
 			}
 		}
 	}, value);
-	console.log(final);
 	return [ key, final, `Min: ${final}`, label ];
 };
 

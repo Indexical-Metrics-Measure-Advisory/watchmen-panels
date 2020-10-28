@@ -9,15 +9,16 @@ const HideDiv = styled.div`
 
 export const AsRnd = (props: {
 	rnd: boolean,
+	lock?: boolean,
 	hidden?: boolean,
 	children: ((props: any) => React.ReactNode) | React.ReactNode
 }) => {
-	const { rnd, hidden = false, children } = props;
+	const { rnd, lock = false, hidden = false, children } = props;
 	if (rnd) {
 		if (hidden) {
 			return <HideDiv>{children}</HideDiv>;
 		} else {
-			return <Rnd>{children}</Rnd>;
+			return <Rnd enableResizing={!lock} disableDragging={lock}>{children}</Rnd>;
 		}
 	} else {
 		return <Fragment>{children}</Fragment>;

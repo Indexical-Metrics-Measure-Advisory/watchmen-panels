@@ -49,43 +49,4 @@ export const MetricsContainer = styled.div.attrs({
 	@media (min-width: 1600px) {
 		grid-template-columns: repeat(4, 1fr);
 	}
-	.quill {
-		&:focus-within {
-			.ql-toolbar {
-				opacity: 1;
-				pointer-events: auto;
-				&.ql-snow + .ql-container.ql-snow {
-		            border-top-color: var(--border-color);
-		        }
-			}
-			.ql-container {
-				border-color: var(--border-color);
-				background-color: var(--bg-color);
-			}
-		}
-		.ql-toolbar {
-			position: absolute;
-			border: var(--border);
-			border-radius: var(--border-radius);
-	        opacity: 0;
-	        pointer-events: none;
-	        bottom: calc(100% + 4px);
-	        width: 400px;
-	        background-color: var(--bg-color);
-	        transition: all 300ms ease-in-out;
-	        &.ql-snow + .ql-container.ql-snow {
-	        	border-top: var(--border);
-	        	border-top-color: transparent;
-	        }
-	        &.ql-snow .ql-picker.ql-font {
-	        	width: 200px;
-	        }
-		}
-		.ql-container {
-			border: var(--border);
-			border-color: transparent;
-			border-radius: var(--border-radius);
-			transition: all 300ms ease-in-out;
-		}
-	}
 `;
