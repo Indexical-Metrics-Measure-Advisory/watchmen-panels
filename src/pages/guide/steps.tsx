@@ -32,6 +32,7 @@ const CurrentStep = styled.div`
 		display: flex;
 		position: relative;
 		opacity: 0.5;
+		white-space: nowrap;
 		> span > a {
 			text-decoration: none;
 			color: var(--font-color);
@@ -47,6 +48,8 @@ const CurrentStep = styled.div`
 		}
 		> span:last-child {
 			user-select: none;
+			text-overflow: ellipsis;
+    		overflow: hidden;
 		}
 	}
 	> span:last-child {
