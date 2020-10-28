@@ -31,12 +31,12 @@ const TrashButton = styled(Button).attrs({
 	&:before {
 		content: '';
 	    position: absolute;
-	    top: 48px;
-	    left: -15px;
-	    width: 20px;
-	    height: 20px;
+	    top: 40px;
+	    left: -23px;
+	    width: 30px;
+	    height: 30px;
 	    border-radius: 50%;
-	    border: 16px solid var(--primary-color);
+	    border: 24px solid var(--primary-color);
 	    overflow: hidden;
 	    clip: rect(0, 0, 0, 0);
 	    transition: clip 300ms ease-in-out;
@@ -47,7 +47,7 @@ const TrashButton = styled(Button).attrs({
 		border-bottom-left-radius: 0;
 		width: 72px;
 		&:before {
-			 clip: ${({ count }) => count > 2 ? 'rect(0, 26px, 26px, 0)' : 'rect(0, 0, 0, 0)'};
+			 clip: ${({ count }) => count > 2 ? 'rect(0, 39px, 39px, 0)' : 'rect(0, 0, 0, 0)'};
 			 opacity: 1;
 		}
 		> div {
