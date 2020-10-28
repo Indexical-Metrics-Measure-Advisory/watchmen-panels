@@ -100,7 +100,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 							display: none;
 						}
 					}
-					button[data-widget='chart-hide-on-print-btn'] {
+					~ button[data-widget='chart-hide-on-print-btn'],
+					~ button[data-widget='chart-add-paragraph-btn']{
 						display: none;
 					}
 				}

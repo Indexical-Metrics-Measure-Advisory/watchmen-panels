@@ -1,6 +1,9 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faParagraph } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { Rnd } from 'react-rnd';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -63,6 +66,42 @@ const MetricsContainer = styled.div.attrs({
 	}
 	@media (min-width: 1600px) {
 		grid-template-columns: repeat(4, 1fr);
+	}
+	.quill {
+		&:focus-within {
+			.ql-toolbar {
+				opacity: 1;
+				pointer-events: auto;
+				&.ql-snow + .ql-container.ql-snow {
+		            border-top-color: var(--border-color);
+		        }
+			}
+			.ql-container {
+				border-color: var(--border-color);
+				background-color: var(--bg-color);
+			}
+		}
+		.ql-toolbar {
+			position: absolute;
+			border: var(--border);
+			border-radius: var(--border-radius);
+	        opacity: 0;
+	        pointer-events: none;
+	        bottom: calc(100% + 4px);
+	        min-width: 300px;
+	        background-color: var(--bg-color);
+	        transition: all 300ms ease-in-out;
+	        &.ql-snow + .ql-container.ql-snow {
+	        	border-top: var(--border);
+	        	border-top-color: transparent;
+	        }
+		}
+		.ql-container {
+			border: var(--border);
+			border-color: transparent;
+			border-radius: var(--border-radius);
+			transition: all 300ms ease-in-out;
+		}
 	}
 `;
 
@@ -259,11 +298,66 @@ const HideOnPrintButton = (props: { rnd: boolean }) => {
 	</TrashButton>;
 };
 
+const Paragraphs = (props: { rnd: boolean, texts: Array<string> }) => {
+	const { rnd, texts } = props;
+
+	if (!rnd) {
+		return null;
+	}
+
+	const modules = {
+		toolbar: [
+			[ { 'header': [ 1, 2, 3, 4 ] } ],
+			[ 'bold', 'italic', 'underline', 'strike', 'blockquote' ],
+			[ { 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' } ],
+			[ 'link', 'image' ],
+			[ 'clean' ]
+		]
+	};
+
+	return <Fragment>
+		{texts.map((text, index) => {
+			return <AsRnd rnd={rnd} key={index}>
+				<ReactQuill value={text} modules={modules}/>
+			</AsRnd>;
+		})}
+	</Fragment>;
+};
+
+const ParagraphButton = styled(Button).attrs({
+	'data-widget': 'chart-add-paragraph-btn'
+})`
+	display: block;
+	position: fixed;
+	font-size: 32px;
+	line-height: 64px;
+	width: 64px;
+	right: 32px;
+	top: 92px;
+	z-index: 10000;
+	padding: 0;
+	border: 0;
+	border-radius: 100%;
+`;
+
+const AddParagraphButton = (props: { rnd: boolean, onClick: () => void }) => {
+	const { rnd, onClick } = props;
+
+	if (!rnd) {
+		return null;
+	}
+
+	return <ParagraphButton inkType={ButtonType.PRIMARY} title='Add new paragraph' onClick={onClick}>
+		<FontAwesomeIcon icon={faParagraph}/>
+	</ParagraphButton>;
+};
+
 export default () => {
 	const history = useHistory();
 	const guide = useGuideContext();
 
 	const [ rnd, setRnd ] = useState(false);
+	const [ texts, setTexts ] = useState<Array<string>>([]);
 	const metricsContainerRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (!rnd || metricsContainerRef.current == null) {
@@ -321,6 +415,7 @@ export default () => {
 	};
 	const onSaveAsPdfClicked = () => window.print();
 	const onRndClicked = () => setRnd(!rnd);
+	const onAddParagraphClicked = () => setTexts([ ...texts, 'New paragraph content here.' ]);
 
 	return <HideOnPrintProvider>
 		<MetricsContainer data-rnd={rnd} ref={metricsContainerRef}>
@@ -332,6 +427,7 @@ export default () => {
 						<AutonomousCustomChartPanel rnd={rnd}/>
 					</ChartContextProvider>
 				</AsRnd>
+				<Paragraphs rnd={rnd} texts={texts}/>
 			</SavedCustomChartContextProvider>
 		</MetricsContainer>
 		<OperationBar>
@@ -347,5 +443,6 @@ export default () => {
 			</BigButton>
 		</OperationBar>
 		<HideOnPrintButton rnd={rnd}/>
+		<AddParagraphButton rnd={rnd} onClick={onAddParagraphClicked}/>
 	</HideOnPrintProvider>;
 }
