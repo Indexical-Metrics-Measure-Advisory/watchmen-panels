@@ -11,7 +11,6 @@ import Path from '../../common/path';
 import Page from '../component/page';
 import BuildMetrics from './build-metrics';
 import DomainSelect from './domain-select';
-import ExportReport from './export-report';
 import { GuideContextProvider, useGuideContext } from './guide-context';
 import ImportData from './import-data';
 import MappingFactor from './mapping-factor';
@@ -70,8 +69,6 @@ export default () => {
 		step = Step.MEASURE_INDICATORS;
 	} else if (matchPath(location.pathname, Path.GUIDE_BUILD_METRICS)) {
 		step = Step.BUILD_METRICS;
-	} else if (matchPath(location.pathname, Path.GUIDE_EXPORT_REPORT)) {
-		step = Step.EXPORT_REPORT;
 	}
 
 	return <GuideContextProvider>
@@ -83,7 +80,6 @@ export default () => {
 				<Route path={Path.GUIDE_MAPPING_FACTOR}><DomainChecker><MappingFactor/></DomainChecker></Route>
 				<Route path={Path.GUIDE_MEASURE_INDICATOR}><DomainChecker><MeasureIndicator/></DomainChecker></Route>
 				<Route path={Path.GUIDE_BUILD_METRICS}><DomainChecker><BuildMetrics/></DomainChecker></Route>
-				<Route path={Path.GUIDE_EXPORT_REPORT}><DomainChecker><ExportReport/></DomainChecker></Route>
 				<Route><Redirect to={Path.GUIDE_DOMAIN_SELECT}/></Route>
 			</Switch>
 		</HomePage>

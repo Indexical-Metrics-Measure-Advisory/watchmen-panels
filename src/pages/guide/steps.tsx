@@ -11,11 +11,10 @@ export enum Step {
 	IMPORT_DATA,
 	MAPPING_FACTORS,
 	MEASURE_INDICATORS,
-	BUILD_METRICS,
-	EXPORT_REPORT
+	BUILD_METRICS
 }
 
-const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Build Metrics', 'Export Report' ];
+const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Build & Export Metrics' ];
 
 const Steps = styled.div.attrs({
 	'data-widget': 'guide-steps'
@@ -108,8 +107,17 @@ const StepDot = styled.li`
 		background-color: transparent;
 	}
 	&[data-current=true] {
+		&:nth-last-child(2) {
+			> svg {
+				opacity: 1;
+				color: var(--font-color);
+			}
+		}
 		> svg {
 			opacity: 0;
+		}
+		+ div {
+			display: none;
 		}
 	}
 	> svg {
@@ -147,7 +155,7 @@ export default (props: { step: Step }) => {
 		<StepDots>
 			{StepLabels.map((label, index) => {
 				return <StepDot key={label} title={label} data-current={index === step} data-performed={index < step}>
-					{index === Step.EXPORT_REPORT ? <FontAwesomeIcon icon={faFlagCheckered}/> : null}
+					{index === Step.BUILD_METRICS ? <FontAwesomeIcon icon={faFlagCheckered}/> : null}
 				</StepDot>;
 			})}
 			<Current step={step}><FontAwesomeIcon icon={faTruckPickup}/></Current>
