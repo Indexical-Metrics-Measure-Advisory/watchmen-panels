@@ -7,14 +7,14 @@ import { HideChart, useHideOnPrintContext } from './hide-on-print-context';
 
 const TrashButton = styled(Button).attrs({
 	'data-widget': 'chart-hide-on-print-btn'
-})`
+})<{ count: number }>`
 	display: block;
 	position: fixed;
 	font-size: 32px;
 	line-height: 64px;
 	width: 64px;
 	right: 32px;
-	top: 240px;
+	top: 92px;
 	z-index: 10000;
 	padding: 0;
 	border: 0;
@@ -28,16 +28,36 @@ const TrashButton = styled(Button).attrs({
 	    right: calc(var(--font-size) - 2px);
 	    line-height: 0.8em;
 	}
+	&:before {
+		content: '';
+	    position: absolute;
+	    top: 48px;
+	    left: -15px;
+	    width: 20px;
+	    height: 20px;
+	    border-radius: 50%;
+	    border: 16px solid var(--primary-color);
+	    overflow: hidden;
+	    clip: rect(0, 0, 0, 0);
+	    transition: clip 300ms ease-in-out;
+	    opacity: 0;
+    }
 	&:hover {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-		right: 231px;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		width: 72px;
+		&:before {
+			 clip: ${({ count }) => count > 2 ? 'rect(0, 26px, 26px, 0)' : 'rect(0, 0, 0, 0)'};
+			 opacity: 1;
+		}
 		> div {
 			opacity: 1;
-			right: -199px;
+			right: 71px;
 			border: var(--border);
 			border-color: var(--primary-color);
 			width: 200px;
+			height: calc(${({ count }) => count} * 28px + 5px);
+			border-bottom-right-radius: ${({ count }) => count > 2 ? 'var(--border-radius)' : 0};
 		}
 	}
 `;
@@ -47,14 +67,15 @@ const HideCharts = styled.div`
 	flex-direction: column;
 	min-height: 64px;
 	max-height: 282px;
+	height: 0;
 	width: 0;
 	position: absolute;
 	opacity: 0;
 	right: 0;
 	top: 0;
 	border-radius: var(--border-radius);
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 	background-color: var(--primary-color);
 	z-index: 1;
 	overflow-x: hidden;
@@ -68,25 +89,21 @@ const HideCharts = styled.div`
 		border-top: var(--border);
 		border-top-color: var(--primary-color);
 		padding: 0 calc(var(--margin) / 2);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 		font-size: 12px;
 		&:first-child {
 			border-top-color: transparent;
 		}
 		&:hover {
+			border-radius: var(--border-radius);
 			background-color: var(--primary-hover-color);
+			transform: scale(1.05);
 			> span {
 				&:first-child {
 					background-color: var(--invert-color);
 					color: var(--primary-hover-color);
-					margin-right: 12px;
-					transform: scale(1.05);
 				}
 				&:last-child {
 					color: var(--invert-color);
-					transform: scale(1.05);
 				}
 			}
 		}
@@ -103,8 +120,11 @@ const HideCharts = styled.div`
 				line-height: 18px;
 			}
 			&:last-child {
-				width: calc(100% - 38px);
+				flex-grow: 1;
 				text-align: left;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 		}
 	}
@@ -124,7 +144,7 @@ export const HiddenChartsStackButton = (props: { rnd: boolean }) => {
 
 	const onRecoverClicked = (chart: HideChart) => async () => await hideOnPrintContext.recover(chart);
 
-	return <TrashButton inkType={ButtonType.PRIMARY}>
+	return <TrashButton inkType={ButtonType.PRIMARY} count={charts.length}>
 		<FontAwesomeIcon icon={faTrashAlt}/>
 		<span>{charts.length}</span>
 		<HideCharts>
