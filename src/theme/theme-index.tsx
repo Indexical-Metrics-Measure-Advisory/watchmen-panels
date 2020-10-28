@@ -91,16 +91,27 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 					display: none;
 				}
 				div[data-widget='metrics-container'][data-rnd=true] {
-					border-color: transparent;
-					transform: translate(-30px, -150px);
+					&:before,
+					&:after {
+						display: none;
+					}
 				}
 			}
 		}
 	}
 	.react-draggable {
+		> div[data-widget='chart-container'] {
+			height: 100%;
+		}
 		div[data-widget='chart-header'] {
 			button {
 				display: none;
+			}
+		}
+		div[data-widget='chart'] {
+			height: calc(100% - 40px);
+			@media (min-width: 800px) {
+				height: calc(100% - 48px);
 			}
 		}
 	}
