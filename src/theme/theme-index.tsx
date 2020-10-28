@@ -101,7 +101,9 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 						}
 					}
 					~ button[data-widget='chart-hide-on-print-btn'],
-					~ button[data-widget='chart-add-paragraph-btn']{
+					~ button[data-widget='chart-add-paragraph-btn'],
+					~ button[data-widget='chart-print-pdf-btn'],
+					~ button[data-widget='chart-quit-export-btn'] {
 						display: none;
 					}
 				}
@@ -123,6 +125,53 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 				height: calc(100% - 48px);
 			}
 		}
+	}
+	
+	.ql-editor .ql-font-Microsoft-YaHei {
+  		font-family: Microsoft YaHei;
+	}
+	.ql-editor .ql-font-SimHei {
+	  	font-family: SimHei;
+	}
+	.ql-editor .ql-font-Arial {
+	  	font-family: Arial;
+	}
+	.ql-editor .ql-font-Times-New-Roman {
+	  	font-family: Times New Roman;
+	}
+	.ql-editor .ql-font-Tahoma {
+	  	font-family: Tahoma;
+	}
+	.ql-editor .ql-font-Verdana {
+	  	font-family: Verdana;
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item::before {
+		content: 'Arial';
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=Microsoft-YaHei]::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=Microsoft-YaHei]::before {
+		content: "Microsoft-YaHei";
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=SimHei]::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=SimHei]::before {
+		content: "Sim Hei";
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=Arial]::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=Arial]::before {
+		content: "Arial";
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=Times-New-Roman]::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=Times-New-Roman]::before {
+		content: "Times New Roman";
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=Tahoma]::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=Tahoma]::before {
+		content: "Tahoma";
+	}
+	.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=Verdana]::before,
+	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=Verdana]::before {
+		content: "Verdana";
 	}
 	
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {

@@ -19,6 +19,7 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 	const hideOnPrintContext = useHideOnPrintContext();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState<boolean>(false);
+	console.log(expanded);
 	const toggleExpanded = () => {
 		setExpanded(!expanded);
 		setTimeout(() => {
@@ -39,7 +40,7 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 		draggable.style.height = `${rect.height}px`;
 		draggable.style.transition = 'all 300ms ease-in-out';
 		setTimeout(() => {
-			draggable.style.top = 'calc(100vh - 56px)';
+			draggable.style.top = '346px';
 			draggable.style.left = 'calc(100vw - 72px)';
 			draggable.style.width = '0';
 			draggable.style.height = '0';
