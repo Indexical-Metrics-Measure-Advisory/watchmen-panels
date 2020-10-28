@@ -84,12 +84,12 @@ export default () => {
 
 	return <HideOnPrintProvider>
 		<MetricsContainer data-rnd={rnd} ref={metricsContainerRef}>
+			<PredefinedCharts rnd={rnd}/>
 			<SavedCustomChartContextProvider>
-				<PredefinedCharts rnd={rnd}/>
 				<CustomCharts rnd={rnd}/>
 				<AutonomousCustomChart rnd={rnd}/>
-				<Paragraphs rnd={rnd} texts={texts} onTextsChanged={setTexts}/>
 			</SavedCustomChartContextProvider>
+			<Paragraphs rnd={rnd} texts={texts} onTextsChanged={setTexts}/>
 		</MetricsContainer>
 		<OperationBar>
 			{rnd ? null : <BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>}

@@ -19,7 +19,6 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 	const hideOnPrintContext = useHideOnPrintContext();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState<boolean>(false);
-	console.log(expanded);
 	const toggleExpanded = () => {
 		setExpanded(!expanded);
 		setTimeout(() => {

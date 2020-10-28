@@ -14,7 +14,7 @@ export const CustomCharts = (props: { rnd: boolean }) => {
 
 	return <Fragment>
 		{customCharts.get().map((settings, index) => {
-			return <AsRnd rnd={rnd} key={`${settings.key}-${index}`}>
+			return <AsRnd rnd={rnd} key={index}>
 				<ChartContextProvider>
 					<CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged(settings)}
 					                  rnd={rnd}/>
