@@ -24,6 +24,7 @@ import { IndicatorDropdown, IndicatorInteractionType } from './custom/indicator-
 import { InputItem } from './custom/input-item';
 import { FactorOption } from './custom/types';
 import { DownloadButton } from './download-button';
+import { HideOnPrintButton } from './hide-on-print-button';
 import { ResizeButtons } from './resize-buttons';
 import { SaveButton } from './save-button';
 import { SettingsButton } from './settings-button';
@@ -209,8 +210,9 @@ export const CustomChartPanel = (props: {
 	settings: ChartSettings,
 	onSettingsChanged: (settings: ChartSettings) => void,
 	canSave?: boolean,
+	rnd: boolean
 }) => {
-	const { settings, onSettingsChanged, canSave = false } = props;
+	const { settings, onSettingsChanged, canSave = false, rnd } = props;
 
 	const chartContext = useChartContext();
 	const settingsContext = useChartSettingsContext();
@@ -265,10 +267,12 @@ export const CustomChartPanel = (props: {
 		errors.push('At lease one indicator is required.');
 	}
 
+	const title = settings.title || 'Chart on You';
 	return <Fragment>
 		<ChartHeader>
-			<ChartTitle>{settings.title || 'Chart on You'}</ChartTitle>
+			<ChartTitle>{title}</ChartTitle>
 			<ChartOperators>
+				<HideOnPrintButton visible={rnd} title={title}/>
 				<SaveButton visible={canSave && !!settings.key && errors.length === 0} settings={settings}/>
 				<DownloadButton visible={!!settings.key && errors.length === 0}/>
 				<SettingsButton visible={true}/>
@@ -335,7 +339,8 @@ export const CustomChartPanel = (props: {
 	</Fragment>;
 };
 
-export const AutonomousCustomChartPanel = () => {
+export const AutonomousCustomChartPanel = (props: { rnd: boolean }) => {
+	const { rnd } = props;
 	const [ settings, setSettings ] = useState<ChartSettings>({
 		dimensions: [ {} ],
 		indicators: [ { aggregator: IndicatorAggregator.NONE } ]
@@ -344,5 +349,5 @@ export const AutonomousCustomChartPanel = () => {
 	const onSettingsChanged = (settings: ChartSettings) => setSettings(settings);
 
 	return <CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged}
-	                         canSave={true}/>;
+	                         canSave={true} rnd={rnd}/>;
 };

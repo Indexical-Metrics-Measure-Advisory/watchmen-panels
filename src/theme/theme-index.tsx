@@ -95,6 +95,14 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 					&:after {
 						display: none;
 					}
+					div[data-widget='chart-header'] {
+						button {
+							display: none;
+						}
+					}
+					button[data-widget='chart-hide-on-print-btn'] {
+						display: none;
+					}
 				}
 			}
 		}
@@ -104,7 +112,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 			height: 100%;
 		}
 		div[data-widget='chart-header'] {
-			button {
+			button:not([data-role=rnd]) {
 				display: none;
 			}
 		}

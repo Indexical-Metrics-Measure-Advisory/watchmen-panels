@@ -1,14 +1,17 @@
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Rnd } from 'react-rnd';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ChartSettings } from '../../../charts/custom/types';
 import Path, { toDomain } from '../../../common/path';
-import { BigButton, ButtonType } from '../../component/button';
+import Button, { BigButton, ButtonType } from '../../component/button';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
 import { useGuideContext } from '../guide-context';
 import { ChartContextProvider } from './chart-context';
 import { AutonomousCustomChartPanel, CustomChartPanel } from './custom-chart-panel';
+import { HideChart, HideOnPrintProvider, useHideOnPrintContext } from './hide-on-print-context';
 import { PredefinedChartPanel } from './predefined-chart-panel';
 import { SavedCustomChartContextProvider, useSavedCustomChartContext } from './saved-custom-chart-context';
 
@@ -35,7 +38,7 @@ const MetricsContainer = styled.div.attrs({
 			left: 0;
 			font-size: 1.5em;
 			font-weight: var(--font-bold);
-			opacity: 0.2;
+			opacity: 0.15;
 			border-radius: 2px;
 		}
 		&:before {
@@ -96,7 +99,8 @@ const CustomCharts = (props: { rnd: boolean }) => {
 		{customCharts.get().map((settings, index) => {
 			return <AsRnd rnd={rnd}>
 				<ChartContextProvider key={`${settings.key}-${index}`}>
-					<CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged(settings)}/>
+					<CustomChartPanel settings={settings} onSettingsChanged={onSettingsChanged(settings)}
+					                  rnd={rnd}/>
 				</ChartContextProvider>
 			</AsRnd>;
 		})}
@@ -115,11 +119,144 @@ const PredefinedCharts = (props: { rnd: boolean }) => {
 			const hidden = !(chart.enabled ? chart.enabled(guide.getData()) : { enabled: true }).enabled;
 			return <AsRnd rnd={rnd} hidden={hidden} key={chart.name}>
 				<ChartContextProvider>
-					<PredefinedChartPanel chart={chart}/>
+					<PredefinedChartPanel chart={chart} rnd={rnd}/>
 				</ChartContextProvider>
 			</AsRnd>;
 		})}
 	</Fragment>;
+};
+
+const TrashButton = styled(Button).attrs({
+	'data-widget': 'chart-hide-on-print-btn'
+})`
+	display: block;
+	position: fixed;
+	font-size: 32px;
+	line-height: 64px;
+	width: 64px;
+	right: 32px;
+	bottom: 32px;
+	z-index: 10000;
+	padding: 0;
+	border: 0;
+	border-radius: 100%;
+	&[data-ink-type=default] {
+	 	color: var(--invert-color);
+	 	background-color: var(--primary-hover-color);
+	}
+	> svg {
+		opacity: 0.3;
+	}
+	> span {
+		display: block;
+	    position: absolute;
+	    font-size: var(--font-size);
+	    font-weight: var(--font-boldest);
+	    top: calc(var(--font-size) - 2px);
+	    right: calc(var(--font-size) - 2px);
+	    line-height: 0.8em;
+	    opacity: 0.7;
+	}
+	&:hover {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		> div {
+			border: var(--border);
+			border-color: var(--primary-hover-color);
+			max-height: 282px;
+		}
+	}
+`;
+const HideCharts = styled.div`
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	max-height: 0;
+	width: 200px;
+	position: absolute;
+	right: 0;
+	bottom: 63px;
+	border-radius: var(--border-radius);
+	border-bottom-right-radius: 0;
+	z-index: 1;
+	transition: all 300ms ease-in-out;
+	> div {
+		display: flex;
+		align-items: center;
+		height: 28px;
+		line-height: initial;
+		border-top: var(--border);
+		border-top-color: var(--primary-hover-color);
+		padding: 0 calc(var(--margin) / 2);
+		white-space: nowrap;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		font-size: 12px;
+		color: var(--font-color);
+		&:first-child {
+			border-top-color: transparent;
+		}
+		&:hover {
+			background-color: var(--primary-hover-color);
+			color: var(--invert-color);
+			> span:first-child {
+				color: var(--primary-hover-color);
+				background-color: var(--invert-color);
+			}
+		}
+		> span:first-child {
+			display: block;
+			margin-right: 6px;
+			width: 32px;
+			border-radius: 9px;
+			background-color: var(--primary-hover-color);
+			color: var(--invert-color);
+			transition: all 300ms ease-in-out;
+			height: 18px;
+			line-height: 18px;
+		}
+		> span:last-child {
+			width: calc(100% - 38px);
+			text-align: left;
+		}
+	}
+`;
+
+const HideOnPrintButton = (props: { rnd: boolean }) => {
+	const { rnd } = props;
+
+	const hideOnPrintContext = useHideOnPrintContext();
+
+	if (!rnd) {
+		return null;
+	}
+
+	const charts = hideOnPrintContext.get();
+	const has = charts.length !== 0;
+
+	const onRecoverClicked = (chart: HideChart) => () => {
+		chart.recover();
+	};
+
+	return <TrashButton>
+		<FontAwesomeIcon icon={faTrashAlt}/>
+		<span>{charts.length}</span>
+		<HideCharts>
+			{
+				has
+					? charts.map((chart, index) => {
+						return <div key={`${chart.title}-${index}`} onClick={onRecoverClicked(chart)}>
+							<span>{index + 1}</span>
+							<span>{chart.title}</span>
+						</div>;
+					})
+					: <div>
+						<span>0</span>
+						<span>No chart is hidden.</span>
+					</div>
+			}
+		</HideCharts>
+	</TrashButton>;
 };
 
 export default () => {
@@ -134,15 +271,29 @@ export default () => {
 		}
 
 		const onBeforePrint = () => {
+			const container = metricsContainerRef.current!;
+			const containerRect = container.getBoundingClientRect();
+			const charts = container.querySelectorAll('.react-draggable');
+			const { width, height } = Array.from(charts).reduce((size, chart) => {
+				const rect = chart.getBoundingClientRect();
+				size.width = Math.max(size.width, rect.left + rect.width - containerRect.left);
+				size.height = Math.max(size.height, rect.top + rect.height - containerRect.top);
+				return size;
+			}, { width: 0, height: 0 });
+			container.style.width = `${width}px`;
+			container.style.height = `${height}px`;
 			document.documentElement.setAttribute('data-on-print', 'true');
 		};
 		const onAfterPrint = () => {
+			const container = metricsContainerRef.current!;
+			container.style.width = ``;
+			container.style.height = ``;
 			document.documentElement.removeAttribute('data-on-print');
 		};
 		window.addEventListener('beforeprint', onBeforePrint);
 		window.addEventListener('afterprint', onAfterPrint);
 
-		const charts = document.querySelectorAll('.react-draggable');
+		const charts = metricsContainerRef.current.querySelectorAll('.react-draggable');
 		let top = 0;
 		let left = 0;
 		Array.from(charts).forEach(chart => {
@@ -171,20 +322,20 @@ export default () => {
 	const onSaveAsPdfClicked = () => window.print();
 	const onRndClicked = () => setRnd(!rnd);
 
-	return <Fragment>
+	return <HideOnPrintProvider>
 		<MetricsContainer data-rnd={rnd} ref={metricsContainerRef}>
 			<SavedCustomChartContextProvider>
 				<PredefinedCharts rnd={rnd}/>
 				<CustomCharts rnd={rnd}/>
 				<AsRnd rnd={rnd} hidden={true}>
 					<ChartContextProvider>
-						<AutonomousCustomChartPanel/>
+						<AutonomousCustomChartPanel rnd={rnd}/>
 					</ChartContextProvider>
 				</AsRnd>
 			</SavedCustomChartContextProvider>
 		</MetricsContainer>
 		<OperationBar>
-			<BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>
+			{rnd ? null : <BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>}
 			<OperationBarPlaceholder/>
 			{
 				rnd
@@ -195,5 +346,6 @@ export default () => {
 				{rnd ? 'Quit Export' : 'Export'}
 			</BigButton>
 		</OperationBar>
-	</Fragment>;
+		<HideOnPrintButton rnd={rnd}/>
+	</HideOnPrintProvider>;
 }

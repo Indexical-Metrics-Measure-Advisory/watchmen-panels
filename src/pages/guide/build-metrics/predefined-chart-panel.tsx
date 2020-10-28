@@ -14,6 +14,7 @@ import {
 import Dropdown, { DropdownOption } from '../../component/dropdown';
 import { useGuideContext } from '../guide-context';
 import { DownloadButton } from './download-button';
+import { HideOnPrintButton } from './hide-on-print-button';
 import { ResizeButtons } from './resize-buttons';
 import { SettingsButton } from './settings-button';
 import { SettingsContainer } from './settings-container';
@@ -85,8 +86,8 @@ const buildChartOptions = (def?: DomainChartOptions) => {
 	return options;
 };
 
-export const PredefinedChartPanel = (props: { chart: DomainChart }) => {
-	const { chart } = props;
+export const PredefinedChartPanel = (props: { chart: DomainChart, rnd: boolean }) => {
+	const { chart, rnd } = props;
 
 	const guide = useGuideContext();
 	const [ options, setOptions ] = useState(buildChartOptions(chart.options));
@@ -100,6 +101,7 @@ export const PredefinedChartPanel = (props: { chart: DomainChart }) => {
 		<ChartHeader>
 			<ChartTitle>{chart.name}</ChartTitle>
 			<ChartOperators>
+				<HideOnPrintButton visible={rnd} title={chart.name}/>
 				<DownloadButton visible={chartEnabled.enabled}/>
 				<SettingsButton visible={hasSettings && chartEnabled.enabled}/>
 				<ResizeButtons visible={chartEnabled.enabled}/>
