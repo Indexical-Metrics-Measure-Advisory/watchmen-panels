@@ -22,10 +22,21 @@ const modules = {
 	]
 };
 
-const RichEditorContainer = styled.div`
-	position: relative;
+const RichEditorRndContainer = styled.div`
+	&:hover {
+		.quill {
+			.ql-toolbar.ql-snow + .ql-container.ql-snow {
+	            border-top-color: var(--border-color);
+	            border-top-style: dashed;
+	        }
+			.ql-container {
+				border-color: var(--border-color);
+				border-style: dashed;
+			}
+		}
+	}
 	&:focus-within {
-		> button {
+		div[data-widget='chart-paragraph-container'] > button {
 			pointer-events: auto;
 			opacity: 1;
 		}
@@ -35,14 +46,22 @@ const RichEditorContainer = styled.div`
 				pointer-events: auto;
 				&.ql-snow + .ql-container.ql-snow {
 		            border-top-color: var(--border-color);
+		             border-top-style: solid;
 		        }
 			}
 			.ql-container {
 				border-color: var(--border-color);
 				background-color: var(--bg-color);
+				border-style: solid;
 			}
 		}
 	}
+`;
+const RichEditorContainer = styled.div.attrs({
+	'data-widget': 'chart-paragraph-container'
+})`
+	position: relative;
+	height: 100%;
 	> button {
 		display: block;
 		position: absolute;
@@ -57,6 +76,7 @@ const RichEditorContainer = styled.div`
 		opacity: 0;
 	}
 	.quill {
+		height: 100%;
 		.ql-toolbar {
 			position: absolute;
 			border: var(--border);
@@ -88,15 +108,17 @@ const RichEditor = (props: { rnd: boolean, value: string, onChanged: (text: stri
 
 	const [ locked, setLocked ] = useState(false);
 
-	return <AsRnd rnd={rnd} lock={locked}>
-		<RichEditorContainer>
-			<Button inkType={ButtonType.PRIMARY} title={locked ? 'Unlock' : 'Lock'}
-			        onClick={() => setLocked(!locked)}>
-				<FontAwesomeIcon icon={locked ? faUnlock : faLock}/>
-			</Button>
-			<ReactQuill value={value} modules={modules} onChange={onChanged}/>
-		</RichEditorContainer>
-	</AsRnd>;
+	return <RichEditorRndContainer>
+		<AsRnd rnd={rnd} lock={locked}>
+			<RichEditorContainer>
+				<Button inkType={ButtonType.PRIMARY} title={locked ? 'Unlock' : 'Lock'}
+				        onClick={() => setLocked(!locked)}>
+					<FontAwesomeIcon icon={locked ? faUnlock : faLock}/>
+				</Button>
+				<ReactQuill value={value} modules={modules} onChange={onChanged}/>
+			</RichEditorContainer>
+		</AsRnd>
+	</RichEditorRndContainer>;
 };
 
 export const Paragraphs = (props: {

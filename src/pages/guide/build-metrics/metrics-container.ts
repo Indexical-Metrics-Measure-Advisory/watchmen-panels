@@ -21,8 +21,8 @@ export const MetricsContainer = styled.div.attrs({
 			position: absolute;
 			top: 0;
 			left: 0;
-			font-size: 1.5em;
-			font-weight: var(--font-bold);
+			font-size: 5em;
+			font-weight: var(--font-boldest);
 			opacity: 0.15;
 			border-radius: 2px;
 		}
