@@ -4,13 +4,20 @@ import React from 'react';
 import { useChartInstanceContext } from '../../../charts/chart-instance-context';
 import Button from '../../component/button';
 import { useAlert } from '../../context/alert';
+import { useResponsive } from '../../context/responsive';
 
 export const DownloadButton = (props: { visible: boolean }) => {
 	const { visible } = props;
 
+	const responsive = useResponsive();
 	const chartInstance = useChartInstanceContext();
 	const alert = useAlert();
 	const onDownloadClicked = async () => {
+		if (responsive.mobile) {
+			alert.show('Download doesn\'t support in mobile device.');
+			return;
+		}
+
 		try {
 			const dataUrl = await chartInstance.download();
 			const link = document.createElement('a');

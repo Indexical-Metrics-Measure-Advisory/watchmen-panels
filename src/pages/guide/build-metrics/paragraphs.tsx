@@ -2,6 +2,7 @@ import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import styled from 'styled-components';
 import Button, { ButtonType } from '../../component/button';
 import { AsRnd } from './as-rnd';

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
 import { useHistory } from 'react-router-dom';
 import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
+import { useAlert } from '../../context/alert';
+import { useResponsive } from '../../context/responsive';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
 import { useGuideContext } from '../guide-context';
 import { AddParagraphButton } from './add-paragraph-button';
@@ -20,6 +21,8 @@ import { SavedCustomChartContextProvider } from './saved-custom-chart-context';
 export default () => {
 	const history = useHistory();
 	const guide = useGuideContext();
+	const responsive = useResponsive();
+	const alert = useAlert();
 
 	const [ rnd, setRnd ] = useState(false);
 	const [ texts, setTexts ] = useState<Array<string>>([]);
@@ -79,7 +82,13 @@ export default () => {
 		history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 	};
 	const onSaveAsPdfClicked = () => window.print();
-	const onRndClicked = () => setRnd(!rnd);
+	const onRndClicked = () => {
+		if (responsive.mobile) {
+			alert.show('Export doesn\'t support in mobile device.');
+			return;
+		}
+		setRnd(!rnd);
+	};
 	const onAddParagraphClicked = () => setTexts([ ...texts, 'New paragraph content here.' ]);
 
 	return <HideOnPrintProvider>

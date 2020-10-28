@@ -63,7 +63,7 @@ const Options = styled.div`
 	border-bottom-right-radius: var(--border-radius);
 	border: var(--border);
 	transition: opacity 300ms ease-in-out;
-	z-index: 1;
+	z-index: 999;
 	overflow-y: auto;
 	> span {
 		height: var(--height);

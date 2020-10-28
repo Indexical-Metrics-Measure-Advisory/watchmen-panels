@@ -151,7 +151,9 @@ export const HiddenChartsStackButton = (props: { rnd: boolean }) => {
 			{
 				has
 					? charts.map((chart, index) => {
-						return <div key={`${chart.title}-${index}`} onClick={onRecoverClicked(chart)}>
+						return <div key={`${chart.title}-${index}`}
+						            title={chart.title}
+						            onClick={onRecoverClicked(chart)}>
 							<span>{index + 1}</span>
 							<span>{chart.title}</span>
 						</div>;
