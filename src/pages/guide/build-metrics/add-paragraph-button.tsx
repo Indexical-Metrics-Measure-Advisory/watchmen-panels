@@ -20,14 +20,14 @@ const ParagraphButton = styled(Button).attrs({
 	border-radius: 100%;
 `;
 
-export const AddParagraphButton = (props: { rnd: boolean, onClick: () => void }) => {
-	const { rnd, onClick } = props;
+export const AddParagraphButton = (props: { rnd: boolean, onAdd: () => void }) => {
+	const { rnd, onAdd } = props;
 
 	if (!rnd) {
 		return null;
 	}
 
-	return <ParagraphButton inkType={ButtonType.PRIMARY} title='Add new paragraph' onClick={onClick}>
+	return <ParagraphButton inkType={ButtonType.PRIMARY} title='Add new paragraph' onClick={onAdd}>
 		<FontAwesomeIcon icon={faParagraph}/>
 	</ParagraphButton>;
 };

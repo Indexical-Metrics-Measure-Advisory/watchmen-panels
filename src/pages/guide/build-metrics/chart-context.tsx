@@ -37,9 +37,9 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 		draggable.style.left = `${rect.left}px`;
 		draggable.style.width = `${rect.width}px`;
 		draggable.style.height = `${rect.height}px`;
-		draggable.style.transition = 'all 300ms ease-in-out';
+		draggable.style.transition = 'all 500ms cubic-bezier(1, 0, 0.03, 0.85)';
 		setTimeout(() => {
-			draggable.style.top = '346px';
+			draggable.style.top = '92px';
 			draggable.style.left = 'calc(100vw - 72px)';
 			draggable.style.width = '0';
 			draggable.style.height = '0';
@@ -50,6 +50,7 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 						return new Promise(resolve => {
 							draggable.style.position = 'absolute';
 							draggable.style.transform = transform;
+							draggable.style.transition = 'all 500ms cubic-bezier(1, 0.14, 0, 1.03)';
 							draggable.style.opacity = '';
 							draggable.style.top = top;
 							draggable.style.left = left;

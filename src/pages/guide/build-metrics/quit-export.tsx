@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
 import Button, { ButtonType } from '../../component/button';
+import { useHideOnPrintContext } from './hide-on-print-context';
 
 const QuitButton = styled(Button).attrs({
 	'data-widget': 'chart-quit-export-btn'
@@ -22,15 +23,22 @@ const QuitButton = styled(Button).attrs({
 
 export const QuitExportButton = (props: {
 	rnd: boolean,
-	onClick: () => void
+	onQuited: () => void
 }) => {
-	const { rnd, onClick } = props;
+	const { rnd, onQuited } = props;
+
+	const hideOnPrintContext = useHideOnPrintContext();
 
 	if (!rnd) {
 		return null;
 	}
 
-	return <QuitButton inkType={ButtonType.PRIMARY} title='Quit Export' onClick={onClick}>
+	const onClicked = () => {
+		onQuited();
+		hideOnPrintContext.clear();
+	};
+
+	return <QuitButton inkType={ButtonType.PRIMARY} title='Quit Export' onClick={onClicked}>
 		<FontAwesomeIcon icon={faDoorOpen}/>
 	</QuitButton>;
 };

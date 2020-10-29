@@ -22,15 +22,15 @@ const PrintButton = styled(Button).attrs({
 
 export const PrintPdfButton = (props: {
 	rnd: boolean,
-	onClick: () => void
+	onPrint: () => void
 }) => {
-	const { rnd, onClick } = props;
+	const { rnd, onPrint } = props;
 
 	if (!rnd) {
 		return null;
 	}
 
-	return <PrintButton inkType={ButtonType.PRIMARY} title='Print as PDF' onClick={onClick}>
+	return <PrintButton inkType={ButtonType.PRIMARY} title='Print as PDF' onClick={onPrint}>
 		<FontAwesomeIcon icon={faPrint}/>
 	</PrintButton>;
 };

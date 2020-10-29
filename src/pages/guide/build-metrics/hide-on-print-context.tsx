@@ -8,7 +8,8 @@ export interface HideChart {
 export interface HideOnPrintContext {
 	get: () => Array<HideChart>;
 	hide: (chart: HideChart) => void;
-	recover: (chart: HideChart) => Promise<void>
+	recover: (chart: HideChart) => Promise<void>;
+	clear: () => void;
 }
 
 const Context = React.createContext<HideOnPrintContext>({} as HideOnPrintContext);
@@ -25,7 +26,8 @@ export const HideOnPrintProvider = (props: { children?: ((props: any) => React.R
 		recover: async (chart: HideChart) => {
 			await chart.recover();
 			setHideCharts(hideCharts.filter(c => c !== chart));
-		}
+		},
+		clear: () => setHideCharts([])
 	};
 	return <Context.Provider value={context}>{children}</Context.Provider>;
 };

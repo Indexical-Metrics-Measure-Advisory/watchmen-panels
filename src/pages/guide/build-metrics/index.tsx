@@ -83,13 +83,15 @@ export default () => {
 		history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 	};
 	const onSaveAsPdfClicked = () => window.print();
-	const onRndClicked = () => {
+	const onStartRndClicked = () => {
 		if (responsive.mobile) {
 			alert.show('Export doesn\'t support in mobile device.');
 			return;
 		}
-		setRnd(!rnd);
+		setRnd(true);
 	};
+	const onQuitExportClicked = () => setRnd(false);
+
 	const onAddParagraphClicked = () => setTexts([ ...texts, { text: 'New paragraph content here.', uuid: uuid() } ]);
 
 	return <HideOnPrintProvider>
@@ -104,11 +106,11 @@ export default () => {
 		<OperationBar>
 			{rnd ? null : <BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>}
 			<OperationBarPlaceholder/>
-			{rnd ? null : <BigButton inkType={ButtonType.PRIMARY} onClick={onRndClicked}>Export</BigButton>}
+			{rnd ? null : <BigButton inkType={ButtonType.PRIMARY} onClick={onStartRndClicked}>Export</BigButton>}
 		</OperationBar>
-		<AddParagraphButton rnd={rnd} onClick={onAddParagraphClicked}/>
-		<PrintPdfButton rnd={rnd} onClick={onSaveAsPdfClicked}/>
+		<AddParagraphButton rnd={rnd} onAdd={onAddParagraphClicked}/>
+		<PrintPdfButton rnd={rnd} onPrint={onSaveAsPdfClicked}/>
 		<HiddenChartsStackButton rnd={rnd}/>
-		<QuitExportButton rnd={rnd} onClick={onRndClicked}/>
+		<QuitExportButton rnd={rnd} onQuited={onQuitExportClicked}/>
 	</HideOnPrintProvider>;
 }
