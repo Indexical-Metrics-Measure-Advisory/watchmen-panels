@@ -268,6 +268,8 @@ export const CustomChartPanel = (props: {
 	}
 
 	const title = settings.title || 'Chart on You';
+
+	// TODO chart special settings, such as stack for bar/line, symbol size for scatter, etc.
 	return <Fragment>
 		<ChartHeader>
 			<ChartTitle>{title}</ChartTitle>

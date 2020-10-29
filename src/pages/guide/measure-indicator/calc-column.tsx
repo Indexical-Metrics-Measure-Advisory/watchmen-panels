@@ -102,7 +102,7 @@ export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOp
 	const created = topic.columns.includes(column);
 	const incorrect = isExpressionIncorrect(topic, calcColumn);
 
-	//TODO expression result values on data should be changed:
+	// expression result values on data should be changed:
 	// 1. column name changed
 	// 2. expression changed
 	const onColumnNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
