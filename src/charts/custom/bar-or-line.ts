@@ -54,6 +54,9 @@ export const buildOptionsForBarOrLine = (defaultType: 'bar' | 'line') => (params
 		},
 		tooltip: {
 			trigger: 'item',
+			axisPointer: {
+				type: 'cross'
+			},
 			formatter: function (params: any) {
 				const values: Array<any> = params.value;
 				return `${values[0]}<br>${values[values.length - 2]}`;

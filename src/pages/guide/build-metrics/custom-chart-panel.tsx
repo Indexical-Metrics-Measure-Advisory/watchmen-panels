@@ -288,7 +288,7 @@ export const CustomChartPanel = (props: {
 							return <div key={error}>{error}</div>;
 						})}
 					</ChartErrorReminder>
-					: <CustomChart data={data} settings={settings}/>)
+					: <CustomChart data={data} settings={settings} errorWrapper={ChartErrorReminder}/>)
 			}
 			{settings.key
 				? null

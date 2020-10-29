@@ -21,6 +21,7 @@ export interface ChartSettingsIndicator {
 	topicName?: string;
 	column?: DataColumn;
 	label?: string;
+	required?: boolean;
 	aggregator?: IndicatorAggregator
 }
 
@@ -28,6 +29,7 @@ export interface ChartSettingsDimension {
 	topicName?: string;
 	column?: DataColumn;
 	label?: string;
+	required?: boolean;
 }
 
 export interface ChartSettings {
