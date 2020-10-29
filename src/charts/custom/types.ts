@@ -40,6 +40,7 @@ export interface ChartSettings {
 export enum ChartKey {
 	BAR = 'bar',
 	LINE = 'line',
+	SCATTER = 'scatter'
 }
 
 export interface ChartOptions {
@@ -63,3 +64,19 @@ export interface ChartLineDefinition extends ChartDefinition {
 	key: ChartKey.LINE
 }
 
+export interface ChartScatterDefinition extends ChartDefinition {
+	key: ChartKey.SCATTER
+}
+
+export type SeriesDataItem = Array<any>;
+export type SeriesData = Array<SeriesDataItem>;
+export type AggregatorParameters = {
+	items: Array<SeriesDataItem>;
+	indicator: ChartSettingsIndicator;
+	keyCount: number;
+}
+export type AggregateResult = {
+	value: any;
+	label: string;
+}
+export type Aggregator = (params: AggregatorParameters) => AggregateResult;

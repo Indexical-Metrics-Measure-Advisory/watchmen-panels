@@ -1,5 +1,6 @@
 import { Bar } from './bar';
 import { Line } from './line';
+import { Scatter } from './scatter';
 import { ChartDefinition, ChartKey } from './types';
 // import { Pie } from './pie';
 // import { Scatter } from './scatter';
@@ -10,7 +11,8 @@ import { ChartDefinition, ChartKey } from './types';
 
 export const ChartDefinitions: Array<ChartDefinition> = [
 	Bar,
-	Line
+	Line,
+	Scatter
 ];
 export const ChartMap = ChartDefinitions.reduce((map, chart) => {
 	map[chart.key] = chart;

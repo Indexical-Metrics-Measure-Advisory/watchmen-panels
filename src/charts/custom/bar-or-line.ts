@@ -1,17 +1,12 @@
 import { DataSet } from '../../data/types';
 import { Theme } from '../../theme/types';
 import { BaseColors24 } from '../color-theme';
+import { buildAxis } from './elements/axis';
+import { asIndicatorData, detectIndicatorCategory, getIndicatorLabel } from './elements/indicator';
+import { getSeriesDataWhenDimensionsOnXAxis } from './elements/series';
+import { getValidDimensionsAndIndicators } from './elements/shortcuts';
+import { buildTitle } from './elements/title';
 import { ChartAxisType, ChartOptions, ChartSettings } from './types';
-import {
-	asIndicatorData,
-	buildTitle,
-	buildXAxis,
-	detectIndicatorCategory,
-	getIndicatorLabel,
-	getYAxisSeriesData,
-	isDimensionValid,
-	isIndicatorValid
-} from './utils';
 
 export const buildOptionsForBarOrLine = (defaultType: 'bar' | 'line') => (params: {
 	data: DataSet,
@@ -20,11 +15,9 @@ export const buildOptionsForBarOrLine = (defaultType: 'bar' | 'line') => (params
 }): ChartOptions => {
 	const { data, theme, settings: { title, dimensions, indicators } } = params;
 
-	const validDimensions = dimensions.filter(isDimensionValid);
-	const validIndicators = indicators.filter(isIndicatorValid);
-
+	const [ validDimensions, validIndicators ] = getValidDimensionsAndIndicators(dimensions, indicators);
 	const xAxis = {
-		...buildXAxis({ data, dimensions: validDimensions }),
+		...buildAxis({ data, dimensions: validDimensions }),
 		axisLabel: {
 			// force show all
 			interval: 0
@@ -37,7 +30,7 @@ export const buildOptionsForBarOrLine = (defaultType: 'bar' | 'line') => (params
 				x: 0,
 				y: 1
 			},
-			data: getYAxisSeriesData({ data, indicator, dimensions: validDimensions })
+			data: getSeriesDataWhenDimensionsOnXAxis({ data, indicator, dimensions: validDimensions })
 		};
 	});
 	if (xAxis.type === ChartAxisType.CATEGORY && validDimensions.length !== 1 && xAxis.data) {
