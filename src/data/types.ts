@@ -17,6 +17,11 @@ export interface DataColumn {
 	native: boolean;
 }
 
+export interface CalculatedDataColumn extends DataColumn {
+	expressionCode: string;
+	expression: string;
+}
+
 export interface ObjectDataColumn extends DataColumn {
 	childTypes: Array<DataColumn>;
 }

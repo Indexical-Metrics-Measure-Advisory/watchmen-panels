@@ -2,14 +2,15 @@ import { faCheck, faEquals, faExclamation, faTimes } from '@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import { DataColumn, DataTopic } from '../../../data/types';
+import { CalculatedDataColumn, DataColumn, DataTopic } from '../../../data/types';
+import { calculateColumn, isExpressionIncorrect } from '../../../services/factor-calculator';
 import { DomainExpression } from '../../../services/types';
 import Button from '../../component/button';
 import { DropdownOption } from '../../component/dropdown';
 import { DropdownInGrid } from '../component/dropdown-in-grid';
 import { InputInGrid } from '../component/input-in-grid';
 import { ObjectDetailBodyCell, ObjectDetailBodyRow } from '../component/object-detail';
-import { GuideCalcDataColumn, useGuideContext } from '../guide-context';
+import { useGuideContext } from '../guide-context';
 import { asDisplayName, generateUniqueLabel, generateUniqueName } from '../utils';
 
 // EXPLAIN use variable to avoid webstorm inspection errors, @supports is not supported yet
@@ -86,33 +87,6 @@ const DetailBodySettingCell = styled(ObjectDetailBodyCell)`
 	}
 `;
 
-export const isExpressionIncorrect = (column: GuideCalcDataColumn, allColumnNames: string[]) => {
-	const expression = (column.expression || '').trim();
-	if (!expression) {
-		// no expression
-		return true;
-	}
-
-	const variables = expression.match(/{{(((?!}}).)+)}}/g) || [];
-	if (variables.length === 0) {
-		// no variables
-		return true;
-	}
-
-	// there is no loop refer, no incorrect refer
-	return -1 !== variables.findIndex(variable => {
-		const x = variable.replace('{{', '').replace('}}', '');
-		if (x === column.name) {
-			// use myself, loop
-			return true;
-		} else if (!allColumnNames.includes(x)) {
-			// cannot match any column
-			return true;
-		}
-		return false;
-	});
-};
-
 export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOptions: Array<DropdownOption> }) => {
 	const { column, topic, typeOptions } = props;
 
@@ -122,13 +96,11 @@ export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOp
 		return null;
 	}
 
-	const allColumnNames = topic.columns.map(column => column.name);
-
-	const calcColumn = column as GuideCalcDataColumn;
+	const calcColumn = column as CalculatedDataColumn;
 	const name = asDisplayName(column);
 	const label = column.label;
 	const created = topic.columns.includes(column);
-	const incorrect = isExpressionIncorrect(calcColumn, allColumnNames);
+	const incorrect = isExpressionIncorrect(topic, calcColumn);
 
 	//TODO expression result values on data should be changed:
 	// 1. column name changed
@@ -141,7 +113,7 @@ export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOp
 		column.label = evt.target.value;
 		guide.setData(guide.getData()!);
 	};
-	const onCalcTypeChanged = (columns: Array<DataColumn>, column: GuideCalcDataColumn) => async (option: DropdownOption) => {
+	const onCalcTypeChanged = (columns: Array<DataColumn>, column: CalculatedDataColumn) => async (option: DropdownOption) => {
 		const expression = option as unknown as DomainExpression;
 		column.expressionCode = option.value as string;
 		column.name = generateUniqueName(columns, column, column.name || expression.name);
@@ -150,15 +122,12 @@ export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOp
 		if (!columns.includes(column)) {
 			columns.push(column);
 		}
-		if ((expression as any).func) {
-			(topic.data || []).forEach(item => {
-				item[column.name] = (expression as any).func(item);
-			});
-		}
+		calculateColumn(topic, column);
 		guide.setData(guide.getData()!);
 	};
 	const onColumnExpressionChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		calcColumn.expression = evt.target.value;
+		calculateColumn(topic, calcColumn);
 		guide.setData(guide.getData()!);
 	};
 	const onColumnDeleteClicked = () => {

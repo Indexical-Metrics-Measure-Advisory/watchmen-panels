@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import React from 'react';
 import { CountDoughnut } from '../charts/count-doughnut';
 import { Gantt } from '../charts/gantt';
@@ -6,33 +5,13 @@ import { SegmentBar } from '../charts/segment-bar';
 import { DataSet } from '../data/types';
 // @ts-ignore
 import SoftwareImplementationTasks from './software-implementation.csv';
-import { Domain, PredefinedExpression } from './types';
+import { Domain } from './types';
 
 export const SoftwareImplementation: Domain = {
 	code: 'software-implementation',
 	label: 'Software Implementation',
 	expressions: [
-		{
-			code: 'workdays', name: 'Workdays', label: 'Workdays', body: '{{EndDate}} - {{StartDate}}',
-			func: (item: { EndDate: string, StartDate: string }) => {
-				const { EndDate: end, StartDate: start } = item;
-
-				const endDate = dayjs(end);
-				const endWeekday = endDate.day();
-				const startDate = dayjs(start);
-				const startWeekday = startDate.day();
-
-				let diffDays = endDate.diff(startDate, 'day') + 1;
-				if (endWeekday >= startWeekday && diffDays <= 7) {
-					// same week
-					return endWeekday - startWeekday - (startWeekday === 0 ? 1 : 0) + (endWeekday === 6 ? 1 : 0);
-				} else if (endWeekday >= startWeekday) {
-					return Math.floor(diffDays / 7) * 5 + ((endWeekday === 6 ? 5 : endWeekday) - startWeekday);
-				} else {
-					return Math.floor(diffDays / 7) * 5 + (6 - (startWeekday === 0 ? 1 : startWeekday)) + endWeekday;
-				}
-			}
-		} as PredefinedExpression
+		{ code: 'workdays', name: 'Workdays', label: 'Workdays', body: 'workdays({{StartDate}}, {{EndDate}})' }
 	],
 	demo: {
 		tasks: SoftwareImplementationTasks

@@ -8,10 +8,6 @@ export interface DomainExpression {
 	body: string;
 }
 
-export interface PredefinedExpression extends DomainExpression {
-	func: (item: any) => any;
-}
-
 export const CustomDomainExpression: DomainExpression = {
 	code: 'custom',
 	name: 'customIndicator',

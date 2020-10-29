@@ -1,13 +1,8 @@
 import React from 'react';
 import { emptyGetter, emptySetter } from '../../common/utils';
-import { DataColumn, DataSet } from '../../data/types';
+import { DataSet } from '../../data/types';
 import { NoDomain } from '../../services/domain';
 import { Domain } from '../../services/types';
-
-export interface GuideCalcDataColumn extends DataColumn {
-	expressionCode: string;
-	expression: string;
-}
 
 export interface GuideContext {
 	domain: Domain,

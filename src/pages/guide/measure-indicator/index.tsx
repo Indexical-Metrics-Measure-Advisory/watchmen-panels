@@ -74,7 +74,7 @@ export default () => {
 			.map((column, index) => {
 				return <CalcColumn column={column} topic={topic}
 				                   typeOptions={calcColumnTypeOptions}
-				                   key={`${column.name}-${index}`}/>;
+				                   key={index}/>;
 			});
 
 		const newColumn = { native: false } as DataColumn;
