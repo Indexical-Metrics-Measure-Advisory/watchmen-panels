@@ -1,4 +1,4 @@
-import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faTimes, faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
@@ -6,6 +6,11 @@ import 'react-quill/dist/quill.snow.css';
 import styled from 'styled-components';
 import Button, { ButtonType } from '../../component/button';
 import { AsRnd } from './as-rnd';
+
+export interface ParagraphText {
+	text: string;
+	uuid: string;
+}
 
 const QuillFonts = [ 'Arial', 'Microsoft-YaHei', 'SimHei', 'Tahoma', 'Times-New-Roman', 'Verdana' ];
 const Font = Quill.import('formats/font');
@@ -24,6 +29,7 @@ const modules = {
 };
 
 const RichEditorRndContainer = styled.div`
+	position: absolute;
 	&:hover {
 		.quill {
 			.ql-toolbar.ql-snow + .ql-container.ql-snow {
@@ -40,6 +46,12 @@ const RichEditorRndContainer = styled.div`
 		div[data-widget='chart-paragraph-container'] > button {
 			pointer-events: auto;
 			opacity: 1;
+			&:first-child {
+				left: calc(100% + 4px);
+			}
+			&:nth-child(2) {
+				left: calc(100% + 4px + 32px + 4px);
+			}
 		}
 		.quill {
 			.ql-toolbar {
@@ -69,7 +81,7 @@ const RichEditorContainer = styled.div.attrs({
 		border: 0;
 		border-radius: 100%;
 		top: 6px;
-		left: calc(100% + var(--margin) / 2);
+		left: 100%;
 		width: 32px;
 		height: 32px;
 		pointer-events: none;
@@ -104,10 +116,19 @@ const RichEditorContainer = styled.div.attrs({
 		}
 	}
 `;
-const RichEditor = (props: { rnd: boolean, value: string, onChanged: (text: string) => void }) => {
-	const { rnd, value, onChanged } = props;
+const RichEditor = (props: {
+	rnd: boolean,
+	value: ParagraphText,
+	onChanged: (text: ParagraphText) => void,
+	onRemove: () => void;
+}) => {
+	const { rnd, value, onChanged, onRemove } = props;
 
 	const [ locked, setLocked ] = useState(false);
+	const onTextChanged = (text: string) => {
+		value.text = text;
+		onChanged(value);
+	};
 
 	return <RichEditorRndContainer>
 		<AsRnd rnd={rnd} lock={locked}>
@@ -116,7 +137,11 @@ const RichEditor = (props: { rnd: boolean, value: string, onChanged: (text: stri
 				        onClick={() => setLocked(!locked)}>
 					<FontAwesomeIcon icon={locked ? faUnlock : faLock}/>
 				</Button>
-				<ReactQuill value={value} modules={modules} onChange={onChanged}/>
+				<Button inkType={ButtonType.PRIMARY} title='Delete this paragraph'
+				        onClick={onRemove}>
+					<FontAwesomeIcon icon={faTimes}/>
+				</Button>
+				<ReactQuill value={value.text} modules={modules} onChange={onTextChanged}/>
 			</RichEditorContainer>
 		</AsRnd>
 	</RichEditorRndContainer>;
@@ -124,8 +149,8 @@ const RichEditor = (props: { rnd: boolean, value: string, onChanged: (text: stri
 
 export const Paragraphs = (props: {
 	rnd: boolean,
-	texts: Array<string>,
-	onTextsChanged: (texts: Array<string>) => void
+	texts: Array<ParagraphText>,
+	onTextsChanged: (texts: Array<ParagraphText>) => void
 }) => {
 	const { rnd, texts, onTextsChanged } = props;
 
@@ -133,15 +158,18 @@ export const Paragraphs = (props: {
 		return null;
 	}
 
-	const onTextChanged = (index: number) => (text: string) => {
-		onTextsChanged(texts.map((t, idx) => {
-			return idx !== index ? t : text;
-		}));
+	const onTextChanged = () => {
+		onTextsChanged([ ...texts ]);
+	};
+	const onTextRemove = (text: ParagraphText) => () => {
+		onTextsChanged(texts.filter(t => t !== text));
 	};
 
 	return <Fragment>
 		{texts.map((text, index) => {
-			return <RichEditor rnd={rnd} value={text} onChanged={onTextChanged(index)} key={index}/>;
+			return <RichEditor rnd={rnd} value={text} key={text.uuid}
+			                   onChanged={onTextChanged}
+			                   onRemove={onTextRemove(text)}/>;
 		})}
 	</Fragment>;
 };

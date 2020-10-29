@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { uuid } from 'uuidv4';
 import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
@@ -12,7 +13,7 @@ import { CustomCharts } from './custom-charts';
 import { HiddenChartsStackButton } from './hidden-charts-stack-button';
 import { HideOnPrintProvider } from './hide-on-print-context';
 import { MetricsContainer } from './metrics-container';
-import { Paragraphs } from './paragraphs';
+import { Paragraphs, ParagraphText } from './paragraphs';
 import { PredefinedCharts } from './predefined-charts';
 import { PrintPdfButton } from './print-pdf-button';
 import { QuitExportButton } from './quit-export';
@@ -25,7 +26,7 @@ export default () => {
 	const alert = useAlert();
 
 	const [ rnd, setRnd ] = useState(false);
-	const [ texts, setTexts ] = useState<Array<string>>([]);
+	const [ texts, setTexts ] = useState<Array<ParagraphText>>([]);
 	const metricsContainerRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (!rnd || metricsContainerRef.current == null) {
@@ -89,7 +90,7 @@ export default () => {
 		}
 		setRnd(!rnd);
 	};
-	const onAddParagraphClicked = () => setTexts([ ...texts, 'New paragraph content here.' ]);
+	const onAddParagraphClicked = () => setTexts([ ...texts, { text: 'New paragraph content here.', uuid: uuid() } ]);
 
 	return <HideOnPrintProvider>
 		<MetricsContainer data-rnd={rnd} ref={metricsContainerRef}>
