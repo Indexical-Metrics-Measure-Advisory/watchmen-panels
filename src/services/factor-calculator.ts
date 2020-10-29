@@ -1,5 +1,13 @@
 import dayjs, { OpUnitType, QUnitType } from 'dayjs';
+import QuarterOfYear from 'dayjs/plugin/quarterOfYear';
+import WeekOfYear from 'dayjs/plugin/weekOfYear';
 import { CalculatedDataColumn, DataColumnType, DataTopic } from '../data/types';
+
+dayjs.extend(WeekOfYear);
+dayjs.extend(QuarterOfYear);
+
+const bold = 'font-weight:bold';
+const normal = 'font-weight:normal';
 
 export const workdays = (start: string, end: string) => {
 	const endDate = dayjs(end);
@@ -17,48 +25,68 @@ export const workdays = (start: string, end: string) => {
 		return Math.floor(diffDays / 7) * 5 + (6 - (startWeekday === 0 ? 1 : startWeekday)) + endWeekday;
 	}
 };
-
-export const days = (start: string, end: string) => {
-	const endDate = dayjs(end);
-	const startDate = dayjs(start);
-	return endDate.diff(startDate, 'day') + 1;
+workdays.doc = (styles: { expression: string }) => {
+	console.info('%cWorkdays duration: %cworkdays({{StartDate}}, {{EndDate}})', bold, styles.expression);
 };
-
+export const days = (start: string, end: string) => dayjs(end).diff(dayjs(start), 'day') + 1;
+days.doc = (styles: { expression: string }) => {
+	console.info('%cDays duration: %cdays({{StartDate}}, {{EndDate}})', bold, styles.expression);
+};
 export const dateDiff = (start: string, end: string, unit?: QUnitType | OpUnitType, float?: boolean) => {
 	const endDate = dayjs(end);
 	const startDate = dayjs(start);
 	return endDate.diff(startDate, unit, float);
 };
+dateDiff.doc = (styles: { expression: string, parameterLead: string }) => {
+	console.groupCollapsed('Time duration: %cdateDiff({{StartDate}}, {{EndDate}}), \'unit\', float)', [ normal, styles.expression ].join(';'));
+	console.group('%cOptional Parameter [unit]:', styles.parameterLead);
+	console.info('Options: y | year | Q | quarter | M | month | w | week | d | day | h | hour | m | minute | s | second | ms | millisecond. Default in millisecond.');
+	console.info('Single quote is required in expression when parameter is given explicitly.');
+	console.groupEnd();
+	console.group('%cOptional Parameter [float]:', styles.parameterLead);
+	console.info('Options: true | false. Default in false.');
+	console.groupEnd();
+	console.groupEnd();
+};
+
+export const year = (date: string) => dayjs(date).year();
+export const month = (date: string) => dayjs(date).month() + 1;
+export const quarter = (date: string) => dayjs(date).quarter();
+export const week = (date: string) => dayjs(date).week();
+export const day = (date: string) => dayjs(date).date();
+export const weekday = (date: string) => dayjs(date).day();
+export const hour = (date: string) => dayjs(date).hour();
+export const minute = (date: string) => dayjs(date).minute();
+export const second = (date: string) => dayjs(date).second();
 
 (() => {
-	const expressionStyle = 'background-color:chocolate;padding:2px 16px;line-height:14px;font-size:12px;border-radius:9px;color:#fff';
-	const parameterLeadStyle = 'color:chocolate;font-weight:bold';
+	const expression = 'background-color:chocolate;padding:2px 16px;line-height:14px;font-size:12px;border-radius:9px;color:#fff';
+	const parameterLead = 'color:chocolate;font-weight:bold';
 
 	console.groupCollapsed('%cSupported expression syntax on calculating factor directly on watchmen frontend.',
 		'background-color:chocolate;padding:2px 16px;line-height:18px;font-size:14px;border-radius:11px;color:#fff');
 
-	console.info('Property name must be wrapped by double braces.');
-	console.info('For example: %c{{StartDate}}%c, %cStartDate%c is property name of topic.',
-		expressionStyle, '', expressionStyle, '');
-
-	console.groupCollapsed('Workdays duration:');
-	console.info('Workdays between two dates: %cworkdays({{StartDate}}, {{EndDate}})', expressionStyle);
-	console.groupEnd();
-
-	console.groupCollapsed('Days duration:');
-	console.info('Days between two dates: %cdays({{StartDate}}, {{EndDate}})', expressionStyle);
-	console.groupEnd();
-
-	console.groupCollapsed('Time duration:');
-	console.info('Time duration between two dates: %cdateDiff({{StartDate}}, {{EndDate}}), \'unit\', float)', expressionStyle);
-	console.group('%cOptional parameter [unit]:', parameterLeadStyle);
-	console.info('Options: y | year | Q | quarter | M | month | w | week | d | day | h | hour | m | minute | s | second | ms | millisecond. Default in millisecond.');
-	console.info('Single quote is required in expression when parameter is given explicitly.');
-	console.groupEnd();
-	console.group('%cOptional parameter [float]:', parameterLeadStyle);
-	console.info('Options: true | false. Default in false.');
-	console.groupEnd();
-	console.groupEnd();
+	/* eslint-disable */
+	// property declaration in expression
+	{
+		console.groupCollapsed('Property Declaration in Expression');
+		console.info('Property name must be wrapped by double braces.');
+		console.info('For example: %c{{StartDate}}%c, %cStartDate%c is property name of topic.', expression, '', expression, '');
+		console.groupEnd();
+	}
+	// date & time functions
+	{
+		console.groupCollapsed('Date & Time Functions');
+		[ workdays, days, dateDiff ].forEach(func => func.doc({ expression, parameterLead }));
+		const docOfDatePart = (funcName: string, styles: { expression: string }) => {
+			console.info(`%c${funcName}: %c${funcName}({{Date}})`, `text-transform:capitalize;${bold}`, styles.expression);
+		};
+		[
+			year, month, quarter, week, day, weekday, hour, minute, second
+		].forEach(func => docOfDatePart(func.name, { expression }));
+		console.groupEnd();
+	}
+	/* eslint-disable */
 
 	console.groupEnd();
 })();
