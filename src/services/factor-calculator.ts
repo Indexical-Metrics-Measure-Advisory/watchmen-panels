@@ -52,11 +52,11 @@ export const dateDiff = (start: string, end: string, unit?: QUnitType | OpUnitTy
 	console.groupCollapsed('Time duration:');
 	console.info('Time duration between two dates: %cdateDiff({{StartDate}}, {{EndDate}}), \'unit\', float)', expressionStyle);
 	console.group('%cOptional parameter [unit]:', parameterLeadStyle);
-	console.info('Options: y | year | Q | quarter | M | month | w | week | d | day | h | hour | m | minute | s | second | ms | millisecond.');
+	console.info('Options: y | year | Q | quarter | M | month | w | week | d | day | h | hour | m | minute | s | second | ms | millisecond. Default in millisecond.');
 	console.info('Single quote is required in expression when parameter is given explicitly.');
 	console.groupEnd();
 	console.group('%cOptional parameter [float]:', parameterLeadStyle);
-	console.info('Options: true | false.');
+	console.info('Options: true | false. Default in false.');
 	console.groupEnd();
 	console.groupEnd();
 
