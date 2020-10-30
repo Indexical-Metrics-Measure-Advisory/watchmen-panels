@@ -8,6 +8,7 @@ import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
 import Page from '../component/page';
 import { useNotImplemented } from '../context/not-implemented';
+import { ConceptSVG } from './concept';
 
 const HomePage = styled(Page)`
 	> main {
@@ -97,8 +98,8 @@ export default () => {
 				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
 			</SlideContent>
 		</Slide>
+		<ConceptSVG/>
 		<Slide>
-			<img src={ProcessDataImage3} alt=''/>
 			<SlideContent>
 				<Title>
 					Sustainability made easy<br/>
@@ -113,6 +114,7 @@ export default () => {
 				}
 				<BigButton inkType={ButtonType.PRIMARY} onClick={notImpl.show}>Contact Us</BigButton>
 			</SlideContent>
+			<img src={ProcessDataImage3} alt=''/>
 		</Slide>
 	</HomePage>;
 }
