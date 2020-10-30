@@ -2,6 +2,7 @@ import dayjs, { OpUnitType, QUnitType } from 'dayjs';
 import QuarterOfYear from 'dayjs/plugin/quarterOfYear';
 import WeekOfYear from 'dayjs/plugin/weekOfYear';
 import { CalculatedDataColumn, DataColumnType, DataTopic } from '../data/types';
+import { detectDataType } from '../data/utils';
 
 dayjs.extend(WeekOfYear);
 dayjs.extend(QuarterOfYear);
@@ -72,6 +73,14 @@ export const second = (date: string) => dayjs(date).second();
 		console.groupCollapsed('Property Declaration in Expression');
 		console.info('Property name must be wrapped by double braces.');
 		console.info('For example: %c{{StartDate}}%c, %cStartDate%c is property name of topic.', expression, '', expression, '');
+		console.groupEnd();
+	}
+	// result type declaration in expression
+	{
+		console.groupCollapsed('Result Type Declaration in Expression');
+		console.info('Result type can be appointed explicitly in expression, otherwise it is detected by engine itself, may cause misunderstanding in some cases.');
+		console.info('For example: %cnumeric:month({{StartDate}})%c, then expression result is a number.', expression, '');
+		console.info('Supported types: %cnumeric%c, %cboolean%c, %ctext%c, %cdate%c, %ctime%c, %cdatetime%c.', expression, '', expression, '', expression, '', expression, '', expression, '', expression, '');
 		console.groupEnd();
 	}
 	// date & time functions
@@ -167,8 +176,13 @@ export const calculate = (options: {
 	try {
 		// TODO use eval() here, should be replaced with execution on AST
 		// console.info(`Evaluate expression[origin=${expression}, replaced=${result}].`);
+		let value = eval(result);
+		if (value != null && ![ 'string', 'boolean', 'number' ].includes(typeof value)) {
+			// let it be undefined
+			value = void 0;
+		}
 		// eslint-disable-next-line
-		target[propName] = eval(result);
+		target[propName] = value;
 	} catch (e) {
 		// console.error(`Error occurred on evaluate expression[origin=${expression}, replaced=${result}].`);
 		// console.error(e);
@@ -203,13 +217,42 @@ export const isExpressionIncorrect = (topic: DataTopic, column: CalculatedDataCo
 	});
 };
 
+const detectColumnTypeByExpression = (column: CalculatedDataColumn): boolean => {
+	let { expression } = column;
+	return [
+		DataColumnType.TEXT, DataColumnType.BOOLEAN, DataColumnType.NUMERIC,
+		DataColumnType.DATE, DataColumnType.TIME, DataColumnType.DATETIME
+	].map(x => ({ type: x, prefix: `${x}:` })).some(({ type, prefix }) => {
+		if (expression.startsWith(prefix)) {
+			expression = expression.substring(prefix.length);
+			column.type = type;
+			return true;
+		}
+		return false;
+	});
+};
 export const calculateColumn = (topic: DataTopic, column: CalculatedDataColumn): void => {
-	if (column.name || column.expression) {
-		(topic.data || []).forEach(item => calculate({
-			target: item,
-			propName: column.name,
-			expression: column.expression,
-			topic
-		}));
+	const { name, expression } = column;
+	if (name || expression) {
+		const detected = detectColumnTypeByExpression(column);
+		(topic.data || []).map(item => {
+			calculate({
+				target: item,
+				propName: name,
+				expression: expression,
+				topic
+			});
+		});
+		if (!detected) {
+			const types = (topic.data || []).map(item => detectDataType(item[name]));
+			const distinctTypes = Array.from(new Set(types));
+			if (distinctTypes.includes(DataColumnType.TEXT)) {
+				// any value is detected as text
+				column.type = DataColumnType.TEXT;
+			} else {
+				// otherwise all types should be same
+				column.type = distinctTypes[0];
+			}
+		}
 	}
 };

@@ -106,7 +106,12 @@ export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOp
 	// 1. column name changed
 	// 2. expression changed
 	const onColumnNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+		const { name: oldName } = column;
 		column.name = evt.target.value;
+		(topic.data || []).forEach(row => {
+			row[column.name] = row[oldName];
+			delete row[oldName];
+		});
 		guide.setData(guide.getData()!);
 	};
 	const onColumnLabelChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,10 +133,13 @@ export const CalcColumn = (props: { column: DataColumn, topic: DataTopic, typeOp
 	const onColumnExpressionChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		calcColumn.expression = evt.target.value;
 		calculateColumn(topic, calcColumn);
+		// console.log((topic.data || []).map(row => row[column.name]));
 		guide.setData(guide.getData()!);
 	};
 	const onColumnDeleteClicked = () => {
 		topic.columns = topic.columns.filter(exists => exists !== column);
+		// delete data
+		(topic.data || []).forEach(row => delete row[column.name]);
 		guide.setData(guide.getData()!);
 	};
 

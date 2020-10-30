@@ -31,7 +31,7 @@ export const ChartContextProvider = (props: { children?: ((props: any) => React.
 		const rect = draggable.getBoundingClientRect();
 		const { transform, top, left, width, height } = draggable.style;
 		draggable.style.position = 'fixed';
-		draggable.style.transform = '';
+		draggable.style.transform = 'translate(0,0)';
 		draggable.style.opacity = '1';
 		draggable.style.top = `${rect.top}px`;
 		draggable.style.left = `${rect.left}px`;

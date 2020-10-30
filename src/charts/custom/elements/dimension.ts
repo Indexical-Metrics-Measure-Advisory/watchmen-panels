@@ -24,7 +24,13 @@ export const asDimensionData = (dimension: ChartSettingsDimension, data: DataSet
 };
 export const getDimensionValue = (row: any, dimension: ChartSettingsDimension) => {
 	const { column: { name: propName } = { name: '' } } = dimension;
-	return row[propName];
+	const category = detectDimensionCategory(dimension);
+	switch (category) {
+		case ChartAxisType.CATEGORY:
+			return row[propName] == null ? null : `${row[propName]}`;
+		default:
+			return row[propName];
+	}
 };
 export const getDimensionLabel = (dimension: ChartSettingsDimension) => {
 	return dimension.label || dimension.column?.label || dimension.column?.name;
