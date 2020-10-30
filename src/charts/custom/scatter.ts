@@ -6,6 +6,11 @@ import { getSeriesDataWhen2DimensionsOnXYAxis } from './elements/series';
 import { getValidDimensionsAndIndicators } from './elements/shortcuts';
 import { buildTitle } from './elements/title';
 import { ChartKey, ChartOptions, ChartScatterDefinition, ChartSettings } from './types';
+import {
+	buildDimensionsCountAtLeastValidator,
+	buildDimensionsCountAtMostValidator,
+	buildIndicatorsCountAtLeastValidator
+} from './validation-utils';
 
 /**
  * scatter has and only has two dimensions
@@ -68,5 +73,11 @@ const buildOptions = (params: {
 export const Scatter: ChartScatterDefinition = {
 	name: 'Scatter',
 	key: ChartKey.SCATTER,
-	buildOptions
+	buildOptions,
+
+	settingsValidators: [
+		buildDimensionsCountAtLeastValidator(2),
+		buildDimensionsCountAtMostValidator(2),
+		buildIndicatorsCountAtLeastValidator(1)
+	]
 };

@@ -48,6 +48,8 @@ export enum ChartKey {
 export interface ChartOptions {
 }
 
+export type ChartSettingsValidator = (settings: ChartSettings) => Array<string>;
+
 export interface ChartDefinition {
 	name: string;
 	key: ChartKey;
@@ -56,6 +58,7 @@ export interface ChartDefinition {
 		theme: Theme,
 		settings: ChartSettings
 	}) => ChartOptions;
+	settingsValidators: ChartSettingsValidator | Array<ChartSettingsValidator>
 }
 
 export interface ChartBarDefinition extends ChartDefinition {

@@ -3,7 +3,7 @@ import { useTheme } from 'styled-components';
 import { DataSet } from '../data/types';
 import { Theme } from '../theme/types';
 import { EChart } from './chart';
-import { ChartMap } from './custom';
+import { ChartMap } from './custom/defs';
 import { ChartSettings } from './custom/types';
 
 export const CustomChart = (props: {

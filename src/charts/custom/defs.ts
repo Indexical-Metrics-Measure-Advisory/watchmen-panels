@@ -3,9 +3,8 @@ import { Line } from './line';
 import { Scatter } from './scatter';
 import { ChartDefinition, ChartKey } from './types';
 // import { Pie } from './pie';
-// import { Scatter } from './scatter';
-// import { Radar } from './radar';
 // import { Tree } from './tree';
+// import { TreeMap } from './tree-map';
 // import { Sunburst } from './sunburst';
 // import { HeatMap } from 'heat-map';
 

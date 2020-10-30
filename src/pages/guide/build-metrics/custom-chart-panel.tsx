@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import { DarkenColors24 } from '../../../charts/color-theme';
-import { ChartDefinitions } from '../../../charts/custom';
 import { CustomChart } from '../../../charts/custom-chart';
+import { ChartDefinitions } from '../../../charts/custom/defs';
+import { isSettingsValid } from '../../../charts/custom/settings';
 import {
 	ChartKey,
 	ChartSettings,
@@ -184,28 +185,6 @@ const ChartErrorReminder = styled.div.attrs({
 
 const ChartDefOptions = ChartDefinitions.map(def => ({ label: def.name, value: def.key }));
 
-const hasValidDimension = (settings: ChartSettings) => {
-	const { dimensions } = settings;
-	if (!dimensions) {
-		return false;
-	}
-	if (dimensions.length === 0) {
-		return false;
-	}
-	return dimensions.some(dimension => !!dimension.column);
-};
-
-const hasValidIndicators = (settings: ChartSettings) => {
-	const { indicators } = settings;
-	if (!indicators) {
-		return false;
-	}
-	if (indicators.length === 0) {
-		return false;
-	}
-	return indicators.some(indicator => !!indicator.column);
-};
-
 export const CustomChartPanel = (props: {
 	settings: ChartSettings,
 	onSettingsChanged: (settings: ChartSettings) => void,
@@ -259,13 +238,7 @@ export const CustomChartPanel = (props: {
 		});
 	}).flat().sort((a, b) => a.label.localeCompare(b.label));
 
-	const errors: Array<string> = [];
-	if (!hasValidDimension(settings)) {
-		errors.push('At least one dimension is required.');
-	}
-	if (!hasValidIndicators(settings)) {
-		errors.push('At lease one indicator is required.');
-	}
+	const { valid: settingsValid, advises: invalidAdvises } = isSettingsValid(settings);
 
 	const title = settings.title || 'Chart on You';
 
@@ -275,8 +248,8 @@ export const CustomChartPanel = (props: {
 			<ChartTitle>{title}</ChartTitle>
 			<ChartOperators>
 				<HideOnPrintButton visible={rnd} title={title}/>
-				<SaveButton visible={canSave && !!settings.key && errors.length === 0} settings={settings}/>
-				<DownloadButton visible={!!settings.key && errors.length === 0}/>
+				<SaveButton visible={canSave && !!settings.key && settingsValid} settings={settings}/>
+				<DownloadButton visible={!!settings.key && settingsValid}/>
 				<SettingsButton visible={true}/>
 				<ResizeButtons/>
 			</ChartOperators>
@@ -284,10 +257,10 @@ export const CustomChartPanel = (props: {
 		<ChartBody data-expanded={chartContext.expanded} data-settings-active={settingsContext.active}>
 			{!settings.key
 				? null
-				: (errors.length !== 0
+				: (invalidAdvises.length !== 0
 					? <ChartErrorReminder>
-						{errors.map(error => {
-							return <div key={error}>{error}</div>;
+						{invalidAdvises.map(advise => {
+							return <div key={advise}>{advise}</div>;
 						})}
 					</ChartErrorReminder>
 					: <CustomChart data={data} settings={settings} errorWrapper={ChartErrorReminder}/>)
