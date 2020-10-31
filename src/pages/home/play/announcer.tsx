@@ -56,12 +56,12 @@ const PlayButtonContainer = styled.div`
 	transition: all 300ms ease-in-out;
 	z-index: 100;
 	&:not([data-scene='${Scene.NOT_START}']) {
-		animation: ${Starting} ${ScenesDefs[Scene.MASSES_OF_FILES].announcer}ms ease-in-out forwards;
+		animation: ${Starting} ${ScenesDefs[Scene.MASSES_OF_FILES].announce}ms ease-in-out forwards;
 		> svg:first-child {
-			animation: ${StartingPlay} ${ScenesDefs[Scene.MASSES_OF_FILES].announcer}ms ease-in-out forwards;
+			animation: ${StartingPlay} ${ScenesDefs[Scene.MASSES_OF_FILES].announce}ms ease-in-out forwards;
 		}
 		> svg:last-child {
-			animation: ${ShowPause} ${ScenesDefs[Scene.MASSES_OF_FILES].announcer}ms ease-in-out forwards;
+			animation: ${ShowPause} ${ScenesDefs[Scene.MASSES_OF_FILES].announce}ms ease-in-out forwards;
 		}
 	}
 	&:hover {

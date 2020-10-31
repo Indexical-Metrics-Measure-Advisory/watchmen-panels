@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Scene, ScenesDefs, useDirector } from './director';
 import { box } from './producer';
 
+const height = 50;
+
 const SubTitle = styled.div`
 	flex-grow: 1;
 	align-items: center;
@@ -23,25 +25,18 @@ const SubTitleStage = styled.div`
 	flex-grow: 1;
 	align-items: center;
 	justify-content: center;
-	height: 50px;
+	height: ${height}px;
 	font-weight: 500;
-	opacity: 0;
 	&[data-visible='${Scene.MASSES_OF_FILES}'] {
-		&[data-stage='${Scene.MASSES_OF_FILES}'] {
-			opacity: 1;
-			transition: opacity ${ScenesDefs.subtitleIn}ms ease-in-out;
+		transition: all ${ScenesDefs.subtitleIn}ms ease-in-out;
+		&[data-scene='${Scene.NOT_START}'] {
+			margin-top: ${height}px;
 		}
-		&:not([data-stage='${Scene.MASSES_OF_FILES}']) {
-			opacity: 0;
-			transition: all ${ScenesDefs.subtitleOut}ms ease-in-out;
-			transform: translateY(-50px);
+		&[data-scene='${Scene.MASSES_OF_FILES}'] {
+			margin-top: 0;
 		}
-	}
-	&[data-visible='${Scene.A_RAW_STORAGE}'] {
-		&[data-stage='${Scene.A_RAW_STORAGE}'] {
-			opacity: 1;
-			transform: translateY(-50px);
-			transition: all ${ScenesDefs.subtitleIn}ms ease-in-out;
+		&[data-scene='${Scene.A_RAW_STORAGE}'] {
+			margin-top: -${height}px;
 		}
 	}
 `;
@@ -49,13 +44,15 @@ const SubTitleStage = styled.div`
 export const CharacterGenerator = () => {
 	const { current } = useDirector();
 
-	return <SubTitle>
-		<SubTitleStage data-stage={current()} data-visible={Scene.MASSES_OF_FILES}>
+	const currentScene = current();
+
+	return <SubTitle data-scene={currentScene}>
+		<SubTitleStage data-scene={currentScene} data-visible={Scene.MASSES_OF_FILES}>
 			<div>There are masses of data in different systems,</div>
 			<div>Difficult part is how to make them valuable fast and efficient.</div>
 		</SubTitleStage>
-		<SubTitleStage data-stage={current()} data-visible={Scene.A_RAW_STORAGE}>
-			<div>First of all, data and their changes must be collected.</div>
+		<SubTitleStage data-scene={currentScene} data-visible={Scene.A_RAW_STORAGE}>
+			<div>First of all, data and their changes need to be collected.</div>
 		</SubTitleStage>
 	</SubTitle>;
 };

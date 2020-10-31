@@ -48,7 +48,7 @@ export const useDirector = () => {
 };
 
 export const ScenesDefs = {
-	subtitleIn: 2000,
+	subtitleIn: 1000,
 	subtitleOut: 1000,
 	[Scene.MASSES_OF_FILES]: {
 		announce: 600,
