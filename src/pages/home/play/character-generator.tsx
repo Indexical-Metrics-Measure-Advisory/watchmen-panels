@@ -35,8 +35,14 @@ const SubTitleStage = styled.div`
 		&[data-scene='${Scene.MASSES_OF_FILES}'] {
 			margin-top: 0;
 		}
-		&[data-scene='${Scene.A_RAW_STORAGE}'] {
+		&[data-scene='${Scene.A_RAW_STORAGE_1}'] {
 			margin-top: -${height}px;
+		}
+		&[data-scene='${Scene.A_RAW_STORAGE_2}'] {
+			margin-top: -${height * 2}px;
+		}
+		&[data-scene='${Scene.A_RAW_STORAGE_3}'] {
+			margin-top: -${height * 3}px;
 		}
 	}
 `;
@@ -51,8 +57,14 @@ export const CharacterGenerator = () => {
 			<div>There are masses of data in different systems,</div>
 			<div>Difficult part is how to make them valuable fast and efficient.</div>
 		</SubTitleStage>
-		<SubTitleStage data-scene={currentScene} data-visible={Scene.A_RAW_STORAGE}>
+		<SubTitleStage data-scene={currentScene} data-visible={Scene.A_RAW_STORAGE_1}>
 			<div>First of all, data and their changes need to be collected.</div>
+		</SubTitleStage>
+		<SubTitleStage data-scene={currentScene} data-visible={Scene.A_RAW_STORAGE_2}>
+			<div>A raw data storage is placed.</div>
+		</SubTitleStage>
+		<SubTitleStage data-scene={currentScene} data-visible={Scene.A_RAW_STORAGE_3}>
+			<div>Send all data to this storage.</div>
 		</SubTitleStage>
 	</SubTitle>;
 };

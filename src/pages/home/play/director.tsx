@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 export enum Scene {
 	NOT_START = 'not-start',
 	MASSES_OF_FILES = 'masses-of-files',
-	A_RAW_STORAGE = 'a-raw-storage'
+	A_RAW_STORAGE_1 = 'a-raw-storage-1',
+	A_RAW_STORAGE_2 = 'a-raw-storage-2',
+	A_RAW_STORAGE_3 = 'a-raw-storage-3'
 }
 
 export interface Director {
@@ -22,7 +24,11 @@ const getNextScene = (current: Scene) => {
 		case Scene.NOT_START:
 			return Scene.MASSES_OF_FILES;
 		case Scene.MASSES_OF_FILES:
-			return Scene.A_RAW_STORAGE;
+			return Scene.A_RAW_STORAGE_1;
+		case Scene.A_RAW_STORAGE_1:
+			return Scene.A_RAW_STORAGE_2;
+		case Scene.A_RAW_STORAGE_2:
+			return Scene.A_RAW_STORAGE_3;
 	}
 	return Scene.NOT_START;
 };
@@ -48,8 +54,7 @@ export const useDirector = () => {
 };
 
 export const ScenesDefs = {
-	subtitleIn: 1000,
-	subtitleOut: 1000,
+	subtitleIn: 500,
 	[Scene.MASSES_OF_FILES]: {
 		announce: 600,
 		showFile: 3000

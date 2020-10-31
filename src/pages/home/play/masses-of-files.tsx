@@ -21,7 +21,7 @@ import * as faFileMedicalAlt from '@fortawesome/free-solid-svg-icons/faFileMedic
 import * as faFilePrescription from '@fortawesome/free-solid-svg-icons/faFilePrescription';
 import * as faFileSignature from '@fortawesome/free-solid-svg-icons/faFileSignature';
 import * as faFileUpload from '@fortawesome/free-solid-svg-icons/faFileUpload';
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { BaseColors24 } from '../../../charts/color-theme';
 import { Scene, ScenesDefs, useDirector } from './director';
@@ -49,19 +49,23 @@ const FileIconAnimation = (scale: number) => keyframes`
 export const FileIcon = styled.g<{ scale: number, translate: { x: number, y: number }, fill: string }>`
 	transform: ${({ scale, translate: { x, y } }) => `translate(${x}px, ${y}px) scale(${scale})`};
 	fill: ${({ fill }) => fill};
-	animation-timing-function: ease-in-out;
 	opacity: 0;
 	&[data-scene='${Scene.MASSES_OF_FILES}'] {
 		opacity: 1;
 		transition: opacity ${() => Math.random() * (ScenesDefs[Scene.MASSES_OF_FILES].showFile - 1000) + 1000}ms ease-in-out;
 	}
-	&[data-scene='${Scene.A_RAW_STORAGE}'] {
+	&[data-scene='${Scene.A_RAW_STORAGE_1}'] {
+		opacity: 1;
+	}
+	&[data-scene='${Scene.A_RAW_STORAGE_2}'] {
+		opacity: 1;
 		// animation-name: ${({ scale }) => FileIconAnimation(scale)};
-		animation-iteration-count: 1;
-		animation-fill-mode: forwards;
-		animation-duration: ${ScenesDefs[Scene.MASSES_OF_FILES].showFile}ms;
-		animation-play-state: paused;
-		//animation-play-state: running;
+		// animation-iteration-count: 1;
+		// animation-fill-mode: forwards;
+		// animation-duration: ${ScenesDefs[Scene.MASSES_OF_FILES].showFile}ms;
+		// animation-play-state: paused;
+	}
+	&[data-scene='${Scene.A_RAW_STORAGE_3}'] {
 		opacity: 1;
 	}
 `;
@@ -95,7 +99,7 @@ export const MassesOfFiles = (props: {}) => {
 	const director = useDirector();
 	const { current } = director;
 
-	return <Fragment>
+	return <g data-concept='masses-of-files'>
 		{
 			files.map((file, index) => {
 				return <FileIcon {...file} data-scene={current()} key={index}>
@@ -103,5 +107,5 @@ export const MassesOfFiles = (props: {}) => {
 				</FileIcon>;
 			})
 		}
-	</Fragment>;
+	</g>;
 };
