@@ -24,7 +24,7 @@ import * as faFileUpload from '@fortawesome/free-solid-svg-icons/faFileUpload';
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { BaseColors24 } from '../../../charts/color-theme';
-import { Scene, useDirector } from './director';
+import { Scene, ScenesDefs, useDirector } from './director';
 import { box } from './producer';
 
 const size = { w: 30, h: 40 };
@@ -51,15 +51,15 @@ export const FileIcon = styled.g<{ scale: number, translate: { x: number, y: num
 	fill: ${({ fill }) => fill};
 	animation-timing-function: ease-in-out;
 	opacity: 0;
-	&[data-start='${Scene.STAGE1}'] {
+	&[data-scene='${Scene.MASSES_OF_FILES}'] {
 		opacity: 1;
-		transition: opacity ${() => Math.random() * 2 + 1}s ease-in-out;
+		transition: opacity ${() => Math.random() * (ScenesDefs[Scene.MASSES_OF_FILES].showFile - 1000) + 1000}ms ease-in-out;
 	}
-	&[data-start='${Scene.STAGE2}'] {
+	&[data-scene='${Scene.A_RAW_STORAGE}'] {
 		// animation-name: ${({ scale }) => FileIconAnimation(scale)};
 		animation-iteration-count: 1;
 		animation-fill-mode: forwards;
-		animation-duration: 3s;
+		animation-duration: ${ScenesDefs[Scene.MASSES_OF_FILES].showFile}ms;
 		animation-play-state: paused;
 		//animation-play-state: running;
 		opacity: 1;
@@ -98,7 +98,7 @@ export const MassesOfFiles = (props: {}) => {
 	return <Fragment>
 		{
 			files.map((file, index) => {
-				return <FileIcon {...file} data-start={current()} key={index}>
+				return <FileIcon {...file} data-scene={current()} key={index}>
 					<path d={file.path}/>
 				</FileIcon>;
 			})

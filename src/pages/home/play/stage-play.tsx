@@ -7,6 +7,7 @@ import { MassesOfFiles } from './masses-of-files';
 
 const Container = styled.div`
 	display: flex;
+	position: relative;
 	flex-direction: column;
 	height: 540px;
 	width: 100vw;
@@ -30,9 +31,9 @@ export const StagePlay = () => {
 		<Container>
 			<SVG xmlns='http://www.w3.org/2000/svg' viewBox={`0 0 800 450`}>
 				<MassesOfFiles/>
-				<Announcer/>
 			</SVG>
 			<CharacterGenerator/>
+			<Announcer/>
 		</Container>
 	</DirectorProvider>;
 };
