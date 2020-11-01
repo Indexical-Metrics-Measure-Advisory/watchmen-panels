@@ -1,4 +1,5 @@
-import { DataSet } from '../../../data/types';
+import { DataColumnType, DataSet } from '../../../data/types';
+import { BaseColors24 } from '../../color-theme';
 import { ChartSettingsDimension, ChartSettingsIndicator, SeriesData, SeriesDataItem } from '../types';
 import { aggregate } from './aggregator';
 import { getAxisValue } from './axis';
@@ -59,4 +60,82 @@ export const getSeriesDataWhen2DimensionsOnXYAxis = (options: {
 		] as SeriesDataItem;
 	});
 	return aggregate(seriesData, indicator, 2);
+};
+
+export const getSeriesDataAsTree = (options: {
+	data: DataSet,
+	indicator: ChartSettingsIndicator,
+	dimensions: Array<ChartSettingsDimension>,
+}): SeriesData => {
+	const { data, indicator, dimensions } = options;
+
+	const parsed = (data[indicator.topicName!].data || []).map(item => {
+		const label = getIndicatorLabel(indicator);
+		const column = indicator.column!;
+		const value = item[column.name!];
+		return {
+			name: label,
+			value,
+			groups: dimensions.map(dimension => {
+				return `${getDimensionValue(item, dimension)}`;
+			})
+		};
+	});
+
+	let colorIndex = 0;
+	const topMap: Map<string, any> = new Map();
+	const allMap: Map<string, any> = new Map();
+	parsed.forEach(item => {
+		const { name, value, groups } = item;
+		// build group tree
+		const parentKey = groups.reduce((key, group) => {
+			const parentKey = key;
+			if (key) {
+				key = `${key},${group}`;
+				const exists = allMap.get(key);
+				if (!exists) {
+					const me = {
+						name: group,
+						children: [],
+						itemStyle: { color: BaseColors24[colorIndex++ % BaseColors24.length] }
+					};
+					allMap.set(key, me);
+					const parent = allMap.get(parentKey);
+					parent.children.push(me);
+				}
+			} else {
+				// first level
+				key = group;
+				const exists = topMap.get(key);
+				if (!exists) {
+					const me = {
+						name: group,
+						children: [],
+						itemStyle: { color: BaseColors24[colorIndex++ % BaseColors24.length] }
+					};
+					allMap.set(key, me);
+					topMap.set(key, me);
+				}
+			}
+			return key;
+		}, '');
+
+		const parent = allMap.get(parentKey);
+		if (indicator.column?.type !== DataColumnType.NUMERIC) {
+			// not a number, use value as name, and set value to 1
+			parent.children.push({
+				name: value,
+				value: 1,
+				itemStyle: { color: BaseColors24[colorIndex++ % BaseColors24.length] }
+			});
+		} else {
+			// numeric value can be aggregate
+			parent.children.push({
+				name,
+				value,
+				itemStyle: { color: BaseColors24[colorIndex++ % BaseColors24.length] }
+			});
+		}
+	});
+	return Array.from(topMap.values());
 };

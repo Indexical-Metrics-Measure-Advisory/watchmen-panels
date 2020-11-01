@@ -46,7 +46,9 @@ export enum ChartKey {
 	PIE = 'pie',
 	DOUGHNUT = 'doughnut',
 	NIGHTINGALE = 'nightingale',
-	SUNBURST = 'sunburst'
+	SUNBURST = 'sunburst',
+	TREE = 'tree',
+	TREEMAP = 'treemap'
 }
 
 export interface ChartOptions {
@@ -91,6 +93,14 @@ export interface ChartNightingaleDefinition extends ChartDefinition {
 
 export interface ChartSunburstDefinition extends ChartDefinition {
 	key: ChartKey.SUNBURST
+}
+
+export interface ChartTreeDefinition extends ChartDefinition {
+	key: ChartKey.TREE
+}
+
+export interface ChartTreeMapDefinition extends ChartDefinition {
+	key: ChartKey.TREEMAP
 }
 
 export type SeriesDataItem = Array<any>;

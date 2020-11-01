@@ -4,7 +4,7 @@ import { BaseColors24 } from '../color-theme';
 import { getSeriesDataAsTree } from './elements/series';
 import { getValidDimensionsAndIndicators } from './elements/shortcuts';
 import { buildTitle } from './elements/title';
-import { ChartKey, ChartOptions, ChartSettings, ChartSunburstDefinition } from './types';
+import { ChartKey, ChartOptions, ChartSettings, ChartTreeDefinition } from './types';
 import {
 	buildDimensionsCountAtLeastValidator,
 	buildIndicatorsCountAtLeastValidator,
@@ -21,16 +21,20 @@ export const buildOptions = (params: {
 	const [ validDimensions, validIndicators ] = getValidDimensionsAndIndicators(dimensions, indicators);
 	const series = validIndicators.map(indicator => {
 		return {
-			type: 'sunburst',
-			radius: [ 0, '90%' ],
-			center: [ '50%', '50%' ],
-			data: getSeriesDataAsTree({ data, indicator, dimensions: validDimensions }),
-			levels: [ {}, ...validDimensions.map((dimension, index) => {
-				return {
-					r0: `${index * 46 / validDimensions.length + 7}%`,
-					r: `${(index + 1) * 46 / validDimensions.length + 7}%`
-				};
-			}), { r0: '53%', r: '55%', label: { position: 'outside' } } ]
+			type: 'tree',
+			left: '6%',
+			right: '6%',
+			initialTreeDepth: validDimensions.length + 1,
+			label: {
+				normal: {
+					position: 'insideTopRight',
+					distance: 10
+				}
+			},
+			data: [ {
+				name: 'Root',
+				children: getSeriesDataAsTree({ data, indicator, dimensions: validDimensions })
+			} ]
 		};
 	});
 
@@ -49,9 +53,9 @@ export const buildOptions = (params: {
 	};
 };
 
-export const Sunburst: ChartSunburstDefinition = {
-	name: 'Sunburst',
-	key: ChartKey.SUNBURST,
+export const Tree: ChartTreeDefinition = {
+	name: 'Tree',
+	key: ChartKey.TREE,
 	buildOptions,
 
 	settingsValidators: [
