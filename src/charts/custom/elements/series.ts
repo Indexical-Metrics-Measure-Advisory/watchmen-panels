@@ -151,6 +151,7 @@ export const getSeriesDataAsTree = (options: {
 				keyCount: 1
 			});
 			node.value = value;
+			node.name = `${node.name}: ${node.value}`;
 			delete node.children;
 		});
 	}
