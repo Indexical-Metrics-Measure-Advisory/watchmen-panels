@@ -39,10 +39,7 @@ const buildOptions = (params: {
 				x: 0,
 				y: 1
 			},
-			data: getSeriesDataWhen2DimensionsOnXYAxis({ data, indicator, dimensions: validDimensions }).map(item => {
-				const [ , label, ...values ] = item.reverse();
-				return [ ...values.reverse(), label ];
-			})
+			data: getSeriesDataWhen2DimensionsOnXYAxis({ data, indicator, dimensions: validDimensions })
 		};
 	});
 

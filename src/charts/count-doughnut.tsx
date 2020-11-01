@@ -4,73 +4,13 @@ import { useTheme } from 'styled-components';
 import { Theme } from '../theme/types';
 import { EChart } from './chart';
 import { BaseColors12, BaseColors24, BaseColors6 } from './color-theme';
-
-// // [ {
-// // 	'name': '北京',
-// // 	'value': 25
-// // }, {
-// // 	'name': '上海',
-// // 	'value': 20
-// // }, {
-// // 	'name': '广州',
-// // 	'value': 18
-// // }, {
-// // 	'name': '深圳',
-// // 	'value': 15
-// // }, {
-// // 	'name': '未知',
-// // 	'value': 13
-// // }, {
-// // 	'name': '海外',
-// // 	'value': 9
-// // } ]
+import { buildRichLabel } from './custom/pie-doughnut-nightingale';
 
 export interface DoughnutDataItem {
 	name: string;
 	value: number;
 }
 
-interface DotStyle {
-	backgroundColor: string;
-	borderRadius: number;
-	width: number;
-	height: number;
-	padding: Array<number>;
-}
-
-interface TextStyle {
-	color: string;
-	fontSize: number;
-	padding: Array<number>;
-}
-
-type RichLabel = { [key in string]: DotStyle | TextStyle };
-
-interface RenderItem {
-	name: string;
-	percent: number;
-	dataIndex: number;
-}
-
-const buildRichLabel = (colors: Array<string>): RichLabel => {
-	return colors.reduce((rich, v, index) => {
-		// dot style
-		rich[`hr${index}`] = {
-			backgroundColor: colors[index],
-			borderRadius: 3,
-			width: 3,
-			height: 3,
-			padding: [ 3, 3, 0, -12 ]
-		};
-		// text style
-		rich[`a${index}`] = {
-			padding: [ 8, -60, -20, -20 ],
-			color: colors[index],
-			fontSize: 12
-		};
-		return rich;
-	}, {} as RichLabel);
-};
 const linearTypes = [
 	{ x: 0, y: 0, x2: 1, y2: 1 }, // top-left -> right-bottom
 	{ x: 0, y: 0, x2: 0, y2: 1 }, // top -> bottom
@@ -81,13 +21,13 @@ const linearTypes = [
 	{ x: 1, y: 0, x2: 0, y2: 1 }, // top-right -> left-bottom
 	{ x: 0, y: 1, x2: 1, y2: 0 }  // left-bottom -> top-right
 ];
-const randomLinearTypes = () => linearTypes[Math.floor(Math.random() * 8)];
+// const randomLinearTypes = () => linearTypes[Math.floor(Math.random() * 8)];
 const buildItemStyle = (colors: Array<string>) => {
 	return colors.map(c => {
 		const colour = color(c);
 		return {
 			type: 'linear',
-			...randomLinearTypes(),
+			...linearTypes[colors.length % 8],
 			colorStops: [ {
 				offset: 0,
 				color: colour.fade(0.95).rgb().toString() // 0% 处的颜色
@@ -164,7 +104,7 @@ const buildOptions = (options: {
 				show: true,
 				position: 'outside',
 				alignTo: 'edge',
-				formatter: function (params: RenderItem) {
+				formatter: function (params: any) {
 					const name = params.name;
 					const percent = params.percent + '%';
 					const colorIndex = params.dataIndex % colorCount;
@@ -179,7 +119,7 @@ const buildOptions = (options: {
 			},
 			itemStyle: {
 				normal: {
-					color: function (params: RenderItem) {
+					color: function (params: any) {
 						return itemStyles[params.dataIndex % colorCount];
 					}
 				}

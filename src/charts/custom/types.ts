@@ -42,7 +42,10 @@ export interface ChartSettings {
 export enum ChartKey {
 	BAR = 'bar',
 	LINE = 'line',
-	SCATTER = 'scatter'
+	SCATTER = 'scatter',
+	PIE = 'pie',
+	DOUGHNUT = 'doughnut',
+	NIGHTINGALE = 'nightingale'
 }
 
 export interface ChartOptions {
@@ -71,6 +74,18 @@ export interface ChartLineDefinition extends ChartDefinition {
 
 export interface ChartScatterDefinition extends ChartDefinition {
 	key: ChartKey.SCATTER
+}
+
+export interface ChartPieDefinition extends ChartDefinition {
+	key: ChartKey.PIE
+}
+
+export interface ChartDoughnutDefinition extends ChartDefinition {
+	key: ChartKey.DOUGHNUT
+}
+
+export interface ChartNightingaleDefinition extends ChartDefinition {
+	key: ChartKey.NIGHTINGALE
 }
 
 export type SeriesDataItem = Array<any>;
