@@ -6,7 +6,7 @@ import { median } from './median';
 import { minimum } from './minimum';
 import { summary } from './summary';
 
-const findAggregator = (indicator: ChartSettingsIndicator): Aggregator | null => {
+export const findAggregator = (indicator: ChartSettingsIndicator): Aggregator | null => {
 	switch (indicator.aggregator) {
 		case IndicatorAggregator.COUNT:
 			return count;

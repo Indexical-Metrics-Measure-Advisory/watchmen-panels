@@ -111,6 +111,7 @@ export type AggregatorParameters = {
 	keyCount: number;
 }
 export type AggregateResult = {
+	aggregator: IndicatorAggregator
 	value: any;
 	label: string;
 }

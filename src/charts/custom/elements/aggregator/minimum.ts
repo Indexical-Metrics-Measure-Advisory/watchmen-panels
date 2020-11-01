@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { DataColumnType } from '../../../../data/types';
-import { AggregateResult, AggregatorParameters } from '../../types';
+import { AggregateResult, AggregatorParameters, IndicatorAggregator } from '../../types';
 
 export const minimum = (params: AggregatorParameters): AggregateResult => {
 	const { items, indicator, keyCount } = params;
@@ -21,5 +21,5 @@ export const minimum = (params: AggregatorParameters): AggregateResult => {
 			}
 		}
 	}, items[0][keyCount]);
-	return { value: final, label: `Min: ${final}` };
+	return { value: final, label: `Min: ${final}`, aggregator: IndicatorAggregator.MINIMUM };
 };

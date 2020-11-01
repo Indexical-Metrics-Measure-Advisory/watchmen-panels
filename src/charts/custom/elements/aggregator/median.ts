@@ -1,4 +1,4 @@
-import { AggregateResult, AggregatorParameters, SeriesDataItem } from '../../types';
+import { AggregateResult, AggregatorParameters, IndicatorAggregator, SeriesDataItem } from '../../types';
 
 export const median = (params: AggregatorParameters): AggregateResult => {
 	const { items, keyCount } = params;
@@ -29,5 +29,5 @@ export const median = (params: AggregatorParameters): AggregateResult => {
 		const coefficient = 1;
 		final = ((one as unknown as number * coefficient) + (another as unknown as number * coefficient)) / 2;
 	}
-	return { value: final, label: `Median: ${final}` };
+	return { value: final, label: `Median: ${final}`, aggregator: IndicatorAggregator.MEDIAN };
 };

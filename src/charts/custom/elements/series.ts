@@ -1,7 +1,7 @@
 import { DataColumnType, DataSet } from '../../../data/types';
 import { BaseColors24 } from '../../color-theme';
 import { ChartSettingsDimension, ChartSettingsIndicator, SeriesData, SeriesDataItem } from '../types';
-import { aggregate } from './aggregator';
+import { aggregate, findAggregator } from './aggregator';
 import { getAxisValue } from './axis';
 import { getDimensionValue } from './dimension';
 import { getIndicatorLabel } from './indicator';
@@ -85,6 +85,7 @@ export const getSeriesDataAsTree = (options: {
 	let colorIndex = 0;
 	const topMap: Map<string, any> = new Map();
 	const allMap: Map<string, any> = new Map();
+	const suspectedMap: Map<string, { name: string, value: number, children?: Array<{ value: number }> }> = new Map();
 	parsed.forEach(item => {
 		const { name, value, groups } = item;
 		// build group tree
@@ -121,6 +122,7 @@ export const getSeriesDataAsTree = (options: {
 		}, '');
 
 		const parent = allMap.get(parentKey);
+		suspectedMap.set(parentKey, parent);
 		if (indicator.column?.type !== DataColumnType.NUMERIC) {
 			// not a number, use value as name, and set value to 1
 			parent.children.push({
@@ -137,5 +139,21 @@ export const getSeriesDataAsTree = (options: {
 			});
 		}
 	});
+
+	const func = findAggregator(indicator);
+	if (func) {
+		Array.from(suspectedMap.values()).forEach(node => {
+			const { value } = func({
+				items: (node.children || []).map(item => {
+					return [ 'group', item.value ];
+				}),
+				indicator,
+				keyCount: 1
+			});
+			node.value = value;
+			delete node.children;
+		});
+	}
+
 	return Array.from(topMap.values());
 };

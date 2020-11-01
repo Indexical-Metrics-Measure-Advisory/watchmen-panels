@@ -6,9 +6,8 @@ import { Pie } from './pie';
 import { Scatter } from './scatter';
 import { Sunburst } from './sunburst';
 import { Tree } from './tree';
+import { TreeMap } from './treemap';
 import { ChartDefinition, ChartKey } from './types';
-// import { Tree } from './tree';
-// import { TreeMap } from './tree-map';
 // import { HeatMap } from 'heat-map';
 
 export const ChartDefinitions: Array<ChartDefinition> = [
@@ -19,7 +18,8 @@ export const ChartDefinitions: Array<ChartDefinition> = [
 	Doughnut,
 	Nightingale,
 	Sunburst,
-	Tree
+	Tree,
+	TreeMap
 ];
 export const ChartMap = ChartDefinitions.reduce((map, chart) => {
 	map[chart.key] = chart;
