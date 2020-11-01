@@ -4,7 +4,14 @@ import { BaseColors24 } from '../color-theme';
 import { getSeriesDataAsTree } from './elements/series';
 import { getValidDimensionsAndIndicators } from './elements/shortcuts';
 import { buildTitle } from './elements/title';
-import { ChartKey, ChartOptions, ChartSettings, ChartSunburstDefinition } from './types';
+import {
+	ChartKey,
+	ChartOptions,
+	ChartSettings,
+	ChartSettingsIndicator,
+	ChartSunburstDefinition,
+	IndicatorAggregator
+} from './types';
 import {
 	buildDimensionsCountAtLeastValidator,
 	buildIndicatorsCountAtLeastValidator,
@@ -20,6 +27,9 @@ export const buildOptions = (params: {
 
 	const [ validDimensions, validIndicators ] = getValidDimensionsAndIndicators(dimensions, indicators);
 	const series = validIndicators.map(indicator => {
+		const aggregator = (indicator as ChartSettingsIndicator).aggregator;
+		const aggregated = aggregator && aggregator != IndicatorAggregator.NONE;
+		const max = (aggregated ? 90 : 53) - 7;
 		return {
 			type: 'sunburst',
 			radius: [ 0, '90%' ],
@@ -27,8 +37,8 @@ export const buildOptions = (params: {
 			data: getSeriesDataAsTree({ data, indicator, dimensions: validDimensions }),
 			levels: [ {}, ...validDimensions.map((dimension, index) => {
 				return {
-					r0: `${index * 46 / validDimensions.length + 7}%`,
-					r: `${(index + 1) * 46 / validDimensions.length + 7}%`
+					r0: `${index * max / validDimensions.length + 7}%`,
+					r: `${(index + 1) * max / validDimensions.length + 7}%`
 				};
 			}), { r0: '53%', r: '55%', label: { position: 'outside' } } ]
 		};
