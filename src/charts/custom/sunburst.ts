@@ -28,7 +28,7 @@ export const buildOptions = (params: {
 	const [ validDimensions, validIndicators ] = getValidDimensionsAndIndicators(dimensions, indicators);
 	const series = validIndicators.map(indicator => {
 		const aggregator = (indicator as ChartSettingsIndicator).aggregator;
-		const aggregated = aggregator && aggregator != IndicatorAggregator.NONE;
+		const aggregated = aggregator && aggregator !== IndicatorAggregator.NONE;
 		const max = (aggregated ? 90 : 53) - 7;
 		return {
 			type: 'sunburst',
