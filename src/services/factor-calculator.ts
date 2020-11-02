@@ -5,9 +5,15 @@ import { CalculatedDataColumn, DataColumnType, DataTopic } from '../data/types';
 import { detectDataType } from '../data/utils';
 import { expressionStyle, fontWeightBold, fontWeightNormal, parameterLeadStyle } from './styles';
 
+//EXPLAIN according to use "eval" in expression calculation,
+// functions must be defined in this file, otherwise eval cannot find them.
+// because webpack changes function names on export/import case.
+// use self-executing anonymous function, is just for folder purpose.
+// this file will be very large after many functions supported, folding is reading helpful.
+
+// datetime functions
 dayjs.extend(WeekOfYear);
 dayjs.extend(QuarterOfYear);
-
 const {
 	workdays, days, dateDiff,
 	year, month, quarter, week, day, weekday, hour, minute, second,
@@ -90,6 +96,7 @@ const {
 	year, month, quarter, week, day, weekday, hour, minute, second
 ].forEach(x => x);
 
+// print docs
 (() => {
 	console.groupCollapsed('%cSupported expression syntax on calculating factor directly on watchmen frontend.',
 		'background-color:chocolate;padding:2px 16px;line-height:18px;font-size:14px;border-radius:11px;color:#fff');
@@ -119,7 +126,7 @@ const {
 
 const VARIABLE_PATTERN = /{{(((?![{}]).)+)}}/m;
 /**
- * will change or create target property in given item
+ * will change property value or create property on given target
  */
 export const calculate = (options: {
 	target: any,
@@ -250,6 +257,7 @@ const detectColumnTypeByExpression = (column: CalculatedDataColumn): boolean => 
 		return false;
 	});
 };
+
 export const calculateColumn = (topic: DataTopic, column: CalculatedDataColumn): void => {
 	const { name, expression } = column;
 	if (name || expression) {
