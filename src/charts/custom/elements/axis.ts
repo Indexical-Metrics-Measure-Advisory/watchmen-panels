@@ -9,7 +9,7 @@ export const buildSingleAxis = (options: { data: DataSet, dimension: ChartSettin
 	const { data, dimension } = options;
 	const type = detectDimensionCategory(dimension);
 	return {
-		type: detectDimensionCategory(dimension),
+		type,
 		name: getDimensionLabel(dimension),
 		data: type === ChartAxisType.CATEGORY ? (asDimensionData(dimension, data) || []).map(x => `${x}`) : undefined
 	};

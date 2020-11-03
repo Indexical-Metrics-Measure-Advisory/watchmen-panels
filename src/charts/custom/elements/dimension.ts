@@ -28,6 +28,15 @@ export const getDimensionValue = (row: any, dimension: ChartSettingsDimension) =
 	switch (category) {
 		case ChartAxisType.CATEGORY:
 			return row[propName] == null ? null : `${row[propName]}`;
+		case ChartAxisType.VALUE:
+			const value = row[propName];
+			if (value == null) {
+				return value;
+			} else if (typeof value === 'number') {
+				return value;
+			}
+			const parsed = parseFloat(value);
+			return isNaN(parsed) ? null : parsed;
 		default:
 			return row[propName];
 	}
