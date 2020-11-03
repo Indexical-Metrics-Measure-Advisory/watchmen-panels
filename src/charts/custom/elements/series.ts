@@ -151,7 +151,7 @@ export const getSeriesDataAsTree = (options: {
 				indicator,
 				keyCount: 1
 			});
-			node.value = Math.round((+value + 'e-2') as unknown as number) / Math.pow(10, -2);
+			node.value = Math.round((+value + 'e2') as unknown as number) / Math.pow(10, 2);
 			node.name = `${node.name}: ${format(node.value)}`;
 			delete node.children;
 		});
