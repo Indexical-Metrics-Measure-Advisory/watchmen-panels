@@ -5,6 +5,7 @@ import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
 import { useResponsive } from '../../context/responsive';
+import { NoObjects, ObjectsContainer, ObjectsList } from '../component/object-list';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
 import { useGuideContext } from '../guide-context';
 import { AddParagraphButton } from './add-paragraph-button';
@@ -79,6 +80,7 @@ export default () => {
 		};
 	}, [ rnd ]);
 
+	const hasTopic = Object.keys(guide.getData() || {}).length !== 0;
 	const onMeasureIndicatorsClicked = () => {
 		history.push(toDomain(Path.GUIDE_MEASURE_INDICATOR, guide.getDomain().code));
 	};
@@ -88,21 +90,36 @@ export default () => {
 			alert.show('Export doesn\'t support in mobile device.');
 			return;
 		}
+		if (!hasTopic) {
+			alert.show('No topic described.');
+			return;
+		}
 		setRnd(true);
 	};
 	const onQuitExportClicked = () => setRnd(false);
-
 	const onAddParagraphClicked = () => setTexts([ ...texts, { text: 'New paragraph content here.', uuid: uuid() } ]);
 
+	const onNoObjectsClicked = () => history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
+
 	return <HideOnPrintProvider>
-		<MetricsContainer data-rnd={rnd} ref={metricsContainerRef}>
-			<PredefinedCharts rnd={rnd}/>
-			<SavedCustomChartContextProvider>
-				<CustomCharts rnd={rnd}/>
-				<AutonomousCustomChart rnd={rnd}/>
-			</SavedCustomChartContextProvider>
-			<Paragraphs rnd={rnd} texts={texts} onTextsChanged={setTexts}/>
-		</MetricsContainer>
+		{
+			hasTopic
+				? <MetricsContainer data-rnd={rnd} ref={metricsContainerRef}>
+					<PredefinedCharts rnd={rnd}/>
+					<SavedCustomChartContextProvider>
+						<CustomCharts rnd={rnd}/>
+						<AutonomousCustomChart rnd={rnd}/>
+					</SavedCustomChartContextProvider>
+					<Paragraphs rnd={rnd} texts={texts} onTextsChanged={setTexts}/>
+				</MetricsContainer>
+				: <ObjectsContainer>
+					<ObjectsList data-has-data={false} data-has-active={false}>
+						<NoObjects onClick={onNoObjectsClicked}>
+							No valid data imported, back and <span>Import Data</span> again.
+						</NoObjects>
+					</ObjectsList>
+				</ObjectsContainer>
+		}
 		<OperationBar>
 			{rnd ? null : <BigButton onClick={onMeasureIndicatorsClicked}>Adjust Indicators</BigButton>}
 			<OperationBarPlaceholder/>
