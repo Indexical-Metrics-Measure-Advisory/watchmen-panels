@@ -9,7 +9,8 @@ export const SaveButton = (props: { visible: boolean, settings: ChartSettings })
 	const { visible, settings } = props;
 
 	const customCharts = useSavedCustomChartContext();
-	const onSaveClicked = () => customCharts.add(settings);
+	// deep clone
+	const onSaveClicked = () => customCharts.add(JSON.parse(JSON.stringify(settings)));
 
 	return <Button onClick={onSaveClicked} data-visible={visible}>
 		<FontAwesomeIcon icon={faThumbtack}/>

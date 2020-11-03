@@ -27,7 +27,7 @@ export const parseFile = async (file: FileLike): Promise<ParsedFile> => {
 		try {
 			return await read(file);
 		} catch (e) {
-			console.error(e);
+			// console.error(e);
 			return null;
 		}
 	}));
