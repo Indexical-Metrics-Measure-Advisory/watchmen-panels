@@ -1,15 +1,6 @@
-import crypto from 'crypto';
-
-export interface ParsedFile {
-	hash: string;
-	data: Array<any>;
-	filename: string;
-}
-
-export interface FileLike {
-	name: string;
-	text: () => Promise<string>;
-}
+import { readFromCsv } from './file-reader/csv-reader';
+import { readFromJson } from './file-reader/json-reader';
+import { FileLike, ParsedFile } from './file-reader/types';
 
 /**
  * Parse file context,<br>
@@ -30,35 +21,20 @@ export interface FileLike {
  * @param file
  */
 export const parseFile = async (file: FileLike): Promise<ParsedFile> => {
-	const isJSON = file.name.endsWith('.json');
-	const text = await file.text();
-	const hash = crypto.createHash('md5').update(text).digest('hex');
-	if (isJSON) {
-		const data = JSON.parse(text);
-		if (Array.isArray(data)) {
-			return { hash, data, filename: file.name };
-		} else {
-			return { hash, data: [ data ], filename: file.name };
+	const files = await Promise.all([
+		readFromCsv, readFromJson
+	].map(async read => {
+		try {
+			return await read(file);
+		} catch (e) {
+			console.error(e);
+			return null;
 		}
+	}));
+	const parsed = files.find(file => file != null);
+	if (parsed) {
+		return parsed;
 	} else {
-		return {
-			hash,
-			data: text.split('\n')
-				.map(line => (line || '').trim())
-				.filter(line => line)
-				.reduce((data, line, index) => {
-					const values = line.split(',');
-					if (index === 0) {
-						data.columns = values.map(value => (value || '').trim());
-					} else if (values.length !== 0) {
-						data.data.push(values.reduce((row, value, index) => {
-							row[data.columns[index]] = value;
-							return row;
-						}, {} as { [key in string]: any }));
-					}
-					return data;
-				}, { columns: [] as Array<string>, data: [] as Array<any> }).data,
-			filename: file.name
-		};
+		throw new Error(`Given file[${file.name}] is not supported yet.`);
 	}
 };
