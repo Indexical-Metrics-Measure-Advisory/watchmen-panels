@@ -48,5 +48,19 @@ export const parseData = (data: Array<any>, types: Array<DataColumn> = []): Arra
 			}
 		});
 		return columns;
-	}, types);
+	}, types).map(column => {
+		data.forEach(row => {
+			const value = row[column.name];
+			switch (true) {
+				case column.type === DataColumnType.NUMERIC && value != null && typeof value !== 'number':
+					const parsed = parseFloat(value);
+					row[column.name] = isNaN(parsed) ? null : parsed;
+					break;
+				case column.type === DataColumnType.BOOLEAN && typeof value !== 'boolean':
+					row[column.name] = [ 'TRUE', 'T', 'YES', 'Y' ].includes((`${value}`).toUpperCase());
+					break;
+			}
+		});
+		return column;
+	});
 };

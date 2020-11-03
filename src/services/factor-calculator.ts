@@ -160,6 +160,9 @@ export const calculate = (options: {
 				break;
 			case column!.type === DataColumnType.BOOLEAN:
 				switch (true) {
+					case typeof value === 'boolean':
+						value = value.toString();
+						break;
 					case [ 'TRUE', 'T', 'YES', 'Y' ].includes(value.toUpperCase()):
 						value = 'true';
 						break;
