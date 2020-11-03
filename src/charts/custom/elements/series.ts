@@ -142,6 +142,7 @@ export const getSeriesDataAsTree = (options: {
 
 	const func = findAggregator(indicator);
 	if (func) {
+		const format = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
 		Array.from(suspectedMap.values()).forEach(node => {
 			const { value } = func({
 				items: (node.children || []).map(item => {
@@ -150,8 +151,8 @@ export const getSeriesDataAsTree = (options: {
 				indicator,
 				keyCount: 1
 			});
-			node.value = value;
-			node.name = `${node.name}: ${node.value}`;
+			node.value = Math.round((+value + 'e-2') as unknown as number) / Math.pow(10, -2);
+			node.name = `${node.name}: ${format(node.value)}`;
 			delete node.children;
 		});
 	}
