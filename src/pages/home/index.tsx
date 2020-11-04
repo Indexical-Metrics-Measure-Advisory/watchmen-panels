@@ -7,7 +7,6 @@ import ProcessDataImage3 from '../../assets/process-data-3.png';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
 import Page from '../component/page';
-import { useNotImplemented } from '../context/not-implemented';
 import { ConceptSVG } from './concept';
 
 const HomePage = styled(Page)`
@@ -65,10 +64,12 @@ const Description = styled.div`
 
 export default () => {
 	const history = useHistory();
-	const notImpl = useNotImplemented();
 
-	const onStartTryClicked = () => {
+	const onStartGuideClicked = () => {
 		history.push(Path.GUIDE);
+	};
+	const onStartConsoleClicked = () => {
+		history.push(Path.CONSOLE);
 	};
 
 	return <HomePage>
@@ -81,7 +82,7 @@ export default () => {
 					Measure your business with our beginner-friendly step-by-step guide. Import data, try metrics,
 					choose indicators, and measure your business.
 				</Description>
-				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartGuideClicked}>Try Chart Guide</BigButton>
 			</SlideContent>
 			<img src={ProcessDataImage1} alt=''/>
 		</Slide>
@@ -95,7 +96,7 @@ export default () => {
 					Dedicated groups of experts continually working to create domain oriented indicators and reports
 					that are accurate and easier to use.
 				</Description>
-				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartTryClicked}>Try Online</BigButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartGuideClicked}>Try Chart Guide</BigButton>
 			</SlideContent>
 		</Slide>
 		<ConceptSVG/>
@@ -112,7 +113,7 @@ export default () => {
 				{
 					// TODO contact us clicked
 				}
-				<BigButton inkType={ButtonType.PRIMARY} onClick={notImpl.show}>Contact Us</BigButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartConsoleClicked}>Try Console</BigButton>
 			</SlideContent>
 			<img src={ProcessDataImage3} alt=''/>
 		</Slide>

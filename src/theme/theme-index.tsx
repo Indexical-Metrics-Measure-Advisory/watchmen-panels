@@ -58,6 +58,9 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		
 		--margin: ${({ theme }) => theme.deskPageMargin}px;
 		
+		--console-menu-width: ${({ theme }) => theme.consoleMenuWidth}px;
+		--console-menu-max-width: ${({ theme }) => theme.consoleMenuMaxWidth}px;
+		
 		width: 100%;
 		
 		//&::-webkit-scrollbar {

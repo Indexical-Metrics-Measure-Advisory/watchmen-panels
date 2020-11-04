@@ -8,7 +8,9 @@ export default {
 	GUIDE_IMPORT_DATA: '/guide/:domain/import-data',
 	GUIDE_MAPPING_FACTOR: '/guide/:domain/mapping-factor',
 	GUIDE_MEASURE_INDICATOR: '/guide/:domain/measure-indicator',
-	GUIDE_BUILD_METRICS: '/guide/:domain/build-metrics'
+	GUIDE_BUILD_METRICS: '/guide/:domain/build-metrics',
+
+	CONSOLE: '/console'
 };
 
 export const toDomain = (path: string, domain: string) => path.replace(':domain', domain);
