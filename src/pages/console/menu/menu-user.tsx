@@ -18,7 +18,7 @@ const User = styled.div`
 	width: var(--console-menu-item-icon-size);
 	height: var(--console-menu-item-icon-size);
 	border-radius: 100%;
-	background-color: var(--console-font-color);
+	background-color: var(--primary-hover-color);
 	color: var(--invert-color);
 	user-select: none;
 	transform: scale(0.9);

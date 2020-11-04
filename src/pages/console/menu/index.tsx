@@ -1,4 +1,4 @@
-import { faBell, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { faInbox, faPlus, faShapes, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
@@ -49,9 +49,10 @@ export default () => {
 		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
 		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}/>
 		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}/>
-		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
 		<MenuSeparator width={width}/>
 		<MenuItem icon={faShapes} label='Show Everything' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faComments} iconSize={1.2} label='Show Timeline' showTooltip={showMenuItemTooltip}/>
 		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Domain Space' showTooltip={showMenuItemTooltip}/>
 		<Placeholder/>
 		<MenuSeparator width={width}/>
