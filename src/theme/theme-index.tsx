@@ -62,6 +62,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		
 		--console-font-color: ${({ theme }) => theme.consoleFontColor};
 		--console-hover-color: ${({ theme }) => theme.consoleHoverColor};
+		--console-waive-color: ${({ theme }) => theme.consoleWaiveColor};
 		
 		--console-menu-width: ${({ theme }) => theme.consoleMenuWidth}px;
 		--console-menu-height: ${({ theme }) => theme.consoleMenuHeight}px;

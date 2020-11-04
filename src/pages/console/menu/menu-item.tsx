@@ -23,9 +23,10 @@ const MenuItemContainer = styled.div.attrs({
 `;
 const MenuItemIcon = styled(FontAwesomeIcon).attrs({
 	'data-widget': 'menu-item-icon'
-})`
+})<{ 'icon-size'?: number }>`
 	&[data-widget='menu-item-icon'] {
 		width: var(--console-menu-item-icon-size);
+		font-size: ${({ 'icon-size': iconSize }) => iconSize != null ? `${iconSize}em` : ''};
 	}
 `;
 const MenuItemLabel = styled.div`
@@ -41,10 +42,12 @@ const MenuItemLabel = styled.div`
 
 export const MenuItem = (props: {
 	icon: IconProp,
+	iconSize?: number,
 	label: string
-	showTooltip: boolean
+	showTooltip: boolean,
+	className?: string
 }) => {
-	const { icon, label, showTooltip } = props;
+	const { icon, iconSize, label, showTooltip, className } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const tooltip = useTooltipContext();
@@ -55,12 +58,12 @@ export const MenuItem = (props: {
 		}
 
 		const { top, left } = containerRef.current.getBoundingClientRect();
-		tooltip.show(label, { x: left + 4, y: top - 20 });
+		tooltip.show(label, { x: left + 8, y: top - 22 - (iconSize != null ? 4 : 0), caretLeft: 12 });
 	};
 
-	return <MenuItemContainer ref={containerRef}
+	return <MenuItemContainer className={className} ref={containerRef}
 	                          onMouseEnter={onMouseEnter} onMouseLeave={tooltip.hide}>
-		<MenuItemIcon icon={icon}/>
+		<MenuItemIcon icon={icon} icon-size={iconSize}/>
 		<MenuItemLabel>{label}</MenuItemLabel>
 	</MenuItemContainer>;
 };

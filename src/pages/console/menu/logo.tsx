@@ -16,7 +16,8 @@ const TopTitle = styled.div`
 	font-family: var(--console-title-font-family);
 	font-weight: var(--console-title-font-weight);
 	font-style: italic;
-	font-size: 1.4em;
+	font-size: 1.8em;
+	letter-spacing: 2px;
 	font-variant: petite-caps;
 	margin-left: calc((var(--console-menu-width) - 32px) / 2);
 `;
