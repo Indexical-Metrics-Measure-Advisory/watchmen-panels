@@ -20,6 +20,7 @@ export default {
 	fontSize: 14,
 	lineHeight: 20,
 	fontColor: '#25265e',
+	fontDemiBold: 500,
 	fontBold: 600,
 	fontBoldest: 900,
 	titleFontSize: 36,
@@ -71,7 +72,21 @@ export default {
 	chartZoomHandlerIcon: 'M96 496V16c0-8.8-7.2-16-16-16H48c-8.8 0-16 7.2-16 16v480c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16zm128 0V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v480c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16z',
 
 	// console
+	consoleFontColor: '#333333',
+	consoleHoverColor: 'rgb(87,120,198)',
+
 	// console menu
 	consoleMenuWidth: 51,
-	consoleMenuMaxWidth: 321
+	consoleMenuHeight: 40,
+	consoleMenuMaxWidth: 321,
+	consoleMenuItemIconSize: 32,
+	consoleMenuSeparatorColor: 'rgb(227,227,229)',
+
+	// console tooltip
+	consoleTooltipBgColor: '#333333',
+	consoleTooltipMinHeight: 20,
+
+	// console title
+	consoleTitleFontFamily: "Oswald, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+	consoleTitleFontWeight: 900
 };

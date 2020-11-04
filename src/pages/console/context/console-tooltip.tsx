@@ -1,0 +1,85 @@
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+
+export interface TooltipRect {
+	x: number;
+	y: number;
+	width?: number;
+	height?: number;
+}
+
+export interface ConsoleTooltipContext {
+	show: (tooltip: ((props: any) => React.ReactNode) | React.ReactNode, rect: TooltipRect) => void;
+	hide: () => void;
+}
+
+interface TooltipContent {
+	tooltip: ((props: any) => React.ReactNode) | React.ReactNode,
+	rect: TooltipRect
+}
+
+const Context = React.createContext<ConsoleTooltipContext>({} as ConsoleTooltipContext);
+Context.displayName = 'ConsoleTooltipContext';
+
+
+const TooltipContainer = styled.div.attrs({
+	'data-widget': 'console-tooltip'
+})<{ x?: number; y?: number; width?: number; height?: number; }>`
+	display: flex;
+	position: fixed;
+	left: ${({ x }) => x != null ? `${x}px` : '-1000px'};
+	top: ${({ y }) => y != null ? `${y}px` : '-1000px'};
+	width: ${({ width }) => width != null ? `${width}px` : 'unset'};
+	height: ${({ height }) => height != null ? `${height}px` : 'unset'};
+	min-height: ${({ theme }) => theme.consoleTooltipMinHeight}px;
+	align-items: center;
+	font-size: 12px;
+	font-weight: var(--font-bold);
+	font-stretch: expanded;
+	border-radius: var(--border-radius);
+	padding: calc(var(--margin) / 6) calc(var(--margin) / 3);
+	background-color: var(--console-tooltip-bg-color);
+	color: var(--invert-color);
+	opacity: 0;
+	pointer-events: none;
+	user-select: none;
+	transition: opacity 300ms ease-in-out;
+	z-index: 10000;
+	&[data-show=true] {
+		opacity: 1;
+	}
+	> svg:last-child {
+		display: block;
+		position: absolute;
+		color: var(--console-tooltip-bg-color);
+		font-size: 1.2em;
+		top: calc(100% - 6px);
+		left: 16px;
+	}
+`;
+
+export const ConsoleTooltipContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
+	const { children } = props;
+
+	const [ content, setContent ] = useState<TooltipContent | null>(null);
+	const [ functions ] = useState({
+		show: (tooltip: ((props: any) => React.ReactNode) | React.ReactNode, rect: TooltipRect) => {
+			setContent({ tooltip, rect });
+		},
+		hide: () => setContent(null)
+	});
+
+	return <Context.Provider value={functions}>
+		{children}
+		<TooltipContainer data-show={content != null} {...content?.rect}>
+			{content?.tooltip}
+			<FontAwesomeIcon icon={faCaretDown}/>
+		</TooltipContainer>
+	</Context.Provider>;
+};
+
+export const useTooltipContext = () => {
+	return React.useContext(Context);
+};

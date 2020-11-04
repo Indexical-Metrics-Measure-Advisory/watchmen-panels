@@ -1,7 +1,10 @@
+import { faBell, faInbox, faStar } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Theme } from '../../../theme/types';
 import { MenuLogo } from './logo';
+import { MenuItem } from './menu-item';
+import { MenuSeparator } from './menu-separator';
 import { ResizeHandle } from './resize-handle';
 
 const MenuContainer = styled.div.attrs({
@@ -34,8 +37,14 @@ export default () => {
 		setWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
 	};
 
+	const showMenuItemTooltip = width / minWidth <= 1.5;
+
 	return <MenuContainer width={width}>
 		<MenuLogo/>
+		<MenuItem icon={faBell} label='Notifications' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
+		<MenuSeparator/>
 		<Placeholder/>
 		<ResizeHandle width={width} onResize={onResize}/>
 	</MenuContainer>;

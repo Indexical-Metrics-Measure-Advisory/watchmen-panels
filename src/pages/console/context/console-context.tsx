@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ConsoleTooltipContextProvider } from './console-tooltip';
 
 export interface ConsoleContext {
 }
@@ -11,9 +12,13 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 
 	const [ context ] = useState<ConsoleContext>({});
 
-	return <Context.Provider value={context}>{children}</Context.Provider>;
+	return <Context.Provider value={context}>
+		<ConsoleTooltipContextProvider>
+			{children}
+		</ConsoleTooltipContextProvider>
+	</Context.Provider>;
 };
 
-export const useGuideContext = () => {
+export const useConsoleContext = () => {
 	return React.useContext(Context);
 };

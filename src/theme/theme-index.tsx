@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { createGlobalStyle } from 'styled-components';
+import '../assets/fonts/oswald/oswald.css';
 import { Theme } from './types';
 
 const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
@@ -29,6 +30,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--font-size: ${({ theme }) => theme.fontSize}px;
 		--line-height: ${({ theme }) => theme.lineHeight}px;
 		--font-color: ${({ theme }) => theme.fontColor};
+		--font-demi-bold: ${({ theme }) => theme.fontDemiBold};
 		--font-bold: ${({ theme }) => theme.fontBold};
 		--font-boldest: ${({ theme }) => theme.fontBoldest};
 		--title-font-size: ${({ theme }) => theme.titleFontSize}px;
@@ -58,8 +60,20 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		
 		--margin: ${({ theme }) => theme.deskPageMargin}px;
 		
+		--console-font-color: ${({ theme }) => theme.consoleFontColor};
+		--console-hover-color: ${({ theme }) => theme.consoleHoverColor};
+		
 		--console-menu-width: ${({ theme }) => theme.consoleMenuWidth}px;
+		--console-menu-height: ${({ theme }) => theme.consoleMenuHeight}px;
 		--console-menu-max-width: ${({ theme }) => theme.consoleMenuMaxWidth}px;
+		--console-menu-item-icon-size: ${({ theme }) => theme.consoleMenuItemIconSize}px;
+		--console-menu-separator-color: ${({ theme }) => theme.consoleMenuSeparatorColor};
+		
+		--console-tooltip-bg-color: ${({ theme }) => theme.consoleTooltipBgColor};
+		--console-tooltip-min-height: ${({ theme }) => theme.consoleTooltipMinHeight};
+		
+		--console-title-font-family: ${({ theme }) => theme.consoleTitleFontFamily};
+		--console-title-font-weight: ${({ theme }) => theme.consoleTitleFontWeight};
 		
 		width: 100%;
 		

@@ -7,6 +7,7 @@ import Menu from './menu';
 const Container = styled.div.attrs({
 	'data-widget': 'console-container'
 })`
+	color: var(--console-font-color);
 	> main {
 		width: 100vw;
 		display: flex;
@@ -35,6 +36,7 @@ export default () => {
 	return <ConsoleContextProvider>
 		<Container>
 			<Menu/>
+			<main/>
 		</Container>
 	</ConsoleContextProvider>;
 }

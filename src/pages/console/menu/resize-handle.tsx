@@ -46,7 +46,8 @@ export const ResizeHandle = (props: {
 	const handleRef = useRef<HTMLDivElement>(null);
 	const [ resizing, setResizing ] = useState(false);
 	useEffect(() => {
-		if (handleRef.current) {
+		const ref = handleRef.current;
+		if (ref) {
 			const canStartResize = (x: number) => Math.abs(x - width) <= 3;
 			const onMouseDown = (event: MouseEvent) => {
 				if (event.button === 0 && canStartResize(event.clientX)) {
@@ -67,19 +68,17 @@ export const ResizeHandle = (props: {
 			const onMouseUp = () => {
 				setResizing(false);
 			};
-			handleRef.current.addEventListener('mousedown', onMouseDown);
-			handleRef.current.addEventListener('mousemove', onMouseMove);
-			handleRef.current.addEventListener('mouseup', onMouseUp);
+			ref.addEventListener('mousedown', onMouseDown);
+			ref.addEventListener('mousemove', onMouseMove);
+			ref.addEventListener('mouseup', onMouseUp);
 
 			return () => {
-				if (handleRef.current) {
-					handleRef.current.removeEventListener('mousedown', onMouseDown);
-					handleRef.current.removeEventListener('mousemove', onMouseMove);
-					handleRef.current.removeEventListener('mouseup', onMouseUp);
-				}
+				ref.removeEventListener('mousedown', onMouseDown);
+				ref.removeEventListener('mousemove', onMouseMove);
+				ref.removeEventListener('mouseup', onMouseUp);
 			};
 		}
-	});
+	}, [ onResize, width, resizing ]);
 
 	return <Handle left={width} data-resizing={resizing} ref={handleRef}/>;
 };

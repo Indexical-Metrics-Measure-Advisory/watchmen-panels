@@ -15,7 +15,9 @@ interface AlertState {
 	content?: ((props: any) => React.ReactNode) | React.ReactNode
 }
 
-const AlertContainer = styled.div`
+const AlertContainer = styled.div.attrs({
+	'data-widget': 'alert'
+})`
 	position: fixed;
 	top: 0;
 	left: 0;
