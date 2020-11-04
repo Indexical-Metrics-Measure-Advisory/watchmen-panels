@@ -19,7 +19,7 @@ const TopTitle = styled.div`
 	font-size: 1.8em;
 	letter-spacing: 2px;
 	font-variant: petite-caps;
-	margin-left: calc((var(--console-menu-width) - 32px) / 2);
+	margin-left: calc((var(--console-menu-width) - var(--console-menu-item-icon-size)) / 2);
 `;
 
 export const MenuLogo = () => {

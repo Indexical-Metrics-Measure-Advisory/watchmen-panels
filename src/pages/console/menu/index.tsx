@@ -3,9 +3,10 @@ import { faInbox, faPlus, faShapes, faStar, faTachometerAlt } from '@fortawesome
 import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { Theme } from '../../../theme/types';
-import { MenuLogo } from './logo';
 import { MenuItem } from './menu-item';
+import { MenuLogo } from './menu-logo';
 import { MenuSeparator } from './menu-separator';
+import { MenuUser } from './menu-user';
 import { ResizeHandle } from './resize-handle';
 
 const MenuContainer = styled.div.attrs({
@@ -51,10 +52,11 @@ export default () => {
 		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
 		<MenuSeparator width={width}/>
 		<MenuItem icon={faShapes} label='Show Everything' showTooltip={showMenuItemTooltip}/>
-		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect Domain Schema' showTooltip={showMenuItemTooltip}/>
+		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Domain Space' showTooltip={showMenuItemTooltip}/>
 		<Placeholder/>
 		<MenuSeparator width={width}/>
 		<MenuItem icon={faQuestionCircle} iconSize={1.2} label='Help' showTooltip={showMenuItemTooltip}/>
+		<MenuUser/>
 		<ResizeHandle width={width} onResize={onResize}/>
 	</MenuContainer>;
 }
