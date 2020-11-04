@@ -21,6 +21,8 @@ const User = styled.div`
 	background-color: var(--console-font-color);
 	color: var(--invert-color);
 	user-select: none;
+	transform: scale(0.9);
+	transform-origin: center;
 	> span:first-child {
 		transform: translate(2px, -1px);
 		z-index: 1;
