@@ -1,14 +1,23 @@
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { listClearedNotifications, listNewNotifications } from '../../../services/console/notification';
+import { Notifications } from '../../../services/console/types';
 import { useNotImplemented } from '../../context/not-implemented';
+import { HorizontalLoading } from '../component/horizontal-loading';
 import { LinkButton } from '../component/link-button';
 
 enum ActiveTab {
 	NEW = 'new',
 	CLEAR = 'clear'
+}
+
+interface DataState {
+	initialized: boolean;
+	allLoaded: boolean;
+	notifications: Notifications;
 }
 
 const NotificationContainer = styled.div.attrs({
@@ -63,16 +72,17 @@ const Tab = styled.div`
 		font-weight: var(--font-bold);
 	}
 `;
-const Placeholder = styled.div`
+const Placeholder = styled(HorizontalLoading)`
 	flex-grow: 1;
 `;
+
 const ClearAll = styled.button`
 	display: flex;
 	position: relative;
 	align-items: center;
 	justify-content: center;
 	padding: 4px calc(var(--margin) / 2);
-	border: 1px solid transparent;
+	border: var(--border);
 	border-radius: var(--border-radius);
 	appearance: none;
 	outline: none;
@@ -103,8 +113,39 @@ const Content = styled.div`
 export const Notification = () => {
 	const notImpl = useNotImplemented();
 	const [ active, setActive ] = useState<ActiveTab>(ActiveTab.NEW);
+	const [ newNotifications, setNewNotifications ] = useState<DataState>({
+		initialized: false,
+		allLoaded: false,
+		notifications: []
+	});
+	const [ clearedNotifications, setClearedNotifications ] = useState<DataState>({
+		initialized: false,
+		allLoaded: false,
+		notifications: []
+	});
+	useEffect(() => {
+		if (!newNotifications.initialized) {
+			listNotifications();
+		}
+	});
+
+	const listNotifications = async () => {
+		const state = active === ActiveTab.NEW ? newNotifications : clearedNotifications;
+		const set = active === ActiveTab.NEW ? setNewNotifications : setClearedNotifications;
+		const pageSize = 30;
+		const fetcher = active === ActiveTab.NEW ? listNewNotifications : listClearedNotifications;
+		const data = await fetcher({ pageSize });
+		if (data.length === 0) {
+			// set as all loaded
+			set({ ...state, initialized: true, allLoaded: true });
+		} else {
+			set({ ...state, initialized: true, notifications: [ ...state.notifications, ...data ] });
+		}
+	};
 
 	const onTabClicked = (activeTab: ActiveTab) => () => activeTab !== active && setActive(activeTab);
+
+	const state = active === ActiveTab.NEW ? newNotifications : clearedNotifications;
 
 	return <NotificationContainer>
 		<Title>
@@ -121,14 +162,16 @@ export const Notification = () => {
 			<Tab data-active={active === ActiveTab.CLEAR}>
 				<LinkButton onClick={onTabClicked(ActiveTab.CLEAR)}>Clear</LinkButton>
 			</Tab>
-			<Placeholder/>
+			<Placeholder visible={!(active === ActiveTab.NEW ? newNotifications : clearedNotifications).initialized}/>
 			<ClearAll data-visible={active === ActiveTab.NEW} onClick={notImpl.show}>
 				<FontAwesomeIcon icon={faCheckCircle}/>
 				<span>Clear All</span>
 			</ClearAll>
 		</Tabs>
 		<Content>
-
+			{state.notifications.map(notification => {
+				return null;
+			})}
 		</Content>
 	</NotificationContainer>;
 };

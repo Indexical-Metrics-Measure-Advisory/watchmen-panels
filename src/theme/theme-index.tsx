@@ -4,7 +4,7 @@ import '../assets/fonts/oswald/oswald.css';
 import { Theme } from './types';
 
 const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
-	* {
+	*, *:before, *:after {
 		margin: 0;
 		padding: 0;
 		box-sizing: border-box;
