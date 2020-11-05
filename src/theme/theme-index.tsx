@@ -64,6 +64,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-hover-color: ${({ theme }) => theme.consoleHoverColor};
 		--console-primary-color: ${({ theme }) => theme.consolePrimaryColor};
 		--console-waive-color: ${({ theme }) => theme.consoleWaiveColor};
+		--console-shadow: ${({ theme }) => theme.consoleShadow};
+		--console-hover-shadow: ${({ theme }) => theme.consoleHoverShadow};
 		
 		--console-menu-width: ${({ theme }) => theme.consoleMenuWidth}px;
 		--console-menu-height: ${({ theme }) => theme.consoleMenuHeight}px;
@@ -81,6 +83,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-notification-color-2: ${({ theme }) => theme.consoleNotificationColor2};
 		--console-notification-color-3: ${({ theme }) => theme.consoleNotificationColor3};
 		--console-notification-color-4: ${({ theme }) => theme.consoleNotificationColor4};
+		--console-notification-header-bg-color: ${({ theme }) => theme.consoleNotificationHeaderBgColor};
 		
 		width: 100%;
 		

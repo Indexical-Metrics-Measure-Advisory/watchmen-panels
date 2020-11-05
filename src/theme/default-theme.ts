@@ -76,6 +76,8 @@ export default {
 	consoleHoverColor: 'rgb(102,132,195)',
 	consolePrimaryColor: 'rgb(94,119,171)',
 	consoleWaiveColor: 'rgb(191,191,191)',
+	consoleShadow: '0 0 11px 0 rgba(0, 0, 0, 0.06)',
+	consoleHoverShadow: '0 0 11px 0 rgba(0, 0, 0, 0.2)',
 
 	// console menu
 	consoleMenuWidth: 51,
@@ -96,5 +98,6 @@ export default {
 	consoleNotificationColor1: 'rgba(150,171,219,0.08)',
 	consoleNotificationColor2: 'rgba(191,243,204,0.08)',
 	consoleNotificationColor3: 'rgba(255,145,145,0.08)',
-	consoleNotificationColor4: 'rgba(255,204,150,0.08)'
+	consoleNotificationColor4: 'rgba(255,204,150,0.08)',
+	consoleNotificationHeaderBgColor: 'rgba(255,255,255,0.08)'
 };

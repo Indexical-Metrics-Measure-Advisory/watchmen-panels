@@ -85,11 +85,11 @@ const ClearAll = styled.button`
 	align-items: center;
 	justify-content: center;
 	padding: 4px calc(var(--margin) / 2);
-	border: var(--border);
+	border: 0;
 	border-radius: var(--border-radius);
 	appearance: none;
 	outline: none;
-	background-color: var(--invert-color);
+	background-color: transparent;
 	color: var(--console-primary-color);
 	font-weight: var(--font-bold);
 	cursor: pointer;
@@ -99,8 +99,9 @@ const ClearAll = styled.button`
 		pointer-events: none;
 	}
 	&:hover {
-		border-color: var(--console-primary-color);
-		background-color: var(--bg-color);
+		color: var(--console-primary-color);
+		background-color: var(--invert-color);
+		box-shadow: var(--console-hover-shadow);;
 	}
 	> svg {
 		margin-right: calc(var(--margin) / 4);
@@ -176,6 +177,14 @@ export const Notification = () => {
 			setActive(activeTab);
 		}
 	};
+	const onClearAllClicked = () => {
+		const { notifications } = newNotifications;
+		setNewNotifications({ ...newNotifications, notifications: [] });
+		setClearedNotifications({
+			...clearedNotifications,
+			notifications: [ ...clearedNotifications.notifications, ...notifications ].sort((n1, n2) => 0 - n1.createDate.localeCompare(n2.createDate))
+		});
+	};
 
 	const state = getActiveState(active);
 
@@ -195,7 +204,7 @@ export const Notification = () => {
 				<LinkButton onClick={onTabClicked(ActiveTab.CLEAR)}>Clear</LinkButton>
 			</Tab>
 			<Placeholder visible={!(active === ActiveTab.NEW ? newNotifications : clearedNotifications).initialized}/>
-			<ClearAll data-visible={active === ActiveTab.NEW} onClick={notImpl.show}>
+			<ClearAll data-visible={active === ActiveTab.NEW} onClick={onClearAllClicked}>
 				<FontAwesomeIcon icon={faCheckCircle}/>
 				<span>Clear All</span>
 			</ClearAll>

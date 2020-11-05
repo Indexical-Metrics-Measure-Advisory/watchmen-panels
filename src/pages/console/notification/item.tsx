@@ -12,10 +12,10 @@ const Container = styled.div.attrs({
 	border-radius: calc(var(--border-radius));
 	overflow: hidden;
 	margin-top: var(--margin);
-    box-shadow: 0 0 11px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: var(--console-shadow);
     transition: all 300ms ease-in-out;
     &:hover {
-    	box-shadow: 0 0 11px 0 rgba(0, 0, 0, 0.2)
+    	box-shadow: var(--console-hover-shadow);
     }
 `;
 const Header = styled.div`
@@ -29,7 +29,7 @@ const Header = styled.div`
     grid-row-gap: calc(var(--margin) / 4);
     align-items: center;
     padding: calc(var(--margin) / 3) calc(var(--margin) / 2) calc(var(--margin) / 4);
-    background-color: rgba(255,255,255,0.08);
+    background-color: var(--console-notification-header-bg-color);
     overflow: hidden;
 `;
 const Category = styled.div`
