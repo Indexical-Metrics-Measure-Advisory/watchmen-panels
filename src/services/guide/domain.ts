@@ -1,6 +1,6 @@
 // @ts-ignore
-import { Domain } from '../types';
 import { SoftwareImplementation } from './software-implementation';
+import { Domain } from './types';
 
 export const NoDomain: Domain = { code: 'no-domain', label: 'No Domain' };
 export const InsuranceVisualization: Domain = { code: 'insurance-visualization', label: 'Insurance Visualization' };

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { CalculatedDataColumn, DataColumn, DataTopic } from '../../../data/types';
 import { calculateColumn, isExpressionIncorrect } from '../../../services/factor-calculator';
-import { DomainExpression } from '../../../services/types';
+import { DomainExpression } from '../../../services/guide/types';
 import Button from '../../component/button';
 import { DropdownOption } from '../../component/dropdown';
 import { DropdownInGrid } from '../component/dropdown-in-grid';

@@ -2,7 +2,7 @@ import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
-import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../services/types';
+import { DomainChart, DomainChartGroupBy, DomainChartOptions } from '../../../services/guide/types';
 import {
 	ChartHeader,
 	ChartOperators,

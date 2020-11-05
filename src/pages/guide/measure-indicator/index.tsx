@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
 import { DataColumn, DataSet, DataTopic } from '../../../data/types';
-import { CustomDomainExpression } from '../../../services/types';
+import { CustomDomainExpression } from '../../../services/guide/types';
 import { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
 import { ObjectDetail, ObjectDetailHeader, ObjectDetailHeaderCell } from '../component/object-detail';

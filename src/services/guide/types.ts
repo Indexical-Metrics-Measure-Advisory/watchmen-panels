@@ -1,5 +1,5 @@
-import { ChartElement } from '../charts/types';
-import { DataSet } from '../data/types';
+import { ChartElement } from '../../charts/types';
+import { DataSet } from '../../data/types';
 
 export interface DomainExpression {
 	code: string;

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
 import { listTopDomains, TopDomains } from '../../../services/guide/domain';
-import { Domain } from '../../../services/types';
+import { Domain } from '../../../services/guide/types';
 import { BigButton, ButtonType } from '../../component/button';
 import { useNotImplemented } from '../../context/not-implemented';
 import { OperationBar, OperationBarPlaceholder } from '../component/operations-bar';
