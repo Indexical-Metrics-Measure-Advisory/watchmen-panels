@@ -93,6 +93,12 @@ const ClearAll = styled.button`
 		margin-right: calc(var(--margin) / 4);
 	}
 `;
+const Content = styled.div`
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	flex-grow: 1;
+`;
 
 export const Notification = () => {
 	const notImpl = useNotImplemented();
@@ -116,10 +122,13 @@ export const Notification = () => {
 				<LinkButton onClick={onTabClicked(ActiveTab.CLEAR)}>Clear</LinkButton>
 			</Tab>
 			<Placeholder/>
-			<ClearAll data-visible={active === ActiveTab.NEW}>
+			<ClearAll data-visible={active === ActiveTab.NEW} onClick={notImpl.show}>
 				<FontAwesomeIcon icon={faCheckCircle}/>
 				<span>Clear All</span>
 			</ClearAll>
 		</Tabs>
+		<Content>
+
+		</Content>
 	</NotificationContainer>;
 };

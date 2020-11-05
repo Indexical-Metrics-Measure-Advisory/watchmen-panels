@@ -4,7 +4,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path, { toDomain } from '../../../common/path';
-import { listTopDomains, TopDomains } from '../../../services/domain';
+import { listTopDomains, TopDomains } from '../../../services/guide/domain';
 import { Domain } from '../../../services/types';
 import { BigButton, ButtonType } from '../../component/button';
 import { useNotImplemented } from '../../context/not-implemented';

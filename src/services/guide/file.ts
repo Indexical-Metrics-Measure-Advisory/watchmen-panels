@@ -1,6 +1,6 @@
-import { readFromCsv } from './file-reader/csv-reader';
-import { readFromJson } from './file-reader/json-reader';
-import { FileLike, ParsedFile } from './file-reader/types';
+import { readFromCsv } from '../file-reader/csv-reader';
+import { readFromJson } from '../file-reader/json-reader';
+import { FileLike, ParsedFile } from '../file-reader/types';
 
 /**
  * Parse file context,<br>

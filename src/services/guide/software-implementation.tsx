@@ -1,11 +1,11 @@
 import React from 'react';
-import { CountDoughnut } from '../charts/count-doughnut';
-import { Gantt } from '../charts/gantt';
-import { SegmentBar } from '../charts/segment-bar';
-import { DataSet } from '../data/types';
+import { CountDoughnut } from '../../charts/count-doughnut';
+import { Gantt } from '../../charts/gantt';
+import { SegmentBar } from '../../charts/segment-bar';
+import { DataSet } from '../../data/types';
+import { Domain } from '../types';
 // @ts-ignore
 import SoftwareImplementationTasks from './software-implementation.csv';
-import { Domain } from './types';
 
 export const SoftwareImplementation: Domain = {
 	code: 'software-implementation',

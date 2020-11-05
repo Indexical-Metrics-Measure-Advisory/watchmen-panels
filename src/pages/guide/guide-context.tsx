@@ -1,7 +1,7 @@
 import React from 'react';
 import { emptyGetter, emptySetter } from '../../common/utils';
 import { DataSet } from '../../data/types';
-import { NoDomain } from '../../services/domain';
+import { NoDomain } from '../../services/guide/domain';
 import { Domain } from '../../services/types';
 
 export interface GuideContext {
