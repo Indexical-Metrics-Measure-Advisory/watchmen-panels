@@ -1,7 +1,9 @@
+import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNotImplemented } from '../../context/not-implemented';
 import { LinkButton } from '../component/link-button';
 
 enum ActiveTab {
@@ -61,25 +63,63 @@ const Tab = styled.div`
 		font-weight: var(--font-bold);
 	}
 `;
+const Placeholder = styled.div`
+	flex-grow: 1;
+`;
+const ClearAll = styled.button`
+	display: flex;
+	position: relative;
+	align-items: center;
+	justify-content: center;
+	padding: 4px calc(var(--margin) / 2);
+	border: 1px solid transparent;
+	border-radius: var(--border-radius);
+	appearance: none;
+	outline: none;
+	background-color: var(--invert-color);
+	color: var(--console-primary-color);
+	font-weight: var(--font-bold);
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	&[data-visible=false] {
+		opacity: 0;
+		pointer-events: none;
+	}
+	&:hover {
+		border-color: var(--console-primary-color);
+		background-color: var(--bg-color);
+	}
+	> svg {
+		margin-right: calc(var(--margin) / 4);
+	}
+`;
 
 export const Notification = () => {
-
+	const notImpl = useNotImplemented();
 	const [ active, setActive ] = useState<ActiveTab>(ActiveTab.NEW);
+
+	const onTabClicked = (activeTab: ActiveTab) => () => activeTab !== active && setActive(activeTab);
 
 	return <NotificationContainer>
 		<Title>
 			<div>Notifications</div>
-			<LinkButton tooltip='Settings' ignoreHorizontalPadding={true}>
+			<LinkButton tooltip='Settings' ignoreHorizontalPadding={true}
+			            onClick={notImpl.show}>
 				<FontAwesomeIcon icon={faCog}/>
 			</LinkButton>
 		</Title>
 		<Tabs>
 			<Tab data-active={active === ActiveTab.NEW}>
-				<LinkButton>New</LinkButton>
+				<LinkButton onClick={onTabClicked(ActiveTab.NEW)}>New</LinkButton>
 			</Tab>
 			<Tab data-active={active === ActiveTab.CLEAR}>
-				<LinkButton>Clear</LinkButton>
+				<LinkButton onClick={onTabClicked(ActiveTab.CLEAR)}>Clear</LinkButton>
 			</Tab>
+			<Placeholder/>
+			<ClearAll data-visible={active === ActiveTab.NEW}>
+				<FontAwesomeIcon icon={faCheckCircle}/>
+				<span>Clear All</span>
+			</ClearAll>
 		</Tabs>
 	</NotificationContainer>;
 };

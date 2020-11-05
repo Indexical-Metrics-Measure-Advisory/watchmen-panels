@@ -13,6 +13,7 @@ const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 	outline: none;
 	background-color: transparent;
 	cursor: pointer;
+	transition: all 300ms ease-in-out;
 	&:before {
 		content: '';
 		display: block;
@@ -39,9 +40,10 @@ const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 export const LinkButton = (props: {
 	tooltip?: string;
 	ignoreHorizontalPadding?: boolean;
+	onClick: () => void;
 	children: ((props: any) => React.ReactNode) | React.ReactNode
 }) => {
-	const { tooltip, children, ignoreHorizontalPadding } = props;
+	const { tooltip, ignoreHorizontalPadding, onClick, children } = props;
 
 	const buttonRef = useRef<HTMLButtonElement>(null);
 	const tooltipContext = useTooltipContext();
@@ -57,6 +59,7 @@ export const LinkButton = (props: {
 
 	return <Button ignore-horizontal-padding={ignoreHorizontalPadding}
 	               onMouseEnter={onMouseEnter} onMouseLeave={tooltipContext.hide}
+	               onClick={onClick}
 	               ref={buttonRef}>
 		{children}
 	</Button>;
