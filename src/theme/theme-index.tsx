@@ -83,6 +83,10 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-notification-color-2: ${({ theme }) => theme.consoleNotificationColor2};
 		--console-notification-color-3: ${({ theme }) => theme.consoleNotificationColor3};
 		--console-notification-color-4: ${({ theme }) => theme.consoleNotificationColor4};
+		--console-notification-dot-color-1: ${({ theme }) => theme.consoleNotificationDotColor1};
+		--console-notification-dot-color-2: ${({ theme }) => theme.consoleNotificationDotColor2};
+		--console-notification-dot-color-3: ${({ theme }) => theme.consoleNotificationDotColor3};
+		--console-notification-dot-color-4: ${({ theme }) => theme.consoleNotificationDotColor4};
 		--console-notification-header-bg-color: ${({ theme }) => theme.consoleNotificationHeaderBgColor};
 		
 		width: 100%;
