@@ -13,7 +13,7 @@ const MenuContainer = styled.div.attrs({
 	'data-widget': 'menu-container'
 })<{ width: number }>`
 	display: flex;
-	position: fixed;
+	position: relative;
 	flex-direction: column;
 	align-items: flex-start;
 	width: ${({ width }) => `${width}px`};

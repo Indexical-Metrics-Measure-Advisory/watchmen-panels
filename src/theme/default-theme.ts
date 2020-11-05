@@ -73,7 +73,8 @@ export default {
 
 	// console
 	consoleFontColor: '#333333',
-	consoleHoverColor: 'rgb(87,120,198)',
+	consoleHoverColor: 'rgb(102,132,195)',
+	consolePrimaryColor: 'rgb(94,119,171)',
 	consoleWaiveColor: 'rgb(191,191,191)',
 
 	// console menu

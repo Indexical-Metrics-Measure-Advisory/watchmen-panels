@@ -10,7 +10,8 @@ export default {
 	GUIDE_MEASURE_INDICATOR: '/guide/:domain/measure-indicator',
 	GUIDE_BUILD_METRICS: '/guide/:domain/build-metrics',
 
-	CONSOLE: '/console'
+	CONSOLE: '/console',
+	CONSOLE_NOTIFICATION: '/console/notification'
 };
 
 export const toDomain = (path: string, domain: string) => path.replace(':domain', domain);
