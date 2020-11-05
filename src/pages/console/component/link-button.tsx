@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { useTooltipContext } from '../context/console-tooltip';
+import { useTooltip } from '../context/console-tooltip';
 
 const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 	display: flex;
@@ -46,19 +46,15 @@ export const LinkButton = (props: {
 	const { tooltip, ignoreHorizontalPadding, onClick, children } = props;
 
 	const buttonRef = useRef<HTMLButtonElement>(null);
-	const tooltipContext = useTooltipContext();
-
-	const onMouseEnter = () => {
-		if (!buttonRef.current || !tooltip) {
-			return;
-		}
-
-		const { top, left } = buttonRef.current.getBoundingClientRect();
-		tooltipContext.show(tooltip, { x: left, y: top - 36, caretLeft: 12 });
-	};
+	const { mouseEnter, mouseLeave } = useTooltip({
+		show: !!tooltip,
+		tooltip,
+		ref: buttonRef,
+		rect: ({ left, top }) => ({ x: left, y: top - 36, caretLeft: 12 })
+	});
 
 	return <Button ignore-horizontal-padding={ignoreHorizontalPadding}
-	               onMouseEnter={onMouseEnter} onMouseLeave={tooltipContext.hide}
+	               onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}
 	               onClick={onClick}
 	               ref={buttonRef}>
 		{children}

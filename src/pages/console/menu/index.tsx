@@ -1,7 +1,9 @@
 import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { faInbox, faPlus, faShapes, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
+import { matchPath, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
+import Path from '../../../common/path';
 import { Theme } from '../../../theme/types';
 import { MenuItem } from './menu-item';
 import { MenuLogo } from './menu-logo';
@@ -33,6 +35,7 @@ const Placeholder = styled.div`
 `;
 
 export default () => {
+	const location = useLocation();
 	const theme = useTheme();
 	const minWidth = (theme as Theme).consoleMenuWidth;
 	const maxWidth = (theme as Theme).consoleMenuMaxWidth;
@@ -44,10 +47,12 @@ export default () => {
 
 	const showMenuItemTooltip = width / minWidth <= 1.5;
 
+
 	return <MenuContainer width={width}>
 		<MenuLogo/>
 		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
-		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}/>
 		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}/>
 		<MenuSeparator width={width}/>
 		<MenuItem icon={faShapes} label='Show Everything' showTooltip={showMenuItemTooltip}/>

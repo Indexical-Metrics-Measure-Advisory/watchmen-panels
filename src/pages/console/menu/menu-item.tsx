@@ -2,7 +2,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { useTooltipContext } from '../context/console-tooltip';
+import { useTooltip } from '../context/console-tooltip';
 
 const MenuItemContainer = styled.div.attrs({
 	'data-widget': 'menu-item-container'
@@ -15,10 +15,22 @@ const MenuItemContainer = styled.div.attrs({
 	align-items: center;
 	cursor: pointer;
 	&:hover {
-		color: var(--console-hover-color);
-		> div {
+		color: var(--console-primary-color);
+		> div:last-child {
 			opacity: 1;
 		}
+	}
+	&[data-active=true] {
+		> div:first-child {
+			color: var(--invert-color);
+			background-color: var(--console-primary-color);
+		}
+	}
+	> div:first-child {
+		border-radius: var(--border-radius);
+		height: 32px;
+		display: flex;
+		align-items: center;
 	}
 `;
 const MenuItemIcon = styled(FontAwesomeIcon).attrs({
@@ -45,25 +57,24 @@ export const MenuItem = (props: {
 	iconSize?: number,
 	label: string
 	showTooltip: boolean,
-	className?: string
+	className?: string,
+	active?: boolean
 }) => {
-	const { icon, iconSize, label, showTooltip, className } = props;
+	const { icon, iconSize, label, showTooltip, className, active } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
-	const tooltip = useTooltipContext();
 
-	const onMouseEnter = () => {
-		if (!containerRef.current || !showTooltip) {
-			return;
-		}
+	const { mouseEnter, mouseLeave } = useTooltip({
+		show: showTooltip,
+		tooltip: label,
+		ref: containerRef,
+		rect: ({ left, top }) => ({ x: left + 8, y: top - 24 - (iconSize != null ? 4 : 0), caretLeft: 12 })
+	});
 
-		const { top, left } = containerRef.current.getBoundingClientRect();
-		tooltip.show(label, { x: left + 8, y: top - 22 - (iconSize != null ? 4 : 0), caretLeft: 12 });
-	};
-
-	return <MenuItemContainer className={className} ref={containerRef}
-	                          onMouseEnter={onMouseEnter} onMouseLeave={tooltip.hide}>
-		<MenuItemIcon icon={icon} icon-size={iconSize}/>
+	return <MenuItemContainer className={className} data-active={active}
+	                          ref={containerRef}
+	                          onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
+		<div><MenuItemIcon icon={icon} icon-size={iconSize}/></div>
 		<MenuItemLabel>{label}</MenuItemLabel>
 	</MenuItemContainer>;
 };

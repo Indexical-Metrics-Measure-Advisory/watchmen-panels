@@ -90,5 +90,11 @@ export default {
 
 	// console title
 	consoleTitleFontFamily: "Oswald, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
-	consoleTitleFontWeight: 900
+	consoleTitleFontWeight: 900,
+
+	// console notification
+	consoleNotificationColor1: 'rgba(150,171,219,0.08)',
+	consoleNotificationColor2: 'rgba(191,243,204,0.08)',
+	consoleNotificationColor3: 'rgba(255,145,145,0.08)',
+	consoleNotificationColor4: 'rgba(255,204,150,0.08)'
 };

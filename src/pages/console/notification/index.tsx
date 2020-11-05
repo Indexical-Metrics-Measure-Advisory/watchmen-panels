@@ -3,11 +3,14 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import BackgroundImage from '../../../assets/console-background.png';
 import { listClearedNotifications, listNewNotifications } from '../../../services/console/notification';
 import { Notifications } from '../../../services/console/types';
 import { useNotImplemented } from '../../context/not-implemented';
 import { HorizontalLoading } from '../component/horizontal-loading';
 import { LinkButton } from '../component/link-button';
+import { PageContainer } from '../component/page-container';
+import { NotificationItem } from './item';
 
 enum ActiveTab {
 	NEW = 'new',
@@ -20,7 +23,7 @@ interface DataState {
 	notifications: Notifications;
 }
 
-const NotificationContainer = styled.div.attrs({
+const NotificationContainer = styled(PageContainer).attrs({
 	'data-widget': 'console-notification-container'
 })`
 	flex-grow: 1;
@@ -109,6 +112,19 @@ const Content = styled.div`
 	flex-direction: column;
 	flex-grow: 1;
 `;
+const SeeAll = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 50px 0;
+	opacity: 0;
+	user-select: none;
+	pointer-events: none;
+	transition: all 300ms ease-in-out;
+	&[data-visible=true] {
+		opacity: 0.7;
+	}
+`;
 
 export const Notification = () => {
 	const notImpl = useNotImplemented();
@@ -125,29 +141,45 @@ export const Notification = () => {
 	});
 	useEffect(() => {
 		if (!newNotifications.initialized) {
-			listNotifications();
+			listNotifications(active);
 		}
 	});
 
-	const listNotifications = async () => {
+	const listNotifications = async (active: ActiveTab) => {
 		const state = active === ActiveTab.NEW ? newNotifications : clearedNotifications;
 		const set = active === ActiveTab.NEW ? setNewNotifications : setClearedNotifications;
 		const pageSize = 30;
 		const fetcher = active === ActiveTab.NEW ? listNewNotifications : listClearedNotifications;
 		const data = await fetcher({ pageSize });
-		if (data.length === 0) {
+		if (data.notifications.length === 0) {
 			// set as all loaded
 			set({ ...state, initialized: true, allLoaded: true });
 		} else {
-			set({ ...state, initialized: true, notifications: [ ...state.notifications, ...data ] });
+			set({
+				...state,
+				initialized: true,
+				allLoaded: data.allLoaded,
+				notifications: [ ...state.notifications, ...data.notifications ]
+			});
 		}
 	};
 
-	const onTabClicked = (activeTab: ActiveTab) => () => activeTab !== active && setActive(activeTab);
+	const getActiveState = (active: ActiveTab) => {
+		return active === ActiveTab.NEW ? newNotifications : clearedNotifications;
+	};
+	const onTabClicked = (activeTab: ActiveTab) => () => {
+		if (activeTab !== active) {
+			const state = getActiveState(activeTab);
+			if (!state.initialized) {
+				listNotifications(activeTab);
+			}
+			setActive(activeTab);
+		}
+	};
 
-	const state = active === ActiveTab.NEW ? newNotifications : clearedNotifications;
+	const state = getActiveState(active);
 
-	return <NotificationContainer>
+	return <NotificationContainer background-image={BackgroundImage}>
 		<Title>
 			<div>Notifications</div>
 			<LinkButton tooltip='Settings' ignoreHorizontalPadding={true}
@@ -169,9 +201,12 @@ export const Notification = () => {
 			</ClearAll>
 		</Tabs>
 		<Content>
-			{state.notifications.map(notification => {
-				return null;
+			{state.notifications.map((notification, index) => {
+				return <NotificationItem data={notification} key={index}/>;
 			})}
+			<SeeAll data-visible={state.allLoaded}>
+				{state.notifications.length === 0 ? 'No notifications.' : ' You\'ve seen it all.'}
+			</SeeAll>
 		</Content>
 	</NotificationContainer>;
 };

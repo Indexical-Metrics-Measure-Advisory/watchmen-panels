@@ -9,6 +9,7 @@ export interface TooltipRect {
 	width?: number;
 	height?: number;
 	caretLeft?: number;
+	center?: true;
 }
 
 export interface ConsoleTooltipContext {
@@ -27,7 +28,7 @@ Context.displayName = 'ConsoleTooltipContext';
 
 const TooltipContainer = styled.div.attrs({
 	'data-widget': 'console-tooltip'
-})<{ x?: number; y?: number; width?: number; height?: number; caretLeft?: number }>`
+})<{ x?: number; y?: number; width?: number; height?: number; caretLeft?: number; center?: true }>`
 	display: flex;
 	position: fixed;
 	left: ${({ x }) => x != null ? `${x}px` : '-1000px'};
@@ -46,7 +47,7 @@ const TooltipContainer = styled.div.attrs({
 	opacity: 0;
 	pointer-events: none;
 	user-select: none;
-	transform: scale(0.91666667);
+	transform: scale(0.91666667) ${({ center }) => center ? 'translateX(-50%)' : ''};
 	transform-origin: bottom left;
 	transition: opacity 300ms ease-in-out;
 	z-index: 10000;
@@ -59,7 +60,7 @@ const TooltipContainer = styled.div.attrs({
 		color: var(--console-tooltip-bg-color);
 		font-size: 1.2em;
 		top: calc(100% - 6px);
-		left: ${({ caretLeft }) => caretLeft || 16}px;
+		left: ${({ caretLeft, center }) => center ? 'calc(50% - 4px)' : `${(caretLeft || 16)}px`};
 	}
 `;
 
@@ -76,7 +77,8 @@ export const ConsoleTooltipContextProvider = (props: { children?: ((props: any) 
 
 	return <Context.Provider value={functions}>
 		{children}
-		<TooltipContainer data-show={content != null} {...content?.rect}>
+		<TooltipContainer data-show={content != null}
+		                  {...content?.rect}>
 			{content?.tooltip}
 			<FontAwesomeIcon icon={faCaretDown}/>
 		</TooltipContainer>
@@ -86,3 +88,38 @@ export const ConsoleTooltipContextProvider = (props: { children?: ((props: any) 
 export const useTooltipContext = () => {
 	return React.useContext(Context);
 };
+
+const notShow = () => {
+};
+export const useTooltip = <T extends HTMLElement>(options: {
+	show: boolean,
+	ref: React.RefObject<T>,
+	tooltip?: string,
+	rect: (rect: DOMRect) => TooltipRect
+}) => {
+	const { show, ref, tooltip, rect } = options;
+
+	const tooltipContext = useTooltipContext();
+	if (!show) {
+		return {
+			context: tooltipContext,
+			mouseEnter: notShow,
+			mouseLeave: notShow
+		};
+	}
+
+	const onMouseEnter = () => {
+		if (!ref.current || !tooltip) {
+			return;
+		}
+
+		tooltipContext.show(tooltip, rect(ref.current.getBoundingClientRect()));
+	};
+
+	return {
+		context: tooltipContext,
+		mouseEnter: onMouseEnter,
+		mouseLeave: tooltipContext.hide
+	};
+};
+

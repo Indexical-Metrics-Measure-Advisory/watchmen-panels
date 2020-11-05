@@ -77,6 +77,11 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-title-font-family: ${({ theme }) => theme.consoleTitleFontFamily};
 		--console-title-font-weight: ${({ theme }) => theme.consoleTitleFontWeight};
 		
+		--console-notification-color-1: ${({ theme }) => theme.consoleNotificationColor1};
+		--console-notification-color-2: ${({ theme }) => theme.consoleNotificationColor2};
+		--console-notification-color-3: ${({ theme }) => theme.consoleNotificationColor3};
+		--console-notification-color-4: ${({ theme }) => theme.consoleNotificationColor4};
+		
 		width: 100%;
 		
 		//&::-webkit-scrollbar {
