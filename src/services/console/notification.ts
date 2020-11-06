@@ -18,7 +18,7 @@ export const listUnreadNotifications = async (options: {
 						subject: 'Awesome chart for investigating customers distribution.',
 						category: NotificationCategory.CHART_PUSHED,
 						body: 'A distribution diagram of customers of age bracket and place of residence.',
-						sender: 'Adrian Veidt',
+						sender: 'Damon Lindelof',
 						createDate: '2020/11/5 20:18:19'
 					},
 					{
@@ -39,9 +39,9 @@ export const listUnreadNotifications = async (options: {
 					},
 					{
 						id: '2',
-						subject: 'Samuel L. Jackson left.',
+						subject: 'Jeffrey Dean Morgan left.',
 						category: NotificationCategory.GROUP_LEFT,
-						body: 'Samuel L. Jackson left group "Universes of Marvel".',
+						body: 'Jeffrey Dean Morgan left group "Oklahoma".',
 						sender: 'Roy Raymond',
 						createDate: '2020/10/14 15:42:00'
 					},
@@ -49,8 +49,8 @@ export const listUnreadNotifications = async (options: {
 						id: '1',
 						subject: 'Hello there.',
 						category: NotificationCategory.GROUP_JOINED,
-						body: 'Welcome to group "Universes of Marvel", guess which one here?',
-						sender: 'Adrian Veidt',
+						body: 'Welcome to group "Oklahoma", guess which one here?',
+						sender: 'Damon Lindelof',
 						createDate: '2020/10/05 17:45:37'
 					}
 				],
