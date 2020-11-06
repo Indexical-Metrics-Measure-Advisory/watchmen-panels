@@ -19,7 +19,6 @@ const UserName = styled.div`
 	font-variant: petite-caps;
 `;
 
-// TODO user name BG for test
 export const MenuUser = () => {
 	const context = useConsoleContext();
 

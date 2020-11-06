@@ -131,8 +131,9 @@ const NotificationList = (props: {
 	notifications: Notifications;
 	allLoaded: boolean;
 	visible: boolean;
+	status: ActiveTab
 }) => {
-	const { notifications, allLoaded, visible } = props;
+	const { notifications, allLoaded, visible, status } = props;
 
 	if (!visible) {
 		return null;
@@ -140,7 +141,8 @@ const NotificationList = (props: {
 
 	return <Content>
 		{notifications.map((notification, index) => {
-			return <NotificationItem data={notification} key={index}/>;
+			return <NotificationItem data={notification} readable={status === ActiveTab.UNREAD}
+			                         key={`${notification.createDate}-${index}`}/>;
 		})}
 		<SeeAll data-visible={allLoaded}>
 			{notifications.length === 0 ? 'No notifications.' : ' You\'ve seen it all.'}
@@ -200,8 +202,10 @@ export const Notification = () => {
 		</Tabs>
 		<NotificationList notifications={context.notifications.unread}
 		                  allLoaded={context.notifications.allUnreadLoaded}
-		                  visible={state.active === ActiveTab.UNREAD}/>
+		                  visible={state.active === ActiveTab.UNREAD}
+		                  status={ActiveTab.UNREAD}/>
 		<NotificationList notifications={context.notifications.read} allLoaded={context.notifications.allReadLoaded}
-		                  visible={state.active === ActiveTab.READ}/>
+		                  visible={state.active === ActiveTab.READ}
+		                  status={ActiveTab.READ}/>
 	</NotificationContainer>;
 };

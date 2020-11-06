@@ -1,10 +1,11 @@
-import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Mail, Notification } from '../../services/console/types';
+import { LinkButtonBackgroundAnimation } from './component/link-button';
 import { UserAvatar } from './component/user-avatar';
 import { useConsoleContext } from './context/console-context';
 import { NotificationEvent } from './context/console-nofitications';
@@ -48,16 +49,21 @@ const Container = styled.div.attrs({
 	bottom: calc(var(--margin) / 2);
 	right: -500px;
 	&[data-show=true] {
-		animation: ${Show} 8s linear forwards;
+		animation: ${Show} 8s ease-in-out forwards;
+	}
+	&[data-show=false] {
+		bottom: -200px;
+		transition: all 300ms ease-in-out;
+		right: 64px;
 	}
 `;
 const Content = styled.div`
 	display: grid;
-	grid-template-columns: auto 1fr auto;
-	grid-template-rows: auto 1fr;
 	position: relative;
+	grid-template-columns: auto 1fr auto auto;
+	grid-template-rows: auto 1fr;
 	align-items: center;
-	padding: calc(var(--margin) * 0.25) calc(var(--margin) * 0.75);
+	padding: calc(var(--margin) * 0.25) calc(var(--margin) * 0.5) calc(var(--margin) * 0.25) calc(var(--margin) * 0.75);
 	border-radius: var(--border-radius);
 	background-color: var(--console-primary-color);
 	color: var(--invert-color);
@@ -86,8 +92,20 @@ const Content = styled.div`
 		font-weight: var(--font-bold);
 		opacity: 0.7;
 	}
+	> div:nth-child(4) {
+		display: flex;
+		position: relative;
+		font-size: 0.8em;
+		opacity: 0.7;
+		width: calc(var(--margin) / 2);
+		height: calc(var(--margin) / 2);
+		align-items: center;
+		justify-content: center;
+		margin-left: calc(var(--margin) / 2);
+		${LinkButtonBackgroundAnimation}
+	}
 	> div:last-child {
-		grid-column: span 2;
+		grid-column: span 3;
 		height: 1.8em;
 	    line-height: 2em;
 	    white-space: nowrap;
@@ -99,8 +117,14 @@ const Content = styled.div`
 
 export const Messenger = () => {
 	const context = useConsoleContext();
+	const [ schedule, setSchedule ] = useState<number | null>(null);
 	const [ state, setState ] = useState<State>({ visible: false });
-	const scheduleHide = () => setTimeout(() => setState({ visible: false }), 10000);
+	const scheduleHide = () => {
+		if (schedule) {
+			clearTimeout(schedule);
+		}
+		setSchedule(setTimeout(() => setState({ visible: false }), 10000));
+	};
 	useEffect(() => {
 		const onNotificationReceived = (notification: Notification) => {
 			setState({ visible: true, type: MessageType.NOTIFICATION, content: notification });
@@ -112,6 +136,13 @@ export const Messenger = () => {
 			context.notifications.off(NotificationEvent.LATEST_RECEIVED, onNotificationReceived);
 		};
 	});
+	const onCloseClicked = () => {
+		if (schedule) {
+			clearTimeout(schedule);
+		}
+		setSchedule(null);
+		setState({ visible: false });
+	};
 
 	return <Container data-show={state.visible}>
 		<Content>
@@ -121,6 +152,7 @@ export const Messenger = () => {
 				<span>{state.content?.sender}</span>
 			</div>
 			<div>{dayjs(state.content?.createDate).format('MMM D [at] H:mm')}</div>
+			<div onClick={onCloseClicked}><FontAwesomeIcon icon={faTimes}/></div>
 			<div>{state.content?.subject}</div>
 		</Content>
 	</Container>;

@@ -2,18 +2,7 @@ import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { useTooltip } from '../context/console-tooltip';
 
-const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
-	display: flex;
-	position: relative;
-	align-items: center;
-	justify-content: center;
-	padding: 4px ${({ 'ignore-horizontal-padding': ignoreHorizontalPadding }) => ignoreHorizontalPadding ? '4px' : 'calc(var(--margin) / 2)'};
-	border: 0;
-	appearance: none;
-	outline: none;
-	background-color: transparent;
-	cursor: pointer;
-	transition: all 300ms ease-in-out;
+export const LinkButtonBackgroundAnimation = `
 	&:before {
 		content: '';
 		display: block;
@@ -35,6 +24,20 @@ const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 		height: 100%;
 		background-color: var(--console-waive-color);
 	}
+`;
+const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
+	display: flex;
+	position: relative;
+	align-items: center;
+	justify-content: center;
+	padding: 4px ${({ 'ignore-horizontal-padding': ignoreHorizontalPadding }) => ignoreHorizontalPadding ? '4px' : 'calc(var(--margin) / 2)'};
+	border: 0;
+	appearance: none;
+	outline: none;
+	background-color: transparent;
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	${LinkButtonBackgroundAnimation}
 `;
 
 export const LinkButton = (props: {

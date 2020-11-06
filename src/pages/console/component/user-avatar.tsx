@@ -39,7 +39,7 @@ export const UserAvatar = (props: { name: string, showTooltip?: boolean }) => {
 		show: showTooltip,
 		tooltip: name,
 		ref: containerRef,
-		rect: ({ left, top }) => ({ x: left + 16 * 0.9, y: top - 36, caretLeft: 12, center: true })
+		rect: ({ left, top }) => ({ x: left + 15 * 0.9, y: top - 36, center: true })
 	});
 
 	let first = 'X';

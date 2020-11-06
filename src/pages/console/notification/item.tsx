@@ -1,21 +1,53 @@
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React from 'react';
-import styled from 'styled-components';
+import React, { useRef, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { Notification, NotificationCategory } from '../../../services/console/types';
+import { LinkButtonBackgroundAnimation } from '../component/link-button';
 import { UserAvatar } from '../component/user-avatar';
+import { useConsoleContext } from '../context/console-context';
+import { useTooltip } from '../context/console-tooltip';
+
+// use gpu
+const ReadAnimation = keyframes`
+	0% {
+		filter: blur(0);
+		opacity: 1;
+		transform: translateZ(0) scaleY(100%);
+		transform-origin: top;
+	}
+	99% {
+		filter: blur(100px);
+		margin-top: 0;
+		opacity: 0;
+		transform: translateZ(0) scaleY(0);
+		transform-origin: top;
+	}
+	100% {
+		display: none;
+	}
+`;
 
 const Container = styled.div.attrs({
 	'data-widget': 'console-notification-item'
 })`
 	display: flex;
+	position: relative;
 	flex-direction: column;
 	border-radius: calc(var(--border-radius));
-	overflow: hidden;
 	margin-top: var(--margin);
     box-shadow: var(--console-shadow);
     transition: all 300ms ease-in-out;
+    &[data-read=true] {
+    	animation: ${ReadAnimation} 1s ease-in-out forwards;
+    }
     &:hover {
     	box-shadow: var(--console-hover-shadow);
+    	div[data-widget='console-notification-item-operators'] {
+    		opacity: 1;
+    		pointer-events: auto;
+    	}
     }
 `;
 const Header = styled.div`
@@ -23,7 +55,7 @@ const Header = styled.div`
     margin-bottom: -1px;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     grid-template-rows: auto 1fr;
     grid-column-gap: calc(var(--margin) / 2);
     grid-row-gap: calc(var(--margin) / 4);
@@ -78,6 +110,27 @@ const CreateAt = styled.div`
 	align-self: start;
 	font-weight: var(--font-bold);
 `;
+const Operators = styled.div.attrs({
+	'data-widget': 'console-notification-item-operators'
+})`
+	grid-row: span 2;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 300ms ease-in-out;
+`;
+const Read = styled.div`
+	display: flex;
+	position: relative;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	color: var(--console-primary-color);
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	${LinkButtonBackgroundAnimation}
+`;
 
 const CategoryLabel: { [key in NotificationCategory]: string } = {
 	CHART_TYPE_PUSHED: 'New Chart Type Go Live',
@@ -127,12 +180,36 @@ const CategoryColor = (category: NotificationCategory) => {
 	}
 };
 
-export const NotificationItem = (props: { data: Notification }) => {
-	const { data: { subject, category, sender, body, image, createDate } } = props;
+export const NotificationItem = (props: { data: Notification, readable: boolean }) => {
+	const { data, readable } = props;
+	const { subject, category, sender, body, image, createDate } = data;
 
-	return <Container>
+	const context = useConsoleContext();
+	const [ read, setRead ] = useState(false);
+	const readRef = useRef<HTMLDivElement>(null);
+	const { mouseEnter, mouseLeave } = useTooltip({
+		show: true,
+		tooltip: 'Clear Notification',
+		rect: ({ left, top }) => ({ x: left + 11, y: top - 36, center: true }),
+		ref: readRef
+	});
+	const onReadClicked = async () => {
+		setRead(true);
+		setTimeout(() => context.notifications.readOne(data), 1000);
+	};
+
+	return <Container data-read={read}>
 		<Header>
 			<Category>{CategoryLabel[category]}</Category>
+			<Operators>
+				{readable
+					? <Read ref={readRef}
+					        onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}
+					        onClick={onReadClicked}>
+						<FontAwesomeIcon icon={faCheck}/>
+					</Read>
+					: null}
+			</Operators>
 			<Sender>
 				<UserAvatar name={sender} showTooltip={true}/>
 			</Sender>

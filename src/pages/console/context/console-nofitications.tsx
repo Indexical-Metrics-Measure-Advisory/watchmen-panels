@@ -3,9 +3,10 @@ import { useEffect, useReducer, useState } from 'react';
 import {
 	getLatestNotifications,
 	listReadNotifications,
-	listUnreadNotifications
+	listUnreadNotifications,
+	updateNotificationsAsRead
 } from '../../../services/console/notification';
-import { Notifications } from '../../../services/console/types';
+import { Notification, Notifications } from '../../../services/console/types';
 
 export enum NotificationEvent {
 	LATEST_RECEIVED = 'latest-received'
@@ -20,6 +21,7 @@ export interface ConsoleNotifications {
 
 export interface ConsoleNotificationsFunctions {
 	readAll: () => void;
+	readOne: (notification: Notification) => void;
 	fetchUnread: (options?: { pageSize?: number, endTime?: string }) => Promise<void>;
 	fetchRead: (options?: { pageSize?: number, endTime?: string }) => Promise<void>;
 	fetchLatest: () => Promise<void>;
@@ -59,12 +61,19 @@ export const useNotifications = () => {
 		forceUpdate();
 	};
 
-	const readAllNotifications = () => {
+	const readAll = async () => {
 		if (notifications.unread.length !== 0) {
-			// TODO send data to remote, change status of unread items to read
-			const read = distinct([ ...notifications.read, ...notifications.unread ]);
+			const unread = notifications.unread;
+			const read = distinct([ ...notifications.read, ...unread ]);
 			mergeNotifications({ unread: [], read });
+			await updateNotificationsAsRead(unread);
 		}
+	};
+	const readOne = async (notification: Notification) => {
+		const unread = notifications.unread.filter(n => n !== notification);
+		const read = distinct([ ...notifications.read, notification ]);
+		mergeNotifications({ read, unread });
+		await updateNotificationsAsRead([ notification ]);
 	};
 
 	const fetchRead = async (options?: { pageSize?: number, endTime?: string }) => {
@@ -103,13 +112,16 @@ export const useNotifications = () => {
 	const on = (event: NotificationEvent, listener: (...args: Array<any>) => void) => emitter.on(event, listener);
 	const off = (event: NotificationEvent, listener: (...args: Array<any>) => void) => emitter.off(event, listener);
 
+	// TODO simulate data for demo purpose
 	useEffect(() => {
-		setTimeout(() => fetchLatest(), 5000);
+		setTimeout(() => fetchLatest(), 30000);
+		// eslint-disable-next-line
 	}, [ 0 ]);
 
 	return {
 		...notifications,
-		readAll: readAllNotifications,
+		readAll,
+		readOne,
 		fetchRead,
 		fetchUnread,
 		fetchLatest,

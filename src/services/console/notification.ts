@@ -87,3 +87,7 @@ export const getLatestNotifications = async (options?: {
 		createDate: dayjs().format('YYYY/MM/DD HH:mm:ss')
 	} as Notification ];
 };
+
+export const updateNotificationsAsRead = async (notifications: Notifications): Promise<void> => {
+	return;
+};
