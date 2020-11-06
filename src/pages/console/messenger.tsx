@@ -26,7 +26,7 @@ const Show = keyframes`
 		opacity: 0;
 		transform: translateZ(0);
 	}
-	3%, 90% {
+	5%, 90% {
 		filter: blur(0);
 		right: 64px;
 		opacity: 1;
@@ -47,9 +47,8 @@ const Container = styled.div.attrs({
 	z-index: 1000;
 	bottom: calc(var(--margin) / 2);
 	right: -500px;
-	//transition: all 400ms ease-in-out;
 	&[data-show=true] {
-		animation: ${Show} 10s linear forwards;
+		animation: ${Show} 8s linear forwards;
 	}
 `;
 const Content = styled.div`
