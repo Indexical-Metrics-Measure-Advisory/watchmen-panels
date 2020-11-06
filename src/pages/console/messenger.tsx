@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Mail, Notification } from '../../services/console/types';
-import { LinkButtonBackgroundAnimation } from './component/link-button';
+import { createLinkButtonBackgroundAnimation } from './component/link-button';
 import { UserAvatar } from './component/user-avatar';
 import { useConsoleContext } from './context/console-context';
 import { NotificationEvent } from './context/console-nofitications';
@@ -102,7 +102,7 @@ const Content = styled.div`
 		align-items: center;
 		justify-content: center;
 		margin-left: calc(var(--margin) / 2);
-		${LinkButtonBackgroundAnimation}
+		${createLinkButtonBackgroundAnimation({ opacity: 0.4 })}
 	}
 	> div:last-child {
 		grid-column: span 3;

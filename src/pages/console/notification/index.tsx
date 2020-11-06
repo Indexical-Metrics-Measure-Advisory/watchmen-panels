@@ -181,7 +181,10 @@ export const Notification = () => {
 	return <NotificationContainer background-image={BackgroundImage}>
 		<Title>
 			<div>Notifications</div>
-			<LinkButton tooltip='Settings' ignoreHorizontalPadding={true}
+			<LinkButton tooltip='Settings'
+			            width={26}
+			            center={true}
+			            ignoreHorizontalPadding={true}
 			            onClick={notImpl.show}>
 				<FontAwesomeIcon icon={faCog}/>
 			</LinkButton>

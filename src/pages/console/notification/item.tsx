@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import React, { useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Notification, NotificationCategory } from '../../../services/console/types';
-import { LinkButtonBackgroundAnimation } from '../component/link-button';
+import { createLinkButtonBackgroundAnimation } from '../component/link-button';
 import { UserAvatar } from '../component/user-avatar';
 import { useConsoleContext } from '../context/console-context';
 import { useTooltip } from '../context/console-tooltip';
@@ -129,7 +129,7 @@ const Read = styled.div`
 	border-radius: var(--border-radius);
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
-	${LinkButtonBackgroundAnimation}
+	${createLinkButtonBackgroundAnimation({ opacity: 0.4 })}
 `;
 
 const CategoryLabel: { [key in NotificationCategory]: string } = {

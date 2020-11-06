@@ -9,7 +9,7 @@ export interface TooltipRect {
 	width?: number;
 	height?: number;
 	caretLeft?: number;
-	center?: true;
+	center?: boolean;
 }
 
 export interface ConsoleTooltipContext {
@@ -28,7 +28,7 @@ Context.displayName = 'ConsoleTooltipContext';
 
 const TooltipContainer = styled.div.attrs({
 	'data-widget': 'console-tooltip'
-})<{ x?: number; y?: number; width?: number; height?: number; caretLeft?: number; center?: true }>`
+})<{ x?: number; y?: number; width?: number; height?: number; caretLeft?: number; center?: boolean }>`
 	display: flex;
 	position: fixed;
 	left: ${({ x }) => x != null ? `${x}px` : '-1000px'};
