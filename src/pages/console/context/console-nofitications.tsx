@@ -39,6 +39,7 @@ export const useNotifications = () => {
 
 	const readAllNotifications = () => {
 		if (notifications.unread.length !== 0) {
+			// TODO send data to remote, change status of unread items to read
 			const read = distinct([ ...notifications.read, ...notifications.unread ]);
 			setNotifications({ ...notifications, unread: [], read });
 		}

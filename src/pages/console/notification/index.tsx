@@ -156,6 +156,7 @@ export const Notification = () => {
 		readInitialized: false,
 		unreadInitialized: false
 	});
+	// load data only when state change
 	useEffect(() => {
 		(async () => {
 			if (state.active === ActiveTab.UNREAD && !state.unreadInitialized) {
@@ -166,7 +167,8 @@ export const Notification = () => {
 				setState({ ...state, readInitialized: true });
 			}
 		})();
-	});
+		// eslint-disable-next-line
+	}, [ state ]);
 
 	const onTabClicked = (activeTab: ActiveTab) => () => {
 		if (activeTab !== state.active) {
@@ -184,10 +186,10 @@ export const Notification = () => {
 		</Title>
 		<Tabs>
 			<Tab data-active={state.active === ActiveTab.UNREAD}>
-				<LinkButton onClick={onTabClicked(ActiveTab.UNREAD)}>New</LinkButton>
+				<LinkButton onClick={onTabClicked(ActiveTab.UNREAD)}>Unread</LinkButton>
 			</Tab>
 			<Tab data-active={state.active === ActiveTab.READ}>
-				<LinkButton onClick={onTabClicked(ActiveTab.READ)}>Clear</LinkButton>
+				<LinkButton onClick={onTabClicked(ActiveTab.READ)}>Folded</LinkButton>
 			</Tab>
 			<Placeholder
 				visible={!(state.active === ActiveTab.UNREAD ? state.unreadInitialized : state.readInitialized)}/>
