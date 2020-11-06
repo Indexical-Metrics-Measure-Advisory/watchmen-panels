@@ -17,7 +17,8 @@ Context.displayName = 'ConsoleContext';
 export const ConsoleContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
-	const [ currentUser ] = useState<ConsoleUser>({ name: 'Stephen Strange' });
+	// TODO account is fixed now, for demo purpose
+	const [ currentUser ] = useState<ConsoleUser>({ name: 'Walter Kovacs' });
 	const notifications = useNotifications();
 
 	const context = {

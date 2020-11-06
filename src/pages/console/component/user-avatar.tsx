@@ -20,13 +20,13 @@ const User = styled.div<{ color: string, 'single-character': boolean }>`
 	transform: scale(0.9);
 	transform-origin: center;
 	> span:first-child {
-		transform: ${({ 'single-character': singleCharacter }) => singleCharacter ? '' : 'translate(2px, -1px)'};
+		transform: ${({ 'single-character': singleCharacter }) => singleCharacter ? '' : 'translate(1px, -1px)'};
 		z-index: 1;
 	}
 	> span:last-child {
 		z-index: 0;
 		opacity: 0.7;
-		transform: translate(-2px, -1px);
+		transform: translate(-1px, -1px);
 	}
 `;
 
