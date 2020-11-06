@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { UserAvatar } from '../component/user-avatar';
+import { useConsoleContext } from '../context/console-context';
 
 const UserContainer = styled.div.attrs({ 'data-widget': 'console-user-container' })`
 	display: flex;
@@ -20,8 +21,10 @@ const UserName = styled.div`
 
 // TODO user name BG for test
 export const MenuUser = () => {
+	const context = useConsoleContext();
+
 	return <UserContainer>
-		<UserAvatar name='Arnold Schwarzenegger'></UserAvatar>
-		<UserName>Arnold Schwarzenegger</UserName>
+		<UserAvatar name={context.user.name}/>
+		<UserName>{context.user.name}</UserName>
 	</UserContainer>;
 };

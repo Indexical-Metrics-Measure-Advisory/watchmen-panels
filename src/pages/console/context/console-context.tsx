@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
+import { ConsoleNotifications, ConsoleNotificationsFunctions, useNotifications } from './console-nofitications';
 import { ConsoleTooltipContextProvider } from './console-tooltip';
 
-export interface ConsoleContext {
+export interface ConsoleUser {
+	name: string;
 }
 
-const Context = React.createContext<ConsoleContext>({});
+export interface ConsoleContext {
+	user: ConsoleUser,
+	notifications: ConsoleNotifications & ConsoleNotificationsFunctions
+}
+
+const Context = React.createContext<ConsoleContext>({} as ConsoleContext);
 Context.displayName = 'ConsoleContext';
 
 export const ConsoleContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
-	const [ context ] = useState<ConsoleContext>({});
+	const [ currentUser ] = useState<ConsoleUser>({ name: 'Stephen Strange' });
+	const notifications = useNotifications();
+
+	const context = {
+		user: currentUser,
+		notifications
+	};
 
 	return <Context.Provider value={context}>
 		<ConsoleTooltipContextProvider>

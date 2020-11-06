@@ -15,7 +15,7 @@ const Container = styled.div.attrs({
 		flex-grow: 1;
 		display: flex;
 		height: 100vh;
-		overflow-y: auto;
+		overflow-y: scroll;
 	}
 `;
 

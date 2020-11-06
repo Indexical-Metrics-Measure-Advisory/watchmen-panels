@@ -4,23 +4,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BackgroundImage from '../../../assets/console-background.png';
-import { listClearedNotifications, listNewNotifications } from '../../../services/console/notification';
 import { Notifications } from '../../../services/console/types';
 import { useNotImplemented } from '../../context/not-implemented';
 import { HorizontalLoading } from '../component/horizontal-loading';
 import { LinkButton } from '../component/link-button';
 import { PageContainer } from '../component/page-container';
+import { useConsoleContext } from '../context/console-context';
 import { NotificationItem } from './item';
 
 enum ActiveTab {
-	NEW = 'new',
-	CLEAR = 'clear'
+	READ = 'read',
+	UNREAD = 'unread'
 }
 
-interface DataState {
-	initialized: boolean;
-	allLoaded: boolean;
-	notifications: Notifications;
+interface State {
+	active: ActiveTab;
+	readInitialized: boolean;
+	unreadInitialized: boolean;
 }
 
 const NotificationContainer = styled(PageContainer).attrs({
@@ -127,66 +127,52 @@ const SeeAll = styled.div`
 	}
 `;
 
+const NotificationList = (props: {
+	notifications: Notifications;
+	allLoaded: boolean;
+	visible: boolean;
+}) => {
+	const { notifications, allLoaded, visible } = props;
+
+	if (!visible) {
+		return null;
+	}
+
+	return <Content>
+		{notifications.map((notification, index) => {
+			return <NotificationItem data={notification} key={index}/>;
+		})}
+		<SeeAll data-visible={allLoaded}>
+			{notifications.length === 0 ? 'No notifications.' : ' You\'ve seen it all.'}
+		</SeeAll>
+	</Content>;
+};
+
 export const Notification = () => {
 	const notImpl = useNotImplemented();
-	const [ active, setActive ] = useState<ActiveTab>(ActiveTab.NEW);
-	const [ newNotifications, setNewNotifications ] = useState<DataState>({
-		initialized: false,
-		allLoaded: false,
-		notifications: []
-	});
-	const [ clearedNotifications, setClearedNotifications ] = useState<DataState>({
-		initialized: false,
-		allLoaded: false,
-		notifications: []
+	const context = useConsoleContext();
+	const [ state, setState ] = useState<State>({
+		active: ActiveTab.UNREAD,
+		readInitialized: false,
+		unreadInitialized: false
 	});
 	useEffect(() => {
-		if (!newNotifications.initialized) {
-			listNotifications(active);
-		}
+		(async () => {
+			if (state.active === ActiveTab.UNREAD && !state.unreadInitialized) {
+				await context.notifications.fetchUnread();
+				setState({ ...state, unreadInitialized: true });
+			} else if (state.active === ActiveTab.READ && !state.readInitialized) {
+				await context.notifications.fetchRead();
+				setState({ ...state, readInitialized: true });
+			}
+		})();
 	});
 
-	const listNotifications = async (active: ActiveTab) => {
-		const state = active === ActiveTab.NEW ? newNotifications : clearedNotifications;
-		const set = active === ActiveTab.NEW ? setNewNotifications : setClearedNotifications;
-		const pageSize = 30;
-		const fetcher = active === ActiveTab.NEW ? listNewNotifications : listClearedNotifications;
-		const data = await fetcher({ pageSize });
-		if (data.notifications.length === 0) {
-			// set as all loaded
-			set({ ...state, initialized: true, allLoaded: true });
-		} else {
-			set({
-				...state,
-				initialized: true,
-				allLoaded: data.allLoaded,
-				notifications: [ ...state.notifications, ...data.notifications ]
-			});
-		}
-	};
-
-	const getActiveState = (active: ActiveTab) => {
-		return active === ActiveTab.NEW ? newNotifications : clearedNotifications;
-	};
 	const onTabClicked = (activeTab: ActiveTab) => () => {
-		if (activeTab !== active) {
-			const state = getActiveState(activeTab);
-			if (!state.initialized) {
-				listNotifications(activeTab);
-			}
-			setActive(activeTab);
+		if (activeTab !== state.active) {
+			setState({ ...state, active: activeTab });
 		}
 	};
-	const onClearAllClicked = () => {
-		const { notifications } = newNotifications;
-		setNewNotifications({ ...newNotifications, notifications: [] });
-		setClearedNotifications({
-			...clearedNotifications,
-			notifications: [ ...clearedNotifications.notifications, ...notifications ].sort((n1, n2) => 0 - n1.createDate.localeCompare(n2.createDate))
-		});
-	};
-
-	const state = getActiveState(active);
 
 	return <NotificationContainer background-image={BackgroundImage}>
 		<Title>
@@ -197,25 +183,23 @@ export const Notification = () => {
 			</LinkButton>
 		</Title>
 		<Tabs>
-			<Tab data-active={active === ActiveTab.NEW}>
-				<LinkButton onClick={onTabClicked(ActiveTab.NEW)}>New</LinkButton>
+			<Tab data-active={state.active === ActiveTab.UNREAD}>
+				<LinkButton onClick={onTabClicked(ActiveTab.UNREAD)}>New</LinkButton>
 			</Tab>
-			<Tab data-active={active === ActiveTab.CLEAR}>
-				<LinkButton onClick={onTabClicked(ActiveTab.CLEAR)}>Clear</LinkButton>
+			<Tab data-active={state.active === ActiveTab.READ}>
+				<LinkButton onClick={onTabClicked(ActiveTab.READ)}>Clear</LinkButton>
 			</Tab>
-			<Placeholder visible={!(active === ActiveTab.NEW ? newNotifications : clearedNotifications).initialized}/>
-			<ClearAll data-visible={active === ActiveTab.NEW} onClick={onClearAllClicked}>
+			<Placeholder
+				visible={!(state.active === ActiveTab.UNREAD ? state.unreadInitialized : state.readInitialized)}/>
+			<ClearAll data-visible={state.active === ActiveTab.UNREAD} onClick={context.notifications.readAll}>
 				<FontAwesomeIcon icon={faCheckCircle}/>
 				<span>Clear All</span>
 			</ClearAll>
 		</Tabs>
-		<Content>
-			{state.notifications.map((notification, index) => {
-				return <NotificationItem data={notification} key={index}/>;
-			})}
-			<SeeAll data-visible={state.allLoaded}>
-				{state.notifications.length === 0 ? 'No notifications.' : ' You\'ve seen it all.'}
-			</SeeAll>
-		</Content>
+		<NotificationList notifications={context.notifications.unread}
+		                  allLoaded={context.notifications.allUnreadLoaded}
+		                  visible={state.active === ActiveTab.UNREAD}/>
+		<NotificationList notifications={context.notifications.read} allLoaded={context.notifications.allReadLoaded}
+		                  visible={state.active === ActiveTab.READ}/>
 	</NotificationContainer>;
 };

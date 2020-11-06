@@ -22,6 +22,7 @@ export enum NotificationCategory {
 }
 
 export interface Notification {
+	id: string;
 	subject: string;
 	category: NotificationCategory;
 	body: string;
