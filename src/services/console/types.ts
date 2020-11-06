@@ -32,3 +32,14 @@ export interface Notification {
 }
 
 export type Notifications = Array<Notification>;
+
+export interface Mail {
+	id: string;
+	subject: string;
+	body: string;
+	image?: string;
+	sender: string;
+	createDate: string;
+}
+
+export type Mails = Array<Mail>;

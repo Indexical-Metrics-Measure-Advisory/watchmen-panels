@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Path from '../../common/path';
 import { ConsoleContextProvider } from './context/console-context';
 import Menu from './menu';
+import { Messenger } from './messenger';
 import { Notification } from './notification';
 
 const Container = styled.div.attrs({
@@ -29,6 +30,7 @@ export default () => {
 					<Route path='*'><Redirect to={Path.CONSOLE_NOTIFICATION}/></Route>
 				</Switch>
 			</main>
+			<Messenger/>
 		</Container>
 	</ConsoleContextProvider>;
 }

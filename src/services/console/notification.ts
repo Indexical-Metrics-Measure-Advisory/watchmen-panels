@@ -1,4 +1,5 @@
-import { NotificationCategory, Notifications } from './types';
+import dayjs from 'dayjs';
+import { Notification, NotificationCategory, Notifications } from './types';
 
 export interface NotificationResponse {
 	notifications: Notifications;
@@ -19,7 +20,7 @@ export const listUnreadNotifications = async (options: {
 						category: NotificationCategory.CHART_PUSHED,
 						body: 'A distribution diagram of customers of age bracket and place of residence.',
 						sender: 'Damon Lindelof',
-						createDate: '2020/11/5 20:18:19'
+						createDate: '2020/11/05 20:18:19'
 					},
 					{
 						id: '4',
@@ -27,7 +28,7 @@ export const listUnreadNotifications = async (options: {
 						category: NotificationCategory.CHART_TYPE_PUSHED,
 						body: 'Use dynamic effect, active your chart!',
 						sender: 'Sally Jupiter',
-						createDate: '2020/11/3 09:55:09'
+						createDate: '2020/11/03 09:55:09'
 					},
 					{
 						id: '3',
@@ -35,7 +36,7 @@ export const listUnreadNotifications = async (options: {
 						category: NotificationCategory.SPACE_PUSHED,
 						body: 'After 3 weeks great work, the marketing space is online now.\nThanks to all involved in making this happen!\nFollow us to find more...',
 						sender: 'Sally Jupiter',
-						createDate: '2020/11/1 11:24:01'
+						createDate: '2020/11/01 11:24:01'
 					},
 					{
 						id: '2',
@@ -59,7 +60,7 @@ export const listUnreadNotifications = async (options: {
 		}, 1000);
 	});
 };
-export const listReadNotifications = async (options: {
+export const listReadNotifications = async (options?: {
 	endTime?: string;
 	pageSize?: number;
 }): Promise<NotificationResponse> => {
@@ -71,4 +72,18 @@ export const listReadNotifications = async (options: {
 			});
 		}, 3000);
 	});
+};
+
+export const getLatestNotifications = async (options?: {
+	endTime?: string;
+	pageSize?: number;
+}): Promise<Notifications> => {
+	return [ {
+		id: '6',
+		subject: 'Jeffrey Dean Morgan join us again.',
+		category: NotificationCategory.GROUP_JOINED,
+		body: 'Misoperation must be prevented on system level.',
+		sender: 'Damon Lindelof',
+		createDate: dayjs().format('YYYY/MM/DD HH:mm:ss')
+	} as Notification ];
 };
