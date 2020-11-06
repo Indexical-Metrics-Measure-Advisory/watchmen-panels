@@ -60,7 +60,7 @@ export const LinkButton = (props: {
 		rect: ({ left, top }) => ({
 			x: width ? (width / 2 + left) : left,
 			y: top - 36,
-			caretLeft: width ? (width / 2) - 4 : 12,
+			caretLeft: width ? (width / 2 - 4) : 12,
 			center
 		})
 	});
