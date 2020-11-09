@@ -3,10 +3,10 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { ConsoleContextProvider } from './context/console-context';
-import { Inbox } from './inbox';
 import Menu from './menu';
+import { Inbox } from './message/inbox';
+import { Notification } from './message/notification';
 import { Messenger } from './messenger';
-import { Notification } from './notification';
 
 const Container = styled.div.attrs({
 	'data-widget': 'console-container'
