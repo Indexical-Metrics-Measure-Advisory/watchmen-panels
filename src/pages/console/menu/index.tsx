@@ -1,5 +1,5 @@
 import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
-import { faInbox, faPlus, faShapes, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faInbox, faPlus, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
@@ -45,6 +45,11 @@ export default () => {
 	const onResize = (newWidth: number) => {
 		setWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
 	};
+	const onHomeClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_HOME)) {
+			history.push(Path.CONSOLE_HOME);
+		}
+	};
 	const onNotificationsClicked = () => {
 		if (!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)) {
 			history.push(Path.CONSOLE_NOTIFICATION);
@@ -58,21 +63,23 @@ export default () => {
 
 	const showMenuItemTooltip = width / minWidth <= 1.5;
 
-
 	return <MenuContainer width={width}>
 		<MenuLogo/>
+		<MenuItem icon={faHome} label='Home' showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.CONSOLE_HOME)}
+		          onClick={onHomeClicked}/>
 		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
+		<MenuSeparator width={width}/>
 		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}
 		          onClick={onNotificationsClicked}/>
 		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_INBOX)}
 		          onClick={onInboxClicked}/>
-		<MenuSeparator width={width}/>
-		<MenuItem icon={faShapes} label='Show Everything' showTooltip={showMenuItemTooltip}/>
-		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
 		<MenuItem icon={faComments} iconSize={1.2} label='Show Timeline' showTooltip={showMenuItemTooltip}/>
-		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Domain Space' showTooltip={showMenuItemTooltip}/>
+		<MenuSeparator width={width}/>
+		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Space' showTooltip={showMenuItemTooltip}/>
 		<Placeholder/>
 		<MenuSeparator width={width}/>
 		<MenuItem icon={faQuestionCircle} iconSize={1.2} label='Help' showTooltip={showMenuItemTooltip}/>

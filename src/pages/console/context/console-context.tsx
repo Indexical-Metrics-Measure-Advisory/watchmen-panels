@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { ConsoleDashboardsStorage, useConsoleDashboards } from './console-dashboards';
 import { ConsoleMailsStorage, ConsoleMailsUsable, useConsoleMails } from './console-mails';
 import {
 	ConsoleNotificationsStorage,
 	ConsoleNotificationsUsable,
 	useConsoleNotifications
 } from './console-nofitications';
+import { ConsoleSpacesStorage, useConsoleSpaces } from './console-spaces';
 import { ConsoleTooltipContextProvider } from './console-tooltip';
 
 export interface ConsoleUser {
@@ -12,9 +14,11 @@ export interface ConsoleUser {
 }
 
 export interface ConsoleContext {
-	user: ConsoleUser,
-	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable,
-	mails: ConsoleMailsStorage & ConsoleMailsUsable
+	user: ConsoleUser;
+	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable;
+	mails: ConsoleMailsStorage & ConsoleMailsUsable;
+	spaces: ConsoleSpacesStorage;
+	dashboards: ConsoleDashboardsStorage
 }
 
 const Context = React.createContext<ConsoleContext>({} as ConsoleContext);
@@ -27,11 +31,15 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 	const [ currentUser ] = useState<ConsoleUser>({ name: 'Walter Kovacs' });
 	const notifications = useConsoleNotifications();
 	const mails = useConsoleMails();
+	const spaces = useConsoleSpaces();
+	const dashboards = useConsoleDashboards();
 
 	const context = {
 		user: currentUser,
 		notifications,
-		mails
+		mails,
+		spaces,
+		dashboards
 	};
 
 	return <Context.Provider value={context}>

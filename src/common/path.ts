@@ -11,6 +11,7 @@ export default {
 	GUIDE_BUILD_METRICS: '/guide/:domain/build-metrics',
 
 	CONSOLE: '/console',
+	CONSOLE_HOME: '/console/home',
 	CONSOLE_INBOX: '/console/inbox',
 	CONSOLE_NOTIFICATION: '/console/notification'
 };

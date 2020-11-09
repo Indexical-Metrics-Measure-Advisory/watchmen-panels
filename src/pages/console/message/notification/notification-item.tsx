@@ -7,15 +7,21 @@ import {
 	ItemBody,
 	MessageItemContainer,
 	MessageItemHeader,
+	MessageItemOperators,
 	MessageItemSender,
 	MessageItemSubject
 } from '../common/item';
-import { Operators } from '../common/operators';
 import { ReadButton } from '../common/read-button';
 
 const Header = styled(MessageItemHeader)`
     grid-template-rows: auto 1fr;
     grid-row-gap: calc(var(--margin) / 4);
+`;
+const Operators = styled(MessageItemOperators)`
+	grid-row: span 2;
+`;
+const Sender = styled(MessageItemSender)`
+	grid-row: span 2;
 `;
 const Category = styled.div`
 	font-size: 0.8em;
@@ -90,9 +96,9 @@ export const NotificationItem = (props: { data: ConsoleNotification, readable: b
 				            onRead={() => setRead(true)}
 				            readOne={() => context.notifications.readOne(data)}/>
 			</Operators>
-			<MessageItemSender>
+			<Sender>
 				<UserAvatar name={sender} showTooltip={true}/>
-			</MessageItemSender>
+			</Sender>
 			<MessageItemSubject>{subject}</MessageItemSubject>
 		</Header>
 		<Body body={body} createDate={createDate} image={image} color-type={CategoryColor(category)}/>

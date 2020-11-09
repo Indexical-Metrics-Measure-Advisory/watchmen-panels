@@ -74,6 +74,13 @@ export const MessageItemSubject = styled.div`
 		color: var(--console-primary-color);
 	}
 `;
+export const MessageItemOperators = styled.div.attrs({
+	'data-widget': 'console-messages-item-operators'
+})`
+	opacity: 0;
+	pointer-events: none;
+	transition: all 300ms ease-in-out;
+`;
 const MessageItemBody = styled.div`
 	display: grid;
 	grid-template-columns: 1fr auto;

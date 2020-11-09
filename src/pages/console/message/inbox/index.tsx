@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import BackgroundImage from '../../../../assets/console-inbox-background.png';
 import { ConsoleMail } from '../../../../services/console/types';
 import { useNotImplemented } from '../../../context/not-implemented';
+import { NarrowPageTitle } from '../../component/narrow-page-title';
+import { NarrowContainer } from '../../component/page-container';
 import { useConsoleContext } from '../../context/console-context';
-import { MessagesContainer } from '../common/container';
 import { ItemList } from '../common/item';
 import { Tabs } from '../common/tabs';
-import { Title } from '../common/title';
 import { ActiveTab, State } from '../common/types';
 import { MailItem } from './mail-item';
 
@@ -38,8 +38,8 @@ export const Inbox = () => {
 		}
 	};
 
-	return <MessagesContainer background-image={BackgroundImage}>
-		<Title title='Inbox' onSettingsClicked={notImpl.show}/>
+	return <NarrowContainer background-image={BackgroundImage}>
+		<NarrowPageTitle title='Inbox' onSettingsClicked={notImpl.show}/>
 		<Tabs state={state}
 		      onUnreadClicked={onTabClicked(ActiveTab.UNREAD)} onReadClicked={onTabClicked(ActiveTab.READ)}
 		      onClearClicked={context.mails.readAll}/>
@@ -58,5 +58,5 @@ export const Inbox = () => {
 				return <MailItem data={item} readable={false} key={`${item.createDate}-${index}`}/>;
 			})}
 		</ItemList>
-	</MessagesContainer>;
+	</NarrowContainer>;
 };

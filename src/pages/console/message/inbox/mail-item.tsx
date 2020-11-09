@@ -7,10 +7,10 @@ import {
 	ItemBody,
 	MessageItemContainer,
 	MessageItemHeader,
+	MessageItemOperators,
 	MessageItemSender,
 	MessageItemSubject
 } from '../common/item';
-import { Operators } from '../common/operators';
 import { ReadButton } from '../common/read-button';
 
 const Body = styled(ItemBody)`
@@ -27,11 +27,11 @@ export const MailItem = (props: { data: ConsoleMail, readable: boolean }) => {
 	return <MessageItemContainer data-read={read}>
 		<MessageItemHeader>
 			<MessageItemSubject>{subject}</MessageItemSubject>
-			<Operators>
+			<MessageItemOperators>
 				<ReadButton readable={readable} tooltip='Set as read'
 				            onRead={() => setRead(true)}
 				            readOne={() => context.mails.readOne(data)}/>
-			</Operators>
+			</MessageItemOperators>
 			<MessageItemSender>
 				<UserAvatar name={sender} showTooltip={true}/>
 			</MessageItemSender>

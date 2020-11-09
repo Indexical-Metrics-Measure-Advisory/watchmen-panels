@@ -278,7 +278,7 @@ export const CustomChartPanel = (props: {
 				<SettingsLeading>
 					<span>Identity</span>
 				</SettingsLeading>
-				<InputItem label='Title' value={settings.title} require={true}
+				<InputItem label='NarrowPageTitle' value={settings.title} require={true}
 				           onValueChanged={onInputValueChanged('title')}/>
 				<DropdownItem label='Chart' value={settings.key}
 				              require={true} please={'...'}

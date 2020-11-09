@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import BackgroundImage from '../../../../assets/console-notifications-background.png';
 import { useNotImplemented } from '../../../context/not-implemented';
+import { NarrowPageTitle } from '../../component/narrow-page-title';
+import { NarrowContainer } from '../../component/page-container';
 import { useConsoleContext } from '../../context/console-context';
-import { MessagesContainer } from '../common/container';
 import { ItemList } from '../common/item';
 import { Tabs } from '../common/tabs';
-import { Title } from '../common/title';
 import { ActiveTab, State } from '../common/types';
 import { NotificationItem } from './notification-item';
-
 
 export const Notification = () => {
 	const notImpl = useNotImplemented();
@@ -38,8 +37,8 @@ export const Notification = () => {
 		}
 	};
 
-	return <MessagesContainer background-image={BackgroundImage}>
-		<Title title='Notifications' onSettingsClicked={notImpl.show}/>
+	return <NarrowContainer background-image={BackgroundImage}>
+		<NarrowPageTitle title='Notifications' onSettingsClicked={notImpl.show}/>
 		<Tabs state={state}
 		      onUnreadClicked={onTabClicked(ActiveTab.UNREAD)} onReadClicked={onTabClicked(ActiveTab.READ)}
 		      onClearClicked={context.mails.readAll}/>
@@ -59,5 +58,5 @@ export const Notification = () => {
 				return <NotificationItem data={item} readable={false} key={`${item.createDate}-${index}`}/>;
 			})}
 		</ItemList>
-	</MessagesContainer>;
+	</NarrowContainer>;
 };

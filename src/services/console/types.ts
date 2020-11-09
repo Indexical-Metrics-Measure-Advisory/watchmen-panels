@@ -40,3 +40,34 @@ export interface ConsoleMail extends ConsoleMessage {
 }
 
 export type ConsoleMails = Array<ConsoleMail>;
+
+export enum ConsoleSpaceType {
+	/** public for all authorized users */
+	PUBLIC = 'public',
+	/** create by user himself/herself, base on one public space */
+	PRIVATE = 'private'
+}
+
+export interface ConsoleSpace {
+	spaceId: string;
+	name: string;
+}
+
+export interface ConnectedConsoleSpace extends ConsoleSpace {
+	connectId: string;
+	type: ConsoleSpaceType;
+}
+
+export interface PublicConsoleSpace extends ConnectedConsoleSpace {
+	type: ConsoleSpaceType.PUBLIC;
+}
+
+export interface PrivateConsoleSpace extends ConnectedConsoleSpace {
+	type: ConsoleSpaceType.PRIVATE;
+	// TODO filter declarations here
+}
+
+export interface ConsoleDashboard {
+	dashboardId: string;
+	name: string;
+}

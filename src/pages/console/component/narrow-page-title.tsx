@@ -2,10 +2,10 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import { LinkButton } from '../../component/link-button';
+import { LinkButton } from './link-button';
 
 const TitleContainer = styled.div.attrs({
-	'data-widget': 'console-messages-title'
+	'data-widget': 'console-narrow-page-title'
 })`
 	display: flex;
 	align-items: baseline;
@@ -21,7 +21,7 @@ const TitleContainer = styled.div.attrs({
 	}
 `;
 
-export const Title = (props: {
+export const NarrowPageTitle = (props: {
 	title: string;
 	onSettingsClicked?: () => void;
 }) => {
