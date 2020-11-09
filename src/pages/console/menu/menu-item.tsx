@@ -59,8 +59,9 @@ export const MenuItem = (props: {
 	showTooltip: boolean,
 	className?: string,
 	active?: boolean
+	onClick?: () => void;
 }) => {
-	const { icon, iconSize, label, showTooltip, className, active } = props;
+	const { icon, iconSize, label, showTooltip, className, active, onClick } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -73,7 +74,8 @@ export const MenuItem = (props: {
 
 	return <MenuItemContainer className={className} data-active={active}
 	                          ref={containerRef}
-	                          onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
+	                          onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}
+	                          onClick={onClick}>
 		<div><MenuItemIcon icon={icon} icon-size={iconSize}/></div>
 		<MenuItemLabel>{label}</MenuItemLabel>
 	</MenuItemContainer>;

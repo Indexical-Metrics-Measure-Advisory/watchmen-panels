@@ -132,7 +132,7 @@ export const Messenger = () => {
 		setSchedule(setTimeout(() => setState({ visible: StateVisible.FALSE }), 8000));
 	};
 	useEffect(() => {
-		const onNotificationReceived = (notification: Notification) => {
+		const onNotificationReceived = (notification: Mail) => {
 			setState({ visible: StateVisible.TRUE, type: MessageType.NOTIFICATION, content: notification });
 			scheduleHide();
 		};

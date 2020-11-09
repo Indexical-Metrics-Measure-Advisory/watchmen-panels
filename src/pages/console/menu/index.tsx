@@ -1,7 +1,7 @@
 import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { faInbox, faPlus, faShapes, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import { matchPath, useLocation } from 'react-router-dom';
+import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path from '../../../common/path';
 import { Theme } from '../../../theme/types';
@@ -35,6 +35,7 @@ const Placeholder = styled.div`
 `;
 
 export default () => {
+	const history = useHistory();
 	const location = useLocation();
 	const theme = useTheme();
 	const minWidth = (theme as Theme).consoleMenuWidth;
@@ -44,6 +45,16 @@ export default () => {
 	const onResize = (newWidth: number) => {
 		setWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
 	};
+	const onNotificationsClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)) {
+			history.push(Path.CONSOLE_NOTIFICATION);
+		}
+	};
+	const onInboxClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_INBOX)) {
+			history.push(Path.CONSOLE_INBOX);
+		}
+	};
 
 	const showMenuItemTooltip = width / minWidth <= 1.5;
 
@@ -52,8 +63,11 @@ export default () => {
 		<MenuLogo/>
 		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
 		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}
-		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}/>
-		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}/>
+		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}
+		          onClick={onNotificationsClicked}/>
+		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.CONSOLE_INBOX)}
+		          onClick={onInboxClicked}/>
 		<MenuSeparator width={width}/>
 		<MenuItem icon={faShapes} label='Show Everything' showTooltip={showMenuItemTooltip}/>
 		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>

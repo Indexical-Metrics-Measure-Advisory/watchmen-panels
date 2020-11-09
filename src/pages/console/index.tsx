@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { ConsoleContextProvider } from './context/console-context';
+import { Inbox } from './inbox';
 import Menu from './menu';
 import { Messenger } from './messenger';
 import { Notification } from './notification';
@@ -26,6 +27,7 @@ export default () => {
 			<Menu/>
 			<main>
 				<Switch>
+					<Route path={Path.CONSOLE_INBOX}><Inbox/></Route>
 					<Route path={Path.CONSOLE_NOTIFICATION}><Notification/></Route>
 					<Route path='*'><Redirect to={Path.CONSOLE_NOTIFICATION}/></Route>
 				</Switch>

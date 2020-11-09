@@ -3,14 +3,14 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import BackgroundImage from '../../../assets/console-notifications-background.png';
-import { Notifications } from '../../../services/console/types';
+import BackgroundImage from '../../../assets/console-inbox-background.png';
+import { Mails } from '../../../services/console/types';
 import { useNotImplemented } from '../../context/not-implemented';
 import { HorizontalLoading } from '../component/horizontal-loading';
 import { LinkButton } from '../component/link-button';
 import { PageContainer } from '../component/page-container';
 import { useConsoleContext } from '../context/console-context';
-import { NotificationItem } from './item';
+import { InboxItem } from './item';
 
 enum ActiveTab {
 	READ = 'read',
@@ -23,8 +23,8 @@ interface State {
 	unreadInitialized: boolean;
 }
 
-const NotificationContainer = styled(PageContainer).attrs({
-	'data-widget': 'console-notification-container'
+const InboxContainer = styled(PageContainer).attrs({
+	'data-widget': 'console-inbox-container'
 })`
 	flex-grow: 1;
 	display: flex;
@@ -35,7 +35,7 @@ const NotificationContainer = styled(PageContainer).attrs({
 	margin: var(--margin) auto;
 `;
 const Title = styled.div.attrs({
-	'data-widget': 'console-notification-title'
+	'data-widget': 'console-inbox-title'
 })`
 	display: flex;
 	align-items: baseline;
@@ -51,7 +51,7 @@ const Title = styled.div.attrs({
 	}
 `;
 const Tabs = styled.div.attrs({
-	'data-widget': 'console-notification-tabs'
+	'data-widget': 'console-inbox-tabs'
 })`
 	display: flex;
 	margin-top: var(--margin);
@@ -127,30 +127,30 @@ const SeeAll = styled.div`
 	}
 `;
 
-const NotificationList = (props: {
-	notifications: Notifications;
+const InboxList = (props: {
+	mails: Mails;
 	allLoaded: boolean;
 	visible: boolean;
 	status: ActiveTab
 }) => {
-	const { notifications, allLoaded, visible, status } = props;
+	const { mails, allLoaded, visible, status } = props;
 
 	if (!visible) {
 		return null;
 	}
 
 	return <Content>
-		{notifications.map((notification, index) => {
-			return <NotificationItem data={notification} readable={status === ActiveTab.UNREAD}
-			                         key={`${notification.createDate}-${index}`}/>;
+		{mails.map((mail, index) => {
+			return <InboxItem data={mail} readable={status === ActiveTab.UNREAD}
+			                  key={`${mail.createDate}-${index}`}/>;
 		})}
 		<SeeAll data-visible={allLoaded}>
-			{notifications.length === 0 ? 'No notifications.' : ' You\'ve seen it all.'}
+			{mails.length === 0 ? 'No mails.' : ' You\'ve seen it all.'}
 		</SeeAll>
 	</Content>;
 };
 
-export const Notification = () => {
+export const Inbox = () => {
 	const notImpl = useNotImplemented();
 	const context = useConsoleContext();
 	const [ state, setState ] = useState<State>({
@@ -162,10 +162,10 @@ export const Notification = () => {
 	useEffect(() => {
 		(async () => {
 			if (state.active === ActiveTab.UNREAD && !state.unreadInitialized) {
-				await context.notifications.fetchUnread();
+				await context.mails.fetchUnread();
 				setState({ ...state, unreadInitialized: true });
 			} else if (state.active === ActiveTab.READ && !state.readInitialized) {
-				await context.notifications.fetchRead();
+				await context.mails.fetchRead();
 				setState({ ...state, readInitialized: true });
 			}
 		})();
@@ -178,9 +178,9 @@ export const Notification = () => {
 		}
 	};
 
-	return <NotificationContainer background-image={BackgroundImage}>
+	return <InboxContainer background-image={BackgroundImage}>
 		<Title>
-			<div>Notifications</div>
+			<div>Inbox</div>
 			<LinkButton tooltip='Settings'
 			            width={26}
 			            center={true}
@@ -198,17 +198,17 @@ export const Notification = () => {
 			</Tab>
 			<Placeholder
 				visible={!(state.active === ActiveTab.UNREAD ? state.unreadInitialized : state.readInitialized)}/>
-			<ClearAll data-visible={state.active === ActiveTab.UNREAD} onClick={context.notifications.readAll}>
+			<ClearAll data-visible={state.active === ActiveTab.UNREAD} onClick={context.mails.readAll}>
 				<FontAwesomeIcon icon={faCheckCircle}/>
 				<span>Clear All</span>
 			</ClearAll>
 		</Tabs>
-		<NotificationList notifications={context.notifications.unread}
-		                  allLoaded={context.notifications.allUnreadLoaded}
-		                  visible={state.active === ActiveTab.UNREAD}
-		                  status={ActiveTab.UNREAD}/>
-		<NotificationList notifications={context.notifications.read} allLoaded={context.notifications.allReadLoaded}
-		                  visible={state.active === ActiveTab.READ}
-		                  status={ActiveTab.READ}/>
-	</NotificationContainer>;
+		<InboxList mails={context.mails.unread}
+		           allLoaded={context.mails.allUnreadLoaded}
+		           visible={state.active === ActiveTab.UNREAD}
+		           status={ActiveTab.UNREAD}/>
+		<InboxList mails={context.mails.read} allLoaded={context.mails.allReadLoaded}
+		           visible={state.active === ActiveTab.READ}
+		           status={ActiveTab.READ}/>
+	</InboxContainer>;
 };

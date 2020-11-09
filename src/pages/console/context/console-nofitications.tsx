@@ -29,9 +29,9 @@ export interface ConsoleNotificationsFunctions {
 	off: (event: NotificationEvent, listener: (...args: Array<any>) => void) => void;
 }
 
-const distinct = (nofitications: Notifications) => {
-	const ids = new Set<string>(nofitications.map(notification => notification.id));
-	return nofitications
+const distinct = (notifications: Notifications) => {
+	const ids = new Set<string>(notifications.map(notification => notification.id));
+	return notifications
 		.sort((n1, n2) => n1.createDate.localeCompare(n2.createDate))
 		.reverse()
 		.filter(notification => {
