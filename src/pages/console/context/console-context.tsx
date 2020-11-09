@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { ConsoleMails, ConsoleMailsFunctions, useMails } from './console-inbox';
-import { ConsoleNotifications, ConsoleNotificationsFunctions, useNotifications } from './console-nofitications';
+import { ConsoleMailsStorage, ConsoleMailsUsable, useConsoleMails } from './console-mails';
+import {
+	ConsoleNotificationsStorage,
+	ConsoleNotificationsUsable,
+	useConsoleNotifications
+} from './console-nofitications';
 import { ConsoleTooltipContextProvider } from './console-tooltip';
 
 export interface ConsoleUser {
@@ -9,8 +13,8 @@ export interface ConsoleUser {
 
 export interface ConsoleContext {
 	user: ConsoleUser,
-	notifications: ConsoleNotifications & ConsoleNotificationsFunctions,
-	mails: ConsoleMails & ConsoleMailsFunctions
+	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable,
+	mails: ConsoleMailsStorage & ConsoleMailsUsable
 }
 
 const Context = React.createContext<ConsoleContext>({} as ConsoleContext);
@@ -21,8 +25,8 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 
 	// TODO account is fixed now, for demo purpose
 	const [ currentUser ] = useState<ConsoleUser>({ name: 'Walter Kovacs' });
-	const notifications = useNotifications();
-	const mails = useMails();
+	const notifications = useConsoleNotifications();
+	const mails = useConsoleMails();
 
 	const context = {
 		user: currentUser,

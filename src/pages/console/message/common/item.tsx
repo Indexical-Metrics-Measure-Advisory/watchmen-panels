@@ -38,7 +38,7 @@ export const MessageItemContainer = styled.div.attrs({
     }
     &:hover {
     	box-shadow: var(--console-hover-shadow);
-    	div[data-widget='console-notification-item-operators'] {
+    	div[data-widget='console-messages-item-operators'] {
     		opacity: 1;
     		pointer-events: auto;
     	}
@@ -54,7 +54,7 @@ export const MessageItemHeader = styled.div`
     grid-column-gap: calc(var(--margin) / 2);
     align-items: center;
     padding: calc(var(--margin) / 3) calc(var(--margin) / 2) calc(var(--margin) / 4);
-    background-color: var(--console-notification-header-bg-color);
+    background-color: var(--console-message-header-bg-color);
     overflow: hidden;
 `;
 export const MessageItemSender = styled.div`

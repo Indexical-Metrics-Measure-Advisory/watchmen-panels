@@ -4,11 +4,11 @@ import dayjs from 'dayjs';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Mail, Notification } from '../../services/console/types';
+import { ConsoleMail, ConsoleNotification } from '../../services/console/types';
 import { createLinkButtonBackgroundAnimation } from './component/link-button';
 import { UserAvatar } from './component/user-avatar';
 import { useConsoleContext } from './context/console-context';
-import { NotificationEvent } from './context/console-nofitications';
+import { ConsoleNotificationEvent } from './context/console-nofitications';
 
 enum MessageType {
 	NOTIFICATION, MAIL
@@ -23,7 +23,7 @@ enum StateVisible {
 interface State {
 	visible: StateVisible;
 	type?: MessageType;
-	content?: Notification | Mail;
+	content?: ConsoleNotification | ConsoleMail;
 }
 
 // use gpu
@@ -132,14 +132,14 @@ export const Messenger = () => {
 		setSchedule(setTimeout(() => setState({ visible: StateVisible.FALSE }), 8000));
 	};
 	useEffect(() => {
-		const onNotificationReceived = (notification: Mail) => {
+		const onNotificationReceived = (notification: ConsoleMail) => {
 			setState({ visible: StateVisible.TRUE, type: MessageType.NOTIFICATION, content: notification });
 			scheduleHide();
 		};
-		context.notifications.on(NotificationEvent.LATEST_RECEIVED, onNotificationReceived);
+		context.notifications.on(ConsoleNotificationEvent.LATEST_RECEIVED, onNotificationReceived);
 
 		return () => {
-			context.notifications.off(NotificationEvent.LATEST_RECEIVED, onNotificationReceived);
+			context.notifications.off(ConsoleNotificationEvent.LATEST_RECEIVED, onNotificationReceived);
 		};
 	});
 	const onCloseClicked = () => {

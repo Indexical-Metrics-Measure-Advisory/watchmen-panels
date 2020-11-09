@@ -1,4 +1,13 @@
-export enum NotificationCategory {
+export interface ConsoleMessage {
+	id: string;
+	subject: string;
+	body: string;
+	image?: string;
+	sender: string;
+	createDate: string;
+}
+
+export enum ConsoleNotificationCategory {
 	CHART_TYPE_PUSHED = 'CHART_TYPE_PUSHED',
 
 	SPACE_PUSHED = 'SPACE_PUSHED',
@@ -21,25 +30,13 @@ export enum NotificationCategory {
 	SUBSCRIBE_CHART_DELETED = 'SUBSCRIBE_CHART_DELETED'
 }
 
-export interface Notification {
-	id: string;
-	subject: string;
-	category: NotificationCategory;
-	body: string;
-	image?: string;
-	sender: string;
-	createDate: string;
+export interface ConsoleNotification extends ConsoleMessage {
+	category: ConsoleNotificationCategory;
 }
 
-export type Notifications = Array<Notification>;
+export type ConsoleNotifications = Array<ConsoleNotification>;
 
-export interface Mail {
-	id: string;
-	subject: string;
-	body: string;
-	image?: string;
-	sender: string;
-	createDate: string;
+export interface ConsoleMail extends ConsoleMessage {
 }
 
-export type Mails = Array<Mail>;
+export type ConsoleMails = Array<ConsoleMail>;

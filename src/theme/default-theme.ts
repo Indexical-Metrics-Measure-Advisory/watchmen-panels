@@ -95,6 +95,7 @@ export default {
 	consoleTitleFontWeight: 900,
 
 	// console notification
+	consoleMessageHeaderBgColor: 'rgba(255,255,255,0.08)',
 	consoleNotificationColor1: 'rgba(150,171,219,0.08)',
 	consoleNotificationColor2: 'rgba(191,243,204,0.08)',
 	consoleNotificationColor3: 'rgba(255,145,145,0.08)',
@@ -102,6 +103,5 @@ export default {
 	consoleNotificationDotColor1: 'rgba(150,171,219,1)',
 	consoleNotificationDotColor2: 'rgba(191,243,204,1)',
 	consoleNotificationDotColor3: 'rgba(255,145,145,1)',
-	consoleNotificationDotColor4: 'rgba(255,204,150,1)',
-	consoleNotificationHeaderBgColor: 'rgba(255,255,255,0.08)'
+	consoleNotificationDotColor4: 'rgba(255,204,150,1)'
 };

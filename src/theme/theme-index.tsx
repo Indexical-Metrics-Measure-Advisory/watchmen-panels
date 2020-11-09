@@ -79,6 +79,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-title-font-family: ${({ theme }) => theme.consoleTitleFontFamily};
 		--console-title-font-weight: ${({ theme }) => theme.consoleTitleFontWeight};
 		
+		--console-message-header-bg-color: ${({ theme }) => theme.consoleMessageHeaderBgColor};
 		--console-notification-color-1: ${({ theme }) => theme.consoleNotificationColor1};
 		--console-notification-color-2: ${({ theme }) => theme.consoleNotificationColor2};
 		--console-notification-color-3: ${({ theme }) => theme.consoleNotificationColor3};
@@ -87,7 +88,6 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-notification-dot-color-2: ${({ theme }) => theme.consoleNotificationDotColor2};
 		--console-notification-dot-color-3: ${({ theme }) => theme.consoleNotificationDotColor3};
 		--console-notification-dot-color-4: ${({ theme }) => theme.consoleNotificationDotColor4};
-		--console-notification-header-bg-color: ${({ theme }) => theme.consoleNotificationHeaderBgColor};
 		
 		width: 100%;
 		

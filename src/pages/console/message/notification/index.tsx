@@ -7,7 +7,7 @@ import { ItemList } from '../common/item';
 import { Tabs } from '../common/tabs';
 import { Title } from '../common/title';
 import { ActiveTab, State } from '../common/types';
-import { MailItem } from '../inbox/mail-item';
+import { NotificationItem } from './notification-item';
 
 
 export const Notification = () => {
@@ -48,7 +48,7 @@ export const Notification = () => {
 		          visible={state.active === ActiveTab.UNREAD}
 		          noData='No notifications.'>
 			{context.notifications.unread.map((item: any, index: number) => {
-				return <MailItem data={item} readable={true} key={`${item.createDate}-${index}`}/>;
+				return <NotificationItem data={item} readable={true} key={`${item.createDate}-${index}`}/>;
 			})}
 		</ItemList>
 		<ItemList data={context.notifications.read}
@@ -56,7 +56,7 @@ export const Notification = () => {
 		          visible={state.active === ActiveTab.READ}
 		          noData='No notifications.'>
 			{context.notifications.read.map((item: any, index: number) => {
-				return <MailItem data={item} readable={false} key={`${item.createDate}-${index}`}/>;
+				return <NotificationItem data={item} readable={false} key={`${item.createDate}-${index}`}/>;
 			})}
 		</ItemList>
 	</MessagesContainer>;

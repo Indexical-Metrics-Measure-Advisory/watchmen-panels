@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Mail } from '../../../../services/console/types';
+import { ConsoleMail } from '../../../../services/console/types';
 import { UserAvatar } from '../../component/user-avatar';
 import { useConsoleContext } from '../../context/console-context';
 import {
@@ -17,7 +17,7 @@ const Body = styled(ItemBody)`
     background-color: var(--console-mail-color);
 `;
 
-export const MailItem = (props: { data: Mail, readable: boolean }) => {
+export const MailItem = (props: { data: ConsoleMail, readable: boolean }) => {
 	const { data, readable } = props;
 	const { subject, sender, body, image, createDate } = data;
 

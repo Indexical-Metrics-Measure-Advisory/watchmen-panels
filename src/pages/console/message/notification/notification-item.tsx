@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Notification, NotificationCategory } from '../../../../services/console/types';
+import { ConsoleNotification, ConsoleNotificationCategory } from '../../../../services/console/types';
 import { UserAvatar } from '../../component/user-avatar';
 import { useConsoleContext } from '../../context/console-context';
 import {
@@ -27,7 +27,7 @@ const Body = styled(ItemBody)<{ 'color-type'?: number }>`
     background-color: ${({ 'color-type': colorType }) => colorType ? `var(--console-notification-color-${colorType})` : 'unset'};
 `;
 
-const CategoryLabel: { [key in NotificationCategory]: string } = {
+const CategoryLabel: { [key in ConsoleNotificationCategory]: string } = {
 	CHART_TYPE_PUSHED: 'New Chart Type Go Live',
 
 	SPACE_PUSHED: 'New Space Go Live',
@@ -49,33 +49,33 @@ const CategoryLabel: { [key in NotificationCategory]: string } = {
 	SUBSCRIBE_CHART_CHANGED: 'Subscribed Chart Definition Change',
 	SUBSCRIBE_CHART_DELETED: 'Subscribed Chart Deleted'
 };
-const CategoryColor = (category: NotificationCategory) => {
+const CategoryColor = (category: ConsoleNotificationCategory) => {
 	switch (category) {
-		case NotificationCategory.CHART_TYPE_PUSHED:
+		case ConsoleNotificationCategory.CHART_TYPE_PUSHED:
 			return 1;
-		case NotificationCategory.SPACE_PUSHED:
-		case NotificationCategory.TOPIC_PUSHED:
-		case NotificationCategory.FACTOR_PUSHED:
-		case NotificationCategory.INDICATOR_PUSHED:
+		case ConsoleNotificationCategory.SPACE_PUSHED:
+		case ConsoleNotificationCategory.TOPIC_PUSHED:
+		case ConsoleNotificationCategory.FACTOR_PUSHED:
+		case ConsoleNotificationCategory.INDICATOR_PUSHED:
 			return 2;
-		case NotificationCategory.REPORT_PUSHED:
-		case NotificationCategory.CHART_PUSHED:
+		case ConsoleNotificationCategory.REPORT_PUSHED:
+		case ConsoleNotificationCategory.CHART_PUSHED:
 			return 3;
-		case NotificationCategory.GROUP_JOINED:
-		case NotificationCategory.GROUP_LEFT:
-		case NotificationCategory.SPACE_JOINED:
-		case NotificationCategory.SPACE_LEFT:
+		case ConsoleNotificationCategory.GROUP_JOINED:
+		case ConsoleNotificationCategory.GROUP_LEFT:
+		case ConsoleNotificationCategory.SPACE_JOINED:
+		case ConsoleNotificationCategory.SPACE_LEFT:
 			return 4;
-		case NotificationCategory.SUBSCRIBE_REPORT_CHANGED:
-		case NotificationCategory.SUBSCRIBE_REPORT_DELETED:
-		case NotificationCategory.SUBSCRIBE_CHART_CHANGED:
-		case NotificationCategory.SUBSCRIBE_CHART_DELETED:
+		case ConsoleNotificationCategory.SUBSCRIBE_REPORT_CHANGED:
+		case ConsoleNotificationCategory.SUBSCRIBE_REPORT_DELETED:
+		case ConsoleNotificationCategory.SUBSCRIBE_CHART_CHANGED:
+		case ConsoleNotificationCategory.SUBSCRIBE_CHART_DELETED:
 		default:
 			return void 0;
 	}
 };
 
-export const NotificationItem = (props: { data: Notification, readable: boolean }) => {
+export const NotificationItem = (props: { data: ConsoleNotification, readable: boolean }) => {
 	const { data, readable } = props;
 	const { subject, category, sender, body, image, createDate } = data;
 

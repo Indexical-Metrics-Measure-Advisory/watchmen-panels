@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BackgroundImage from '../../../../assets/console-inbox-background.png';
-import { Mail } from '../../../../services/console/types';
+import { ConsoleMail } from '../../../../services/console/types';
 import { useNotImplemented } from '../../../context/not-implemented';
 import { useConsoleContext } from '../../context/console-context';
 import { MessagesContainer } from '../common/container';
@@ -47,14 +47,14 @@ export const Inbox = () => {
 		          allLoaded={context.mails.allUnreadLoaded}
 		          visible={state.active === ActiveTab.UNREAD}
 		          noData='No mails.'>
-			{context.mails.unread.map((item: Mail, index: number) => {
+			{context.mails.unread.map((item: ConsoleMail, index: number) => {
 				return <MailItem data={item} readable={true} key={`${item.createDate}-${index}`}/>;
 			})}
 		</ItemList>
 		<ItemList data={context.mails.read} allLoaded={context.mails.allReadLoaded}
 		          visible={state.active === ActiveTab.READ}
 		          noData='No mails.'>
-			{context.mails.read.map((item: Mail, index: number) => {
+			{context.mails.read.map((item: ConsoleMail, index: number) => {
 				return <MailItem data={item} readable={false} key={`${item.createDate}-${index}`}/>;
 			})}
 		</ItemList>
