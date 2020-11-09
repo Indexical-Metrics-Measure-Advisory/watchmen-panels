@@ -14,8 +14,14 @@ enum MessageType {
 	NOTIFICATION, MAIL
 }
 
+enum StateVisible {
+	TRUE = 'true',
+	FALSE = 'false',
+	CLOSE = 'close'
+}
+
 interface State {
-	visible: boolean;
+	visible: StateVisible;
 	type?: MessageType;
 	content?: Notification | Mail;
 }
@@ -51,7 +57,7 @@ const Container = styled.div.attrs({
 	&[data-show=true] {
 		animation: ${Show} 8s ease-in-out forwards;
 	}
-	&[data-show=false] {
+	&[data-show=close] {
 		bottom: -200px;
 		transition: all 300ms ease-in-out;
 		right: 64px;
@@ -118,16 +124,16 @@ const Content = styled.div`
 export const Messenger = () => {
 	const context = useConsoleContext();
 	const [ schedule, setSchedule ] = useState<number | null>(null);
-	const [ state, setState ] = useState<State>({ visible: false });
+	const [ state, setState ] = useState<State>({ visible: StateVisible.FALSE });
 	const scheduleHide = () => {
 		if (schedule) {
 			clearTimeout(schedule);
 		}
-		setSchedule(setTimeout(() => setState({ visible: false }), 10000));
+		setSchedule(setTimeout(() => setState({ visible: StateVisible.FALSE }), 8000));
 	};
 	useEffect(() => {
 		const onNotificationReceived = (notification: Notification) => {
-			setState({ visible: true, type: MessageType.NOTIFICATION, content: notification });
+			setState({ visible: StateVisible.TRUE, type: MessageType.NOTIFICATION, content: notification });
 			scheduleHide();
 		};
 		context.notifications.on(NotificationEvent.LATEST_RECEIVED, onNotificationReceived);
@@ -141,7 +147,7 @@ export const Messenger = () => {
 			clearTimeout(schedule);
 		}
 		setSchedule(null);
-		setState({ visible: false });
+		setState({ visible: StateVisible.CLOSE });
 	};
 
 	return <Container data-show={state.visible}>
