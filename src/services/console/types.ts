@@ -56,6 +56,7 @@ export interface ConsoleSpace {
 export interface ConnectedConsoleSpace extends ConsoleSpace {
 	connectId: string;
 	type: ConsoleSpaceType;
+	lastVisitTime: string;
 }
 
 export interface PublicConsoleSpace extends ConnectedConsoleSpace {
@@ -70,4 +71,5 @@ export interface PrivateConsoleSpace extends ConnectedConsoleSpace {
 export interface ConsoleDashboard {
 	dashboardId: string;
 	name: string;
+	lastVisitTime: string;
 }

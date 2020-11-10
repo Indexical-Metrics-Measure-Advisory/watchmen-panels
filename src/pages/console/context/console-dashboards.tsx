@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { fetchDashboards } from '../../../services/console/dashboard';
 import { ConsoleDashboard } from '../../../services/console/types';
 
 export interface ConsoleDashboardsStorage {
@@ -6,12 +7,18 @@ export interface ConsoleDashboardsStorage {
 }
 
 export const useConsoleDashboards = () => {
-	const [ state ] = useState<ConsoleDashboardsStorage>({
-		items: [ {
-			dashboardId: '1',
-			name: 'Sales Statistics'
-		} ]
+	const [ state, setState ] = useState<ConsoleDashboardsStorage>({
+		items: []
 	});
+
+	// TODO simulate data for demo purpose
+	useEffect(() => {
+		(async () => {
+			const dashboards = await fetchDashboards();
+			setState({ items: dashboards });
+		})();
+		// eslint-disable-next-line
+	}, [ 0 ]);
 
 	return {
 		...state

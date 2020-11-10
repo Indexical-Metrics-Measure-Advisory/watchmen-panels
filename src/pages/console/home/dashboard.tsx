@@ -1,5 +1,6 @@
 import { faSolarPanel, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import dayjs from 'dayjs';
 import React from 'react';
 import { ConsoleDashboard } from '../../../services/console/types';
 import { ActionButton } from './action-button';
@@ -10,11 +11,13 @@ export const Dashboard = (props: {
 }) => {
 	const { data } = props;
 
+	const lastVisit = dayjs(data.lastVisitTime).fromNow();
+
 	return <HomeSectionCard btnColor='--console-favorite-color'>
 		<div>
 			<span>
 				<FontAwesomeIcon icon={faSolarPanel}/>
-				<span/>
+				<span>{lastVisit}</span>
 			</span>
 			<span>{data.name}</span>
 		</div>

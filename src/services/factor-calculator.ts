@@ -1,6 +1,4 @@
 import dayjs, { OpUnitType, QUnitType } from 'dayjs';
-import QuarterOfYear from 'dayjs/plugin/quarterOfYear';
-import WeekOfYear from 'dayjs/plugin/weekOfYear';
 import { CalculatedDataColumn, DataColumnType, DataTopic } from '../data/types';
 import { detectDataType } from '../data/utils';
 import { expressionStyle, fontWeightBold, fontWeightNormal, parameterLeadStyle } from './styles';
@@ -11,9 +9,6 @@ import { expressionStyle, fontWeightBold, fontWeightNormal, parameterLeadStyle }
 // use self-executing anonymous function, is just for folder purpose.
 // this file will be very large after many functions supported, folding is reading helpful.
 
-// datetime functions
-dayjs.extend(WeekOfYear);
-dayjs.extend(QuarterOfYear);
 const {
 	workdays, days, dateDiff,
 	year, month, quarter, week, day, weekday, hour, minute, second,

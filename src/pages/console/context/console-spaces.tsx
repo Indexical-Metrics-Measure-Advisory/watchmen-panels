@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { ConnectedConsoleSpace, ConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
+import { useEffect, useState } from 'react';
+import { fetchAvailableSpaces, fetchConnectedSpaces } from '../../../services/console/space';
+import { ConnectedConsoleSpace, ConsoleSpace } from '../../../services/console/types';
 
 export interface ConsoleSpacesStorage {
 	connected: Array<ConnectedConsoleSpace>;
@@ -7,23 +8,20 @@ export interface ConsoleSpacesStorage {
 }
 
 export const useConsoleSpaces = () => {
-	const [ state ] = useState<ConsoleSpacesStorage>({
-		connected: [ {
-			spaceId: '1',
-			connectId: '1',
-			name: 'Sales Statistics',
-			type: ConsoleSpaceType.PUBLIC
-		}, {
-			spaceId: '1',
-			connectId: '2',
-			name: 'Sales Statistics in NY',
-			type: ConsoleSpaceType.PRIVATE
-		} ],
-		available: [ {
-			spaceId: '2',
-			name: 'Claim Trend'
-		} ]
+	const [ state, setState ] = useState<ConsoleSpacesStorage>({
+		connected: [],
+		available: []
 	});
+
+	// TODO simulate data for demo purpose
+	useEffect(() => {
+		(async () => {
+			const connected = await fetchConnectedSpaces();
+			const available = await fetchAvailableSpaces();
+			setState({ connected, available });
+		})();
+		// eslint-disable-next-line
+	}, [ 0 ]);
 
 	return {
 		...state
