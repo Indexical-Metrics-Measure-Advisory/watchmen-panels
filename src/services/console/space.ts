@@ -1,6 +1,6 @@
-import { ConsoleSpaceType } from './types';
+import { ConnectedConsoleSpace, ConsoleSpace, ConsoleSpaceType } from './types';
 
-export const fetchConnectedSpaces = async () => {
+export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpace>> => {
 	return [ {
 		spaceId: '1',
 		connectId: '1',
@@ -52,7 +52,7 @@ export const fetchConnectedSpaces = async () => {
 	} ];
 };
 
-export const fetchAvailableSpaces = async () => {
+export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 	return [ {
 		spaceId: '2',
 		name: 'Claim Trend'

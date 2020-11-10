@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ConsoleDashboardsStorage, useConsoleDashboards } from './console-dashboards';
+import { ConsoleFavoritesStorage, ConsoleFavoritesUsable, useConsoleFavorites } from './console-favorites';
 import { ConsoleMailsStorage, ConsoleMailsUsable, useConsoleMails } from './console-mails';
 import {
 	ConsoleNotificationsStorage,
@@ -18,7 +19,8 @@ export interface ConsoleContext {
 	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable;
 	mails: ConsoleMailsStorage & ConsoleMailsUsable;
 	spaces: ConsoleSpacesStorage;
-	dashboards: ConsoleDashboardsStorage
+	dashboards: ConsoleDashboardsStorage;
+	favorites: ConsoleFavoritesStorage & ConsoleFavoritesUsable;
 }
 
 const Context = React.createContext<ConsoleContext>({} as ConsoleContext);
@@ -33,13 +35,15 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 	const mails = useConsoleMails();
 	const spaces = useConsoleSpaces();
 	const dashboards = useConsoleDashboards();
+	const favorites = useConsoleFavorites();
 
 	const context = {
 		user: currentUser,
 		notifications,
 		mails,
 		spaces,
-		dashboards
+		dashboards,
+		favorites
 	};
 
 	return <Context.Provider value={context}>

@@ -73,3 +73,22 @@ export interface ConsoleDashboard {
 	name: string;
 	lastVisitTime: string;
 }
+
+export enum ConsoleFavoriteType {
+	SPACE = 'space',
+	DASHBOARD = 'dashboard'
+}
+
+export interface ConsoleFavorite {
+	type: ConsoleFavoriteType;
+}
+
+export interface ConsoleFavoriteSpace extends ConsoleFavorite {
+	type: ConsoleFavoriteType.SPACE;
+	connectId: string;
+}
+
+export interface ConsoleFavoriteDashboard extends ConsoleFavorite {
+	type: ConsoleFavoriteType.DASHBOARD;
+	dashboardId: string;
+}

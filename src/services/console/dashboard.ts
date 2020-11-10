@@ -1,4 +1,6 @@
-export const fetchDashboards = async () => {
+import { ConsoleDashboard } from './types';
+
+export const fetchDashboards = async (): Promise<Array<ConsoleDashboard>> => {
 	return [ {
 		dashboardId: '1',
 		name: 'Sales Statistics',

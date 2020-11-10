@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const HomeSectionCard = styled.div.attrs({
 	'data-widget': 'console-home-section-card'
-})<{ btnColor?: string }>`
+})`
 	display: grid;
 	position: relative;
 	grid-template-columns: 1fr auto;
@@ -18,9 +18,10 @@ export const HomeSectionCard = styled.div.attrs({
 		> div:first-child > span:first-child {
 			color: var(--console-primary-color);
 		}
-		> div:nth-child(2) > svg {
+		> div[data-widget='console-home-section-card-fav-btn'] > svg {
 			opacity: 1;
 			width: 100%;
+			height: 16px;
 			margin-left: 0;
 			pointer-events: auto;
 		}
@@ -45,22 +46,6 @@ export const HomeSectionCard = styled.div.attrs({
 			> svg {
 				margin-right: calc(var(--margin) / 3);
 			}
-		}
-	}
-	> div:nth-child(2) {
-		display: flex;
-		width: 32px;
-		align-items: center;
-		color: var(--console-waive-color);
-		&:hover {
-			color: var(${({ btnColor }) => btnColor || '--console-primary-color'});
-		}
-		> svg {
-			opacity: 0;
-			width: 0;
-			margin-left: 32px;
-			pointer-events: none;
-			transition: all 300ms ease-in-out;
 		}
 	}
 `;

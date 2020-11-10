@@ -119,7 +119,9 @@ export const useTooltip = <T extends HTMLElement>(options: {
 	return {
 		context: tooltipContext,
 		mouseEnter: onMouseEnter,
-		mouseLeave: tooltipContext.hide
+		mouseLeave: tooltipContext.hide,
+		show: (tooltip: string) => tooltipContext.show(tooltip, rect(ref.current!.getBoundingClientRect())),
+		hide: tooltipContext.hide
 	};
 };
 

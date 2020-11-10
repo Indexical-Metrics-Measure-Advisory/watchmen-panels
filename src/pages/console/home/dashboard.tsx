@@ -1,19 +1,40 @@
-import { faSolarPanel, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faSolarPanel } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import React from 'react';
-import { ConsoleDashboard } from '../../../services/console/types';
-import { ActionButton } from './action-button';
+import {
+	ConsoleDashboard,
+	ConsoleFavorite,
+	ConsoleFavoriteDashboard,
+	ConsoleFavoriteType
+} from '../../../services/console/types';
+import { useConsoleContext } from '../context/console-context';
+import { FavoriteButton } from './favorite-button';
 import { HomeSectionCard } from './home-section-card';
+
+const isFavSpace = (fav: ConsoleFavorite): fav is ConsoleFavoriteDashboard => fav.type === ConsoleFavoriteType.DASHBOARD;
 
 export const Dashboard = (props: {
 	data: ConsoleDashboard
 }) => {
 	const { data } = props;
 
-	const lastVisit = dayjs(data.lastVisitTime).fromNow();
+	const { favorites: { items: favorites, remove, add } } = useConsoleContext();
+	// eslint-disable-next-line
+	const findInFavorite = () => favorites.find(fav => isFavSpace(fav) && fav.dashboardId == data.dashboardId);
+	const toggleFavorite = () => {
+		const exists = findInFavorite();
+		if (exists) {
+			remove(exists);
+		} else {
+			add({ type: ConsoleFavoriteType.DASHBOARD, dashboardId: data.dashboardId } as ConsoleFavoriteDashboard);
+		}
+	};
 
-	return <HomeSectionCard btnColor='--console-favorite-color'>
+	const lastVisit = dayjs(data.lastVisitTime).fromNow();
+	const isFavorite = !!findInFavorite();
+
+	return <HomeSectionCard>
 		<div>
 			<span>
 				<FontAwesomeIcon icon={faSolarPanel}/>
@@ -21,6 +42,6 @@ export const Dashboard = (props: {
 			</span>
 			<span>{data.name}</span>
 		</div>
-		<ActionButton tooltip='Add into Favorite' icon={faStar}/>
+		<FavoriteButton toggle={toggleFavorite} isFavorite={isFavorite}/>
 	</HomeSectionCard>;
 };
