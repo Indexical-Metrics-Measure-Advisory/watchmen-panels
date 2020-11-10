@@ -110,9 +110,6 @@ export default () => {
 					Pipelines on data lake or stream, continuous investigating constructive and valuable indicators
 					extracting and recognizing dynamically.
 				</Description>
-				{
-					// TODO contact us clicked
-				}
 				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartConsoleClicked}>Try Console</BigButton>
 			</SlideContent>
 			<img src={ProcessDataImage3} alt=''/>
