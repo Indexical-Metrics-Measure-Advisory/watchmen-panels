@@ -11,7 +11,7 @@ const MenuItemContainer = styled.div.attrs({
 	position: relative;
 	padding: 0 calc((var(--console-menu-width) - var(--console-menu-item-icon-size)) / 2) \
 			 0 calc(var(--margin) / 4);
-	height: var(--console-menu-height);
+	min-height: var(--console-menu-height);
 	align-items: center;
 	cursor: pointer;
 	&:hover {
@@ -29,6 +29,7 @@ const MenuItemContainer = styled.div.attrs({
 	> div:first-child {
 		border-radius: var(--border-radius);
 		height: 32px;
+		min-height: 32px;
 		display: flex;
 		align-items: center;
 	}

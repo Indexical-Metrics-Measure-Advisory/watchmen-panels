@@ -1,9 +1,18 @@
 import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
-import { faHome, faInbox, faPlus, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCompactDisc,
+	faGlobe,
+	faHome,
+	faInbox,
+	faPlus,
+	faStar,
+	faTachometerAlt
+} from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path from '../../../common/path';
+import { ConsoleSpaceType } from '../../../services/console/types';
 import { Theme } from '../../../theme/types';
 import { useConsoleContext } from '../context/console-context';
 import { MenuItem } from './menu-item';
@@ -28,6 +37,32 @@ const MenuContainer = styled.div.attrs({
 	background-color: var(--invert-color);
 	overflow: hidden;
 `;
+const SpaceMenus = styled.div`
+	display: flex;
+	flex-direction: column;
+	max-height: calc(var(--console-menu-height) * 5);
+	overflow-y: scroll;
+	overflow-x: hidden;
+	direction: rtl;
+	&::-webkit-scrollbar {
+		background-color: transparent;
+		width: 4px;
+	}
+	&::-webkit-scrollbar-track {
+		background-color: transparent;
+		border-radius: 2px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--console-favorite-color);
+		border-radius: 2px;
+	}
+	> div {
+		margin-left: -4px;
+	}
+`;
+const SpaceMenu = styled(MenuItem)`
+	direction: ltr;
+`;
 const ConnectMenu = styled(MenuItem)`
 	color: var(--console-waive-color);
 `;
@@ -41,7 +76,7 @@ export default () => {
 	const theme = useTheme();
 	const minWidth = (theme as Theme).consoleMenuWidth;
 	const maxWidth = (theme as Theme).consoleMenuMaxWidth;
-	const { menu: { menuWidth, setMenuWidth }, favorites } = useConsoleContext();
+	const { menu: { menuWidth, setMenuWidth }, favorites, spaces: { connected: spaces } } = useConsoleContext();
 
 	const onResize = (newWidth: number) => {
 		setMenuWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
@@ -89,6 +124,16 @@ export default () => {
 		          onClick={onInboxClicked}/>
 		<MenuItem icon={faComments} iconSize={1.2} label='Show Timeline' showTooltip={showMenuItemTooltip}/>
 		<MenuSeparator width={menuWidth}/>
+		<SpaceMenus>
+			{spaces
+				.sort((s1, s2) => s1.name.localeCompare(s2.name))
+				.map(space => {
+					return <SpaceMenu icon={space.type == ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}
+					                  label={space.name}
+					                  showTooltip={showMenuItemTooltip}
+					                  key={`space-${space.connectId}`}/>;
+				})}
+		</SpaceMenus>
 		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Space' showTooltip={showMenuItemTooltip}/>
 		<Placeholder/>
 		<MenuSeparator width={menuWidth}/>
