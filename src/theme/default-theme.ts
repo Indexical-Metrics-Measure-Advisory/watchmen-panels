@@ -96,6 +96,7 @@ export default {
 
 	// console favorite
 	consoleFavoriteColor: 'rgba(255,142,43, 0.9)',
+	consoleFavoritePinnedHeight: 36,
 
 	// console home
 	consoleHomeSectionBodyBgColor: 'rgba(233,235,240,.7)',

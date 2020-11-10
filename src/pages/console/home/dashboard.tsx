@@ -12,7 +12,7 @@ import { useConsoleContext } from '../context/console-context';
 import { FavoriteButton } from './favorite-button';
 import { HomeSectionCard } from './home-section-card';
 
-const isFavSpace = (fav: ConsoleFavorite): fav is ConsoleFavoriteDashboard => fav.type === ConsoleFavoriteType.DASHBOARD;
+const isFavDashboard = (fav: ConsoleFavorite): fav is ConsoleFavoriteDashboard => fav.type === ConsoleFavoriteType.DASHBOARD;
 
 export const Dashboard = (props: {
 	data: ConsoleDashboard
@@ -21,7 +21,7 @@ export const Dashboard = (props: {
 
 	const { favorites: { items: favorites, remove, add } } = useConsoleContext();
 	// eslint-disable-next-line
-	const findInFavorite = () => favorites.find(fav => isFavSpace(fav) && fav.dashboardId == data.dashboardId);
+	const findInFavorite = () => favorites.find(fav => isFavDashboard(fav) && fav.dashboardId == data.dashboardId);
 	const toggleFavorite = () => {
 		const exists = findInFavorite();
 		if (exists) {

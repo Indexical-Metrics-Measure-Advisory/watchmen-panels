@@ -1,10 +1,11 @@
 import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { faHome, faInbox, faPlus, faStar, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
+import React from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path from '../../../common/path';
 import { Theme } from '../../../theme/types';
+import { useConsoleContext } from '../context/console-context';
 import { MenuItem } from './menu-item';
 import { MenuLogo } from './menu-logo';
 import { MenuSeparator } from './menu-separator';
@@ -40,10 +41,10 @@ export default () => {
 	const theme = useTheme();
 	const minWidth = (theme as Theme).consoleMenuWidth;
 	const maxWidth = (theme as Theme).consoleMenuMaxWidth;
-	const [ width, setWidth ] = useState<number>(minWidth);
+	const { menu: { menuWidth, setMenuWidth }, favorites } = useConsoleContext();
 
 	const onResize = (newWidth: number) => {
-		setWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
+		setMenuWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
 	};
 	const onHomeClicked = () => {
 		if (!matchPath(location.pathname, Path.CONSOLE_HOME)) {
@@ -60,17 +61,26 @@ export default () => {
 			history.push(Path.CONSOLE_INBOX);
 		}
 	};
+	const onFavoriteClicked = (rect: DOMRect) => {
+		const visible = favorites.visible;
+		if (visible) {
+			favorites.hide();
+		} else {
+			favorites.show(rect, !showMenuItemTooltip);
+		}
+	};
 
-	const showMenuItemTooltip = width / minWidth <= 1.5;
+	const showMenuItemTooltip = menuWidth / minWidth <= 1.5;
 
-	return <MenuContainer width={width}>
+	return <MenuContainer width={menuWidth}>
 		<MenuLogo/>
 		<MenuItem icon={faHome} label='Home' showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_HOME)}
 		          onClick={onHomeClicked}/>
 		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
-		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}/>
-		<MenuSeparator width={width}/>
+		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}
+		          onClick={onFavoriteClicked}/>
+		<MenuSeparator width={menuWidth}/>
 		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}
 		          onClick={onNotificationsClicked}/>
@@ -78,12 +88,12 @@ export default () => {
 		          active={!!matchPath(location.pathname, Path.CONSOLE_INBOX)}
 		          onClick={onInboxClicked}/>
 		<MenuItem icon={faComments} iconSize={1.2} label='Show Timeline' showTooltip={showMenuItemTooltip}/>
-		<MenuSeparator width={width}/>
+		<MenuSeparator width={menuWidth}/>
 		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Space' showTooltip={showMenuItemTooltip}/>
 		<Placeholder/>
-		<MenuSeparator width={width}/>
+		<MenuSeparator width={menuWidth}/>
 		<MenuItem icon={faQuestionCircle} iconSize={1.2} label='Help' showTooltip={showMenuItemTooltip}/>
 		<MenuUser/>
-		<ResizeHandle width={width} onResize={onResize}/>
+		<ResizeHandle width={menuWidth} onResize={onResize}/>
 	</MenuContainer>;
 }

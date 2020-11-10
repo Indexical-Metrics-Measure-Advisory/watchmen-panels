@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
 import { ConsoleContextProvider } from './context/console-context';
+import { Favorite } from './favorite';
 import { Home } from './home';
 import Menu from './menu';
 import { Inbox } from './message/inbox';
@@ -20,12 +21,17 @@ const Container = styled.div.attrs({
 		height: 100vh;
 		overflow-y: scroll;
 	}
+	> div[data-widget='console-favorite-container'][data-pinned=true] + main {
+		margin-top: var(--console-favorite-pinned-height);
+		height: calc(100vh - var(--console-favorite-pinned-height));
+	}
 `;
 
 export default () => {
 	return <ConsoleContextProvider>
 		<Container>
 			<Menu/>
+			<Favorite/>
 			<main>
 				<Switch>
 					<Route path={Path.CONSOLE_HOME}><Home/></Route>

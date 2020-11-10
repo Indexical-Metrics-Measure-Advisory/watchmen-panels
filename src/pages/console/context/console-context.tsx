@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ConsoleDashboardsStorage, useConsoleDashboards } from './console-dashboards';
 import { ConsoleFavoritesStorage, ConsoleFavoritesUsable, useConsoleFavorites } from './console-favorites';
 import { ConsoleMailsStorage, ConsoleMailsUsable, useConsoleMails } from './console-mails';
+import { ConsoleMenuUsable, useConsoleMenu } from './console-menu';
 import {
 	ConsoleNotificationsStorage,
 	ConsoleNotificationsUsable,
@@ -15,6 +16,7 @@ export interface ConsoleUser {
 }
 
 export interface ConsoleContext {
+	menu: ConsoleMenuUsable;
 	user: ConsoleUser;
 	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable;
 	mails: ConsoleMailsStorage & ConsoleMailsUsable;
@@ -29,6 +31,7 @@ Context.displayName = 'ConsoleContext';
 export const ConsoleContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
+	const menu = useConsoleMenu();
 	// TODO account is fixed now, for demo purpose
 	const [ currentUser ] = useState<ConsoleUser>({ name: 'Walter Kovacs' });
 	const notifications = useConsoleNotifications();
@@ -38,6 +41,7 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 	const favorites = useConsoleFavorites();
 
 	const context = {
+		menu,
 		user: currentUser,
 		notifications,
 		mails,

@@ -23,13 +23,13 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		spaceId: '1',
 		connectId: '4',
 		name: 'Sales Statistics in New Hampshire',
-		type: ConsoleSpaceType.PRIVATE,
+		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 13:12:11'
 	}, {
 		spaceId: '1',
 		connectId: '5',
 		name: 'Sales Statistics in Vermont',
-		type: ConsoleSpaceType.PRIVATE,
+		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 12:11:11'
 	}, {
 		spaceId: '1',
@@ -47,7 +47,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		spaceId: '1',
 		connectId: '8',
 		name: 'Sales Statistics in Massachusetts',
-		type: ConsoleSpaceType.PRIVATE,
+		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 09:08:11'
 	} ];
 };

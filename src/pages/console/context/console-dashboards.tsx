@@ -14,8 +14,14 @@ export const useConsoleDashboards = () => {
 	// TODO simulate data for demo purpose
 	useEffect(() => {
 		(async () => {
-			const dashboards = await fetchDashboards();
-			setState({ items: dashboards });
+			try {
+				const dashboards = await fetchDashboards();
+				setState({ items: dashboards });
+			} catch (e) {
+				console.groupCollapsed(`%cError on fetch dashboards.`, 'color:rgb(251,71,71)');
+				console.error(e);
+				console.groupEnd();
+			}
 		})();
 		// eslint-disable-next-line
 	}, [ 0 ]);

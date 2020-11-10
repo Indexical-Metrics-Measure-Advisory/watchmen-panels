@@ -16,9 +16,15 @@ export const useConsoleSpaces = () => {
 	// TODO simulate data for demo purpose
 	useEffect(() => {
 		(async () => {
-			const connected = await fetchConnectedSpaces();
-			const available = await fetchAvailableSpaces();
-			setState({ connected, available });
+			try {
+				const connected = await fetchConnectedSpaces();
+				const available = await fetchAvailableSpaces();
+				setState({ connected, available });
+			} catch (e) {
+				console.groupCollapsed(`%cError on fetch spaces.`, 'color:rgb(251,71,71)');
+				console.error(e);
+				console.groupEnd();
+			}
 		})();
 		// eslint-disable-next-line
 	}, [ 0 ]);

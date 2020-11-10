@@ -80,6 +80,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-title-font-weight: ${({ theme }) => theme.consoleTitleFontWeight};
 		
 		--console-favorite-color: ${({ theme }) => theme.consoleFavoriteColor};
+		--console-favorite-pinned-height: ${({ theme }) => theme.consoleFavoritePinnedHeight}px;
 		
 		--console-home-section-body-bg-color: ${({ theme }) => theme.consoleHomeSectionBodyBgColor};
 		

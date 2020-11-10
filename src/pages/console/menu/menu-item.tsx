@@ -59,7 +59,7 @@ export const MenuItem = (props: {
 	showTooltip: boolean,
 	className?: string,
 	active?: boolean
-	onClick?: () => void;
+	onClick?: (rect: DOMRect) => void;
 }) => {
 	const { icon, iconSize, label, showTooltip, className, active, onClick } = props;
 
@@ -72,10 +72,14 @@ export const MenuItem = (props: {
 		rect: ({ left, top }) => ({ x: left + 8, y: top - 24 - (iconSize != null ? 4 : 0), caretLeft: 12 })
 	});
 
+	const onClicked = () => {
+		onClick && onClick(containerRef.current!.getBoundingClientRect());
+	};
+
 	return <MenuItemContainer className={className} data-active={active}
 	                          ref={containerRef}
 	                          onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}
-	                          onClick={onClick}>
+	                          onClick={onClicked}>
 		<div><MenuItemIcon icon={icon} icon-size={iconSize}/></div>
 		<MenuItemLabel>{label}</MenuItemLabel>
 	</MenuItemContainer>;
