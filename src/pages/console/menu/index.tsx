@@ -37,6 +37,14 @@ const MenuContainer = styled.div.attrs({
 	background-color: var(--invert-color);
 	overflow: hidden;
 `;
+const FavMenu = styled(MenuItem)`
+	&[data-active=true] {
+		> div:first-child {
+			color: var(--console-favorite-color);
+			background-color: transparent;
+		}
+	}
+`;
 const SpaceMenus = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -97,10 +105,8 @@ export default () => {
 		}
 	};
 	const onFavoriteClicked = (rect: DOMRect) => {
-		const visible = favorites.visible;
-		if (visible) {
-			favorites.hide();
-		} else {
+		const { visible } = favorites;
+		if (!visible) {
 			favorites.show(rect, !showMenuItemTooltip);
 		}
 	};
@@ -113,8 +119,9 @@ export default () => {
 		          active={!!matchPath(location.pathname, Path.CONSOLE_HOME)}
 		          onClick={onHomeClicked}/>
 		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
-		<MenuItem icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}
-		          onClick={onFavoriteClicked}/>
+		<FavMenu icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}
+		         active={favorites.visible}
+		         onClick={onFavoriteClicked}/>
 		<MenuSeparator width={menuWidth}/>
 		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}
@@ -128,7 +135,7 @@ export default () => {
 			{spaces
 				.sort((s1, s2) => s1.name.localeCompare(s2.name))
 				.map(space => {
-					return <SpaceMenu icon={space.type == ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}
+					return <SpaceMenu icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}
 					                  label={space.name}
 					                  showTooltip={showMenuItemTooltip}
 					                  key={`space-${space.connectId}`}/>;
