@@ -11,15 +11,16 @@ export interface ConsoleMessagesStorage<M extends ConsoleMessage> {
 	allReadLoaded: boolean;
 }
 
-const distinct = <T extends ConsoleMessage>(messages: Array<T>): Array<T> => {
+const distinct = <T extends ConsoleMessage>(messages: Array<T>, exclusive: Array<T>): Array<T> => {
 	const ids = new Set<string>(messages.map(message => message.id));
+	const exclusiveIds = new Set<string>(exclusive.map(message => message.id));
 	return messages
 		.sort((n1, n2) => n1.createDate.localeCompare(n2.createDate))
 		.reverse()
 		.filter(message => {
 			if (ids.has(message.id)) {
 				ids.delete(message.id);
-				return true;
+				return !exclusiveIds.has(message.id);
 			} else {
 				return false;
 			}
@@ -66,14 +67,14 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 	const readAll = async () => {
 		if (state.unread.length !== 0) {
 			const unread = state.unread;
-			const read = distinct([ ...state.read, ...unread ]);
+			const read = distinct([ ...state.read, ...unread ], []);
 			mergeToState({ unread: [], read });
 			await updateAsRead(unread);
 		}
 	};
 	const readOne = async (message: M) => {
 		const unread = state.unread.filter(n => n !== message);
-		const read = distinct([ ...state.read, message ]);
+		const read = distinct([ ...state.read, message ], []);
 		mergeToState({ read, unread });
 		await updateAsRead([ message ]);
 	};
@@ -84,7 +85,7 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 		try {
 			const { list, allLoaded } = await listReadMessages({ pageSize, endTime });
 			mergeToState({
-				read: distinct([ ...state.read, ...list ]),
+				read: distinct([ ...state.read, ...list ], state.unread),
 				allReadLoaded: allLoaded
 			});
 		} catch (e) {
@@ -99,7 +100,7 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 		try {
 			const { list, allLoaded } = await listUnreadMessages({ pageSize, endTime });
 			mergeToState({
-				unread: distinct([ ...state.unread, ...list ]),
+				unread: distinct([ ...state.unread, ...list ], state.read),
 				allUnreadLoaded: allLoaded
 			});
 		} catch (e) {
@@ -113,7 +114,7 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 			const latest = await getLatestMessages();
 			if (latest.length !== 0) {
 				mergeToState({
-					unread: distinct([ ...state.unread, ...latest ])
+					unread: distinct([ ...state.unread, ...latest ], state.read)
 				});
 				emitter.emit(latestArrivedEvent, latest[0]);
 			}
