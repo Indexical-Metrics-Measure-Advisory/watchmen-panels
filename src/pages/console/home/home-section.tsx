@@ -1,5 +1,5 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -8,6 +8,7 @@ const HomeSectionContainer = styled.div.attrs({
 	'data-widget': 'console-home-section'
 })<{ itemCount: number }>`
 	display: flex;
+	position: relative;
 	flex-direction: column;
 	margin-top: var(--margin);
 	transition: all 300ms ease-in-out;
@@ -34,6 +35,23 @@ const HomeSectionContainer = styled.div.attrs({
 			padding-top: 0;
 			padding-bottom: 0;
 			height: 0;
+		}
+	}
+	&[data-visible=true][data-can-expand=true] {
+		&[data-expanded=false] {
+			> div[data-widget='console-home-section-body'] {
+				height: calc(var(--margin) / 3 * (2 + ${({ itemCount }) => Math.ceil(itemCount / 3) - 1}) + ${({ itemCount }) => Math.ceil(itemCount / 3) * 64}px + 18px);
+				> div:not(:nth-child(-n + 6)) {
+					opacity: 0;
+					pointer-events: none;
+				}
+			}
+		}
+		&[data-expanded=true] {
+			> div[data-widget='console-home-section-body'] {
+				height: calc(var(--margin) / 3 * (2 + ${({ itemCount }) => Math.ceil(itemCount / 3) - 1}) + ${({ itemCount }) => Math.ceil(itemCount / 3) * 64}px + 18px);
+				padding-bottom: calc(var(--margin) / 3 + 18px);
+			}
 		}
 	}
 	> div[data-widget='console-home-section-body'] {
@@ -87,6 +105,10 @@ const HomeSectionTitle = styled.div.attrs({
 		transition: all 300ms ease-in-out;
 	}
 `;
+const HomeSectionHeaderOperators = styled.div`
+	display: flex;
+	align-items: center;
+`;
 const HomeSectionBody = styled.div.attrs({
 	'data-widget': 'console-home-section-body'
 })`
@@ -100,6 +122,56 @@ const HomeSectionBody = styled.div.attrs({
 	border-radius: calc(var(--margin) / 2);
 	transition: all 300ms ease-in-out;
 `;
+const ExpandButton = styled.div`
+	display: block;
+	position: absolute;
+	bottom: -10px;
+	left: calc(50% - 80px);
+	width: 160px;
+	height: 28px;
+	padding: 6px calc(var(--margin) / 2);
+	border-radius: 14px;
+	box-shadow: var(--console-shadow);
+	font-size: 0.8em;
+	background-color: var(--invert-color);
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	overflow: hidden;
+	&:hover {
+		color: var(--console-primary-color);
+		box-shadow: var(--console-hover-shadow);
+	}
+	&[data-expanded=true] {
+		> div:first-child {
+			left: 0;
+		}
+		> div:last-child {
+			left: 160px;
+		}
+	}
+	&[data-expanded=false] {
+		> div:first-child {
+			left: -160px;
+		}
+		> div:last-child {
+			left: 0;
+		}
+	}
+	> div {
+		display: flex;
+		position: absolute;
+		align-items: center;
+		justify-content: center;
+		width: 160px;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		transition: all 300ms ease-in-out;
+		> svg {
+			margin-right: calc(var(--margin) / 4);
+		}
+	}
+`;
 
 export const HomeSection = (props: {
 	title: string;
@@ -111,20 +183,43 @@ export const HomeSection = (props: {
 	const { title, titleIcon, itemCount, titleOperators, children } = props;
 
 	const [ collapsed, setCollapsed ] = useState(false);
+	const [ expanded, setExpanded ] = useState(false);
+
+	const canExpand = itemCount > 6;
+	const displayItemCount = (canExpand && !expanded) ? Math.min(itemCount, 6) : itemCount;
 
 	const toggleCollapsed = () => setCollapsed(!collapsed);
+	const toggleExpanded = () => setExpanded(!expanded);
 
-	return <HomeSectionContainer data-visible={!collapsed} itemCount={itemCount}>
+	return <HomeSectionContainer data-visible={!collapsed}
+	                             data-can-expand={canExpand} data-expanded={expanded}
+	                             itemCount={displayItemCount}>
 		<HomeSectionHeader>
 			<HomeSectionTitle onClick={toggleCollapsed}>
 				<FontAwesomeIcon icon={faCaretDown}/>
 				<FontAwesomeIcon icon={titleIcon}/>
 				<div>{title}</div>
 			</HomeSectionTitle>
-			{titleOperators}
+			<HomeSectionHeaderOperators>
+				{titleOperators}
+			</HomeSectionHeaderOperators>
 		</HomeSectionHeader>
 		<HomeSectionBody>
 			{children}
 		</HomeSectionBody>
+		{
+			canExpand && !collapsed
+				? <ExpandButton onClick={toggleExpanded} data-expanded={expanded}>
+					<div>
+						<FontAwesomeIcon icon={faCompressAlt}/>
+						<span>View Latest</span>
+					</div>
+					<div>
+						<FontAwesomeIcon icon={faExpandAlt}/>
+						<span>View All</span>
+					</div>
+				</ExpandButton>
+				: null
+		}
 	</HomeSectionContainer>;
 };

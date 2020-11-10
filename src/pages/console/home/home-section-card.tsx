@@ -22,6 +22,7 @@ export const HomeSectionCard = styled.div.attrs({
 			opacity: 1;
 			width: 100%;
 			margin-left: 0;
+			pointer-events: auto;
 		}
 	}
 	> div:first-child {
@@ -58,6 +59,7 @@ export const HomeSectionCard = styled.div.attrs({
 			opacity: 0;
 			width: 0;
 			margin-left: 32px;
+			pointer-events: none;
 			transition: all 300ms ease-in-out;
 		}
 	}
