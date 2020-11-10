@@ -10,6 +10,7 @@ import { useConsoleContext } from '../context/console-context';
 import { AvailableSpace } from './available-space';
 import { ConnectedSpace } from './connected-space';
 import { Dashboard } from './dashboard';
+import { NewDashboard } from './new-dashboard';
 
 const HomeSection = styled.div.attrs({
 	'data-widget': 'console-home-section'
@@ -152,8 +153,9 @@ export const Home = () => {
 			</HomeSectionHeader>
 			<HomeSectionBody>
 				{dashboards.map(dashboard => {
-					return <Dashboard key={`dashboard`} data={dashboard}/>;
+					return <Dashboard key={`dashboard-${dashboard.dashboardId}`} data={dashboard}/>;
 				})}
+				<NewDashboard/>
 			</HomeSectionBody>
 		</HomeSection>
 	</NarrowContainer>;
