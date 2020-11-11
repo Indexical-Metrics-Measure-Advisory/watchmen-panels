@@ -4,7 +4,7 @@ import QuarterOfYear from 'dayjs/plugin/quarterOfYear';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import WeekOfYear from 'dayjs/plugin/weekOfYear';
 import React from 'react';
-import Pages from './pages';
+import { Pages } from './pages';
 import { AlertProvider } from './pages/context/alert';
 import { NotImplementedProvider } from './pages/context/not-implemented';
 import { ResponsiveProvider } from './pages/context/responsive';
@@ -16,7 +16,7 @@ dayjs.extend(QuarterOfYear);
 dayjs.extend(Duration);
 dayjs.extend(RelativeTime);
 
-export default () => {
+const app = () => {
 	return <ThemeContextProvider>
 		<ResponsiveProvider>
 			<AlertProvider>
@@ -27,3 +27,4 @@ export default () => {
 		</ResponsiveProvider>
 	</ThemeContextProvider>;
 };
+export default app;

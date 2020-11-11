@@ -35,7 +35,7 @@ const FavBtn = styled.div.attrs({
 `;
 
 export const FavoriteButton = (props: {
-	toggle: () => void;
+	toggle: (event: React.MouseEvent) => void;
 	isFavorite: boolean;
 }) => {
 	const { toggle, isFavorite } = props;
@@ -51,10 +51,10 @@ export const FavoriteButton = (props: {
 			center: true
 		})
 	});
-	const onClick = () => {
+	const onClick = (event: React.MouseEvent) => {
 		hide!();
 		show!(isFavorite ? 'Add into Favorite' : 'Remove from Favorite');
-		toggle();
+		toggle(event);
 	};
 
 	return <FavBtn onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}

@@ -2,6 +2,8 @@ import { faCompactDisc, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+import Path, { toConnectedSpace } from '../../../common/path';
 import {
 	ConnectedConsoleSpace,
 	ConsoleFavorite,
@@ -20,10 +22,13 @@ export const Space = (props: {
 }) => {
 	const { space } = props;
 
+	const history = useHistory();
 	const { favorites: { items: favorites, remove, add } } = useConsoleContext();
 	// eslint-disable-next-line
 	const findInFavorite = () => favorites.find(fav => isFavSpace(fav) && fav.connectId == space.connectId);
-	const toggleFavorite = () => {
+	const toggleFavorite = (event: React.MouseEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
 		const exists = findInFavorite();
 		if (exists) {
 			remove(exists);
@@ -34,8 +39,11 @@ export const Space = (props: {
 
 	const lastVisit = dayjs(space.lastVisitTime).fromNow();
 	const isFavorite = !!findInFavorite();
+	const onSpaceClicked = () => {
+		history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE, space.connectId));
+	};
 
-	return <HomeSectionCard>
+	return <HomeSectionCard onClick={onSpaceClicked}>
 		<div>
 			<span>
 				<FontAwesomeIcon icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}/>

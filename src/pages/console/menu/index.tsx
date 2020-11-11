@@ -11,8 +11,8 @@ import {
 import React from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
-import Path from '../../../common/path';
-import { ConsoleSpaceType } from '../../../services/console/types';
+import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
+import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import { Theme } from '../../../theme/types';
 import { useConsoleContext } from '../context/console-context';
 import { MenuItem } from './menu-item';
@@ -78,7 +78,7 @@ const Placeholder = styled.div`
 	flex-grow: 1;
 `;
 
-export default () => {
+export const ConsoleMenu = () => {
 	const history = useHistory();
 	const location = useLocation();
 	const theme = useTheme();
@@ -110,6 +110,13 @@ export default () => {
 			favorites.show(rect, !showMenuItemTooltip);
 		}
 	};
+	const onSpaceClicked = (space: ConnectedConsoleSpace) => () => {
+		if (isConnectedSpaceOpened(space.connectId)) {
+			return;
+		}
+
+		history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE, space.connectId));
+	};
 
 	const showMenuItemTooltip = menuWidth / minWidth <= 1.5;
 
@@ -138,6 +145,7 @@ export default () => {
 					return <SpaceMenu icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}
 					                  label={space.name}
 					                  showTooltip={showMenuItemTooltip}
+					                  onClick={onSpaceClicked(space)}
 					                  key={`space-${space.connectId}`}/>;
 				})}
 		</SpaceMenus>
@@ -148,4 +156,4 @@ export default () => {
 		<MenuUser/>
 		<ResizeHandle width={menuWidth} onResize={onResize}/>
 	</MenuContainer>;
-}
+};

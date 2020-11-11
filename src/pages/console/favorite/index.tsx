@@ -1,8 +1,11 @@
 import { faCompactDisc, faGlobe, faSolarPanel, faThumbtack } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
+import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
 import {
+	ConnectedConsoleSpace,
 	ConsoleFavorite,
 	ConsoleFavoriteDashboard,
 	ConsoleFavoriteSpace,
@@ -159,6 +162,7 @@ const isFavDashboard = (fav: ConsoleFavorite): fav is ConsoleFavoriteDashboard =
 const isFavSpace = (fav: ConsoleFavorite): fav is ConsoleFavoriteSpace => fav.type === ConsoleFavoriteType.SPACE;
 
 export const Favorite = () => {
+	const history = useHistory();
 	const theme = useTheme() as Theme;
 	const {
 		menu: { menuWidth },
@@ -218,6 +222,13 @@ export const Favorite = () => {
 	const itemCount = items.length;
 	const displayItemCount = Math.min(itemCount, 5);
 	const onPinClicked = () => pinned ? unpin() : pin();
+	const onSpaceClicked = (space: ConnectedConsoleSpace) => () => {
+		if (isConnectedSpaceOpened(space.connectId)) {
+			return;
+		}
+
+		history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE, space.connectId));
+	};
 
 	return <FavoriteContainer data-visible={visible} data-pinned={pinned} pinnedLeft={menuWidth}
 	                          itemCount={displayItemCount}
@@ -250,7 +261,8 @@ export const Favorite = () => {
 					if (space) {
 						return {
 							name: space.name,
-							item: <div key={`space-${item.connectId}`}>
+							item: <div onClick={onSpaceClicked(space)}
+							           key={`space-${item.connectId}`}>
 								<FontAwesomeIcon
 									icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}/>
 								<span>{space.name}</span>

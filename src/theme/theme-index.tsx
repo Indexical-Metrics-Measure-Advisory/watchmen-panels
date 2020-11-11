@@ -240,12 +240,13 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	}
 `;
 
-export default (props: { children: ((props: any) => React.ReactNode) | React.ReactNode }) => {
+const ThemeIndex = (props: { children: ((props: any) => React.ReactNode) | React.ReactNode }) => {
 	const { children } = props;
 
 	return <Fragment>
 		<GlobalStyle/>
 		{children}
 	</Fragment>;
-}
+};
 
+export default ThemeIndex;

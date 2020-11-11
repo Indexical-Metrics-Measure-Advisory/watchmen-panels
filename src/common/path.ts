@@ -1,4 +1,6 @@
-export default {
+import { matchPath } from 'react-router-dom';
+
+const Paths = {
 	HOME: '/home',
 
 	WELCOME: '/welcome',
@@ -12,8 +14,23 @@ export default {
 
 	CONSOLE: '/console',
 	CONSOLE_HOME: '/console/home',
+	CONSOLE_SPACE: '/console/space/:spaceId',
+	CONSOLE_CONNECTED_SPACE: '/console/space/connected/:connectId',
 	CONSOLE_INBOX: '/console/inbox',
 	CONSOLE_NOTIFICATION: '/console/notification'
 };
+export default Paths;
 
 export const toDomain = (path: string, domain: string) => path.replace(':domain', domain);
+
+export const isConnectedSpaceOpened = (connectId: string): boolean => {
+	const match = matchPath(location.pathname, Paths.CONSOLE_CONNECTED_SPACE);
+	if (match) {
+		// eslint-disable-next-line
+		if ((match.params as any)?.connectId == connectId) {
+			return true;
+		}
+	}
+	return false;
+};
+export const toConnectedSpace = (path: string, connectId: string) => path.replace(':connectId', connectId);

@@ -2,10 +2,11 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
+import { ConnectedSpace } from './connected-space';
 import { ConsoleContextProvider } from './context/console-context';
 import { Favorite } from './favorite';
 import { Home } from './home';
-import Menu from './menu';
+import { ConsoleMenu } from './menu';
 import { Inbox } from './message/inbox';
 import { Notification } from './message/notification';
 import { Messenger } from './messenger';
@@ -27,14 +28,15 @@ const Container = styled.div.attrs({
 	}
 `;
 
-export default () => {
+export const ConsoleIndex = () => {
 	return <ConsoleContextProvider>
 		<Container>
-			<Menu/>
+			<ConsoleMenu/>
 			<Favorite/>
 			<main>
 				<Switch>
 					<Route path={Path.CONSOLE_HOME}><Home/></Route>
+					<Route path={Path.CONSOLE_CONNECTED_SPACE}><ConnectedSpace/></Route>
 					<Route path={Path.CONSOLE_INBOX}><Inbox/></Route>
 					<Route path={Path.CONSOLE_NOTIFICATION}><Notification/></Route>
 					<Route path='*'><Redirect to={Path.CONSOLE_HOME}/></Route>
@@ -43,4 +45,4 @@ export default () => {
 			<Messenger/>
 		</Container>
 	</ConsoleContextProvider>;
-}
+};
