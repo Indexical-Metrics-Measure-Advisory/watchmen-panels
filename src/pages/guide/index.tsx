@@ -55,7 +55,7 @@ const DomainChecker = (props: { children: ((props: any) => React.ReactNode) | Re
 	}
 };
 
-export default () => {
+const Guide = () => {
 	let step = Step.DOMAIN_SELECT;
 	const location = useLocation();
 
@@ -84,4 +84,5 @@ export default () => {
 			</Switch>
 		</HomePage>
 	</GuideContextProvider>;
-}
+};
+export default Guide;

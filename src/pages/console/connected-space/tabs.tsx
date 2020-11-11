@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
 
-export const SpaceTabs = styled.div`
+export const Tabs = styled.div`
 	display: flex;
 	align-items: center;
 	padding: 0 calc(var(--margin) / 2);
 	padding-top: 8px;
 	height: 50px;
 `;
-const SpaceTabContainer = styled.div<{ active: boolean }>`
+const TabContainer = styled.div<{ active: boolean }>`
 	display: flex;
 	position: relative;
 	align-items: center;
@@ -74,7 +74,7 @@ const SpaceTabContainer = styled.div<{ active: boolean }>`
 	}
 `;
 
-export const SpaceTab = (props: {
+export const Tab = (props: {
 	active: boolean;
 	icon: IconProp;
 	label: string;
@@ -82,10 +82,10 @@ export const SpaceTab = (props: {
 }) => {
 	const { active, icon, label, onClick } = props;
 
-	return <SpaceTabContainer active={active} onClick={onClick}>
+	return <TabContainer active={active} onClick={onClick}>
 		<FontAwesomeIcon icon={icon}/>
 		<span>{label}</span>
 		<div/>
 		<div/>
-	</SpaceTabContainer>;
+	</TabContainer>;
 };

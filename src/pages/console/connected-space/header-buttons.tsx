@@ -4,13 +4,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { LinkButton } from '../component/link-button';
 
-export interface SpaceHeaderButton {
+export interface HeaderButton {
 	icon: IconProp;
 	label: string;
 	onClick: () => void;
 }
 
-const SpaceOperators = styled.div`
+const Operators = styled.div`
 	display: flex;
 	flex-grow: 1;
 	align-items: center;
@@ -26,17 +26,17 @@ const SpaceOperators = styled.div`
 	}
 `;
 
-export const SpaceHeaderButtons = (props: {
-	buttons: Array<SpaceHeaderButton>
+export const HeaderButtons = (props: {
+	buttons: Array<HeaderButton>
 }) => {
 	const { buttons } = props;
 
-	return <SpaceOperators>
+	return <Operators>
 		{buttons.map(button => {
 			return <LinkButton ignoreHorizontalPadding={true} key={button.label}
 			                   onClick={button.onClick}>
 				<FontAwesomeIcon icon={button.icon}/>
 			</LinkButton>;
 		})}
-	</SpaceOperators>;
+	</Operators>;
 };

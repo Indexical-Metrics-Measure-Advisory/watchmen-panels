@@ -41,6 +41,12 @@ export interface ConsoleMail extends ConsoleMessage {
 
 export type ConsoleMails = Array<ConsoleMail>;
 
+export interface ConsoleTopic {
+	topicId: string;
+	code: string;
+	name: string;
+}
+
 export enum ConsoleSpaceType {
 	/** public for all authorized users */
 	PUBLIC = 'public',

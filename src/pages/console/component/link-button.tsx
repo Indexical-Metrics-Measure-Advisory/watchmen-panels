@@ -35,6 +35,7 @@ const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 	border: 0;
 	appearance: none;
 	outline: none;
+	color: currentColor;
 	background-color: transparent;
 	cursor: pointer;
 	transition: all 300ms ease-in-out;

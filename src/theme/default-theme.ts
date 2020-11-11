@@ -72,9 +72,11 @@ const DefaultTheme = {
 	chartZoomHandlerIcon: 'M96 496V16c0-8.8-7.2-16-16-16H48c-8.8 0-16 7.2-16 16v480c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16zm128 0V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v480c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16z',
 
 	// console
-	consoleFontColor: '#333333',
+	consoleFontColor: '#666666',
 	consoleHoverColor: 'rgb(102,132,195)',
 	consolePrimaryColor: 'rgb(94,119,171)',
+	consoleDangerColor: 'rgb(246,52,27)',
+	consoleSuccessColor: 'rgb(33,157,79)',
 	consoleWaiveColor: 'rgb(191,191,191)',
 	consoleShadow: '0 0 11px 0 rgba(0, 0, 0, 0.06)',
 	consoleHoverShadow: '0 0 11px 0 rgba(0, 0, 0, 0.2)',
