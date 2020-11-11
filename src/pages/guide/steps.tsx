@@ -16,7 +16,7 @@ export enum Step {
 
 const StepLabels = [ 'Domain Select', 'Import Data', 'Mapping Factors', 'Measure Indicators', 'Build & Export Metrics' ];
 
-const Steps = styled.div.attrs({
+const StepsContainer = styled.div.attrs({
 	'data-widget': 'guide-steps'
 })`
 	position: relative;
@@ -136,7 +136,7 @@ const Current = styled.div<{ step: number }>`
 	transition: left 300ms ease-in-out;
 `;
 
-export default (props: { step: Step }) => {
+const Steps = (props: { step: Step }) => {
 	const { step } = props;
 	const location = useLocation();
 	const showDomain = !matchPath(location.pathname, Path.GUIDE_DOMAIN_SELECT);
@@ -144,7 +144,7 @@ export default (props: { step: Step }) => {
 
 	const domain = guide.getDomain();
 
-	return <Steps>
+	return <StepsContainer>
 		<CurrentStep>
 			<span>
 				<span><Link to={Path.HOME}>Home</Link></span>
@@ -163,5 +163,7 @@ export default (props: { step: Step }) => {
 			})}
 			<Current step={step}><FontAwesomeIcon icon={faTruckPickup}/></Current>
 		</StepDots>
-	</Steps>;
-}
+	</StepsContainer>;
+};
+
+export default Steps;

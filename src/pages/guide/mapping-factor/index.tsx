@@ -45,7 +45,7 @@ const typeOptions = Object.keys(DataColumnType).filter(k =>
 	};
 });
 
-export default () => {
+const MappingFactor = () => {
 	const history = useHistory();
 	const alert = useAlert();
 	const guide = useGuideContext();
@@ -123,4 +123,6 @@ export default () => {
 			<BigButton inkType={ButtonType.PRIMARY} onClick={onNextClicked}>Next</BigButton>
 		</OperationBar>
 	</Fragment>;
-}
+};
+
+export default MappingFactor;

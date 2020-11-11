@@ -20,7 +20,7 @@ import { PrintPdfButton } from './print-pdf-button';
 import { QuitExportButton } from './quit-export';
 import { SavedCustomChartContextProvider } from './saved-custom-chart-context';
 
-export default () => {
+const BuildMetrics = () => {
 	const history = useHistory();
 	const guide = useGuideContext();
 	const responsive = useResponsive();
@@ -130,4 +130,6 @@ export default () => {
 		<HiddenChartsStackButton rnd={rnd}/>
 		<QuitExportButton rnd={rnd} onQuited={onQuitExportClicked}/>
 	</HideOnPrintProvider>;
-}
+};
+
+export default BuildMetrics;

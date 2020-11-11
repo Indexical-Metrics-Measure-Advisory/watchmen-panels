@@ -13,8 +13,7 @@ const SVG = styled.svg`
 	}
 `;
 
-
-export default (props: { className?: string; }) => {
+const Logo = (props: { className?: string; }) => {
 	const { className } = props;
 
 	return <SVG xmlns='http://www.w3.org/2000/svg' version='1.1' width='541px' height='558px'
@@ -29,3 +28,4 @@ export default (props: { className?: string; }) => {
 		</g>
 	</SVG>;
 }
+export default Logo;

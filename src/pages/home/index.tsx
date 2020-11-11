@@ -62,7 +62,7 @@ const Description = styled.div`
 	margin-bottom: 56px;
 `;
 
-export default () => {
+const HomeIndex = () => {
 	const history = useHistory();
 
 	const onStartGuideClicked = () => {
@@ -115,4 +115,6 @@ export default () => {
 			<img src={ProcessDataImage3} alt=''/>
 		</Slide>
 	</HomePage>;
-}
+};
+
+export default HomeIndex;

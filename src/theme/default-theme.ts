@@ -1,4 +1,4 @@
-export default {
+const DefaultTheme = {
 	// color
 	primaryColor: 'rgba(43,80,174,1)',
 	primaryHoverColor: 'rgba(3,51,141,1)',
@@ -113,3 +113,5 @@ export default {
 	consoleNotificationDotColor3: 'rgba(255,145,145,1)',
 	consoleNotificationDotColor4: 'rgba(255,204,150,1)'
 };
+
+export default DefaultTheme;

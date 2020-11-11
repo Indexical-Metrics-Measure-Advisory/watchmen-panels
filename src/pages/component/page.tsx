@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PageFooter from './page-footer';
 import PageHeader from './page-header';
 
-const Page = styled.div`
+const PageContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
@@ -19,7 +19,7 @@ export const Main = styled.main.attrs({
 	padding: var(--margin) 0;
 `;
 
-export default (props: {
+const Page = (props: {
 	className?: string,
 	header?: false | ((props: any) => React.ReactElement) | React.ReactElement,
 	footer?: false,
@@ -27,11 +27,13 @@ export default (props: {
 }) => {
 	const { className, header = <PageHeader/>, children, footer = <PageFooter/> } = props;
 
-	return <Page className={className}>
+	return <PageContainer className={className}>
 		{header || null}
 		<Main>
 			{children}
 		</Main>
 		{footer || null}
-	</Page>;
-}
+	</PageContainer>;
+};
+
+export default Page;

@@ -24,7 +24,7 @@ export default Paths;
 export const toDomain = (path: string, domain: string) => path.replace(':domain', domain);
 
 export const isConnectedSpaceOpened = (connectId: string): boolean => {
-	const match = matchPath(location.pathname, Paths.CONSOLE_CONNECTED_SPACE);
+	const match = matchPath(window.location.pathname, Paths.CONSOLE_CONNECTED_SPACE);
 	if (match) {
 		// eslint-disable-next-line
 		if ((match.params as any)?.connectId == connectId) {

@@ -57,7 +57,7 @@ const HeaderButton = styled(Button)`
 	}
 `;
 
-export default () => {
+const PageHeader = () => {
 	const isHome = useRouteMatch(Path.HOME);
 
 	return <Header>
@@ -72,4 +72,6 @@ export default () => {
 				</HeaderButton>
 			</Link>}
 	</Header>;
-}
+};
+
+export default PageHeader;

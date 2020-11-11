@@ -32,7 +32,7 @@ const Href = styled(Link)`
 	}
 `;
 
-export default () => {
+const WelcomeIndex = () => {
 	return <WelcomeContainer>
 		<Header>
 			<div>
@@ -44,4 +44,5 @@ export default () => {
 			</Href>
 		</Header>
 	</WelcomeContainer>;
-}
+};
+export default WelcomeIndex;

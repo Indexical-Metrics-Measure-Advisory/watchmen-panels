@@ -167,7 +167,7 @@ const Files = styled.div<{ itemCount: number }>`
 	}
 `;
 
-export default () => {
+const ImportData = () => {
 	const history = useHistory();
 	const alert = useAlert();
 	const guide = useGuideContext();
@@ -343,4 +343,6 @@ export default () => {
 			<BigButton inkType={ButtonType.PRIMARY} onClick={onNextClicked}>Next</BigButton>
 		</OperationBar>
 	</Fragment>;
-}
+};
+
+export default ImportData;

@@ -35,7 +35,7 @@ const DetailHeader = styled(ObjectDetailHeader)`
 	grid-template-columns: 30% calc(35% - 32px) calc(35% - 32px) 32px 32px;
 `;
 
-export default () => {
+const MeasureIndicator = () => {
 	const history = useHistory();
 	const alert = useAlert();
 	const guide = useGuideContext();
@@ -118,4 +118,6 @@ export default () => {
 			<BigButton inkType={ButtonType.PRIMARY} onClick={onNextClicked}>Next</BigButton>
 		</OperationBar>
 	</Fragment>;
-}
+};
+
+export default MeasureIndicator;

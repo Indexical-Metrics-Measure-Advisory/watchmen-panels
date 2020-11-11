@@ -58,7 +58,7 @@ const MoreDomainsButton = styled(DomainButton)`
 	}
 `;
 
-export default () => {
+const DomainSelect = () => {
 	const history = useHistory();
 	const notImpl = useNotImplemented();
 	const guide = useGuideContext();
@@ -115,4 +115,6 @@ export default () => {
 			<BigButton inkType={buttonType} onClick={onNextClicked}>{buttonLabel}</BigButton>
 		</OperationBar>
 	</Fragment>;
-}
+};
+
+export default DomainSelect;

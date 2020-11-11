@@ -16,7 +16,6 @@ export const createLinkButtonBackgroundAnimation = ({ opacity = 0.2 }) => {
 			background-color: transparent;
 			opacity: ${opacity};
 			transition: all 300ms ease-in-out;
-			z-index: -1;
 		}
 		&:hover:before {
 			top: 0;

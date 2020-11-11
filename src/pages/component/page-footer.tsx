@@ -53,7 +53,7 @@ const SocialIcons = styled.div`
 	}
 `;
 
-export default () => {
+const PageFooter = () => {
 	return <Footer>
 		<LastLine>
 			<span>© IMMA Team. All rights reserved.</span>
@@ -66,4 +66,6 @@ export default () => {
 			</SocialIcons>
 		</LastLine>
 	</Footer>;
-}
+};
+
+export default PageFooter;
