@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
-import { DemoTopics } from '../demo-space';
 
 const Container = styled.div`
 	display: flex;
@@ -52,7 +51,7 @@ const Container = styled.div`
 export const TopicList = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
 
-	const topics = DemoTopics;
+	const { topics } = space;
 
 	return <Container>
 		<FontAwesomeIcon icon={faBook}/>

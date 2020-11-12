@@ -57,6 +57,7 @@ export enum ConsoleSpaceType {
 export interface ConsoleSpace {
 	spaceId: string;
 	name: string;
+	topics: Array<ConsoleTopic>;
 }
 
 export interface ConnectedConsoleSpace extends ConsoleSpace {

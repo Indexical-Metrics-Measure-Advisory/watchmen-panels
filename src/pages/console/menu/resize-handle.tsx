@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const handleWidth = 6;
@@ -45,40 +45,34 @@ export const ResizeHandle = (props: {
 
 	const handleRef = useRef<HTMLDivElement>(null);
 	const [ resizing, setResizing ] = useState(false);
-	useEffect(() => {
-		const ref = handleRef.current;
-		if (ref) {
-			const canStartResize = (x: number) => Math.abs(x - width) <= 3;
-			const onMouseDown = (event: MouseEvent) => {
-				if (event.button === 0 && canStartResize(event.clientX)) {
-					setResizing(true);
-				}
-			};
-			const onMouseMove = (event: MouseEvent) => {
-				if (!resizing) {
-					if (canStartResize(event.clientX)) {
-						handleRef.current!.style.cursor = 'col-resize';
-					} else {
-						handleRef.current!.style.cursor = 'default';
-					}
-				} else {
-					onResize(event.clientX);
-				}
-			};
-			const onMouseUp = () => {
+
+	const canStartResize = (x: number) => Math.abs(x - width) <= 3;
+	const onMouseDown = (event: React.MouseEvent) => {
+		const { target, button, clientX } = event;
+		if (button === 0 && canStartResize(clientX)) {
+			setResizing(true);
+			const onResizeEnd = (event: Event) => {
+				const { target } = event;
 				setResizing(false);
+				target!.removeEventListener('mouseup', onResizeEnd);
+				target!.removeEventListener('mouseleave', onResizeEnd);
 			};
-			ref.addEventListener('mousedown', onMouseDown);
-			ref.addEventListener('mousemove', onMouseMove);
-			ref.addEventListener('mouseup', onMouseUp);
-
-			return () => {
-				ref.removeEventListener('mousedown', onMouseDown);
-				ref.removeEventListener('mousemove', onMouseMove);
-				ref.removeEventListener('mouseup', onMouseUp);
-			};
+			target.addEventListener('mouseup', onResizeEnd);
+			target.addEventListener('mouseleave', onResizeEnd);
 		}
-	}, [ onResize, width, resizing ]);
+	};
+	const onMouseMove = (event: React.MouseEvent) => {
+		if (!resizing) {
+			if (canStartResize(event.clientX)) {
+				handleRef.current!.style.cursor = 'col-resize';
+			} else {
+				handleRef.current!.style.cursor = 'default';
+			}
+		} else {
+			onResize(event.clientX);
+		}
+	};
 
-	return <Handle left={width} data-resizing={resizing} ref={handleRef}/>;
+	return <Handle left={width} data-resizing={resizing} ref={handleRef}
+	               onMouseDown={onMouseDown} onMouseMove={onMouseMove}/>;
 };
