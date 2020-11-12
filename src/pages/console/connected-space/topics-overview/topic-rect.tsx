@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConsoleTopic } from '../../../../services/console/types';
+import { PaletteEvent, usePalette } from './palette-context';
+import { findSvgRoot } from './utils';
 
 interface Coordinate {
 	x: number;
@@ -43,7 +45,6 @@ const Rect = styled.rect.attrs<{ frame: Frame, dnd: Dnd }>(({ frame: { width, he
 	fill: var(--invert-color);
 	rx: 6px;
 	ry: 6px;
-	box-shadow: var(--console-hover-shadow);
 `;
 const NameText = styled.text.attrs<{ dnd: Dnd }>(({ dnd: { drag } }) => {
 	return {
@@ -77,17 +78,11 @@ const computeFrameSize = (name: DOMRect) => {
 const computeNamePosition = (frame: Frame) => {
 	return { x: frame.width / 2, y: frame.height / 2 + TitleOffsetY };
 };
-const findSvgRoot = (element: SVGGraphicsElement): SVGElement => {
-	let parent = element.parentElement!;
-	while (parent.tagName.toUpperCase() !== 'SVG') {
-		parent = parent.parentElement!;
-	}
-	return parent as unknown as SVGElement;
-};
 
 export const TopicRect = (props: { topic: ConsoleTopic }) => {
 	const { topic } = props;
 
+	const palette = usePalette();
 	const [ coordinate, setCoordinate ] = useState<Coordinate>({ x: 0, y: 0 });
 	const [ paint, setPaint ] = useState<Paint>(createDefaultPaintState);
 	const [ dnd, setDnd ] = useState<Dnd>(createDefaultDndState);
@@ -96,6 +91,8 @@ export const TopicRect = (props: { topic: ConsoleTopic }) => {
 		const nameRect = nameRef.current!.getBBox();
 		const frame = computeFrameSize(nameRect);
 		setPaint({ frame, name: computeNamePosition(frame) });
+		// @ts-ignore
+		palette.emit(PaletteEvent.TOPIC_INIT_PAINTED, topic);
 	}, [ topic.name ]);
 
 	const onMouseDown = (event: React.MouseEvent) => {
@@ -119,8 +116,9 @@ export const TopicRect = (props: { topic: ConsoleTopic }) => {
 		}
 	};
 
-	return <Container onMouseDown={onMouseDown} coordinate={coordinate}>
-		<Rect x={0} y={0} frame={paint.frame} dnd={dnd}/>
+	return <Container onMouseDown={onMouseDown} coordinate={coordinate}
+	                  data-topic-id={topic.topicId} data-topic-code={topic.code}>
+		<Rect x={0} y={0} frame={paint.frame} dnd={dnd} data-role='frame'/>
 		<NameText ref={nameRef} x={paint.name.x} y={paint.name.y} dnd={dnd}>{topic.name}</NameText>
 	</Container>;
 };

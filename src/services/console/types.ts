@@ -47,6 +47,25 @@ export interface ConsoleTopic {
 	name: string;
 }
 
+export enum ConsoleTopicRelationshipType {
+	ONE_2_ONE = 'one-2-one',
+	ONE_2_MANY = 'one-2-many',
+	MANY_2_ONE = 'many-2-one'
+}
+
+export interface ConsoleTopicRelationship {
+	relationId: string;
+	sourceTopicId: string;
+	sourceFactorNames: Array<string>;
+	targetTopicId: string;
+	targetFactorNames: Array<string>;
+	type: ConsoleTopicRelationshipType;
+	/** target must have data on source has data when strict is true */
+	strictToTarget: boolean;
+	/** source must have data on target has data when strict is true */
+	strictToSource: boolean;
+}
+
 export enum ConsoleSpaceType {
 	/** public for all authorized users */
 	PUBLIC = 'public',
@@ -58,6 +77,7 @@ export interface ConsoleSpace {
 	spaceId: string;
 	name: string;
 	topics: Array<ConsoleTopic>;
+	relations?: Array<ConsoleTopicRelationship>;
 }
 
 export interface ConnectedConsoleSpace extends ConsoleSpace {

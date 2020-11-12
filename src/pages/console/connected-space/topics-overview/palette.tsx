@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
+import { PaletteContextProvider } from './palette-context';
 import { TopicRect } from './topic-rect';
+import { TopicRelation } from './topic-relation';
 
 const PaletteContainer = styled.div`
 	position: relative;
@@ -19,7 +21,7 @@ const PaletteSvg = styled.svg`
 
 export const Palette = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
-	const { topics } = space;
+	const { topics, relations = [] } = space;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [ svgSize, setSvgSize ] = useState<{ width: number, height: number }>({
@@ -39,10 +41,16 @@ export const Palette = (props: { space: ConnectedConsoleSpace }) => {
 	}, []);
 
 	return <PaletteContainer ref={containerRef}>
-		<PaletteSvg width={svgSize.width} height={svgSize.height} viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}>
-			{topics.map(topic => {
-				return <TopicRect topic={topic} key={topic.code}/>;
-			})}
-		</PaletteSvg>
+		<PaletteContextProvider space={space}>
+			<PaletteSvg width={svgSize.width} height={svgSize.height}
+			            viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}>
+				{topics.map(topic => {
+					return <TopicRect topic={topic} key={topic.code}/>;
+				})}
+				{relations.map(relation => {
+					return <TopicRelation space={space} relation={relation} key={relation.relationId}/>;
+				})}
+			</PaletteSvg>
+		</PaletteContextProvider>
 	</PaletteContainer>;
 };
