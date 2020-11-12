@@ -1,17 +1,22 @@
 import { EventEmitter } from 'events';
 import React, { useState } from 'react';
-import { GraphicsTopic } from './types';
+import { TopicGraphics, TopicSelectionGraphics } from './types';
 
 export enum PaletteEvent {
-	TOPIC_MOVE = 'topic-move'
+	TOPIC_MOVE = 'topic-move',
+	TOPIC_SELECTION_CHANGE = 'topic-selection-change'
 }
 
-export type TopicMovedListener = (topic: GraphicsTopic) => void;
+export type TopicMovedListener = (topic: TopicGraphics) => void;
+export type TopicSelectionChangedListener = (topicSelection: TopicSelectionGraphics) => void;
 
 export interface PaletteContext {
-	topicMoved: (topic: GraphicsTopic) => void;
+	topicMoved: (topic: TopicGraphics) => void;
 	addTopicMovedListener: (listener: TopicMovedListener) => void;
 	removeTopicMovedListener: (listener: TopicMovedListener) => void;
+	topicSelectionChanged: (topicSelection: TopicSelectionGraphics) => void;
+	addTopicSelectionChangedListener: (listener: TopicSelectionChangedListener) => void;
+	removeTopicSelectionChangedListener: (listener: TopicSelectionChangedListener) => void;
 }
 
 const Context = React.createContext<PaletteContext>({} as PaletteContext);
@@ -24,12 +29,19 @@ export const PaletteContextProvider = (props: {
 
 	const [ emitter ] = useState(new EventEmitter());
 	const [ context ] = useState<PaletteContext>({
-		topicMoved: (topic: GraphicsTopic) => emitter.emit(PaletteEvent.TOPIC_MOVE, topic),
+		topicMoved: (topic: TopicGraphics) => emitter.emit(PaletteEvent.TOPIC_MOVE, topic),
 		addTopicMovedListener: (listener: TopicMovedListener) => {
 			emitter.on(PaletteEvent.TOPIC_MOVE, listener);
 		},
 		removeTopicMovedListener: (listener: TopicMovedListener) => {
 			emitter.off(PaletteEvent.TOPIC_MOVE, listener);
+		},
+		topicSelectionChanged: (topicSelection: TopicSelectionGraphics) => emitter.emit(PaletteEvent.TOPIC_SELECTION_CHANGE, topicSelection),
+		addTopicSelectionChangedListener: (listener: TopicSelectionChangedListener) => {
+			emitter.on(PaletteEvent.TOPIC_SELECTION_CHANGE, listener);
+		},
+		removeTopicSelectionChangedListener: (listener: TopicSelectionChangedListener) => {
+			emitter.off(PaletteEvent.TOPIC_SELECTION_CHANGE, listener);
 		}
 	});
 

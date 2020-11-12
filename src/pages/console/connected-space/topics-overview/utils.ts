@@ -1,4 +1,4 @@
-import { Graphics, GraphicsTopic, TopicFrame, TopicRelationCurvePoints } from './types';
+import { Graphics, TopicFrame, TopicGraphics, TopicRelationCurvePoints } from './types';
 
 export const findSvgRoot = (element: SVGGraphicsElement): SVGSVGElement => {
 	let parent = element.parentElement!;
@@ -27,7 +27,7 @@ export const computeTopicNamePosition = (topicFrame: TopicFrame) => {
 	return { x: topicFrame.width / 2, y: topicFrame.height / 2 + TitleOffsetY };
 };
 
-const computeTopicFramePoints = (topic: GraphicsTopic) => {
+const computeTopicFramePoints = (topic: TopicGraphics) => {
 	const { rect: { coordinate, frame } } = topic;
 	return {
 		top: { x: coordinate.x + frame.x + frame.width / 2, y: coordinate.y + frame.y },
@@ -37,7 +37,7 @@ const computeTopicFramePoints = (topic: GraphicsTopic) => {
 	};
 };
 
-const findTopicGraphics = (graphics: Graphics, topicId: string): GraphicsTopic => {
+export const findTopicGraphics = (graphics: Graphics, topicId: string): TopicGraphics => {
 	// eslint-disable-next-line
 	return graphics.topics.find(({ topic }) => topic.topicId == topicId)!;
 };
@@ -66,5 +66,17 @@ export const computeTopicRelationPoints = (options: {
 		centerX, centerY,
 		thirdControlX, thirdControlY,
 		endX, endY
+	};
+};
+
+export const computeTopicSelection = (options: { topicId: string; graphics: Graphics }) => {
+	const { graphics, topicId } = options;
+
+	const topicGraphics = findTopicGraphics(graphics, topicId);
+	return {
+		x: topicGraphics.rect.coordinate.x - 6,
+		y: topicGraphics.rect.coordinate.y - 6,
+		width: topicGraphics.rect.frame.width + 12,
+		height: topicGraphics.rect.frame.height + 12
 	};
 };

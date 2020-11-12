@@ -1,14 +1,16 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
-import { PaletteContextProvider } from './palette-context';
+import { PaletteContextProvider, usePalette } from './palette-context';
 import { TopicRect } from './topic-rect';
 import { TopicRelation } from './topic-relation';
-import { Graphics, GraphicsTopic, GraphicsTopicRelation } from './types';
+import { TopicSelection } from './topic-selection';
+import { Graphics, GraphicsRole, GraphicsSize, TopicGraphics, TopicRelationGraphics } from './types';
 import {
 	computeTopicFrameSize,
 	computeTopicNamePosition,
 	computeTopicRelationPoints,
+	computeTopicSelection,
 	TopicHeightMin,
 	TopicWidthMin
 } from './utils';
@@ -58,20 +60,24 @@ const createInitGraphics = (space: ConnectedConsoleSpace): Graphics => {
 					endY: 0
 				}
 			};
-		})
+		}),
+		topicSelection: {
+			visible: false,
+			rect: { x: 0, y: 0, width: 0, height: 0 }
+		}
 	};
 };
 const asTopicMap = (graphics: Graphics) => {
 	return graphics.topics.reduce((map, topic) => {
 		map.set(topic.topic.topicId, topic);
 		return map;
-	}, new Map<string, GraphicsTopic>());
+	}, new Map<string, TopicGraphics>());
 };
 const asTopicRelationMap = (graphics: Graphics) => {
 	return graphics.topicRelations.reduce((map, relation) => {
 		map.set(relation.relation.relationId, relation);
 		return map;
-	}, new Map<string, GraphicsTopicRelation>());
+	}, new Map<string, TopicRelationGraphics>());
 };
 const computeGraphics = (options: {
 	graphics: Graphics;
@@ -80,16 +86,16 @@ const computeGraphics = (options: {
 }) => {
 	const { graphics, repaint, svg } = options;
 
-	const topicMap: Map<string, GraphicsTopic> = asTopicMap(graphics);
-	Array.from(svg.querySelectorAll('g[data-role=topic]')).forEach(topicRect => {
+	const topicMap: Map<string, TopicGraphics> = asTopicMap(graphics);
+	Array.from(svg.querySelectorAll(`g[data-role=${GraphicsRole.TOPIC}]`)).forEach(topicRect => {
 		const topicId = topicRect.getAttribute('data-topic-id')!;
-		// const frame = topicRect.querySelector('rect[data-role="topic-frame"]')! as SVGRectElement;
-		const name = topicRect.querySelector('text[data-role="topic-name"]')! as SVGTextElement;
+		const name = topicRect.querySelector(`text[data-role='${GraphicsRole.TOPIC_NAME}']`)! as SVGTextElement;
 		const nameRect = name.getBBox();
 		const rect = topicMap.get(topicId)!.rect;
 		rect.frame = { ...rect.frame, ...computeTopicFrameSize(nameRect) };
 		rect.name = computeTopicNamePosition(rect.frame);
 	});
+	// TODO compute topic positions in palette
 	graphics.topicRelations.forEach(relation => {
 		const { relation: { sourceTopicId, targetTopicId } } = relation;
 		relation.points = computeTopicRelationPoints({ graphics, sourceTopicId, targetTopicId });
@@ -97,23 +103,23 @@ const computeGraphics = (options: {
 	repaint();
 };
 
-export const Palette = (props: { space: ConnectedConsoleSpace }) => {
+const SvgPalette = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
 	const { topics, topicRelations = [] } = space;
 
-	const containerRef = useRef<HTMLDivElement>(null);
+	const palette = usePalette();
 	const svgRef = useRef<SVGSVGElement>(null);
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-	const [ svgSize, setSvgSize ] = useState<{ width: number, height: number }>({ width: 300, height: 300 });
+	const [ svgSize, setSvgSize ] = useState<GraphicsSize>({ width: 300, height: 300 });
 	const [ graphics ] = useState<Graphics>(createInitGraphics(space));
 	useEffect(() => {
-		const ref = containerRef.current;
 		const svg = svgRef.current;
-		if (ref && svg) {
-			const resize = () => setSvgSize({ width: ref.clientWidth, height: ref.clientHeight });
+		if (svg) {
+			const container = svg.parentElement! as HTMLDivElement;
+			const resize = () => setSvgSize({ width: container.clientWidth, height: container.clientHeight });
 			// @ts-ignore
 			const resizeObserver = new ResizeObserver(resize);
-			resizeObserver.observe(ref);
+			resizeObserver.observe(container);
 			resize();
 			computeGraphics({ graphics, repaint: forceUpdate, svg });
 			return () => resizeObserver.disconnect();
@@ -121,23 +127,66 @@ export const Palette = (props: { space: ConnectedConsoleSpace }) => {
 		// eslint-disable-next-line
 	}, []);
 
-	const topicMap: Map<string, GraphicsTopic> = asTopicMap(graphics);
-	const topicRelationMap: Map<string, GraphicsTopicRelation> = asTopicRelationMap(graphics);
+	const topicMap: Map<string, TopicGraphics> = asTopicMap(graphics);
+	const topicRelationMap: Map<string, TopicRelationGraphics> = asTopicRelationMap(graphics);
 
-	return <PaletteContainer ref={containerRef}>
+	const clearSelection = () => {
+		delete graphics.topicSelection.topicId;
+		graphics.topicSelection.visible = false;
+		palette.topicSelectionChanged(graphics.topicSelection);
+	};
+	const onSvgMouseDown = (event: React.MouseEvent) => {
+		const { button, target } = event;
+		if (button === 2 || button === 1) {
+			return;
+		}
+
+		const element = target as SVGGraphicsElement;
+		const tagName = element.tagName.toUpperCase();
+		if (tagName === 'SVG') {
+			clearSelection();
+			return;
+		}
+
+		const role = element.getAttribute('data-role') || '';
+		switch (role) {
+			case GraphicsRole.TOPIC_FRAME:
+			case GraphicsRole.TOPIC_NAME:
+				const topicRect = element.parentElement! as unknown as SVGGElement;
+				const topicId = topicRect.getAttribute('data-topic-id')!;
+				graphics.topicSelection.topicId = topicId;
+				graphics.topicSelection.visible = true;
+				graphics.topicSelection.rect = computeTopicSelection({ graphics, topicId });
+				palette.topicSelectionChanged(graphics.topicSelection);
+				break;
+			default:
+				clearSelection();
+				break;
+		}
+	};
+
+	return <PaletteSvg width={svgSize.width} height={svgSize.height}
+	                   viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
+	                   onMouseDown={onSvgMouseDown}
+	                   ref={svgRef}>
+		{topics.map(topic => {
+			const topicGraphics = topicMap.get(topic.topicId)!;
+			return <TopicRect topic={topicGraphics} key={topic.code}/>;
+		})}
+		{topicRelations.map(relation => {
+			const relationGraphics = topicRelationMap.get(relation.relationId)!;
+			return <TopicRelation graphics={graphics} relation={relationGraphics} key={relation.relationId}/>;
+		})}
+		<TopicSelection graphics={graphics} selection={graphics.topicSelection}/>
+	</PaletteSvg>;
+};
+
+export const Palette = (props: { space: ConnectedConsoleSpace }) => {
+	const { space } = props;
+
+	return <PaletteContainer>
 		<PaletteContextProvider>
-			<PaletteSvg width={svgSize.width} height={svgSize.height}
-			            viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
-			            ref={svgRef}>
-				{topics.map(topic => {
-					const topicGraphics = topicMap.get(topic.topicId)!;
-					return <TopicRect topic={topicGraphics} key={topic.code}/>;
-				})}
-				{topicRelations.map(relation => {
-					const relationGraphics = topicRelationMap.get(relation.relationId)!;
-					return <TopicRelation graphics={graphics} relation={relationGraphics} key={relation.relationId}/>;
-				})}
-			</PaletteSvg>
+			<SvgPalette space={space}/>
 		</PaletteContextProvider>
 	</PaletteContainer>;
 };

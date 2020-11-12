@@ -1,20 +1,18 @@
 import React, { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { usePalette } from './palette-context';
-import { GraphicsTopic, TopicCoordinate, TopicFrame, TopicName } from './types';
+import { GraphicsRole, TopicCoordinate, TopicFrame, TopicGraphics, TopicName } from './types';
 import { findSvgRoot } from './utils';
 
 const Container = styled.g.attrs<{ coordinate: TopicCoordinate }>(({ coordinate: { x, y } }) => {
 	return { transform: `translate(${x}, ${y})` };
 })<{ coordinate: TopicCoordinate }>``;
 const Rect = styled.rect.attrs<{ frame: TopicFrame, dnd: boolean }>(({ frame: { x, y, width, height }, dnd }) => {
-	return { x, y, width, height, cursor: dnd ? 'move' : 'pointer' };
+	return { x, y, width, height, rx: 6, ry: 6, cursor: dnd ? 'move' : 'pointer' };
 })<{ frame: TopicFrame, dnd: boolean }>`
 	stroke: var(--console-primary-color);
 	stroke-width: 2px;
 	fill: var(--invert-color);
-	rx: 6px;
-	ry: 6px;
 `;
 const NameText = styled.text.attrs<{ dnd: boolean, pos: TopicName }>(({ dnd, pos: { x, y } }) => {
 	return { x, y, cursor: dnd ? 'move' : 'pointer' };
@@ -26,9 +24,9 @@ const NameText = styled.text.attrs<{ dnd: boolean, pos: TopicName }>(({ dnd, pos
 	user-select: none;
 `;
 
-export const TopicRect = (props: { topic: GraphicsTopic }) => {
-	const { topic: graphics } = props;
-	const { topic, rect } = graphics;
+export const TopicRect = (props: { topic: TopicGraphics }) => {
+	const { topic: topicGraphics } = props;
+	const { topic, rect } = topicGraphics;
 	const { coordinate, frame: frameRect, name: namePos } = rect;
 
 	const palette = usePalette();
@@ -42,7 +40,7 @@ export const TopicRect = (props: { topic: GraphicsTopic }) => {
 			const onMove = ({ clientX: x, clientY: y }: MouseEvent) => {
 				rect.coordinate = { x: x - offsetX, y: y - offsetY };
 				forceUpdate();
-				palette.topicMoved(graphics);
+				palette.topicMoved(topicGraphics);
 			};
 			const root = findSvgRoot(event.target as SVGGraphicsElement);
 			const onEnd = () => {
@@ -60,10 +58,10 @@ export const TopicRect = (props: { topic: GraphicsTopic }) => {
 
 	return <Container onMouseDown={onMouseDown} coordinate={coordinate}
 	                  data-topic-id={topic.topicId} data-topic-code={topic.code}
-	                  data-role='topic'>
+	                  data-role={GraphicsRole.TOPIC}>
 		<Rect frame={frameRect} dnd={dnd}
 		      data-topic-id={topic.topicId} data-topic-code={topic.code}
-		      data-role='topic-frame'/>
-		<NameText pos={namePos} dnd={dnd} data-role='topic-name'>{topic.name}</NameText>
+		      data-role={GraphicsRole.TOPIC_FRAME}/>
+		<NameText pos={namePos} dnd={dnd} data-role={GraphicsRole.TOPIC_NAME}>{topic.name}</NameText>
 	</Container>;
 };

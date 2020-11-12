@@ -1,5 +1,14 @@
 import { ConsoleTopic, ConsoleTopicRelationship } from '../../../../services/console/types';
 
+export enum GraphicsRole {
+	TOPIC = 'topic',
+	TOPIC_FRAME = 'topic-frame',
+	TOPIC_NAME = 'topic-name',
+	TOPIC_RELATION = 'topic-relation',
+	TOPIC_RELATION_LINK = 'topic-relation-link',
+	TOPIC_SELECTION = 'topic-selection',
+}
+
 export interface GraphicsPosition {
 	x: number;
 	y: number;
@@ -34,12 +43,12 @@ export interface TopicRelationCurvePoints {
 	endY: number;
 }
 
-export interface GraphicsTopicRelation {
+export interface TopicRelationGraphics {
 	relation: ConsoleTopicRelationship;
 	points: TopicRelationCurvePoints
 }
 
-export interface GraphicsTopic {
+export interface TopicGraphics {
 	topic: ConsoleTopic;
 	rect: {
 		coordinate: TopicCoordinate;
@@ -48,7 +57,14 @@ export interface GraphicsTopic {
 	}
 }
 
+export interface TopicSelectionGraphics {
+	visible: boolean;
+	topicId?: string;
+	rect: GraphicsPosition & GraphicsSize;
+}
+
 export interface Graphics {
-	topics: Array<GraphicsTopic>;
-	topicRelations: Array<GraphicsTopicRelation>;
+	topics: Array<TopicGraphics>;
+	topicRelations: Array<TopicRelationGraphics>;
+	topicSelection: TopicSelectionGraphics
 }
