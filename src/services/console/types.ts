@@ -77,7 +77,7 @@ export interface ConsoleSpace {
 	spaceId: string;
 	name: string;
 	topics: Array<ConsoleTopic>;
-	relations?: Array<ConsoleTopicRelationship>;
+	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
 export interface ConnectedConsoleSpace extends ConsoleSpace {

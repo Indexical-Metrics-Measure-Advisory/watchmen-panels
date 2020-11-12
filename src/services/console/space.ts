@@ -12,7 +12,7 @@ const demoTopics: Array<ConsoleTopic> = [
 	{ topicId: '2', code: 'policy', name: 'Policy' },
 	{ topicId: '3', code: 'participant', name: 'Participant' }
 ];
-const demoRelations: Array<ConsoleTopicRelationship> = [
+const demoTopicRelations: Array<ConsoleTopicRelationship> = [
 	{
 		relationId: '1',
 		sourceTopicId: '2',
@@ -32,7 +32,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/10/31 14:23:07',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '2',
@@ -40,7 +40,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 15:14:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '3',
@@ -48,7 +48,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 14:13:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '4',
@@ -56,7 +56,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 13:12:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '5',
@@ -64,7 +64,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 12:11:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '6',
@@ -72,7 +72,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 11:10:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '7',
@@ -80,7 +80,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 10:09:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '1',
 		connectId: '8',
@@ -88,7 +88,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 09:08:11',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	} ];
 };
 
@@ -97,11 +97,10 @@ export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 		spaceId: '1',
 		name: 'Sales Statistics',
 		topics: demoTopics,
-		relations: demoRelations
+		topicRelations: demoTopicRelations
 	}, {
 		spaceId: '2',
 		name: 'Claim Trend',
-		topics: demoTopics,
-		relations: demoRelations
+		topics: demoTopics
 	} ];
 };

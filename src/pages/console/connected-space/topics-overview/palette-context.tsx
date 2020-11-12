@@ -1,39 +1,36 @@
 import { EventEmitter } from 'events';
 import React, { useState } from 'react';
-import { ConnectedConsoleSpace, ConsoleTopic } from '../../../../services/console/types';
+import { GraphicsTopic } from './types';
 
 export enum PaletteEvent {
-	TOPIC_INIT_PAINTED = 'topic-painted',
-	TOPIC_ALL_PAINTED = 'topic-all-painted'
+	TOPIC_MOVE = 'topic-move'
 }
 
-type Listener = () => void;
-export type TopicPaintedListener = (topic: ConsoleTopic) => void;
-export type TopicAllPaintedListener = () => void;
+export type TopicMovedListener = (topic: GraphicsTopic) => void;
 
 export interface PaletteContext {
-	on: ((event: PaletteEvent.TOPIC_INIT_PAINTED, listener: TopicPaintedListener) => void)
-		| ((event: PaletteEvent.TOPIC_ALL_PAINTED, listener: TopicAllPaintedListener) => void);
-	emit: ((event: PaletteEvent.TOPIC_INIT_PAINTED, topic: ConsoleTopic) => void)
-		| ((event: PaletteEvent.TOPIC_ALL_PAINTED) => void);
-	off: ((event: PaletteEvent.TOPIC_INIT_PAINTED, listener: TopicPaintedListener) => void)
-		| ((event: PaletteEvent.TOPIC_ALL_PAINTED, listener: TopicAllPaintedListener) => void);
+	topicMoved: (topic: GraphicsTopic) => void;
+	addTopicMovedListener: (listener: TopicMovedListener) => void;
+	removeTopicMovedListener: (listener: TopicMovedListener) => void;
 }
 
 const Context = React.createContext<PaletteContext>({} as PaletteContext);
 Context.displayName = 'PaletteContext';
 
 export const PaletteContextProvider = (props: {
-	space: ConnectedConsoleSpace;
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
 }) => {
-	const { space, children } = props;
+	const { children } = props;
 
 	const [ emitter ] = useState(new EventEmitter());
 	const [ context ] = useState<PaletteContext>({
-		on: (event: PaletteEvent, listener: Listener) => emitter.on(event, listener),
-		off: (event: PaletteEvent, listener: Listener) => emitter.off(event, listener),
-		emit: (event: PaletteEvent, ...args: Array<any>) => emitter.emit(event, args)
+		topicMoved: (topic: GraphicsTopic) => emitter.emit(PaletteEvent.TOPIC_MOVE, topic),
+		addTopicMovedListener: (listener: TopicMovedListener) => {
+			emitter.on(PaletteEvent.TOPIC_MOVE, listener);
+		},
+		removeTopicMovedListener: (listener: TopicMovedListener) => {
+			emitter.off(PaletteEvent.TOPIC_MOVE, listener);
+		}
 	});
 
 	return <Context.Provider value={context}>{children}</Context.Provider>;
