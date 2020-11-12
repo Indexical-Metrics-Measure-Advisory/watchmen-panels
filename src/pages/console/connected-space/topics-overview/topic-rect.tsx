@@ -96,13 +96,14 @@ export const TopicRect = (props: { topic: ConsoleTopic }) => {
 		const nameRect = nameRef.current!.getBBox();
 		const frame = computeFrameSize(nameRect);
 		setPaint({ frame, name: computeNamePosition(frame) });
-	}, [ 0 ]);
+	}, [ topic.name ]);
 
 	const onMouseDown = (event: React.MouseEvent) => {
 		if (event.button === 0) {
 			const { clientX, clientY } = event;
+			const [ offsetX, offsetY ] = [ clientX - coordinate.x, clientY - coordinate.y ];
 			const onMove = ({ clientX: x, clientY: y }: MouseEvent) => {
-				setCoordinate({ x: x - clientX, y: y - clientY });
+				setCoordinate({ x: x - offsetX, y: y - offsetY });
 			};
 			const root = findSvgRoot(event.target as SVGGraphicsElement);
 			const onEnd = () => {
