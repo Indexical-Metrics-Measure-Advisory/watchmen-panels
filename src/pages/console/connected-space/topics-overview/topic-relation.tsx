@@ -5,17 +5,8 @@ import { Graphics, GraphicsRole, TopicGraphics, TopicRelationCurvePoints, TopicR
 import { computeTopicRelationPoints } from './utils';
 
 
-const Curve = styled.path.attrs<{ lattice: TopicRelationCurvePoints }>((
-	{
-		lattice: {
-			startX, startY, firstControlX, firstControlY, secondControlX, secondControlY,
-			centerX, centerY, thirdControlX, thirdControlY, endX, endY
-		}
-	}
-) => {
-	return {
-		d: `M ${startX} ${startY} C ${firstControlX} ${firstControlY}, ${secondControlX} ${secondControlY}, ${centerX} ${centerY} S ${thirdControlX} ${thirdControlY}, ${endX} ${endY}`
-	};
+const Curve = styled.path.attrs<{ lattice: TopicRelationCurvePoints }>(({ lattice: { drawn } }) => {
+	return { d: drawn };
 })<{ lattice: TopicRelationCurvePoints }>`
 	stroke: var(--console-primary-color);
 	stroke-width: 2px;

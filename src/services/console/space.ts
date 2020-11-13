@@ -22,6 +22,16 @@ const demoTopicRelations: Array<ConsoleTopicRelationship> = [
 		type: ConsoleTopicRelationshipType.ONE_2_ONE,
 		strictToTarget: true,
 		strictToSource: false
+	},
+	{
+		relationId: '2',
+		sourceTopicId: '2',
+		sourceFactorNames: [ 'participantId' ],
+		targetTopicId: '3',
+		targetFactorNames: [ 'participantId' ],
+		type: ConsoleTopicRelationshipType.MANY_2_ONE,
+		strictToTarget: true,
+		strictToSource: false
 	}
 ];
 export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpace>> => {

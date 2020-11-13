@@ -29,18 +29,7 @@ export interface TopicName extends GraphicsPosition {
 }
 
 export interface TopicRelationCurvePoints {
-	startX: number;
-	startY: number;
-	firstControlX: number;
-	firstControlY: number;
-	secondControlX: number;
-	secondControlY: number;
-	centerX: number;
-	centerY: number;
-	thirdControlX: number;
-	thirdControlY: number;
-	endX: number;
-	endY: number;
+	drawn: string;
 }
 
 export interface TopicRelationGraphics {

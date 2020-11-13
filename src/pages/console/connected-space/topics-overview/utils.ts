@@ -52,21 +52,84 @@ export const computeTopicRelationPoints = (options: {
 	const sourcePoints = computeTopicFramePoints(findTopicGraphics(graphics, sourceTopicId));
 	const targetPoints = computeTopicFramePoints(findTopicGraphics(graphics, targetTopicId));
 
-	const [ startX, startY ] = [ sourcePoints.right.x, sourcePoints.right.y ];
-	const [ endX, endY ] = [ targetPoints.left.x, targetPoints.right.y ];
-	const [ centerX, centerY ] = [ (startX + endX) / 2, (startY + endY) / 2 ];
-	const [ firstControlX, firstControlY ] = [ startX + (centerX - startX) / 4, startY + (centerY - startY) / 4 ];
-	const [ secondControlX, secondControlY ] = [ startX + (centerX - startX) / 4 * 3, startY + (centerY - startY) / 4 ];
-	const [ thirdControlX, thirdControlY ] = [ centerX + (endX - centerX) / 4 * 3, centerY + (endY - centerY) / 4 ];
-
-	return {
-		startX, startY,
-		firstControlX, firstControlY,
-		secondControlX, secondControlY,
-		centerX, centerY,
-		thirdControlX, thirdControlY,
-		endX, endY
-	};
+	let drawn = `M${sourcePoints.top.x},${(sourcePoints.top.y + sourcePoints.bottom.y) / 2} L${targetPoints.top.x},${(targetPoints.top.y + targetPoints.bottom.y) / 2}`;
+	// noinspection DuplicatedCode
+	switch (true) {
+		case targetPoints.left.x - sourcePoints.right.x <= 200 && targetPoints.left.x - sourcePoints.right.x >= 0:
+			// target on right of source, no overlap, small distance
+			switch (true) {
+				case  sourcePoints.bottom.y <= targetPoints.top.y:
+					// target on bottom right, no overlap
+					drawn = `M${sourcePoints.bottom.x},${sourcePoints.bottom.y} Q${sourcePoints.bottom.x},${targetPoints.left.y} ${targetPoints.left.x},${targetPoints.left.y}`;
+					break;
+				case sourcePoints.top.y >= targetPoints.bottom.y:
+					// target on bottom top, no overlap
+					drawn = `M${sourcePoints.top.x},${sourcePoints.top.y} Q${sourcePoints.top.x},${targetPoints.left.y} ${targetPoints.left.x},${targetPoints.left.y}`;
+					break;
+				default:
+				// vertical has overlap
+			}
+			break;
+		case targetPoints.left.x - sourcePoints.right.x > 200:
+			// target on right of source, no overlap, large distance
+			switch (true) {
+				case sourcePoints.bottom.y <= targetPoints.top.y:
+				case sourcePoints.top.y >= targetPoints.bottom.y:
+					// target on bottom/top right, no overlap
+					drawn = [
+						`M${sourcePoints.right.x},${sourcePoints.right.y}`,
+						`C${sourcePoints.right.x + (targetPoints.left.x - sourcePoints.right.x) / 6},${sourcePoints.right.y}`,
+						`${sourcePoints.right.x + (targetPoints.left.x - sourcePoints.right.x) / 3},${sourcePoints.right.y}`,
+						`${sourcePoints.right.x + (targetPoints.left.x - sourcePoints.right.x) / 2},${(sourcePoints.right.y + targetPoints.left.y) / 2}`,
+						`C${sourcePoints.right.x + (targetPoints.left.x - sourcePoints.right.x) / 3 * 2},${targetPoints.left.y}`,
+						`${sourcePoints.right.x + (targetPoints.left.x - sourcePoints.right.x) / 6 * 5},${targetPoints.left.y}`,
+						`${targetPoints.left.x},${targetPoints.left.y}`
+					].join(' ');
+					break;
+				default:
+					// vertical has overlap
+					drawn = `M${sourcePoints.right.x},${sourcePoints.right.y} L${targetPoints.left.x},${targetPoints.left.y}`;
+			}
+			break;
+		case sourcePoints.left.x - targetPoints.right.x <= 200 && sourcePoints.left.x - targetPoints.right.x >= 0:
+			// target on left of source, no overlap, small distance
+			switch (true) {
+				case  sourcePoints.bottom.y <= targetPoints.top.y:
+					// target on bottom left, no overlap
+					drawn = `M${sourcePoints.bottom.x},${sourcePoints.bottom.y} Q${sourcePoints.bottom.x},${targetPoints.right.y} ${targetPoints.right.x},${targetPoints.right.y}`;
+					break;
+				case sourcePoints.top.y >= targetPoints.bottom.y:
+					// target on bottom top, no overlap
+					drawn = `M${sourcePoints.top.x},${sourcePoints.top.y} Q${sourcePoints.top.x},${targetPoints.right.y} ${targetPoints.right.x},${targetPoints.right.y}`;
+					break;
+				default:
+				// vertical has overlap
+			}
+			break;
+		case sourcePoints.left.x - targetPoints.right.x > 200:
+			// target on left of source, no overlap, large distance
+			switch (true) {
+				case sourcePoints.bottom.y <= targetPoints.top.y:
+				case sourcePoints.top.y >= targetPoints.bottom.y:
+					// target on bottom/top right, no overlap
+					drawn = [
+						`M${sourcePoints.left.x},${sourcePoints.left.y}`,
+						`C${targetPoints.right.x + (sourcePoints.left.x - targetPoints.right.x) / 6 * 5},${sourcePoints.left.y}`,
+						`${targetPoints.right.x + (sourcePoints.left.x - targetPoints.right.x) / 3 * 2},${sourcePoints.left.y}`,
+						`${targetPoints.right.x + (sourcePoints.left.x - targetPoints.right.x) / 2},${(sourcePoints.left.y + targetPoints.right.y) / 2}`,
+						`C${targetPoints.right.x + (sourcePoints.left.x - targetPoints.right.x) / 3},${targetPoints.right.y}`,
+						`${targetPoints.right.x + (sourcePoints.left.x - targetPoints.right.x) / 6},${targetPoints.right.y}`,
+						`${targetPoints.right.x},${targetPoints.right.y}`
+					].join(' ');
+					break;
+				default:
+					// vertical has overlap
+					drawn = `M${sourcePoints.left.x},${sourcePoints.left.y} L${targetPoints.right.x},${targetPoints.right.y}`;
+			}
+			break;
+	}
+	// console.log(drawn);
+	return { drawn };
 };
 
 export const computeTopicSelection = (options: { topicId: string; graphics: Graphics }) => {

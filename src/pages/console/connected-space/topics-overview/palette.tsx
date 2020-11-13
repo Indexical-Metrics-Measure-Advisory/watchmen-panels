@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import { PaletteContextProvider, usePalette } from './palette-context';
 import { TopicRect } from './topic-rect';
 import { TopicRelation } from './topic-relation';
+import { TopicRelationAnimation } from './topic-relation-animation';
 import { TopicSelection } from './topic-selection';
 import { Graphics, GraphicsRole, GraphicsSize, TopicGraphics, TopicRelationGraphics } from './types';
 import {
@@ -45,20 +46,7 @@ const createInitGraphics = (space: ConnectedConsoleSpace): Graphics => {
 		topicRelations: topicRelations.map(relation => {
 			return {
 				relation,
-				points: {
-					startX: 0,
-					startY: 0,
-					firstControlX: 0,
-					firstControlY: 0,
-					secondControlX: 0,
-					secondControlY: 0,
-					centerX: 0,
-					centerY: 0,
-					thirdControlX: 0,
-					thirdControlY: 0,
-					endX: 0,
-					endY: 0
-				}
+				points: { drawn: 'M0,0 L0,0' }
 			};
 		}),
 		topicSelection: {
@@ -165,20 +153,26 @@ const SvgPalette = (props: { space: ConnectedConsoleSpace }) => {
 		}
 	};
 
-	return <PaletteSvg width={svgSize.width} height={svgSize.height}
-	                   viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
-	                   onMouseDown={onSvgMouseDown}
-	                   ref={svgRef}>
-		{topics.map(topic => {
-			const topicGraphics = topicMap.get(topic.topicId)!;
-			return <TopicRect topic={topicGraphics} key={topic.code}/>;
-		})}
+	return <Fragment>
+		<PaletteSvg width={svgSize.width} height={svgSize.height}
+		            viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
+		            onMouseDown={onSvgMouseDown}
+		            ref={svgRef}>
+			{topicRelations.map(relation => {
+				const relationGraphics = topicRelationMap.get(relation.relationId)!;
+				return <TopicRelation graphics={graphics} relation={relationGraphics} key={relation.relationId}/>;
+			})}
+			{topics.map(topic => {
+				const topicGraphics = topicMap.get(topic.topicId)!;
+				return <TopicRect topic={topicGraphics} key={topic.code}/>;
+			})}
+			<TopicSelection graphics={graphics} selection={graphics.topicSelection}/>
+		</PaletteSvg>
 		{topicRelations.map(relation => {
 			const relationGraphics = topicRelationMap.get(relation.relationId)!;
-			return <TopicRelation graphics={graphics} relation={relationGraphics} key={relation.relationId}/>;
+			return <TopicRelationAnimation graphics={graphics} relation={relationGraphics} key={relation.relationId}/>;
 		})}
-		<TopicSelection graphics={graphics} selection={graphics.topicSelection}/>
-	</PaletteSvg>;
+	</Fragment>;
 };
 
 export const Palette = (props: { space: ConnectedConsoleSpace }) => {
