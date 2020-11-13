@@ -173,10 +173,17 @@ const TopicFactor = (props: {
 	});
 	const asTooltip = () => {
 		return relations.map(relation => {
+			// eslint-disable-next-line
 			if (relation.sourceTopicId == topicId) {
+				// eslint-disable-next-line
 				return space.topics.find(topic => relation.targetTopicId == topic.topicId)!.name;
+				// eslint-disable-next-line
+			} else if (relation.targetTopicId == topicId) {
+				// eslint-disable-next-line
+				return space.topics.find(topic => relation.sourceTopicId == topic.topicId)!.name;
 			}
-		}).join(', ');
+			return null;
+		}).filter(x => x != null).join(', ');
 	};
 	const { mouseEnter, mouseLeave } = useTooltip({
 		show: relations.length !== 0,
