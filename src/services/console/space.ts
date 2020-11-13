@@ -3,14 +3,77 @@ import {
 	ConsoleSpace,
 	ConsoleSpaceType,
 	ConsoleTopic,
+	ConsoleTopicFactorType,
 	ConsoleTopicRelationship,
 	ConsoleTopicRelationshipType
 } from './types';
 
 const demoTopics: Array<ConsoleTopic> = [
-	{ topicId: '1', code: 'quotation', name: 'Quotation' },
-	{ topicId: '2', code: 'policy', name: 'Policy' },
-	{ topicId: '3', code: 'participant', name: 'Participant' }
+	{
+		topicId: '1', code: 'quotation', name: 'Quotation',
+		factors: [
+			{
+				factorId: '101',
+				name: 'quotationId',
+				label: 'Quotation Sequence',
+				type: ConsoleTopicFactorType.SEQUENCE
+			},
+			{ factorId: '102', name: 'quoteNo', label: 'Quotation No.', type: ConsoleTopicFactorType.TEXT },
+			{
+				factorId: '103',
+				name: 'quoteDate',
+				label: 'Quotation Create Date',
+				type: ConsoleTopicFactorType.DATETIME
+			},
+			{
+				factorId: '104',
+				name: 'policyHolderId',
+				label: 'Policy Holder Id',
+				type: ConsoleTopicFactorType.SEQUENCE
+			},
+			{ factorId: '105', name: 'premium', label: 'Premium', type: ConsoleTopicFactorType.NUMBER },
+			{ factorId: '106', name: 'issued', label: 'Issued', type: ConsoleTopicFactorType.BOOLEAN }
+		]
+	},
+	{
+		topicId: '2', code: 'policy', name: 'Policy',
+		factors: [
+			{ factorId: '201', name: 'policyId', label: 'Policy Sequence', type: ConsoleTopicFactorType.SEQUENCE },
+			{ factorId: '202', name: 'quotationNo', label: 'Quotation No.', type: ConsoleTopicFactorType.TEXT },
+			{
+				factorId: '203',
+				name: 'quoteDate',
+				label: 'Quotation Create Date',
+				type: ConsoleTopicFactorType.DATETIME
+			},
+			{ factorId: '204', name: 'policyNo', label: 'Policy No.', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '205', name: 'issueDate', label: 'Policy Issue Date', type: ConsoleTopicFactorType.DATETIME },
+			{
+				factorId: '206',
+				name: 'policyHolderId',
+				label: 'Policy Holder Id',
+				type: ConsoleTopicFactorType.SEQUENCE
+			},
+			{ factorId: '207', name: 'premium', label: 'Premium', type: ConsoleTopicFactorType.NUMBER }
+		]
+	},
+	{
+		topicId: '3', code: 'participant', name: 'Participant',
+		factors: [
+			{
+				factorId: '301',
+				name: 'participantId',
+				label: 'Participant Sequence',
+				type: ConsoleTopicFactorType.SEQUENCE
+			},
+			{ factorId: '302', name: 'firstName', label: 'First Name', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '303', name: 'lastName', label: 'Last Name', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '304', name: 'fullName', label: 'Full Name', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '305', name: 'dateOfBirth', label: 'Birth Date', type: ConsoleTopicFactorType.DATETIME },
+			{ factorId: '306', name: 'gender', label: 'Gender', type: ConsoleTopicFactorType.ENUM, enum: 'Gender' },
+			{ factorId: '307', name: 'city', label: 'City', type: ConsoleTopicFactorType.ENUM, enum: 'City' }
+		]
+	}
 ];
 const demoTopicRelations: Array<ConsoleTopicRelationship> = [
 	{
@@ -26,7 +89,7 @@ const demoTopicRelations: Array<ConsoleTopicRelationship> = [
 	{
 		relationId: '2',
 		sourceTopicId: '2',
-		sourceFactorNames: [ 'participantId' ],
+		sourceFactorNames: [ 'policyHolderId' ],
 		targetTopicId: '3',
 		targetFactorNames: [ 'participantId' ],
 		type: ConsoleTopicRelationshipType.MANY_2_ONE,
@@ -36,7 +99,7 @@ const demoTopicRelations: Array<ConsoleTopicRelationship> = [
 	{
 		relationId: '3',
 		sourceTopicId: '1',
-		sourceFactorNames: [ 'participantId' ],
+		sourceFactorNames: [ 'policyHolderId' ],
 		targetTopicId: '3',
 		targetFactorNames: [ 'participantId' ],
 		type: ConsoleTopicRelationshipType.MANY_2_ONE,

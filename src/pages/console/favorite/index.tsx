@@ -13,6 +13,7 @@ import {
 	ConsoleSpaceType
 } from '../../../services/console/types';
 import { Theme } from '../../../theme/types';
+import { useNotImplemented } from '../../context/not-implemented';
 import { useConsoleContext } from '../context/console-context';
 
 const FavoriteContainer = styled.div.attrs({
@@ -164,6 +165,7 @@ const isFavSpace = (fav: ConsoleFavorite): fav is ConsoleFavoriteSpace => fav.ty
 export const Favorite = () => {
 	const history = useHistory();
 	const theme = useTheme() as Theme;
+	const notImpl = useNotImplemented();
 	const {
 		menu: { menuWidth },
 		favorites: {
@@ -249,7 +251,8 @@ export const Favorite = () => {
 					if (dashboard) {
 						return {
 							name: dashboard.name,
-							item: <div key={`dashboard-${item.dashboardId}`}>
+							item: <div onClick={notImpl.show}
+							           key={`dashboard-${item.dashboardId}`}>
 								<FontAwesomeIcon icon={faSolarPanel}/>
 								<span>{dashboard.name}</span>
 							</div>

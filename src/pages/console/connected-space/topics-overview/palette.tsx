@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import { PaletteContextProvider, usePalette } from './palette-context';
+import { TopicDetail } from './topic-detail';
 import { TopicRect } from './topic-rect';
 import { TopicRelation } from './topic-relation';
 import { TopicRelationAnimation } from './topic-relation-animation';
@@ -71,9 +72,11 @@ const computeGraphics = (options: {
 	graphics: Graphics;
 	repaint: () => void;
 	svg: SVGSVGElement;
+	size: GraphicsSize;
 }) => {
-	const { graphics, repaint, svg } = options;
+	const { graphics, repaint, svg, size: { width, height } } = options;
 
+	// compute topic size
 	const topicMap: Map<string, TopicGraphics> = asTopicMap(graphics);
 	Array.from(svg.querySelectorAll(`g[data-role=${GraphicsRole.TOPIC}]`)).forEach(topicRect => {
 		const topicId = topicRect.getAttribute('data-topic-id')!;
@@ -83,7 +86,14 @@ const computeGraphics = (options: {
 		rect.frame = { ...rect.frame, ...computeTopicFrameSize(nameRect) };
 		rect.name = computeTopicNamePosition(rect.frame);
 	});
-	// TODO compute topic positions in palette
+	// compute topic positions in palette, random
+	Array.from(topicMap.values()).forEach(topicGraphics => {
+		let x = 30 + Math.random() * (width - topicGraphics.rect.frame.width - 60);
+		let y = 15 + Math.random() * (height - topicGraphics.rect.frame.height - 30);
+		topicGraphics.rect.coordinate = { x, y };
+	});
+
+	// compute topic relations
 	graphics.topicRelations.forEach(relation => {
 		const { relation: { sourceTopicId, targetTopicId } } = relation;
 		relation.points = computeTopicRelationPoints({ graphics, sourceTopicId, targetTopicId });
@@ -109,7 +119,12 @@ const SvgPalette = (props: { space: ConnectedConsoleSpace }) => {
 			const resizeObserver = new ResizeObserver(resize);
 			resizeObserver.observe(container);
 			resize();
-			computeGraphics({ graphics, repaint: forceUpdate, svg });
+			computeGraphics({
+				graphics,
+				repaint: forceUpdate,
+				svg,
+				size: { width: container.clientWidth, height: container.clientHeight }
+			});
 			return () => resizeObserver.disconnect();
 		}
 		// eslint-disable-next-line
@@ -172,6 +187,7 @@ const SvgPalette = (props: { space: ConnectedConsoleSpace }) => {
 			const relationGraphics = topicRelationMap.get(relation.relationId)!;
 			return <TopicRelationAnimation graphics={graphics} relation={relationGraphics} key={relation.relationId}/>;
 		})}
+		<TopicDetail space={space}/>
 	</Fragment>;
 };
 

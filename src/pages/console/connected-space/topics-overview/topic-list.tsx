@@ -19,13 +19,12 @@ const Container = styled.div`
 		writing-mode: vertical-lr;
 		padding: calc(var(--margin) / 2) 0;
 		font-family: var(--console-title-font-family);
-		transform: rotateZ(180deg);
 		user-select: none;
 		&:not(:last-child):after {
 			content: '';
 			display: block;
 			position: absolute;
-			top: 0;
+			bottom: 0;
 			left: 10%;
 			width: 80%;
 			height: 1px;

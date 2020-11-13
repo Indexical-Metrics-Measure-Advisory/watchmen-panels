@@ -41,10 +41,28 @@ export interface ConsoleMail extends ConsoleMessage {
 
 export type ConsoleMails = Array<ConsoleMail>;
 
+export enum ConsoleTopicFactorType {
+	SEQUENCE = 'sequence',
+	NUMBER = 'number',
+	TEXT = 'text',
+	DATETIME = 'datetime',
+	BOOLEAN = 'boolean',
+	ENUM = 'enum'
+}
+
+export interface ConsoleTopicFactor {
+	factorId: string;
+	name: string;
+	label: string;
+	type: ConsoleTopicFactorType;
+	enum?: string;
+}
+
 export interface ConsoleTopic {
 	topicId: string;
 	code: string;
 	name: string;
+	factors: Array<ConsoleTopicFactor>;
 }
 
 export enum ConsoleTopicRelationshipType {
