@@ -67,7 +67,8 @@ export const computeTopicRelationPoints = (options: {
 					drawn = `M${sourcePoints.top.x},${sourcePoints.top.y} Q${sourcePoints.top.x},${targetPoints.left.y} ${targetPoints.left.x},${targetPoints.left.y}`;
 					break;
 				default:
-				// vertical has overlap
+					// vertical has overlap
+					drawn = `M${sourcePoints.right.x},${sourcePoints.right.y} L${targetPoints.left.x},${targetPoints.left.y}`;
 			}
 			break;
 		case targetPoints.left.x - sourcePoints.right.x > 200:
@@ -103,7 +104,8 @@ export const computeTopicRelationPoints = (options: {
 					drawn = `M${sourcePoints.top.x},${sourcePoints.top.y} Q${sourcePoints.top.x},${targetPoints.right.y} ${targetPoints.right.x},${targetPoints.right.y}`;
 					break;
 				default:
-				// vertical has overlap
+					// vertical has overlap
+					drawn = `M${sourcePoints.left.x},${sourcePoints.left.y} L${targetPoints.right.x},${targetPoints.right.y}`;
 			}
 			break;
 		case sourcePoints.left.x - targetPoints.right.x > 200:
@@ -127,8 +129,51 @@ export const computeTopicRelationPoints = (options: {
 					drawn = `M${sourcePoints.left.x},${sourcePoints.left.y} L${targetPoints.right.x},${targetPoints.right.y}`;
 			}
 			break;
+		case targetPoints.top.y - sourcePoints.bottom.y <= 100 && targetPoints.top.y - sourcePoints.bottom.y >= 0:
+		case sourcePoints.top.y - targetPoints.bottom.y <= 100 && sourcePoints.top.y - targetPoints.bottom.y >= 0:
+			// target on top/bottom of source, has horizontal overlap and no vertical overlap, small distance
+			const controlX = Math.min(sourcePoints.left.x, targetPoints.left.x) - 150;
+			let useRightSide = false;
+			if (controlX <= 5) {
+				useRightSide = true;
+			}
+			if (useRightSide) {
+				drawn = [
+					`M${sourcePoints.right.x},${sourcePoints.right.y}`,
+					`Q${Math.min(sourcePoints.right.x, targetPoints.right.x) + 150},${(sourcePoints.right.y + targetPoints.right.y) / 2}`,
+					`${targetPoints.right.x},${targetPoints.right.y}`
+				].join(' ');
+			} else {
+				drawn = [
+					`M${sourcePoints.left.x},${sourcePoints.left.y}`,
+					`Q${controlX},${(sourcePoints.left.y + targetPoints.left.y) / 2}`,
+					`${targetPoints.left.x},${targetPoints.left.y}`
+				].join(' ');
+			}
+			break;
+		case targetPoints.top.y - sourcePoints.bottom.y > 100:
+		case sourcePoints.top.y - targetPoints.bottom.y > 100:
+			// target on top/bottom of source, has horizontal overlap and no vertical overlap, large distance
+			drawn = `M${sourcePoints.bottom.x},${sourcePoints.bottom.y} L${targetPoints.top.x},${targetPoints.top.y}`;
+			break;
+		case targetPoints.top.y >= sourcePoints.top.y:
+			// overlap anyway
+			drawn = [
+				`M${sourcePoints.top.x},${sourcePoints.top.y}`,
+				`C${sourcePoints.top.x - 300},${sourcePoints.top.y - 300}`,
+				`${targetPoints.bottom.x - 300},${targetPoints.bottom.y + 300}`,
+				`${targetPoints.bottom.x},${targetPoints.bottom.y}`
+			].join(' ');
+			break;
+		case targetPoints.top.y < sourcePoints.top.y:
+			drawn = [
+				`M${sourcePoints.bottom.x},${sourcePoints.bottom.y}`,
+				`C${sourcePoints.bottom.x + 300},${sourcePoints.bottom.y + 300}`,
+				`${targetPoints.top.x + 300},${targetPoints.top.y - 300}`,
+				`${targetPoints.top.x},${targetPoints.top.y}`
+			].join(' ');
+			break;
 	}
-	// console.log(drawn);
 	return { drawn };
 };
 

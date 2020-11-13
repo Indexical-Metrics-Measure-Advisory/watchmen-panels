@@ -33,6 +33,7 @@ export const TopicRelation = (props: {
 			}
 			relationGraphics.points = computeTopicRelationPoints({ graphics, sourceTopicId, targetTopicId });
 			forceUpdate();
+			palette.topicRelationTransformed(relationGraphics);
 		};
 		palette.addTopicMovedListener(repaint);
 		return () => palette.removeTopicMovedListener(repaint);

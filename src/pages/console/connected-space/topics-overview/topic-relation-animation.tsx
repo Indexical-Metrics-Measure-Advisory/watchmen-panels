@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { usePalette } from './palette-context';
-import {
-	Graphics,
-	TopicGraphics,
-	TopicRelationCurvePoints,
-	TopicRelationGraphics,
-	TopicSelectionGraphics
-} from './types';
+import { Graphics, TopicRelationCurvePoints, TopicRelationGraphics, TopicSelectionGraphics } from './types';
 
 const TopicRelationAnimationFrames = keyframes`
 	from {
@@ -43,36 +37,32 @@ export const TopicRelationAnimation = (props: {
 }) => {
 	const { graphics, relation: relationGraphics } = props;
 	const { relation } = relationGraphics;
-	const { sourceTopicId, targetTopicId } = relation;
 
 	const palette = usePalette();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ visible, setVisible ] = useState(false);
 	useEffect(() => {
 		const onSelectionChanged = ({ topicId, visible }: TopicSelectionGraphics) => {
 			// eslint-disable-next-line
-			if (!visible || (topicId != sourceTopicId && topicId != targetTopicId)) {
+			if (!visible || (topicId != relation.sourceTopicId && topicId != relation.targetTopicId)) {
 				setVisible(false);
 			} else {
 				setVisible(true);
 			}
 		};
-		const onTopicMove = ({ topic: { topicId } }: TopicGraphics) => {
+		const onTopicRelationTransformed = ({ relation: { relationId } }: TopicRelationGraphics) => {
 			// eslint-disable-next-line
-			if (topicId != sourceTopicId && topicId != targetTopicId) {
-				// irrelevant
-				setVisible(false);
-				return;
-			} else {
-				setVisible(true);
+			if (relationId == relation.relationId) {
+				forceUpdate();
 			}
 		};
 		palette.addTopicSelectionChangedListener(onSelectionChanged);
-		palette.addTopicMovedListener(onTopicMove);
+		palette.addTopicRelationTransformedListener(onTopicRelationTransformed);
 		return () => {
 			palette.removeTopicSelectionChangedListener(onSelectionChanged);
-			palette.removeTopicMovedListener(onTopicMove);
+			palette.removeTopicRelationTransformedListener(onTopicRelationTransformed);
 		};
-	}, [ palette, graphics, sourceTopicId, targetTopicId, setVisible ]);
+	}, [ palette, graphics, relation ]);
 
 	return <TopicRelationAnimationDot lattice={relationGraphics.points} visible={visible}/>;
 };
