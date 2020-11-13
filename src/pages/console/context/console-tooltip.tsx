@@ -3,13 +3,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-export interface TooltipRect {
-	x: number;
-	y: number;
-	width?: number;
-	height?: number;
-	caretLeft?: number;
-	center?: boolean;
+export enum TooltipAlignment {
+	LEFT = 'left',
+	RIGHT = 'right',
+	CENTER = 'center'
+}
+
+export interface ComputedTooltipRect {
+	align: TooltipAlignment;
+	maxWidth?: number;
+	offsetX?: number;
+	offsetY?: number;
+}
+
+export interface TooltipRect extends ComputedTooltipRect {
+	trigger: DOMRect;
 }
 
 export interface ConsoleTooltipContext {
@@ -26,16 +34,24 @@ const Context = React.createContext<ConsoleTooltipContext>({} as ConsoleTooltipC
 Context.displayName = 'ConsoleTooltipContext';
 
 
-const TooltipContainer = styled.div.attrs({
-	'data-widget': 'console-tooltip'
-})<{ x?: number; y?: number; width?: number; height?: number; caretLeft?: number; center?: boolean }>`
+const TooltipContainer = styled.div.attrs<{ rect?: TooltipRect }>(({ rect: { align, maxWidth, offsetY = 0, offsetX = 0, trigger } = {} }) => {
+	const { y = 0, x = 0, width = 0 } = trigger || {};
+	return {
+		'data-widget': 'console-tooltip',
+		style: {
+			maxWidth: maxWidth || 200,
+			bottom: `calc(100vh - ${y - offsetY}px)`,
+			left: align === TooltipAlignment.LEFT ? (x - offsetX) : (align === TooltipAlignment.CENTER ? (x + width / 2) : 'unset'),
+			right: align === TooltipAlignment.RIGHT ? `calc(100vw - ${x + width - offsetX}px)` : 'unset',
+			transform: `scale(0.91666667) ${align === TooltipAlignment.CENTER ? 'translateX(-50%)' : ''}`,
+			transformOrigin: align === TooltipAlignment.LEFT ? 'bottom left' : (align === TooltipAlignment.RIGHT ? 'bottom right' : 'bottom left')
+		}
+	};
+}) <{ rect?: TooltipRect }>`
 	display: flex;
 	position: fixed;
-	left: ${({ x }) => x != null ? `${x}px` : '-1000px'};
-	top: ${({ y }) => y != null ? `${y}px` : '-1000px'};
-	width: ${({ width }) => width != null ? `${width}px` : 'unset'};
-	height: ${({ height }) => height != null ? `${height}px` : 'unset'};
 	min-height: ${({ theme }) => theme.consoleTooltipMinHeight}px;
+	min-width: 120px;
 	align-items: center;
 	font-size: 12px;
 	font-weight: var(--font-bold);
@@ -47,21 +63,26 @@ const TooltipContainer = styled.div.attrs({
 	opacity: 0;
 	pointer-events: none;
 	user-select: none;
-	transform: scale(0.91666667) ${({ center }) => center ? 'translateX(-50%)' : ''};
-	transform-origin: bottom left;
 	transition: opacity 300ms ease-in-out;
 	z-index: 10000;
 	&[data-show=true] {
 		opacity: 1;
 	}
-	> svg:last-child {
-		display: block;
-		position: absolute;
-		color: var(--console-tooltip-bg-color);
-		font-size: 1.2em;
-		top: calc(100% - 6px);
-		left: ${({ caretLeft, center }) => center ? 'calc(50% - 4px)' : `${(caretLeft || 16)}px`};
-	}
+`;
+
+const Caret = styled(FontAwesomeIcon).attrs<{ rect?: TooltipRect }>(({ rect: { align, trigger: { width = 0 } = {} } = {} }) => {
+	return {
+		style: {
+			left: align === TooltipAlignment.LEFT ? 16 : (align === TooltipAlignment.CENTER ? 'calc(50% - 4px)' : 'unset'),
+			right: align === TooltipAlignment.RIGHT ? 16 : 'unset'
+		}
+	};
+})<{ rect?: TooltipRect }>`
+	display: block;
+	position: absolute;
+	color: var(--console-tooltip-bg-color);
+	font-size: 1.2em;
+	top: calc(100% - 6px);
 `;
 
 export const ConsoleTooltipContextProvider = (props: { children?: ((props: any) => React.ReactNode) | React.ReactNode }) => {
@@ -78,9 +99,9 @@ export const ConsoleTooltipContextProvider = (props: { children?: ((props: any) 
 	return <Context.Provider value={functions}>
 		{children}
 		<TooltipContainer data-show={content != null}
-		                  {...content?.rect}>
+		                  rect={content?.rect}>
 			{content?.tooltip}
-			<FontAwesomeIcon icon={faCaretDown}/>
+			<Caret icon={faCaretDown} rect={content?.rect}/>
 		</TooltipContainer>
 	</Context.Provider>;
 };
@@ -95,7 +116,7 @@ export const useTooltip = <T extends HTMLElement>(options: {
 	show: boolean,
 	ref: React.RefObject<T>,
 	tooltip?: string,
-	rect: (rect: DOMRect) => TooltipRect
+	rect: (rect: DOMRect) => ComputedTooltipRect
 }) => {
 	const { show, ref, tooltip, rect } = options;
 
@@ -113,14 +134,18 @@ export const useTooltip = <T extends HTMLElement>(options: {
 			return;
 		}
 
-		tooltipContext.show(tooltip, rect(ref.current.getBoundingClientRect()));
+		const trigger = ref.current.getBoundingClientRect();
+		tooltipContext.show(tooltip, { ...rect(trigger), trigger });
 	};
 
 	return {
 		context: tooltipContext,
 		mouseEnter: onMouseEnter,
 		mouseLeave: tooltipContext.hide,
-		show: (tooltip: string) => tooltipContext.show(tooltip, rect(ref.current!.getBoundingClientRect())),
+		show: (tooltip: string) => {
+			const trigger = ref.current!.getBoundingClientRect();
+			tooltipContext.show(tooltip, { ...rect(trigger), trigger });
+		},
 		hide: tooltipContext.hide
 	};
 };

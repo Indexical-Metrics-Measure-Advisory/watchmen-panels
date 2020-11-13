@@ -2,7 +2,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { useTooltip } from '../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../context/console-tooltip';
 
 const FavBtn = styled.div.attrs({
 	'data-widget': 'console-home-section-card-fav-btn'
@@ -45,11 +45,7 @@ export const FavoriteButton = (props: {
 		show: true,
 		tooltip: isFavorite ? 'Remove from Favorite' : 'Add into Favorite',
 		ref: buttonRef,
-		rect: ({ left, top }) => ({
-			x: left + 16,
-			y: top - 30,
-			center: true
-		})
+		rect: () => ({ align: TooltipAlignment.CENTER })
 	});
 	const onClick = (event: React.MouseEvent) => {
 		hide!();

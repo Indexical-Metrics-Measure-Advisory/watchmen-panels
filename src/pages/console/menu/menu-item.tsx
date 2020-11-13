@@ -2,7 +2,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { useTooltip } from '../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../context/console-tooltip';
 
 const MenuItemContainer = styled.div.attrs({
 	'data-widget': 'menu-item-container'
@@ -70,7 +70,7 @@ export const MenuItem = (props: {
 		show: showTooltip,
 		tooltip: label,
 		ref: containerRef,
-		rect: ({ left, top }) => ({ x: left + 8, y: top - 24 - (iconSize != null ? 4 : 0), caretLeft: 12 })
+		rect: () => ({ align: TooltipAlignment.LEFT, offsetX: -5 })
 	});
 
 	const onClicked = () => {

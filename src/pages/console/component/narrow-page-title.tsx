@@ -31,7 +31,6 @@ export const NarrowPageTitle = (props: {
 		<div>{title}</div>
 		{onSettingsClicked
 			? <LinkButton tooltip='Settings'
-			              width={26}
 			              center={true}
 			              ignoreHorizontalPadding={true}
 			              onClick={onSettingsClicked}>

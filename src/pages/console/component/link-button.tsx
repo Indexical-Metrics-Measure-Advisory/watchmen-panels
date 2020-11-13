@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { useTooltip } from '../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../context/console-tooltip';
 
 export const createLinkButtonBackgroundAnimation = ({ opacity = 0.2 }) => {
 	return `
@@ -44,25 +44,19 @@ const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 
 export const LinkButton = (props: {
 	tooltip?: string;
-	width?: number;
 	center?: boolean;
 	ignoreHorizontalPadding?: boolean;
 	onClick: () => void;
 	children: ((props: any) => React.ReactNode) | React.ReactNode
 }) => {
-	const { tooltip, width = 0, center = false, ignoreHorizontalPadding, onClick, children } = props;
+	const { tooltip, center = false, ignoreHorizontalPadding, onClick, children } = props;
 
 	const buttonRef = useRef<HTMLButtonElement>(null);
 	const { mouseEnter, mouseLeave } = useTooltip({
 		show: !!tooltip,
 		tooltip,
 		ref: buttonRef,
-		rect: ({ left, top }) => ({
-			x: width ? (width / 2 + left) : left,
-			y: top - 36,
-			caretLeft: width ? (width / 2 - 4) : 12,
-			center
-		})
+		rect: () => ({ align: center ? TooltipAlignment.CENTER : TooltipAlignment.LEFT, offsetY: 10 })
 	});
 
 	return <Button ignore-horizontal-padding={ignoreHorizontalPadding}

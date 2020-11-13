@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { BaseColors24 } from '../../../charts/color-theme';
-import { useTooltip } from '../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../context/console-tooltip';
 
 const User = styled.div<{ color: string, 'single-character': boolean }>`
 	display: flex;
@@ -39,7 +39,7 @@ export const UserAvatar = (props: { name: string, showTooltip?: boolean }) => {
 		show: showTooltip,
 		tooltip: name,
 		ref: containerRef,
-		rect: ({ left, top }) => ({ x: left + 15 * 0.9, y: top - 36, center: true })
+		rect: () => ({ align: TooltipAlignment.CENTER, offsetY: 10 })
 	});
 
 	let first = 'X';

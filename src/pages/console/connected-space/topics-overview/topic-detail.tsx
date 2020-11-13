@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConsoleSpace, ConsoleTopic, ConsoleTopicFactor } from '../../../../services/console/types';
 import { UserAvatar } from '../../component/user-avatar';
-import { useTooltip } from '../../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
 import { usePalette } from './palette-context';
 import { TopicSelectionGraphics } from './types';
 
@@ -189,11 +189,7 @@ const TopicFactor = (props: {
 		show: relations.length !== 0,
 		tooltip: asTooltip(),
 		ref: linkRef,
-		rect: ({ left, top }) => ({
-			x: left + 4,
-			y: top - 36,
-			center: true
-		})
+		rect: () => ({ align: TooltipAlignment.RIGHT, offsetX: -13, offsetY: 10 })
 	});
 
 	return <TopicFactoryRow>

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { createLinkButtonBackgroundAnimation } from '../../component/link-button';
-import { useTooltip } from '../../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
 
 const Read = styled.div`
 	display: flex;
@@ -31,7 +31,7 @@ export const ReadButton = (props: {
 	const { mouseEnter, mouseLeave } = useTooltip({
 		show: true,
 		tooltip,
-		rect: ({ left, top }) => ({ x: left + 11, y: top - 36, center: true }),
+		rect: () => ({ align: TooltipAlignment.CENTER, offsetY: 10 }),
 		ref: readRef
 	});
 	const onReadClicked = async () => {
