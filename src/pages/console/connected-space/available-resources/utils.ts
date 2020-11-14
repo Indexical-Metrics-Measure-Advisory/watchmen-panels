@@ -152,9 +152,12 @@ export const computeTopicRelationPoints = (options: {
 			}
 			break;
 		case targetPoints.top.y - sourcePoints.bottom.y > 100:
-		case sourcePoints.top.y - targetPoints.bottom.y > 100:
-			// target on top/bottom of source, has horizontal overlap and no vertical overlap, large distance
+			// target on top of source, has horizontal overlap and no vertical overlap, large distance
 			drawn = `M${sourcePoints.bottom.x},${sourcePoints.bottom.y} L${targetPoints.top.x},${targetPoints.top.y}`;
+			break;
+		case sourcePoints.top.y - targetPoints.bottom.y > 100:
+			// target on bottom of source, has horizontal overlap and no vertical overlap, large distance
+			drawn = `M${sourcePoints.top.x},${sourcePoints.top.y} L${targetPoints.bottom.x},${targetPoints.bottom.y}`;
 			break;
 		case targetPoints.top.y >= sourcePoints.top.y:
 			// overlap anyway
