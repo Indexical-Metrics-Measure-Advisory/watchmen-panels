@@ -47,7 +47,7 @@ const Container = styled.div`
 	}
 `;
 
-export const TopicList = (props: { space: ConnectedConsoleSpace }) => {
+export const ResourcesList = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
 
 	const { topics } = space;

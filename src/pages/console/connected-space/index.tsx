@@ -5,14 +5,14 @@ import { useHistory, useParams } from 'react-router-dom';
 import Path from '../../../common/path';
 import { ConsoleSpaceType } from '../../../services/console/types';
 import { useConsoleContext } from '../context/console-context';
+import { AvailableResources } from './available-resources';
 import { Body, Container, Header, Title } from './components';
 import { ListView } from './list-view';
 import { Tab, Tabs } from './tabs';
-import { TopicsOverview } from './topics-overview';
 
 enum ActiveTab {
 	LIST = 'list',
-	TOPICS = 'topics'
+	RESOURCES = 'resources'
 }
 
 export const ConnectedSpace = () => {
@@ -40,13 +40,13 @@ export const ConnectedSpace = () => {
 			<Tabs>
 				<Tab active={activeTab === ActiveTab.LIST} icon={faServer} label='List View'
 				     onClick={onTabClicked(ActiveTab.LIST)}/>
-				<Tab active={activeTab === ActiveTab.TOPICS} icon={faBezierCurve} label='Topics Overview'
-				     onClick={onTabClicked(ActiveTab.TOPICS)}/>
+				<Tab active={activeTab === ActiveTab.RESOURCES} icon={faBezierCurve} label='Available Resources'
+				     onClick={onTabClicked(ActiveTab.RESOURCES)}/>
 			</Tabs>
 		</Header>
 		<Body>
 			<ListView visible={activeTab === ActiveTab.LIST} space={space}/>
-			<TopicsOverview visible={activeTab === ActiveTab.TOPICS} space={space}/>
+			<AvailableResources visible={activeTab === ActiveTab.RESOURCES} space={space}/>
 		</Body>
 	</Container>;
 };

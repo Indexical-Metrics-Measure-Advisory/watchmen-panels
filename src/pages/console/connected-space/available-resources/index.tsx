@@ -2,25 +2,25 @@ import React from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import { Palette } from './palette';
-import { TopicList } from './topic-list';
+import { ResourcesList } from './resources-list';
 
 const Container = styled.div`
 	display: flex;
 	min-height: 100%;
 `;
 
-const SpaceTopicsContent = (props: {
+const AvailableResourcesContent = (props: {
 	space: ConnectedConsoleSpace;
 }) => {
 	const { space } = props;
 
 	return <Container>
 		<Palette space={space}/>
-		<TopicList space={space}/>
+		<ResourcesList space={space}/>
 	</Container>;
 };
 
-export const TopicsOverview = (props: {
+export const AvailableResources = (props: {
 	visible: boolean;
 	space: ConnectedConsoleSpace;
 }) => {
@@ -30,5 +30,5 @@ export const TopicsOverview = (props: {
 		return null;
 	}
 
-	return <SpaceTopicsContent {...rest}/>;
+	return <AvailableResourcesContent {...rest}/>;
 };
