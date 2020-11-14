@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
+import { ListBody } from './list-body';
 import { ListContextProvider } from './list-context';
 import { ListHeader } from './list-header';
 
-const Container = styled.div`
+const Container = styled.div.attrs({
+	'data-widget': 'console-list-view-container'
+})`
 	display: flex;
 	flex-direction: column;
 	min-height: 100%;
@@ -21,6 +24,7 @@ export const ListView = (props: { visible: boolean; space: ConnectedConsoleSpace
 	return <ListContextProvider>
 		<Container>
 			<ListHeader space={space}/>
+			<ListBody space={space}/>
 		</Container>
 	</ListContextProvider>;
 };

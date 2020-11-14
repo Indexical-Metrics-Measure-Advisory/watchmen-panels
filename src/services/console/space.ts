@@ -115,7 +115,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/10/31 14:23:07',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	}, {
 		spaceId: '1',
 		connectId: '2',
@@ -123,7 +125,75 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 15:14:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		subjects: [
+			{
+				subjectId: '1',
+				name: 'Premium Summary',
+				topicCount: 1,
+				graphicsCount: 2,
+				lastVisitTime: '2020/11/12 20:20:01',
+				createdAt: '2020/11/12 19:20:02'
+			},
+			{
+				subjectId: '2',
+				name: 'District Summary',
+				topicCount: 2,
+				graphicsCount: 1,
+				lastVisitTime: '2020/11/02 20:25:01',
+				createdAt: '2020/11/01 19:25:02'
+			}
+		],
+		groups: [
+			{
+				groupId: '1', name: 'All About Money', subjects: [
+					{
+						subjectId: '101',
+						name: 'Premium Summary',
+						topicCount: 1,
+						graphicsCount: 1,
+						lastVisitTime: '2020/11/12 20:25:01',
+						createdAt: '2020/11/12 19:25:02'
+					}
+				]
+			},
+			{
+				groupId: '2', name: 'All About Time', subjects: [
+					{
+						subjectId: '201',
+						name: 'Premium Summary',
+						topicCount: 2,
+						graphicsCount: 1,
+						lastVisitTime: '2020/11/12 20:25:01',
+						createdAt: '2020/11/12 19:25:02'
+					}
+				]
+			},
+			{
+				groupId: '3', name: 'All About Gender', subjects: [
+					{
+						subjectId: '301',
+						name: 'Premium Summary',
+						topicCount: 2,
+						graphicsCount: 1,
+						lastVisitTime: '2020/8/31 20:25:01',
+						createdAt: '2020/8/21 19:25:02'
+					}
+				]
+			},
+			{
+				groupId: '4', name: 'All About Age', subjects: [
+					{
+						subjectId: '401',
+						name: 'Premium Summary',
+						topicCount: 2,
+						graphicsCount: 1,
+						lastVisitTime: '2019/11/12 20:25:01',
+						createdAt: '2019/11/12 19:25:02'
+					}
+				]
+			}
+		]
 	}, {
 		spaceId: '1',
 		connectId: '3',
@@ -131,7 +201,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 14:13:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	}, {
 		spaceId: '1',
 		connectId: '4',
@@ -139,7 +211,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 13:12:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	}, {
 		spaceId: '1',
 		connectId: '5',
@@ -147,7 +221,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 12:11:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	}, {
 		spaceId: '1',
 		connectId: '6',
@@ -155,7 +231,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 11:10:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	}, {
 		spaceId: '1',
 		connectId: '7',
@@ -163,7 +241,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PRIVATE,
 		lastVisitTime: '2020/11/05 10:09:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	}, {
 		spaceId: '1',
 		connectId: '8',
@@ -171,7 +251,9 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		type: ConsoleSpaceType.PUBLIC,
 		lastVisitTime: '2020/11/05 09:08:11',
 		topics: demoTopics,
-		topicRelations: demoTopicRelations
+		topicRelations: demoTopicRelations,
+		groups: [],
+		subjects: []
 	} ];
 };
 

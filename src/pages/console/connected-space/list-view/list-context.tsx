@@ -2,16 +2,23 @@ import { EventEmitter } from 'events';
 import React, { useState } from 'react';
 import { ViewType } from './types';
 
-export enum ListEvent {
-	VIEW_TYPE_CHANGED = 'view-type-changed'
+export enum ListViewEvent {
+	COLLAPSED_CHANGED = 'collapsed-changed',
+	FILTER_TEXT_CHANGED = 'filter-text-changed'
 }
 
-export type ViewTypeChangedListener = (type: ViewType) => void;
+export type ToggleCollapsedListener = (collapsed: boolean) => void;
+export type FilterTextChangedListener = (text: string) => void;
 
 export interface ListContext {
-	viewTypeChanged: (type: ViewType) => void;
-	addViewTypeChangedListener: (listener: ViewTypeChangedListener) => void;
-	removeViewTypeChangedListener: (listener: ViewTypeChangedListener) => void;
+	viewType: ViewType;
+	setViewType: (viewType: ViewType) => void;
+	toggleCollapsed: (collapsed: boolean) => void;
+	addCollapsedChangedListener: (listener: ToggleCollapsedListener) => void;
+	removeCollapsedChangedListener: (listener: ToggleCollapsedListener) => void;
+	filterTextChanged: (text: string) => void;
+	addFilterTextChangedListener: (listener: FilterTextChangedListener) => void;
+	removeFilterTextChangedListener: (listener: FilterTextChangedListener) => void;
 }
 
 const Context = React.createContext<ListContext>({} as ListContext);
@@ -23,13 +30,20 @@ export const ListContextProvider = (props: {
 	const { children } = props;
 
 	const [ emitter ] = useState(new EventEmitter());
-	const [ context ] = useState<ListContext>({
-		viewTypeChanged: (type: ViewType) => emitter.emit(ListEvent.VIEW_TYPE_CHANGED, type),
-		addViewTypeChangedListener: (listener: ViewTypeChangedListener) => emitter.on(ListEvent.VIEW_TYPE_CHANGED, listener),
-		removeViewTypeChangedListener: (listener: ViewTypeChangedListener) => emitter.off(ListEvent.VIEW_TYPE_CHANGED, listener)
+	const [ viewType, setViewType ] = useState<ViewType>(ViewType.BY_GROUP);
+	const [ functions ] = useState({
+		toggleCollapsed: (collapsed: boolean) => emitter.emit(ListViewEvent.COLLAPSED_CHANGED, collapsed),
+		addCollapsedChangedListener: (listener: ToggleCollapsedListener) => emitter.on(ListViewEvent.COLLAPSED_CHANGED, listener),
+		removeCollapsedChangedListener: (listener: ToggleCollapsedListener) => emitter.off(ListViewEvent.COLLAPSED_CHANGED, listener),
+		filterTextChanged: (text: string) => emitter.emit(ListViewEvent.FILTER_TEXT_CHANGED, text),
+		addFilterTextChangedListener: (listener: FilterTextChangedListener) => emitter.on(ListViewEvent.FILTER_TEXT_CHANGED, listener),
+		removeFilterTextChangedListener: (listener: FilterTextChangedListener) => emitter.off(ListViewEvent.FILTER_TEXT_CHANGED, listener)
 	});
 
-	return <Context.Provider value={context}>{children}</Context.Provider>;
+	return <Context.Provider value={{
+		viewType, setViewType,
+		...functions
+	}}>{children}</Context.Provider>;
 };
 
 export const useListView = () => {

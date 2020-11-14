@@ -56,7 +56,7 @@ const ClearAll = styled.button`
 	&:hover {
 		color: var(--console-primary-color);
 		background-color: var(--invert-color);
-		box-shadow: var(--console-hover-shadow);;
+		box-shadow: var(--console-hover-shadow);
 	}
 	> svg {
 		margin-right: calc(var(--margin) / 4);

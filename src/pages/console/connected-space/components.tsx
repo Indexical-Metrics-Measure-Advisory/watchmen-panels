@@ -11,11 +11,14 @@ export const Header = styled.div.attrs({
 	'data-widget': 'console-space-header'
 })`
 	display: flex;
+	position: sticky;
+	top: 0;
 	align-items: center;
 	padding: 0 calc(var(--margin) / 2);
 	height: 51px;
 	background-color: var(--invert-color);
 	border-bottom: var(--border);
+	z-index: 1;
 `;
 export const Title = styled.div.attrs({
 	'data-widget': 'console-space-title'

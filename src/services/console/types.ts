@@ -98,10 +98,27 @@ export interface ConsoleSpace {
 	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
+export interface ConsoleSpaceSubject {
+	subjectId: string;
+	name: string;
+	topicCount: number,
+	graphicsCount: number,
+	lastVisitTime: string,
+	createdAt: string
+}
+
+export interface ConsoleSpaceGroup {
+	groupId: string;
+	name: string;
+	subjects: Array<ConsoleSpaceSubject>;
+}
+
 export interface ConnectedConsoleSpace extends ConsoleSpace {
 	connectId: string;
 	type: ConsoleSpaceType;
 	lastVisitTime: string;
+	groups: Array<ConsoleSpaceGroup>;
+	subjects: Array<ConsoleSpaceSubject>;
 }
 
 export interface PublicConsoleSpace extends ConnectedConsoleSpace {

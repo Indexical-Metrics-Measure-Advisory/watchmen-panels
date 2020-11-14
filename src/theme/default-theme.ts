@@ -77,6 +77,8 @@ const DefaultTheme = {
 	consolePrimaryColor: 'rgb(94,119,171)',
 	consoleDangerColor: 'rgb(246,52,27)',
 	consoleSuccessColor: 'rgb(33,157,79)',
+	consoleWarnColor: 'rgb(255,161,0)',
+	consoleInfoColor: 'rgb(138,53,193)',
 	consoleWaiveColor: 'rgb(191,191,191)',
 	consoleShadow: '0 0 11px 0 rgba(0, 0, 0, 0.06)',
 	consoleHoverShadow: '0 0 11px 0 rgba(0, 0, 0, 0.2)',
@@ -113,7 +115,21 @@ const DefaultTheme = {
 	consoleNotificationDotColor1: 'rgba(150,171,219,1)',
 	consoleNotificationDotColor2: 'rgba(191,243,204,1)',
 	consoleNotificationDotColor3: 'rgba(255,145,145,1)',
-	consoleNotificationDotColor4: 'rgba(255,204,150,1)'
+	consoleNotificationDotColor4: 'rgba(255,204,150,1)',
+
+	// console group
+	consoleGroupBgColor: 'rgba(181,188,194,0.2)',
+	consoleGroupQuoteColor: 'rgba(181,188,194)',
+	consoleGroupBgColorUngroup: 'rgba(119,177,127,0.2)',
+	consoleGroupQuoteColorUngroup: 'rgb(119,177,127)',
+	consoleGroupBgColorRecent: 'rgba(119,177,127,0.2)',
+	consoleGroupQuoteColorRecent: 'rgb(119,177,127)',
+	consoleGroupBgColorMonth: 'rgba(138,53,193,0.1)',
+	consoleGroupQuoteColorMonth: 'rgb(138,53,193)',
+	consoleGroupBgColorYear: 'rgba(255,161,0,0.1)',
+	consoleGroupQuoteColorYear: 'rgb(255,161,0)',
+	consoleGroupBgColorAncient: 'rgba(246,52,27, 0.1)',
+	consoleGroupQuoteColorAncient: 'rgb(246,52,27)'
 };
 
 export default DefaultTheme;

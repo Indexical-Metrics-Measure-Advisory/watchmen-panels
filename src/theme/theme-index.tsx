@@ -65,6 +65,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-primary-color: ${({ theme }) => theme.consolePrimaryColor};
 		--console-danger-color: ${({ theme }) => theme.consoleDangerColor};
 		--console-success-color: ${({ theme }) => theme.consoleSuccessColor};
+		--console-warn-color: ${({ theme }) => theme.consoleWarnColor};
+		--console-info-color: ${({ theme }) => theme.consoleInfoColor};
 		--console-waive-color: ${({ theme }) => theme.consoleWaiveColor};
 		--console-shadow: ${({ theme }) => theme.consoleShadow};
 		--console-hover-shadow: ${({ theme }) => theme.consoleHoverShadow};
@@ -96,6 +98,19 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-notification-dot-color-2: ${({ theme }) => theme.consoleNotificationDotColor2};
 		--console-notification-dot-color-3: ${({ theme }) => theme.consoleNotificationDotColor3};
 		--console-notification-dot-color-4: ${({ theme }) => theme.consoleNotificationDotColor4};
+		
+		--console-group-bg-color: ${({ theme }) => theme.consoleGroupBgColor};
+		--console-group-quote-color: ${({ theme }) => theme.consoleGroupQuoteColor};
+		--console-group-bg-color-ungroup: ${({ theme }) => theme.consoleGroupBgColorUngroup};
+		--console-group-quote-color-ungroup: ${({ theme }) => theme.consoleGroupQuoteColorUngroup};
+		--console-group-bg-color-recent: ${({ theme }) => theme.consoleGroupBgColorRecent};
+		--console-group-quote-color-recent: ${({ theme }) => theme.consoleGroupQuoteColorRecent};
+		--console-group-bg-color-month: ${({ theme }) => theme.consoleGroupBgColorMonth};
+		--console-group-quote-color-month: ${({ theme }) => theme.consoleGroupQuoteColorMonth};
+		--console-group-bg-color-year: ${({ theme }) => theme.consoleGroupBgColorYear};
+		--console-group-quote-color-year: ${({ theme }) => theme.consoleGroupQuoteColorYear};
+		--console-group-bg-color-ancient: ${({ theme }) => theme.consoleGroupBgColorAncient};
+		--console-group-quote-color-ancient: ${({ theme }) => theme.consoleGroupQuoteColorAncient};
 		
 		width: 100%;
 		
