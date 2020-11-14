@@ -34,13 +34,13 @@ const Context = React.createContext<ConsoleTooltipContext>({} as ConsoleTooltipC
 Context.displayName = 'ConsoleTooltipContext';
 
 
-const TooltipContainer = styled.div.attrs<{ rect?: TooltipRect }>(({ rect: { align, maxWidth, offsetY = 0, offsetX = 0, trigger } = {} }) => {
+const TooltipContainer = styled.div.attrs<{ rect?: TooltipRect, 'data-show': boolean }>(({ rect: { align, maxWidth, offsetY = 0, offsetX = 0, trigger } = {}, 'data-show': visible }) => {
 	const { y = 0, x = 0, width = 0 } = trigger || {};
 	return {
 		'data-widget': 'console-tooltip',
 		style: {
 			maxWidth: maxWidth || 200,
-			bottom: `calc(100vh - ${y - offsetY}px)`,
+			bottom: visible ? `calc(100vh - ${y - offsetY}px)` : -1000,
 			left: align === TooltipAlignment.LEFT ? (x - offsetX) : (align === TooltipAlignment.CENTER ? (x + width / 2) : 'unset'),
 			right: align === TooltipAlignment.RIGHT ? `calc(100vw - ${x + width - offsetX}px)` : 'unset',
 			transform: `scale(0.91666667) ${align === TooltipAlignment.CENTER ? 'translateX(-50%)' : ''}`,

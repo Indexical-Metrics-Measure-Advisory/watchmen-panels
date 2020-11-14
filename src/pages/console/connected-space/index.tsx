@@ -1,4 +1,4 @@
-import { faBars, faBezierCurve, faCompactDisc, faGlobe, faSearch, faServer } from '@fortawesome/free-solid-svg-icons';
+import { faBezierCurve, faCompactDisc, faGlobe, faServer } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -6,7 +6,6 @@ import Path from '../../../common/path';
 import { ConsoleSpaceType } from '../../../services/console/types';
 import { useConsoleContext } from '../context/console-context';
 import { Body, Container, Header, Title } from './components';
-import { HeaderButtons } from './header-buttons';
 import { ListView } from './list-view';
 import { Tab, Tabs } from './tabs';
 import { TopicsOverview } from './topics-overview';
@@ -31,15 +30,6 @@ export const ConnectedSpace = () => {
 	}
 
 	const onTabClicked = (active: ActiveTab) => () => (activeTab !== active) && setActiveTab(active);
-	const onSearchClicked = () => {
-	};
-	const onMenuClicked = () => {
-	};
-
-	const headerButtons = [
-		{ icon: faSearch, label: 'Search', onClick: onSearchClicked },
-		{ icon: faBars, label: 'Menu', onClick: onMenuClicked }
-	];
 
 	return <Container>
 		<Header>
@@ -53,7 +43,6 @@ export const ConnectedSpace = () => {
 				<Tab active={activeTab === ActiveTab.TOPICS} icon={faBezierCurve} label='Topics Overview'
 				     onClick={onTabClicked(ActiveTab.TOPICS)}/>
 			</Tabs>
-			<HeaderButtons buttons={headerButtons}/>
 		</Header>
 		<Body>
 			<ListView visible={activeTab === ActiveTab.LIST} space={space}/>

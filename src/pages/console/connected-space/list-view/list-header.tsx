@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import Input from '../../../component/input';
 import Radio from '../../../component/radio';
+import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
 import { useListView } from './list-context';
 import { ViewType } from './types';
 
@@ -10,8 +11,11 @@ const Container = styled.div.attrs({
 	'data-widget': 'console-list-view-header'
 })`
 	display: flex;
-	justify-content: space-between;
-	margin-bottom: var(--margin);
+	align-items: center;
+	margin-bottom: calc(var(--margin) / 2);
+	> div:first-child {
+		flex-grow: 1;
+	}
 `;
 const NameFilter = styled(Input)`
 	min-width: 200px;
@@ -126,7 +130,15 @@ export const ListHeader = (props: {
 }) => {
 	const { viewType, setViewType, toggleCollapsed } = useListView();
 
+	const filterRef = useRef<HTMLInputElement>(null);
 	const listView = useListView();
+	const { mouseEnter, mouseLeave } = useTooltip({
+		show: viewType !== ViewType.BY_VISIT,
+		ref: filterRef,
+		tooltip: 'Filter group by "g:name"',
+		rect: () => ({ align: TooltipAlignment.LEFT, offsetY: 8 })
+	});
+
 	const onFilterTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = (event.target.value || '').trim();
 
@@ -144,7 +156,10 @@ export const ListHeader = (props: {
 	};
 
 	return <Container>
-		<NameFilter placeholder='Filter by name...' onChange={onFilterTextChanged}/>
+		<div>
+			<NameFilter placeholder='Filter by name...' onChange={onFilterTextChanged}
+			            ref={filterRef} onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}/>
+		</div>
 		<HeaderButtons>
 			<div>
 				<ViewTypeRadio onClick={onViewTypeChanged(ViewType.BY_GROUP)}>

@@ -33,6 +33,12 @@ const GroupContainer = styled.div.attrs({
 			pointer-events: auto;
 		}
 	}
+	&[data-visible=false] {
+		margin-bottom: 0;
+		> div {
+			height: 0;
+		}
+	}
 `;
 const GroupHeader = styled.div.attrs({
 	'data-widget': 'console-list-view-group-header'
@@ -105,6 +111,7 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 	const { subjects } = group;
 
 	const listView = useListView();
+	const [ visible, setVisible ] = useState<boolean>(true);
 	const [ collapsed, setCollapsed ] = useState<boolean>(false);
 	const [ displaySubjects, setDisplaySubjects ] = useState<Array<ConsoleSpaceSubject>>(decorateDisplaySubjects(subjects, false));
 	useEffect(() => {
@@ -117,12 +124,22 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 		const onFilterTextChanged = (text: string) => {
 			const value = (text || '').trim();
 			if (!value) {
+				setVisible(true);
 				if (displaySubjects.length === subjects.length) {
 					return;
 				} else {
 					setDisplaySubjects(decorateDisplaySubjects(subjects, false));
 				}
+			} else if (value.startsWith('g:')) {
+				const name = value.substr(2);
+				if (!group.name.toUpperCase().includes(name.toUpperCase())) {
+					setVisible(false);
+				} else {
+					setVisible(true);
+				}
+				setDisplaySubjects(decorateDisplaySubjects(subjects, false));
 			} else {
+				setVisible(true);
 				setDisplaySubjects(decorateDisplaySubjects(subjects.filter(subject => subject.name.toUpperCase().includes(value.toUpperCase())), true));
 			}
 		};
@@ -132,11 +149,11 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 			listView.removeCollapsedChangedListener(onCollapsedChanged);
 			listView.removeFilterTextChangedListener(onFilterTextChanged);
 		};
-	}, [ listView, collapsed, displaySubjects, subjects ]);
+	}, [ listView, collapsed, displaySubjects, subjects, group.name ]);
 
 	const onToggleExpand = () => setCollapsed(!collapsed);
 
-	return <GroupContainer colorSuffix={colorSuffix}>
+	return <GroupContainer data-visible={visible} colorSuffix={colorSuffix}>
 		<GroupHeader>
 			<div>{group.name}</div>
 			<div data-widget='console-list-view-header-buttons'>
@@ -145,7 +162,7 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 				</LinkButton>
 			</div>
 		</GroupHeader>
-		<GroupBody visible={!collapsed} itemCount={displaySubjects.length}>
+		<GroupBody visible={!collapsed && visible} itemCount={displaySubjects.length}>
 			<GroupItemHeader>
 				<div/>
 				<div>Relevant Topics</div>
