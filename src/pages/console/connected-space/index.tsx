@@ -7,11 +7,12 @@ import { ConsoleSpaceType } from '../../../services/console/types';
 import { useConsoleContext } from '../context/console-context';
 import { Body, Container, Header, Title } from './components';
 import { HeaderButtons } from './header-buttons';
+import { ListView } from './list-view';
 import { Tab, Tabs } from './tabs';
 import { TopicsOverview } from './topics-overview';
 
 enum ActiveTab {
-	BOARD = 'board',
+	LIST = 'list',
 	TOPICS = 'topics'
 }
 
@@ -19,7 +20,7 @@ export const ConnectedSpace = () => {
 	const history = useHistory();
 	const { connectId } = useParams<{ connectId: string }>();
 	const { spaces: { connected: spaces } } = useConsoleContext();
-	const [ activeTab, setActiveTab ] = useState<ActiveTab>(ActiveTab.BOARD);
+	const [ activeTab, setActiveTab ] = useState<ActiveTab>(ActiveTab.LIST);
 
 	// eslint-disable-next-line
 	const space = spaces.find(space => space.connectId == connectId)!;
@@ -47,14 +48,15 @@ export const ConnectedSpace = () => {
 				<span>{space.name}</span>
 			</Title>
 			<Tabs>
-				<Tab active={activeTab === ActiveTab.BOARD} icon={faServer} label='Board'
-				     onClick={onTabClicked(ActiveTab.BOARD)}/>
+				<Tab active={activeTab === ActiveTab.LIST} icon={faServer} label='List View'
+				     onClick={onTabClicked(ActiveTab.LIST)}/>
 				<Tab active={activeTab === ActiveTab.TOPICS} icon={faBezierCurve} label='Topics Overview'
 				     onClick={onTabClicked(ActiveTab.TOPICS)}/>
 			</Tabs>
 			<HeaderButtons buttons={headerButtons}/>
 		</Header>
 		<Body>
+			<ListView visible={activeTab === ActiveTab.LIST} space={space}/>
 			<TopicsOverview visible={activeTab === ActiveTab.TOPICS} space={space}/>
 		</Body>
 	</Container>;

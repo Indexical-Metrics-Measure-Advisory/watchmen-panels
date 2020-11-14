@@ -25,7 +25,7 @@ export interface PaletteContext {
 }
 
 const Context = React.createContext<PaletteContext>({} as PaletteContext);
-Context.displayName = 'PaletteContext';
+Context.displayName = 'SpacePaletteContext';
 
 export const PaletteContextProvider = (props: {
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
