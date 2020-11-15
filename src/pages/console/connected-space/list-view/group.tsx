@@ -76,9 +76,12 @@ const GroupBody = styled.div.attrs<{ itemCount: number, visible: boolean }>(({ i
 	display: flex;
 	flex-direction: column;
 	transition: all 300ms ease-in-out;
+	margin: 0 calc(var(--margin) / -2);
 	overflow: hidden;
 `;
-const GroupItemHeader = styled.div`
+const GroupItemHeader = styled.div.attrs({
+	'data-widget': 'console-list-view-subject-header'
+})`
 	display: grid;
 	align-items: center;
 	grid-template-columns: 1fr 80px 80px 120px 120px;
@@ -86,6 +89,7 @@ const GroupItemHeader = styled.div`
 	font-family: var(--console-title-font-family);
 	font-size: 0.8em;
 	padding: 0 calc(var(--margin) / 2);
+	margin: 0 calc(var(--margin) / 2);
 	opacity: 0.5;
 	height: 1.6em;
 	margin-bottom: 0.3em;

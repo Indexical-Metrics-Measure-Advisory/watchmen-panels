@@ -3,25 +3,34 @@ import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { ConsoleSpaceSubject } from '../../../../services/console/types';
 
-const SubjectContainer = styled.div`
+const SubjectContainer = styled.div.attrs({
+	'data-widget': 'console-list-view-subject'
+})`
 	display: grid;
 	grid-template-columns: 1fr 80px 80px 120px 120px;
 	grid-column-gap: calc(var(--margin) / 3);
 	align-items: center;
 	height: 32px;
-	margin-bottom: 1px;
+	margin: 0 calc(var(--margin) / 2) 1px;
 	padding: 0 calc(var(--margin) / 2);
 	background-color: var(--bg-color);
 	
 	cursor: pointer;
-	&:first-child {
-		border-top-left-radius: calc(var(--border-radius) / 2);
-		border-top-right-radius: calc(var(--border-radius) / 2);
+	&:nth-child(2) {
+		border-top-left-radius: calc(var(--border-radius));
+		border-top-right-radius: calc(var(--border-radius));
 	}
 	&:last-child {
-		border-bottom-left-radius: calc(var(--border-radius) / 2);
-		border-bottom-right-radius: calc(var(--border-radius) / 2);
+		border-bottom-left-radius: calc(var(--border-radius));
+		border-bottom-right-radius: calc(var(--border-radius));
 		margin-bottom: 0;
+	}
+	&:hover {
+		box-shadow: var(--console-hover-shadow);
+		z-index: 1;
+		> div:first-child {
+			color: var(--console-primary-color);
+		}
 	}
 	> div {
 		white-space: nowrap;
