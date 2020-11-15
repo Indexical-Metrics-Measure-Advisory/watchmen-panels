@@ -1,6 +1,8 @@
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpace,
+	ConsoleSpaceGroup,
+	ConsoleSpaceSubject,
 	ConsoleSpaceType,
 	ConsoleTopic,
 	ConsoleTopicFactorType,
@@ -268,4 +270,12 @@ export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 		name: 'Claim Trend',
 		topics: demoTopics
 	} ];
+};
+
+export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {
+
+};
+
+export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
+
 };

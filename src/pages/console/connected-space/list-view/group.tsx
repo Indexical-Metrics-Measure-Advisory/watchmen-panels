@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { faCompressAlt, faExpandAlt, faFlagCheckered, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
+import { deleteGroup } from '../../../../services/console/space';
+import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
+import { Theme } from '../../../../theme/types';
+import Button, { ButtonType } from '../../../component/button';
+import { useDialog } from '../../../context/dialog';
+import { useNotImplemented } from '../../../context/not-implemented';
 import { LinkButton } from '../../component/link-button';
 import { useListView } from './list-context';
 import { Subject } from './subject';
@@ -32,6 +39,12 @@ const GroupContainer = styled.div.attrs({
 			opacity: 1;
 			pointer-events: auto;
 		}
+		div[data-widget='console-list-view-subject-header'] {
+			> div:first-child > button {
+				opacity: 1;
+				pointer-events: auto;
+			}
+		}
 	}
 	&[data-visible=false] {
 		margin-bottom: 0;
@@ -51,24 +64,30 @@ const GroupHeader = styled.div.attrs({
 		font-family: var(--console-title-font-family);
 	}
 	> div:last-child {
+		display: flex;
 		opacity: 0;
 		pointer-events: none;
 		transition: all 300ms ease-in-out;
 		> button {
 			font-size: 0.8em;
 			font-weight: var(--font-bold);
+			color: var(--console-primary-color);
 			opacity: 0.6;
 			&:hover {
 				opacity: 1;
 			}
+			> svg {
+				margin-right: calc(var(--margin) / 4);
+			}
 		}
 	}
 `;
-const GroupBody = styled.div.attrs<{ itemCount: number, visible: boolean }>(({ itemCount, visible }) => {
+const GroupBody = styled.div.attrs<{ itemCount: number, visible: boolean }>(({ theme, itemCount, visible }) => {
+	const t = theme as Theme;
 	return {
 		'data-widget': 'console-list-view-group-body',
 		style: {
-			height: visible ? `calc(1.9em + ${itemCount} * 33px - 1px)` : 0,
+			height: visible ? `calc(1.9em + ${itemCount} * ${t.consoleSubjectHeight + 1}px - 1px)` : 0,
 			marginBottom: visible ? 'calc(var(--margin) / 2)' : 0
 		}
 	};
@@ -84,22 +103,24 @@ const GroupItemHeader = styled.div.attrs({
 })`
 	display: grid;
 	align-items: center;
-	grid-template-columns: 1fr 80px 80px 120px 120px;
+	grid-template-columns: 1fr 80px 80px 120px 120px 32px;
 	grid-column-gap: calc(var(--margin) / 3);
 	font-family: var(--console-title-font-family);
 	font-size: 0.8em;
 	padding: 0 calc(var(--margin) / 2);
 	margin: 0 calc(var(--margin) / 2);
-	opacity: 0.5;
 	height: 1.6em;
-	margin-bottom: 0.3em;
+	margin-bottom: 0.5em;
+	> div:not(:first-child) {
+		opacity: 0.5;
+	}
 `;
 
 const decorateDisplaySubjects = (subjects: Array<ConsoleSpaceSubject>, filtering: boolean): Array<ConsoleSpaceSubject> => {
 	if (subjects.length === 0) {
 		return [ {
 			subjectId: '-1',
-			name: filtering ? 'No matched.' : 'No subject yet.',
+			name: filtering ? 'No matched.' : 'No subject.',
 			topicCount: 0,
 			graphicsCount: 0,
 			lastVisitTime: '',
@@ -109,15 +130,48 @@ const decorateDisplaySubjects = (subjects: Array<ConsoleSpaceSubject>, filtering
 		return subjects;
 	}
 };
+const computeDisplaySubjects = (options: {
+	filter: string;
+	subjects: Array<ConsoleSpaceSubject>;
+	group: ConsoleSpaceGroup;
+}): {
+	visible: boolean;
+	subjects: Array<ConsoleSpaceSubject>;
+} => {
+	const { filter, subjects, group } = options;
 
-export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string }) => {
-	const { group, colorSuffix } = props;
+	if (!filter) {
+		return { visible: true, subjects: decorateDisplaySubjects(subjects, false) };
+	} else if (filter.startsWith('g:')) {
+		const name = filter.substr(2);
+		if (!group.name.toUpperCase().includes(name.toUpperCase())) {
+			return { visible: false, subjects: decorateDisplaySubjects(subjects, false) };
+		} else {
+			return { visible: true, subjects: decorateDisplaySubjects(subjects, false) };
+		}
+	} else {
+		return {
+			visible: true,
+			subjects: decorateDisplaySubjects(subjects.filter(subject => subject.name.toUpperCase().includes(filter.toUpperCase())), true)
+		};
+	}
+};
+
+export const Group = (props: {
+	space: ConnectedConsoleSpace;
+	group: ConsoleSpaceGroup;
+	colorSuffix?: string;
+	removable?: boolean;
+	canAddSubject?: boolean;
+}) => {
+	const { space, group, colorSuffix, removable = true, canAddSubject = true } = props;
 	const { subjects } = group;
 
+	const notImpl = useNotImplemented();
+	const dialog = useDialog();
 	const listView = useListView();
-	const [ visible, setVisible ] = useState<boolean>(true);
 	const [ collapsed, setCollapsed ] = useState<boolean>(false);
-	const [ displaySubjects, setDisplaySubjects ] = useState<Array<ConsoleSpaceSubject>>(decorateDisplaySubjects(subjects, false));
+	const [ filter, setFilter ] = useState<string>('');
 	useEffect(() => {
 		const onCollapsedChanged = (newCollapsed: boolean) => {
 			if (newCollapsed === collapsed) {
@@ -127,25 +181,10 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 		};
 		const onFilterTextChanged = (text: string) => {
 			const value = (text || '').trim();
-			if (!value) {
-				setVisible(true);
-				if (displaySubjects.length === subjects.length) {
-					return;
-				} else {
-					setDisplaySubjects(decorateDisplaySubjects(subjects, false));
-				}
-			} else if (value.startsWith('g:')) {
-				const name = value.substr(2);
-				if (!group.name.toUpperCase().includes(name.toUpperCase())) {
-					setVisible(false);
-				} else {
-					setVisible(true);
-				}
-				setDisplaySubjects(decorateDisplaySubjects(subjects, false));
-			} else {
-				setVisible(true);
-				setDisplaySubjects(decorateDisplaySubjects(subjects.filter(subject => subject.name.toUpperCase().includes(value.toUpperCase())), true));
+			if (value === filter) {
+				return;
 			}
+			setFilter(value);
 		};
 		listView.addCollapsedChangedListener(onCollapsedChanged);
 		listView.addFilterTextChangedListener(onFilterTextChanged);
@@ -153,15 +192,60 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 			listView.removeCollapsedChangedListener(onCollapsedChanged);
 			listView.removeFilterTextChangedListener(onFilterTextChanged);
 		};
-	}, [ listView, collapsed, displaySubjects, subjects, group.name ]);
+	}, [ listView, collapsed, filter ]);
 
 	const onToggleExpand = () => setCollapsed(!collapsed);
+	const onAddSubjectClicked = () => notImpl.show();
+	const onDeleteGroupConfirmClicked = async () => {
+		try {
+			await deleteGroup(group);
+		} catch (e) {
+			console.groupCollapsed(`%cError on delete group.`, 'color:rgb(251,71,71)');
+			console.error('Space: ', space);
+			console.error('Group: ', group);
+			console.error(e);
+			console.groupEnd();
+		}
+		const index = space.groups.findIndex(exists => exists === group);
+		space.groups.splice(index, 1);
+		listView.groupDeleted({ space, group });
+		dialog.hide();
+	};
+	const onDeleteGroupClicked = () => {
+		dialog.show(
+			<div data-widget='dialog-console-delete'>
+				<span>Are you sure to delete group?</span>
+				<span data-widget='dialog-console-group'>{space.name} / {group.name}</span>
+			</div>,
+			<Fragment>
+				<div style={{ flexGrow: 1 }}/>
+				<Button inkType={ButtonType.PRIMARY} onClick={onDeleteGroupConfirmClicked}>Yes</Button>
+				<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
+			</Fragment>
+		);
+	};
+
+	const { visible, subjects: displaySubjects } = computeDisplaySubjects({ filter, subjects, group });
 
 	return <GroupContainer data-visible={visible} colorSuffix={colorSuffix}>
 		<GroupHeader>
 			<div>{group.name}</div>
 			<div data-widget='console-list-view-header-buttons'>
+				{canAddSubject
+					? <LinkButton onClick={onAddSubjectClicked}>
+						<FontAwesomeIcon icon={faFlagCheckered}/>
+						<span>Add Subject</span>
+					</LinkButton>
+					: null}
+				{removable
+					? <LinkButton onClick={onDeleteGroupClicked}>
+						<FontAwesomeIcon icon={faTrashAlt}/>
+						<span>Delete Group</span>
+					</LinkButton>
+					: null
+				}
 				<LinkButton onClick={onToggleExpand}>
+					<FontAwesomeIcon icon={collapsed ? faExpandAlt : faCompressAlt}/>
 					{collapsed ? 'Expand' : 'Collapse'}
 				</LinkButton>
 			</div>
@@ -175,7 +259,7 @@ export const Group = (props: { group: ConsoleSpaceGroup, colorSuffix?: string })
 				<div>Created At</div>
 			</GroupItemHeader>
 			{displaySubjects.map(subject => {
-				return <Subject subject={subject} key={subject.subjectId}/>;
+				return <Subject space={space} group={group} subject={subject} key={subject.subjectId}/>;
 			})}
 		</GroupBody>
 	</GroupContainer>;

@@ -18,7 +18,7 @@ export const Header = styled.div.attrs({
 	height: 51px;
 	background-color: var(--invert-color);
 	border-bottom: var(--border);
-	z-index: 1;
+	z-index: 2;
 `;
 export const Title = styled.div.attrs({
 	'data-widget': 'console-space-title'

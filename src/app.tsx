@@ -6,6 +6,7 @@ import WeekOfYear from 'dayjs/plugin/weekOfYear';
 import React from 'react';
 import { Pages } from './pages';
 import { AlertProvider } from './pages/context/alert';
+import { DialogProvider } from './pages/context/dialog';
 import { NotImplementedProvider } from './pages/context/not-implemented';
 import { ResponsiveProvider } from './pages/context/responsive';
 import { ThemeContextProvider } from './theme/theme-context';
@@ -21,7 +22,9 @@ const app = () => {
 		<ResponsiveProvider>
 			<AlertProvider>
 				<NotImplementedProvider>
-					<Pages/>
+					<DialogProvider>
+						<Pages/>
+					</DialogProvider>
 				</NotImplementedProvider>
 			</AlertProvider>
 		</ResponsiveProvider>

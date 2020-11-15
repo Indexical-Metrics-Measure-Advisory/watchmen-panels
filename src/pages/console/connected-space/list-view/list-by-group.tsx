@@ -14,7 +14,8 @@ const Container = styled.div.attrs({
 `;
 
 export const ListByGroup = (props: { space: ConnectedConsoleSpace }) => {
-	const { space: { subjects, groups } } = props;
+	const { space } = props;
+	const { subjects, groups } = space;
 
 	const { viewType } = useListView();
 
@@ -28,9 +29,9 @@ export const ListByGroup = (props: { space: ConnectedConsoleSpace }) => {
 	}
 
 	return <Container data-visible={viewType === ViewType.BY_GROUP}>
-		{ungroup ? <Group group={ungroup} colorSuffix='ungroup'/> : null}
+		{ungroup ? <Group space={space} group={ungroup} colorSuffix='ungroup' removable={false}/> : null}
 		{groups.map(group => {
-			return <Group group={group} key={group.groupId}/>;
+			return <Group space={space} group={group} key={group.groupId}/>;
 		})}
 	</Container>;
 };

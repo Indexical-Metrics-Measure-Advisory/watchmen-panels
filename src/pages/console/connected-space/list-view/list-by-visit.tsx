@@ -23,7 +23,8 @@ const FromGroup = styled.span`
 `;
 
 export const ListByVisit = (props: { space: ConnectedConsoleSpace }) => {
-	const { space: { subjects, groups } } = props;
+	const { space } = props;
+	const { subjects, groups } = space;
 
 	const { viewType } = useListView();
 
@@ -62,7 +63,9 @@ export const ListByVisit = (props: { space: ConnectedConsoleSpace }) => {
 
 	return <Container data-visible={viewType === ViewType.BY_VISIT}>
 		{timeGroups.map(group => {
-			return <Group group={group} colorSuffix={group.colorSuffix} key={group.groupId}/>;
+			return <Group space={space} group={group}
+			              colorSuffix={group.colorSuffix} removable={false} canAddSubject={false}
+			              key={group.groupId}/>;
 		})}
 	</Container>;
 };

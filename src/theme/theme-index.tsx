@@ -112,6 +112,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-group-bg-color-ancient: ${({ theme }) => theme.consoleGroupBgColorAncient};
 		--console-group-quote-color-ancient: ${({ theme }) => theme.consoleGroupQuoteColorAncient};
 		
+		--console-subject-height: ${({ theme }) => theme.consoleSubjectHeight}px;
+		
 		width: 100%;
 		
 		//&::-webkit-scrollbar {
@@ -254,6 +256,18 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	
 	code {
 	    font-family: var(--code-font-family);
+	}
+	
+	div[data-widget='dialog-console-delete'] {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.8em;
+    	margin-bottom: var(--margin);
+	}
+	span[data-widget='dialog-console-group'] {
+		font-family: var(--console-title-font-family);
+		font-weight: var(--font-bold);
+		color: var(--console-danger-color);
 	}
 `;
 

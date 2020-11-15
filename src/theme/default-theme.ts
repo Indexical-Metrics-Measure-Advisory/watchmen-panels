@@ -129,7 +129,10 @@ const DefaultTheme = {
 	consoleGroupBgColorYear: 'rgba(255,161,0,0.1)',
 	consoleGroupQuoteColorYear: 'rgb(255,161,0)',
 	consoleGroupBgColorAncient: 'rgba(246,52,27, 0.1)',
-	consoleGroupQuoteColorAncient: 'rgb(246,52,27)'
+	consoleGroupQuoteColorAncient: 'rgb(246,52,27)',
+
+	// console subject
+	consoleSubjectHeight: 40
 };
 
 export default DefaultTheme;
