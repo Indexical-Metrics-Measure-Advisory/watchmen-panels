@@ -133,7 +133,7 @@ export const ListHeader = (props: {
 	const filterRef = useRef<HTMLInputElement>(null);
 	const listView = useListView();
 	const { mouseEnter, mouseLeave } = useTooltip({
-		show: viewType !== ViewType.BY_VISIT,
+		show: true,
 		ref: filterRef,
 		tooltip: 'Filter group by "g:name"',
 		rect: () => ({ align: TooltipAlignment.LEFT, offsetY: 8 })

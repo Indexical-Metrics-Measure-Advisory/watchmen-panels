@@ -1,6 +1,6 @@
 import { faCompressAlt, faExpandAlt, faFlagCheckered, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { deleteGroup } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
@@ -170,8 +170,8 @@ export const Group = (props: {
 	const notImpl = useNotImplemented();
 	const dialog = useDialog();
 	const listView = useListView();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ collapsed, setCollapsed ] = useState<boolean>(false);
-	const [ filter, setFilter ] = useState<string>('');
 	useEffect(() => {
 		const onCollapsedChanged = (newCollapsed: boolean) => {
 			if (newCollapsed === collapsed) {
@@ -179,20 +179,14 @@ export const Group = (props: {
 			}
 			setCollapsed(newCollapsed);
 		};
-		const onFilterTextChanged = (text: string) => {
-			const value = (text || '').trim();
-			if (value === filter) {
-				return;
-			}
-			setFilter(value);
-		};
+		const onFilterTextChanged = () => forceUpdate();
 		listView.addCollapsedChangedListener(onCollapsedChanged);
 		listView.addFilterTextChangedListener(onFilterTextChanged);
 		return () => {
 			listView.removeCollapsedChangedListener(onCollapsedChanged);
 			listView.removeFilterTextChangedListener(onFilterTextChanged);
 		};
-	}, [ listView, collapsed, filter ]);
+	}, [ listView, collapsed ]);
 
 	const onToggleExpand = () => setCollapsed(!collapsed);
 	const onAddSubjectClicked = () => notImpl.show();
@@ -225,7 +219,11 @@ export const Group = (props: {
 		);
 	};
 
-	const { visible, subjects: displaySubjects } = computeDisplaySubjects({ filter, subjects, group });
+	const { visible, subjects: displaySubjects } = computeDisplaySubjects({
+		filter: listView.store.filter,
+		subjects,
+		group
+	});
 
 	return <GroupContainer data-visible={visible} colorSuffix={colorSuffix}>
 		<GroupHeader>
