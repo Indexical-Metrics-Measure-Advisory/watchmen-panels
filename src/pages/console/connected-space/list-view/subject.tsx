@@ -75,6 +75,18 @@ const SubjectContainer = styled.div.attrs({
 	}
 `;
 
+const indexOf = (subject: ConsoleSpaceSubject, subjects: Array<ConsoleSpaceSubject>): number => {
+	// eslint-disable-next-line
+	return subjects.findIndex(s => s.subjectId == subject.subjectId);
+};
+const findParentGroup = (subject: ConsoleSpaceSubject, space: ConnectedConsoleSpace): ConsoleSpaceGroup | undefined => {
+	if (indexOf(subject, space.subjects) !== -1) {
+		return void 0;
+	} else {
+		return space.groups.find(group => indexOf(subject, group.subjects) !== -1);
+	}
+};
+
 export const Subject = (props: {
 	space: ConnectedConsoleSpace;
 	group: ConsoleSpaceGroup;
@@ -115,26 +127,20 @@ export const Subject = (props: {
 			console.groupEnd();
 		}
 		// display group is not the really parent group
-		let parentGroup;
-		const index = space.subjects.findIndex(exists => exists === subject);
+		let parentGroup: ConsoleSpaceGroup | undefined;
+		const index = indexOf(subject, space.subjects);
 		if (index !== -1) {
 			space.subjects.splice(index, 1);
 		} else {
-			const [ parent, index ] = space.groups.map(group => {
-				const index = group.subjects.findIndex(exists => exists === subject);
-				if (index !== -1) {
-					return [ group, index ];
-				} else {
-					return null;
-				}
-			}).filter(x => x != null)[0];
-			(parent as ConsoleSpaceGroup).subjects.splice(index as number, 1);
+			parentGroup = findParentGroup(subject, space)!;
+			const index = indexOf(subject, parentGroup.subjects);
+			parentGroup.subjects.splice(index as number, 1);
 		}
 		listView.subjectDeleted({ space, group: parentGroup, subject });
 		dialog.hide();
 	};
 	const onDeleteClicked = async () => {
-		const parentGroup = space.groups.find(group => group.subjects.includes(subject));
+		const parentGroup = findParentGroup(subject, space);
 		const label = parentGroup ? `${space.name} / ${parentGroup.name} / ${subject.name}` : `${space.name} / ${subject.name}`;
 		dialog.show(
 			<div data-widget='dialog-console-delete'>
