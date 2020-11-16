@@ -10,7 +10,7 @@ export const GroupView = (props: {
 	space: ConnectedConsoleSpace;
 	visible: boolean;
 }) => {
-	const { space, visible } = props;
+	const { visible } = props;
 
 	if (!visible) {
 		return null;

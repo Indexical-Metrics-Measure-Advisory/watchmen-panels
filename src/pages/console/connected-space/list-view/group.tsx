@@ -14,7 +14,6 @@ import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '.
 import { Theme } from '../../../../theme/types';
 import Button, { ButtonType } from '../../../component/button';
 import { useDialog } from '../../../context/dialog';
-import { useNotImplemented } from '../../../context/not-implemented';
 import { LinkButton } from '../../component/link-button';
 import { useSpaceContext } from '../space-context';
 import { useListView } from './list-context';
@@ -198,7 +197,6 @@ export const Group = (props: {
 	const { space, group, colorSuffix, openable = true, removable = true, canAddSubject = true } = props;
 	const { subjects } = group;
 
-	const notImpl = useNotImplemented();
 	const dialog = useDialog();
 	const { openGroupIfCan, closeGroupIfCan, openSubjectIfCan } = useSpaceContext();
 	const listView = useListView();
