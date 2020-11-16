@@ -1,6 +1,7 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { ForwardedRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
 export const Tabs = styled.div`
@@ -31,7 +32,7 @@ const TabContainer = styled.div<{ active: boolean }>`
 			opacity: 1;
 		}
 	}
-	> svg {
+	> svg:first-child {
 		margin-right: calc(var(--margin) / 4);
 		opacity: ${({ active }) => active ? 1 : 0.6};
 		transition: all 300ms ease-in-out;
@@ -39,6 +40,11 @@ const TabContainer = styled.div<{ active: boolean }>`
 	> span {
 		opacity: ${({ active }) => active ? 1 : 0.6};
 		margin-top: -1px;
+		transition: all 300ms ease-in-out;
+	}
+	> svg:nth-child(3) {
+		width: 24px;
+		opacity: ${({ active }) => active ? 1 : 0.6};
 		transition: all 300ms ease-in-out;
 	}
 	> div:nth-last-child(2),
@@ -81,18 +87,22 @@ const TabContainer = styled.div<{ active: boolean }>`
 	}
 `;
 
-export const Tab = (props: {
+export const Tab = forwardRef((props: {
 	active: boolean;
 	icon: IconProp;
 	label: string;
-	onClick: () => void
-}) => {
-	const { active, icon, label, onClick } = props;
+	moreClick?: (event: React.MouseEvent) => void;
+	more?: ((props: any) => React.ReactNode) | React.ReactNode;
+	onClick: () => void;
+}, ref: ForwardedRef<HTMLDivElement>) => {
+	const { active, icon, label, moreClick, more, onClick } = props;
 
-	return <TabContainer active={active} onClick={onClick}>
+	return <TabContainer active={active} onClick={onClick} ref={ref}>
 		<FontAwesomeIcon icon={icon}/>
 		<span>{label}</span>
+		{moreClick ? <FontAwesomeIcon icon={faCaretDown} onClick={moreClick}/> : null}
+		{more}
 		<div/>
 		<div/>
 	</TabContainer>;
-};
+});

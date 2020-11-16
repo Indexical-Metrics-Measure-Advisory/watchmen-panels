@@ -10,7 +10,14 @@ export enum SpaceEvent {
 export type ActiveGroups = Array<ConsoleSpaceGroup>;
 export type ActiveSubjects = Array<ConsoleSpaceSubject>;
 
+export interface SpaceContextStore {
+	activeGroupId?: string;
+	activeSubjectId?: string;
+}
+
 export interface SpaceContext {
+	store: SpaceContextStore;
+
 	isGroupOpened: (group: ConsoleSpaceGroup) => boolean;
 	openGroupIfCan: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
 	closeGroupIfCan: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
@@ -30,11 +37,13 @@ export const SpaceContextProvider = (props: {
 
 	const location = useLocation();
 	const history = useHistory();
+	// eslint-disable-next-line
 	const [ emitter ] = useState(new EventEmitter());
+	// eslint-disable-next-line
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ activeGroups ] = useState<ActiveGroups>([]);
 	const [ activeSubjects ] = useState<ActiveSubjects>([]);
-	const [ functions ] = useState({});
+	const [ store ] = useState<SpaceContextStore>({} as SpaceContextStore);
 
 	// eslint-disable-next-line
 	const isGroupOpened = (group: ConsoleSpaceGroup) => activeGroups.some(g => g.groupId == group.groupId);
@@ -46,6 +55,7 @@ export const SpaceContextProvider = (props: {
 			// not opened
 			activeGroups.push(group);
 		}
+		store.activeGroupId = group.groupId;
 		history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_GROUP, space.connectId, group.groupId));
 	};
 	const closeGroupIfCan = (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => {
@@ -58,14 +68,18 @@ export const SpaceContextProvider = (props: {
 			// eslint-disable-next-line
 			if (match && match.params.groupId == group.groupId) {
 				// current opened, switch to another tab
-				if (index === 0) {
+				if (activeGroups.length === 0) {
+					// no more group opened
+					delete store.activeGroupId;
 					history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE_OVERALL, space.connectId));
-				} else {
+				} else if (index !== 0) {
+					// not first one, use previous one
+					store.activeGroupId = activeGroups[index - 1].groupId;
 					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_GROUP, space.connectId, activeGroups[index - 1].groupId));
+				} else {
+					store.activeGroupId = activeGroups[0].groupId;
+					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_GROUP, space.connectId, activeGroups[0].groupId));
 				}
-			} else {
-				// current not opened, force update to render tabs header
-				forceUpdate();
 			}
 		}
 	};
@@ -80,6 +94,7 @@ export const SpaceContextProvider = (props: {
 			// not opened
 			activeSubjects.push(subject);
 		}
+		store.activeSubjectId = subject.subjectId;
 		history.push(toSpaceSubject(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, subject.subjectId));
 	};
 	const closeSubjectIfCan = (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => {
@@ -92,23 +107,27 @@ export const SpaceContextProvider = (props: {
 			// eslint-disable-next-line
 			if (match && match.params.subjectId == subject.subjectId) {
 				// current opened, switch to another tab
-				if (index === 0) {
+				if (activeSubjects.length === 0) {
+					// no more subject opened
+					delete store.activeSubjectId;
 					history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE_OVERALL, space.connectId));
-				} else {
+				} else if (index !== 0) {
+					// not first one, use previous one
+					store.activeSubjectId = activeSubjects[index - 1].subjectId;
 					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[index - 1].subjectId));
+				} else {
+					store.activeSubjectId = activeSubjects[0].subjectId;
+					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[0].subjectId));
 				}
-			} else {
-				// current not opened, force update to render tabs header
-				forceUpdate();
 			}
 		}
 	};
 
 	return <Context.Provider value={{
-		isGroupOpened, openGroupIfCan, closeGroupIfCan,
-		isSubjectOpened, openSubjectIfCan, closeSubjectIfCan,
+		store,
 
-		...functions
+		isGroupOpened, openGroupIfCan, closeGroupIfCan,
+		isSubjectOpened, openSubjectIfCan, closeSubjectIfCan
 	}}>{children}</Context.Provider>;
 };
 

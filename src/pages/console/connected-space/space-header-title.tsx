@@ -1,18 +1,12 @@
 import { faCaretDown, faCompactDisc, faCube, faGlobe, faPoll } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { notInMe } from '../../../common/utils';
 import { createGroup, createSubject } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
+import { hideMenu, Menu, MenuItem, MenuState, showMenu, useMenu } from './components';
 import { useSpaceContext } from './space-context';
-
-interface MenuState {
-	left: number;
-	top: number,
-	visible: boolean
-}
 
 const Title = styled.div.attrs({
 	'data-widget': 'console-space-title'
@@ -43,49 +37,6 @@ const Title = styled.div.attrs({
 		}
 	}
 `;
-const Menu = styled.div.attrs<{ left: number, top: number, visible: boolean }>(({ left, top, visible }) => {
-	return {
-		style: {
-			left,
-			top,
-			opacity: visible ? 1 : 0,
-			pointerEvents: visible ? 'auto' : 'none'
-		}
-	};
-})<{ left: number, top: number, visible: boolean }>`
-	display: flex;
-	flex-direction: column;
-	position: fixed;
-	font-family: var(--font-family);
-	width: 306px;
-	background-color: var(--invert-color);
-	border-radius: var(--border-radius);
-	border: var(--border);
-	box-shadow: var(--console-hover-shadow);
-	transition: all 300ms ease-in-out;
-	overflow: hidden;
-	z-index: 1000;
-`;
-const MenuItem = styled.div`
-	display: flex;
-	align-items: center;
-	padding: 0 calc(var(--margin) / 2);
-	height: 32px;
-	transition: all 300ms ease-in-out;
-	&:hover {
-		z-index: 1;
-		color: var(--console-primary-color);
-	}
-	> svg {
-		margin-right: calc(var(--margin) / 2);
-	}
-`;
-
-const getPosition = (div: HTMLDivElement) => div.getBoundingClientRect();
-const hideMenu = (containerRef: React.RefObject<HTMLDivElement>, stateChangeTo: React.Dispatch<React.SetStateAction<MenuState>>) => {
-	const { top, left, height } = getPosition(containerRef.current!);
-	stateChangeTo({ visible: false, top: top + height + 30, left });
-};
 
 export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
@@ -97,43 +48,11 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		top: 0,
 		visible: false
 	});
-	useEffect(() => {
-		const { top, left, height } = getPosition(containerRef.current!);
-		setMenuShown({ visible: false, top: top + height + 30, left });
-	}, []);
-	useEffect(() => {
-		if (!menuShown.visible) {
-			return;
-		}
-		const hide = (event: Event) => {
-			if (notInMe(containerRef.current!, event.target)) {
-				hideMenu(containerRef, setMenuShown);
-			}
-		};
-		window.addEventListener('scroll', hide, true);
-		window.addEventListener('click', hide, true);
-		window.addEventListener('focus', hide, true);
-		return () => {
-			window.removeEventListener('scroll', hide, true);
-			window.removeEventListener('click', hide, true);
-			window.removeEventListener('focus', hide, true);
-		};
-	}, [ menuShown.visible ]);
+	useMenu({ containerRef: containerRef, state: menuShown, changeState: setMenuShown, offsetY: 6 });
 
-	const onTitleClicked = () => {
-		if (menuShown.visible) {
-			return;
-		}
-		const pos = getPosition(containerRef.current!);
-		const tobe = !menuShown.visible;
-		setMenuShown({
-			visible: tobe,
-			left: pos.left,
-			top: pos.top + pos.height + (tobe ? 0 : 30)
-		});
-	};
+	const onTitleClicked = () => showMenu({ containerRef, state: menuShown, changeState: setMenuShown, offsetY: 6 });
 	const onAddGroupClicked = async () => {
-		hideMenu(containerRef, setMenuShown);
+		hideMenu({ containerRef, changeState: setMenuShown, offsetY: 6 });
 		const newGroup = {
 			// fake id
 			groupId: '',
@@ -145,7 +64,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		openGroupIfCan({ space, group: newGroup });
 	};
 	const onAddSubjectClicked = async () => {
-		hideMenu(containerRef, setMenuShown);
+		hideMenu({ containerRef, changeState: setMenuShown, offsetY: 6 });
 		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
 		const newSubject = {
 			subjectId: '',
@@ -164,7 +83,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		<FontAwesomeIcon icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}/>
 		<span>{space.name}</span>
 		<FontAwesomeIcon icon={faCaretDown} data-menu-shown={menuShown.visible}/>
-		<Menu {...menuShown}>
+		<Menu {...menuShown} itemCount={2}>
 			<MenuItem onClick={onAddGroupClicked}>
 				<FontAwesomeIcon icon={faCube}/>
 				<span>Add Group</span>
