@@ -1,4 +1,10 @@
-import { faCompressAlt, faExpandAlt, faFlagCheckered, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCompressAlt,
+	faExpandAlt,
+	faExternalLinkAlt,
+	faFlagCheckered,
+	faTrashAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
@@ -9,6 +15,7 @@ import Button, { ButtonType } from '../../../component/button';
 import { useDialog } from '../../../context/dialog';
 import { useNotImplemented } from '../../../context/not-implemented';
 import { LinkButton } from '../../component/link-button';
+import { useSpaceContext } from '../space-context';
 import { useListView } from './list-context';
 import { Subject } from './subject';
 import { getGroupFilterText, hasFilter, isGroupFilter, matchesFilter } from './utils';
@@ -81,6 +88,27 @@ const GroupHeader = styled.div.attrs({
 				margin-right: calc(var(--margin) / 4);
 			}
 		}
+	}
+`;
+const GroupName = styled.div`
+	display: flex;
+	align-items: center;
+	&[data-openable=true]:hover {
+		cursor: pointer;
+		> span {
+			color: var(--console-primary-color);
+		}
+		> svg {
+			color: var(--console-primary-color);
+			opacity: 1;
+			pointer-events: auto;
+		}
+	}
+	> svg {
+		margin-left: calc(var(--margin) / 4);
+		opacity: 0;
+		pointer-events: none;
+		transition: all 300ms ease-in-out;
 	}
 `;
 const GroupBody = styled.div.attrs<{ itemCount: number, visible: boolean }>(({ theme, itemCount, visible }) => {
@@ -162,14 +190,16 @@ export const Group = (props: {
 	space: ConnectedConsoleSpace;
 	group: ConsoleSpaceGroup;
 	colorSuffix?: string;
+	openable?: boolean;
 	removable?: boolean;
 	canAddSubject?: boolean;
 }) => {
-	const { space, group, colorSuffix, removable = true, canAddSubject = true } = props;
+	const { space, group, colorSuffix, openable = true, removable = true, canAddSubject = true } = props;
 	const { subjects } = group;
 
 	const notImpl = useNotImplemented();
 	const dialog = useDialog();
+	const spaceContext = useSpaceContext();
 	const listView = useListView();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ collapsed, setCollapsed ] = useState<boolean>(false);
@@ -189,6 +219,7 @@ export const Group = (props: {
 		};
 	}, [ listView, collapsed ]);
 
+	const onOpenGroupClicked = () => spaceContext.openGroupIfCan(space, group);
 	const onToggleExpand = () => setCollapsed(!collapsed);
 	const onAddSubjectClicked = () => notImpl.show();
 	const onDeleteGroupConfirmClicked = async () => {
@@ -204,6 +235,7 @@ export const Group = (props: {
 		const index = space.groups.findIndex(exists => exists === group);
 		space.groups.splice(index, 1);
 		listView.groupDeleted({ space, group });
+		spaceContext.closeGroupIfCan(space, group);
 		dialog.hide();
 	};
 	const onDeleteGroupClicked = () => {
@@ -228,7 +260,10 @@ export const Group = (props: {
 
 	return <GroupContainer data-visible={visible} colorSuffix={colorSuffix}>
 		<GroupHeader>
-			<div>{group.name}</div>
+			<GroupName data-openable={openable} onClick={openable ? onOpenGroupClicked : (void 0)}>
+				<span>{group.name}</span>
+				{openable ? <FontAwesomeIcon icon={faExternalLinkAlt}/> : null}
+			</GroupName>
 			<div data-widget='console-list-view-header-buttons'>
 				{canAddSubject
 					? <LinkButton onClick={onAddSubjectClicked}>

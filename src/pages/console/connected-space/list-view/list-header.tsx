@@ -146,7 +146,7 @@ export const ListHeader = (props: {
 		};
 		listView.addFilterClearedListener(onFilterCleared);
 		return () => {
-			listView.addFilterClearedListener(onFilterCleared);
+			listView.removeFilterClearedListener(onFilterCleared);
 		};
 	}, [ listView ]);
 

@@ -41,7 +41,6 @@ export interface ListContext {
 
 	groupDeleted: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
 	subjectDeleted: (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
-
 }
 
 const Context = React.createContext<ListContext>({} as ListContext);

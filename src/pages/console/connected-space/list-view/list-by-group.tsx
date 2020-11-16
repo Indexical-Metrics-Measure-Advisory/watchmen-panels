@@ -29,7 +29,8 @@ export const ListByGroup = (props: { space: ConnectedConsoleSpace }) => {
 	}
 
 	return <Container data-visible={viewType === ViewType.BY_GROUP}>
-		{ungroup ? <Group space={space} group={ungroup} colorSuffix='ungroup' removable={false}/> : null}
+		{ungroup ?
+			<Group space={space} group={ungroup} colorSuffix='ungroup' openable={false} removable={false}/> : null}
 		{groups.map(group => {
 			return <Group space={space} group={group} key={group.groupId}/>;
 		})}

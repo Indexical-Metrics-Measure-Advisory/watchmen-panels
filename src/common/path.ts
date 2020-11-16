@@ -16,6 +16,10 @@ const Paths = {
 	CONSOLE_HOME: '/console/home',
 	CONSOLE_SPACE: '/console/space/:spaceId',
 	CONSOLE_CONNECTED_SPACE: '/console/space/connected/:connectId',
+	CONSOLE_CONNECTED_SPACE_OVERALL: '/console/space/connected/:connectId/overall',
+	CONSOLE_CONNECTED_SPACE_RESOURCES: '/console/space/connected/:connectId/resources',
+	CONSOLE_CONNECTED_SPACE_GROUP: '/console/space/connected/:connectId/group/:groupId',
+	CONSOLE_CONNECTED_SPACE_SUBJECT: '/console/space/connected/:connectId/subject/:subjectId',
 	CONSOLE_INBOX: '/console/inbox',
 	CONSOLE_NOTIFICATION: '/console/notification'
 };
@@ -34,3 +38,5 @@ export const isConnectedSpaceOpened = (connectId: string): boolean => {
 	return false;
 };
 export const toConnectedSpace = (path: string, connectId: string) => path.replace(':connectId', connectId);
+export const toSpaceGroup = (path: string, connectId: string, groupId: string) => path.replace(':connectId', connectId).replace(':groupId', groupId);
+export const toSpaceSubject = (path: string, connectId: string, subjectId: string) => path.replace(':connectId', connectId).replace(':subjectId', subjectId);

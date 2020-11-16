@@ -64,7 +64,8 @@ export const ListByVisit = (props: { space: ConnectedConsoleSpace }) => {
 	return <Container data-visible={viewType === ViewType.BY_VISIT}>
 		{timeGroups.map(group => {
 			return <Group space={space} group={group}
-			              colorSuffix={group.colorSuffix} removable={false} canAddSubject={false}
+			              colorSuffix={group.colorSuffix}
+			              openable={false} removable={false} canAddSubject={false}
 			              key={group.groupId}/>;
 		})}
 	</Container>;
