@@ -22,3 +22,20 @@ export const toReadableFileSize = (size: number): string => {
 
 	return `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(size / 1024)}mb`;
 };
+
+export const notInMe = (me: HTMLOrSVGElement, target: EventTarget | null): boolean => {
+	const body = document.body;
+	if (target === window) {
+		return true;
+	}
+	let parent: HTMLElement | null | undefined = target as HTMLElement;
+	while (true) {
+		if (parent === me) {
+			return false;
+		}
+		if (parent === body || parent == null) {
+			return true;
+		}
+		parent = parent?.parentElement;
+	}
+};

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 export const Tabs = styled.div`
 	display: flex;
 	align-items: center;
-	padding: 0 calc(var(--margin) / 2);
+	padding: 0 calc(var(--margin) / 2) 0 0;
 	padding-top: 8px;
 	height: 50px;
 `;
@@ -23,7 +23,14 @@ const TabContainer = styled.div<{ active: boolean }>`
 	padding: 6px calc(var(--margin) / 1.5) 5px;
 	height: 43px;
 	cursor: pointer;
+	color: ${({ active }) => active ? 'var(--console-primary-color)' : ''};
 	transition: all 300ms ease-in-out;
+	&:hover {
+		> svg,
+		> span {
+			opacity: 1;
+		}
+	}
 	> svg {
 		margin-right: calc(var(--margin) / 4);
 		opacity: ${({ active }) => active ? 1 : 0.6};

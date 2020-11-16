@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
+import { notInMe } from '../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleFavorite,
@@ -189,26 +190,7 @@ export const Favorite = () => {
 	useEffect(() => {
 		if (!pinned) {
 			const onWindowClick = (event: FocusEvent | MouseEvent) => {
-				let notMe = true;
-				const body = document.body;
-				const target = event.target;
-				if (target === window) {
-					hide();
-					return;
-				}
-				let parent: HTMLElement | null | undefined = target as HTMLElement;
-				while (true) {
-					if (parent === containerRef.current) {
-						notMe = false;
-						break;
-					}
-					if (parent === body || parent == null) {
-						notMe = true;
-						break;
-					}
-					parent = parent?.parentElement;
-				}
-				if (notMe) {
+				if (notInMe(containerRef.current!, event.target)) {
 					hide();
 				}
 			};
