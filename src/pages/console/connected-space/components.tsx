@@ -101,7 +101,7 @@ export const MenuItem = styled.div`
 			opacity: 0.2;
 		}
 	}
-	> svg {
+	> svg:first-child {
 		margin-right: calc(var(--margin) / 3);
 	}
 	> span {
