@@ -8,6 +8,7 @@ import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '.
 import Button, { ButtonType } from '../../../component/button';
 import { useDialog } from '../../../context/dialog';
 import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
+import { useSpaceContext } from '../space-context';
 import { useListView } from './list-context';
 
 const SubjectContainer = styled.div.attrs({
@@ -96,6 +97,7 @@ export const Subject = (props: {
 
 	const dialog = useDialog();
 	const listView = useListView();
+	const { openSubjectIfCan, closeSubjectIfCan } = useSpaceContext();
 	const deleteRef = useRef<HTMLElement>(null);
 	const { mouseEnter, mouseLeave } = useTooltip({
 		show: true,
@@ -115,6 +117,14 @@ export const Subject = (props: {
 		visitAdvise = 'week';
 	}
 
+	const onSubjectClicked = () => {
+		let parentGroup: ConsoleSpaceGroup | undefined;
+		const index = indexOf(subject, space.subjects);
+		if (index === -1) {
+			parentGroup = findParentGroup(subject, space)!;
+		}
+		openSubjectIfCan({ space, group: parentGroup, subject });
+	};
 	const onDeleteSubjectConfirmClicked = async () => {
 		try {
 			await deleteSubject(subject);
@@ -137,9 +147,12 @@ export const Subject = (props: {
 			parentGroup.subjects.splice(index as number, 1);
 		}
 		listView.subjectDeleted({ space, group: parentGroup, subject });
+		closeSubjectIfCan({ space, group: parentGroup, subject });
 		dialog.hide();
 	};
-	const onDeleteClicked = async () => {
+	const onDeleteClicked = async (event: React.MouseEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
 		const parentGroup = findParentGroup(subject, space);
 		const label = parentGroup ? `${space.name} / ${parentGroup.name} / ${subject.name}` : `${space.name} / ${subject.name}`;
 		dialog.show(
@@ -155,7 +168,7 @@ export const Subject = (props: {
 		);
 	};
 
-	return <SubjectContainer>
+	return <SubjectContainer onClick={onSubjectClicked}>
 		<div>
 			<span>{subject.nameAs || subject.name}</span>
 		</div>

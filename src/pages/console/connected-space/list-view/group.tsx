@@ -6,9 +6,10 @@ import {
 	faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import dayjs from 'dayjs';
 import React, { Fragment, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
-import { deleteGroup } from '../../../../services/console/space';
+import { createSubject, deleteGroup } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { Theme } from '../../../../theme/types';
 import Button, { ButtonType } from '../../../component/button';
@@ -199,7 +200,7 @@ export const Group = (props: {
 
 	const notImpl = useNotImplemented();
 	const dialog = useDialog();
-	const spaceContext = useSpaceContext();
+	const { openGroupIfCan, closeGroupIfCan, openSubjectIfCan } = useSpaceContext();
 	const listView = useListView();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ collapsed, setCollapsed ] = useState<boolean>(false);
@@ -219,9 +220,22 @@ export const Group = (props: {
 		};
 	}, [ listView, collapsed ]);
 
-	const onOpenGroupClicked = () => spaceContext.openGroupIfCan(space, group);
+	const onOpenGroupClicked = () => openGroupIfCan({ space, group });
 	const onToggleExpand = () => setCollapsed(!collapsed);
-	const onAddSubjectClicked = () => notImpl.show();
+	const onAddSubjectClicked = async () => {
+		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
+		const newSubject = {
+			subjectId: '',
+			name: 'Noname',
+			topicCount: 0,
+			graphicsCount: 0,
+			lastVisitTime: now,
+			createdAt: now
+		};
+		group.subjects.push(newSubject);
+		await createSubject({ space, group, subject: newSubject });
+		openSubjectIfCan({ space, group, subject: newSubject });
+	};
 	const onDeleteGroupConfirmClicked = async () => {
 		try {
 			await deleteGroup(group);
@@ -235,7 +249,7 @@ export const Group = (props: {
 		const index = space.groups.findIndex(exists => exists === group);
 		space.groups.splice(index, 1);
 		listView.groupDeleted({ space, group });
-		spaceContext.closeGroupIfCan(space, group);
+		closeGroupIfCan({ space, group });
 		dialog.hide();
 	};
 	const onDeleteGroupClicked = () => {

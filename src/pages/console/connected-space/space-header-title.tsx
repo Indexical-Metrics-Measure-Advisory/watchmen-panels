@@ -1,9 +1,18 @@
 import { faCaretDown, faCompactDisc, faCube, faGlobe, faPoll } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { notInMe } from '../../../common/utils';
+import { createGroup, createSubject } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
+import { useSpaceContext } from './space-context';
+
+interface MenuState {
+	left: number;
+	top: number,
+	visible: boolean
+}
 
 const Title = styled.div.attrs({
 	'data-widget': 'console-space-title'
@@ -73,12 +82,17 @@ const MenuItem = styled.div`
 `;
 
 const getPosition = (div: HTMLDivElement) => div.getBoundingClientRect();
+const hideMenu = (containerRef: React.RefObject<HTMLDivElement>, stateChangeTo: React.Dispatch<React.SetStateAction<MenuState>>) => {
+	const { top, left, height } = getPosition(containerRef.current!);
+	stateChangeTo({ visible: false, top: top + height + 30, left });
+};
 
 export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
 
+	const { openGroupIfCan, openSubjectIfCan } = useSpaceContext();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [ menuShown, setMenuShown ] = useState<{ left: number; top: number, visible: boolean }>({
+	const [ menuShown, setMenuShown ] = useState<MenuState>({
 		left: 0,
 		top: 0,
 		visible: false
@@ -93,8 +107,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		}
 		const hide = (event: Event) => {
 			if (notInMe(containerRef.current!, event.target)) {
-				const { top, left, height } = getPosition(containerRef.current!);
-				setMenuShown({ visible: false, top: top + height + 30, left });
+				hideMenu(containerRef, setMenuShown);
 			}
 		};
 		window.addEventListener('scroll', hide, true);
@@ -119,17 +132,44 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 			top: pos.top + pos.height + (tobe ? 0 : 30)
 		});
 	};
+	const onAddGroupClicked = async () => {
+		hideMenu(containerRef, setMenuShown);
+		const newGroup = {
+			// fake id
+			groupId: '',
+			name: 'Noname',
+			subjects: []
+		};
+		space.groups.push(newGroup);
+		await createGroup({ space, group: newGroup });
+		openGroupIfCan({ space, group: newGroup });
+	};
+	const onAddSubjectClicked = async () => {
+		hideMenu(containerRef, setMenuShown);
+		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
+		const newSubject = {
+			subjectId: '',
+			name: 'Noname',
+			topicCount: 0,
+			graphicsCount: 0,
+			lastVisitTime: now,
+			createdAt: now
+		};
+		space.subjects.push(newSubject);
+		await createSubject({ space, subject: newSubject });
+		openSubjectIfCan({ space, subject: newSubject });
+	};
 
 	return <Title onClick={onTitleClicked} ref={containerRef}>
 		<FontAwesomeIcon icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}/>
 		<span>{space.name}</span>
 		<FontAwesomeIcon icon={faCaretDown} data-menu-shown={menuShown.visible}/>
 		<Menu {...menuShown}>
-			<MenuItem>
+			<MenuItem onClick={onAddGroupClicked}>
 				<FontAwesomeIcon icon={faCube}/>
 				<span>Add Group</span>
 			</MenuItem>
-			<MenuItem>
+			<MenuItem onClick={onAddSubjectClicked}>
 				<FontAwesomeIcon icon={faPoll}/>
 				<span>Add Subject</span>
 			</MenuItem>

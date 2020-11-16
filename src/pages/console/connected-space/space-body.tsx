@@ -6,6 +6,7 @@ import { AvailableResources } from './available-resources';
 import { Body } from './components';
 import { GroupView } from './group-view';
 import { ListView } from './list-view';
+import { SubjectView } from './subject-view';
 
 export const ConnectedSpaceBody = (props: {
 	space: ConnectedConsoleSpace
@@ -22,6 +23,9 @@ export const ConnectedSpaceBody = (props: {
 			</Route>
 			<Route path={Path.CONSOLE_CONNECTED_SPACE_GROUP}>
 				<GroupView visible={true} space={space}/>
+			</Route>
+			<Route path={Path.CONSOLE_CONNECTED_SPACE_SUBJECT}>
+				<SubjectView visible={true} space={space}/>
 			</Route>
 			<Route path='*'>
 				<Redirect to={toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE_OVERALL, space.connectId)}/>
