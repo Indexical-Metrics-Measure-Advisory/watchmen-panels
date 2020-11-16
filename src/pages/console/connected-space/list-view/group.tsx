@@ -11,6 +11,7 @@ import { useNotImplemented } from '../../../context/not-implemented';
 import { LinkButton } from '../../component/link-button';
 import { useListView } from './list-context';
 import { Subject } from './subject';
+import { getGroupFilterText, hasFilter, isGroupFilter, matchesFilter } from './utils';
 
 const GroupContainer = styled.div.attrs({
 	'data-widget': 'console-list-view-group'
@@ -140,11 +141,11 @@ const computeDisplaySubjects = (options: {
 } => {
 	const { filter, subjects, group } = options;
 
-	if (!filter) {
+	if (!hasFilter(filter)) {
 		return { visible: true, subjects: decorateDisplaySubjects(subjects, false) };
-	} else if (filter.startsWith('g:')) {
-		const name = filter.substr(2);
-		if (!group.name.toUpperCase().includes(name.toUpperCase())) {
+	} else if (isGroupFilter(filter)) {
+		const name = getGroupFilterText(filter);
+		if (!matchesFilter(group.name, name)) {
 			return { visible: false, subjects: decorateDisplaySubjects(subjects, false) };
 		} else {
 			return { visible: true, subjects: decorateDisplaySubjects(subjects, false) };
@@ -152,7 +153,7 @@ const computeDisplaySubjects = (options: {
 	} else {
 		return {
 			visible: true,
-			subjects: decorateDisplaySubjects(subjects.filter(subject => subject.name.toUpperCase().includes(filter.toUpperCase())), true)
+			subjects: decorateDisplaySubjects(subjects.filter(subject => matchesFilter(subject.name, filter)), true)
 		};
 	}
 };

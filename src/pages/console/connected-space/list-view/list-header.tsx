@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import Input from '../../../component/input';
@@ -138,6 +138,17 @@ export const ListHeader = (props: {
 		tooltip: 'Filter group by "g:name"',
 		rect: () => ({ align: TooltipAlignment.LEFT, offsetY: 8 })
 	});
+	useEffect(() => {
+		const onFilterCleared = () => {
+			filterRef.current!.value = '';
+			// force invoke text changed
+			listView.filterTextChanged('');
+		};
+		listView.addFilterClearedListener(onFilterCleared);
+		return () => {
+			listView.addFilterClearedListener(onFilterCleared);
+		};
+	}, [ listView ]);
 
 	const onFilterTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = (event.target.value || '').trim();
