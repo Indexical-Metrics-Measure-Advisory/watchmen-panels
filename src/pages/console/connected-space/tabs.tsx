@@ -23,12 +23,13 @@ export const TabContainer = styled.div<{ active: boolean }>`
 	background-color: ${({ active }) => active ? 'var(--bg-color)' : 'transparent'};
 	padding: 6px calc(var(--margin) / 1.5) 5px;
 	height: 43px;
+	font-size: 0.8em;
 	cursor: pointer;
 	color: ${({ active }) => active ? 'var(--console-primary-color)' : ''};
 	transition: all 300ms ease-in-out;
 	&:hover {
-		> svg,
-		> span {
+		> svg:first-child,
+		> span:nth-child(2) {
 			opacity: 1;
 		}
 	}
@@ -37,14 +38,9 @@ export const TabContainer = styled.div<{ active: boolean }>`
 		opacity: ${({ active }) => active ? 1 : 0.6};
 		transition: all 300ms ease-in-out;
 	}
-	> span {
+	> span:nth-child(2) {
 		opacity: ${({ active }) => active ? 1 : 0.6};
 		margin-top: -1px;
-		transition: all 300ms ease-in-out;
-	}
-	> svg:nth-child(3) {
-		width: 24px;
-		opacity: ${({ active }) => active ? 1 : 0.6};
 		transition: all 300ms ease-in-out;
 	}
 	> div:nth-last-child(2),

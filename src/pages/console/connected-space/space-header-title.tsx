@@ -45,6 +45,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [ menuShown, setMenuShown ] = useState<MenuState>({
 		left: 0,
+		right: 0,
 		top: 0,
 		visible: false
 	});

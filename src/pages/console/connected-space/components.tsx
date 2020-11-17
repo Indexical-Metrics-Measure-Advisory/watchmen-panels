@@ -28,19 +28,33 @@ export const Body = styled.div.attrs({
 	flex-grow: 1;
 `;
 
-export interface MenuState {
-	left: number;
-	top: number,
-	visible: boolean
+export enum MenuStateAlignment {
+	LEFT = 'left',
+	CENTER = 'center',
+	RIGHT = 'right'
 }
 
-export const Menu = styled.div.attrs<MenuState & { itemCount: number }>(({ left, top, visible, itemCount }) => {
+export interface MenuState {
+	align?: MenuStateAlignment
+	left: number;
+	right: number;
+	top: number;
+	visible: boolean;
+}
+
+export const Menu = styled.div.attrs<MenuState & { itemCount: number }>
+(({
+	  align = MenuStateAlignment.LEFT,
+	  left, right, top,
+	  visible, itemCount
+  }) => {
 	return {
 		style: {
-			left,
+			left: align === MenuStateAlignment.LEFT ? left : (align === MenuStateAlignment.CENTER ? ((left + right) / 2) : 'unset'),
+			right: align === MenuStateAlignment.RIGHT ? `calc(100vw - ${right}px)` : 'unset',
 			top,
-			height: 2 + 28 * Math.min(10, itemCount),
-			transform: visible ? 'scaleY(1)' : 'scaleY(0)',
+			height: 2 + 30 * Math.min(10, itemCount),
+			transform: `${visible ? 'scaleY(1)' : 'scaleY(0)'} ${align === MenuStateAlignment.CENTER ? 'translateX(-50%)' : ''}`,
 			opacity: visible ? 1 : 0,
 			pointerEvents: visible ? 'auto' : 'none'
 		}
@@ -50,7 +64,8 @@ export const Menu = styled.div.attrs<MenuState & { itemCount: number }>(({ left,
 	flex-direction: column;
 	position: fixed;
 	font-family: var(--font-family);
-	width: 306px;
+	min-width: 200px;
+	max-width: 300px;
 	background-color: var(--invert-color);
 	border-radius: var(--border-radius);
 	border: var(--border);
@@ -77,30 +92,15 @@ export const MenuItem = styled.div`
 	display: flex;
 	position: relative;
 	align-items: center;
+	min-height: 30px;
 	padding: 0 calc(var(--margin) / 2);
-	min-height: 28px;
 	font-size: 0.8em;
 	color: var(--console-font-color);
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
-	//&:before {
-	//	content: '';
-	//	display: block;
-	//	position: absolute;
-	//	top: 0;
-	//	left: 0;
-	//	width: 100%;
-	//	height: 100%;
-	//	background-color: var(--console-waive-color);
-	//	opacity: 0;
-	//	transition: opacity 300ms ease-in-out;
-	//}
 	&:hover {
 		color: var(--console-primary-color);
 		text-decoration: underline;
-		//&:before {
-		//	opacity: 0.05;
-		//}
 	}
 	> svg:first-child {
 		margin-right: calc(var(--margin) / 3);
@@ -118,13 +118,20 @@ export const getPosition = (div: HTMLDivElement) => div.getBoundingClientRect();
 export const hideMenu = (options: {
 	containerRef: React.RefObject<HTMLDivElement>;
 	changeState: React.Dispatch<React.SetStateAction<MenuState>>;
+	align?: MenuStateAlignment;
 	offsetX?: number;
 	offsetY?: number;
 }) => {
-	const { containerRef, changeState, offsetX = 0, offsetY = 0 } = options;
+	const { containerRef, changeState, align, offsetX = 0, offsetY = 0 } = options;
 
-	const { top, left, height } = getPosition(containerRef.current!);
-	changeState({ visible: false, left: left + offsetX, top: top + height + offsetY });
+	const { top, left, width, height } = getPosition(containerRef.current!);
+	changeState({
+		visible: false,
+		align,
+		left: left + offsetX,
+		right: left + width + offsetX,
+		top: top + height + offsetY
+	});
 };
 export const showMenu = (options: {
 	containerRef: RefObject<HTMLDivElement>,
@@ -139,12 +146,14 @@ export const showMenu = (options: {
 		return;
 	}
 
-	const pos = getPosition(containerRef.current!);
+	const { top, left, width, height } = getPosition(containerRef.current!);
 	const tobe = !state.visible;
 	changeState({
 		visible: tobe,
-		left: pos.left + offsetX,
-		top: pos.top + pos.height + offsetY
+		align: state.align,
+		left: left + offsetX,
+		right: left + width + offsetX,
+		top: top + height + offsetY
 	});
 };
 export const useMenu = (options: {
@@ -158,8 +167,14 @@ export const useMenu = (options: {
 
 	useEffect(() => {
 		if (containerRef.current) {
-			const { top, left, height } = getPosition(containerRef.current);
-			changeState({ visible: false, left: left + offsetX, top: top + height + offsetY });
+			const { top, left, width, height } = getPosition(containerRef.current);
+			changeState({
+				visible: false,
+				align: state.align,
+				left: left + offsetX,
+				right: left + width + offsetX,
+				top: top + height + offsetY
+			});
 		}
 	}, [ containerRef, offsetX, offsetY, changeState ]);
 	useEffect(() => {
@@ -168,7 +183,7 @@ export const useMenu = (options: {
 		}
 		const hide = (event: Event) => {
 			if (notInMe(containerRef.current!, event.target)) {
-				hideMenu({ containerRef, changeState, offsetX, offsetY });
+				hideMenu({ containerRef, changeState, align: state.align, offsetX, offsetY });
 			}
 		};
 		window.addEventListener('scroll', hide, true);
@@ -179,6 +194,6 @@ export const useMenu = (options: {
 			window.removeEventListener('click', hide, true);
 			window.removeEventListener('focus', hide, true);
 		};
-	}, [ state.visible, offsetX, offsetY, containerRef, changeState ]);
+	}, [ state.visible, state.align, offsetX, offsetY, containerRef, changeState ]);
 
 };

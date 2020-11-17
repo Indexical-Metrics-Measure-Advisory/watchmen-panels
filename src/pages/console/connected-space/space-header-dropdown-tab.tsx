@@ -1,16 +1,62 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faCaretDown, faCube, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCube, faEllipsisH, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { ForwardedRef, forwardRef, useReducer, useRef, useState } from 'react';
+import React, { Children, ForwardedRef, forwardRef, useReducer, useRef, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 import Path from '../../../common/path';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
 import { LinkButton } from '../component/link-button';
-import { hideMenu, Menu, MenuItem, MenuState, showMenu, useMenu } from './components';
+import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
 import { useSpaceContext } from './space-context';
 import { TabContainer } from './tabs';
 
-const offset = { offsetX: 6, offsetY: -1 };
+interface SubjectItem {
+	group?: ConsoleSpaceGroup;
+	subject: ConsoleSpaceSubject;
+}
+
+const offset = { offsetX: 0, offsetY: -1 };
+
+const DropdownTabContainer = styled(TabContainer)`
+	&:hover {
+		> span:nth-child(3) {
+			opacity: 1;
+		}
+	}
+	> span:nth-child(3) {
+		height: 20px;
+		text-align: center;
+		line-height: 20px;
+		margin-left: calc(var(--margin) / 4);
+		padding: 0 calc(var(--margin) / 3);
+		border-radius: 10px;
+		color: var(--invert-color);
+		background-color: ${({ active }) => active ? 'var(--console-primary-color)' : 'var(--console-font-color)'};
+		opacity: ${({ active }) => active ? 1 : 0.6};
+		transform-origin: center center;
+		transform: scaleX(0.8) scaleY(0.8);
+		transition: all 300ms ease-in-out;
+	}
+	> button:nth-child(4) {
+		margin-left: calc(var(--margin) / 4);
+		color: ${({ active }) => active ? 'var(--console-primary-color)' : 'var(--console-font-color)'};
+		opacity: ${({ active }) => active ? 1 : 0.6};
+		transition: all 300ms ease-in-out;
+	}
+`;
+const DropdownMenuItem = styled(MenuItem)`
+	&:hover {
+		> button:nth-child(3) {
+			opacity: 1;
+			pointer-events: auto;
+		}
+	}
+	> button:nth-child(3) {
+		opacity: 0;
+		pointer-events: none;
+	}
+`;
 
 export const DropdownTab = forwardRef((props: {
 	active: boolean;
@@ -33,20 +79,22 @@ export const DropdownTab = forwardRef((props: {
 		showDropdown();
 	};
 
-	return <TabContainer active={active} onClick={onTabClicked} ref={ref}>
+	return <DropdownTabContainer active={active} onClick={onTabClicked} ref={ref}>
 		<FontAwesomeIcon icon={icon}/>
 		<span>{label}</span>
-		{children ? <FontAwesomeIcon icon={faCaretDown} onClick={onMoreClicked}/> : null}
+		{children
+			? <span>{Children.count(children) + 1}</span>
+			: null}
+		{children
+			? <LinkButton onClick={onMoreClicked} ignoreHorizontalPadding={true}>
+				<FontAwesomeIcon icon={faEllipsisH}/>
+			</LinkButton>
+			: null}
 		{children}
 		<div/>
 		<div/>
-	</TabContainer>;
+	</DropdownTabContainer>;
 });
-
-interface SubjectItem {
-	group?: ConsoleSpaceGroup;
-	subject: ConsoleSpaceSubject;
-}
 
 export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(props: {
 	active: boolean;
@@ -70,13 +118,19 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 	} = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [ menuState, setMenuState ] = useState<MenuState>({ left: 0, top: 0, visible: false });
+	const [ menuState, setMenuState ] = useState<MenuState>({
+		align: MenuStateAlignment.RIGHT,
+		left: 0,
+		right: 0,
+		top: 0,
+		visible: false
+	});
 	useMenu({ containerRef, state: menuState, changeState: setMenuState, ...offset });
 
 	const onMenuItemClicked = (item: T) => (event: React.MouseEvent) => {
 		event.preventDefault();
 		event.stopPropagation();
-		hideMenu({ containerRef, changeState: setMenuState, ...offset });
+		hideMenu({ containerRef, changeState: setMenuState, align: menuState.align, ...offset });
 		onItemClicked(item);
 	};
 	const onMenuItemCloseClicked = (item: T) => (event: React.MouseEvent) => {
@@ -85,7 +139,12 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 		onItemCloseClicked(item);
 	};
 
-	const showDropdown = () => showMenu({ containerRef, state: menuState, changeState: setMenuState, ...offset });
+	const showDropdown = () => showMenu({
+		containerRef,
+		state: menuState,
+		changeState: setMenuState,
+		...offset
+	});
 
 	return <DropdownTab active={active} icon={icon} label={label}
 	                    onTabClicked={onTabClicked} showDropdown={showDropdown}
@@ -93,13 +152,13 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 		{dropdownItems.length !== 0
 			? <Menu {...menuState} itemCount={dropdownItems.length}>
 				{dropdownItems.map(item => {
-					return <MenuItem key={itemAsKey(item)} onClick={onMenuItemClicked(item)}>
+					return <DropdownMenuItem key={itemAsKey(item)} onClick={onMenuItemClicked(item)}>
 						<FontAwesomeIcon icon={icon}/>
 						<span>{itemAsLabel(item)}</span>
 						<LinkButton onClick={onMenuItemCloseClicked(item)} ignoreHorizontalPadding={true}>
 							<FontAwesomeIcon icon={faTimes}/>
 						</LinkButton>
-					</MenuItem>;
+					</DropdownMenuItem>;
 				})}
 			</Menu>
 			: null}
