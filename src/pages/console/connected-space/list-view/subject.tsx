@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import React, { Fragment, useRef } from 'react';
 import styled from 'styled-components';
-import { deleteSubject } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
-import Button, { ButtonType } from '../../../component/button';
 import { useDialog } from '../../../context/dialog';
 import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
+import { onDeleteSubjectClicked } from '../dialog';
 import { useSpaceContext } from '../space-context';
+import { findParentGroup, findSubjectIndex, getVisitAdvice } from '../utils';
 import { useListView } from './list-context';
 
 const SubjectContainer = styled.div.attrs({
@@ -76,24 +76,12 @@ const SubjectContainer = styled.div.attrs({
 	}
 `;
 
-const indexOf = (subject: ConsoleSpaceSubject, subjects: Array<ConsoleSpaceSubject>): number => {
-	// eslint-disable-next-line
-	return subjects.findIndex(s => s.subjectId == subject.subjectId);
-};
-const findParentGroup = (subject: ConsoleSpaceSubject, space: ConnectedConsoleSpace): ConsoleSpaceGroup | undefined => {
-	if (indexOf(subject, space.subjects) !== -1) {
-		return void 0;
-	} else {
-		return space.groups.find(group => indexOf(subject, group.subjects) !== -1);
-	}
-};
-
 export const Subject = (props: {
 	space: ConnectedConsoleSpace;
 	group: ConsoleSpaceGroup;
 	subject: ConsoleSpaceSubject & { nameAs?: ((props: any) => React.ReactNode) | React.ReactNode };
 }) => {
-	const { space, group, subject } = props;
+	const { space, subject } = props;
 
 	const dialog = useDialog();
 	const listView = useListView();
@@ -106,67 +94,25 @@ export const Subject = (props: {
 		rect: () => ({ align: TooltipAlignment.RIGHT, offsetY: 10, offsetX: -13 })
 	});
 
-	const lastVisit = dayjs(subject.lastVisitTime);
-	const days = dayjs().diff(lastVisit, 'day');
-	let visitAdvise = '';
-	if (days > 365) {
-		visitAdvise = 'year';
-	} else if (days > 30) {
-		visitAdvise = 'month';
-	} else if (days > 7) {
-		visitAdvise = 'week';
-	}
-
+	const visitAdvice = getVisitAdvice(subject.lastVisitTime);
 	const onSubjectClicked = () => {
 		let parentGroup: ConsoleSpaceGroup | undefined;
-		const index = indexOf(subject, space.subjects);
+		const index = findSubjectIndex(subject, space.subjects);
 		if (index === -1) {
 			parentGroup = findParentGroup(subject, space)!;
 		}
 		openSubjectIfCan({ space, group: parentGroup, subject });
 	};
-	const onDeleteSubjectConfirmClicked = async () => {
-		try {
-			await deleteSubject(subject);
-		} catch (e) {
-			console.groupCollapsed(`%cError on delete group.`, 'color:rgb(251,71,71)');
-			console.error('Space: ', space);
-			console.error('Group: ', group);
-			console.error('Subject:', subject);
-			console.error(e);
-			console.groupEnd();
+	const onDeleteClicked = onDeleteSubjectClicked({
+		dialog,
+		space,
+		group: findParentGroup(subject, space),
+		subject,
+		onDeleted: ({ space, group, subject }) => {
+			listView.subjectDeleted({ space, group, subject });
+			closeSubjectIfCan({ space, group, subject });
 		}
-		// display group is not the really parent group
-		let parentGroup: ConsoleSpaceGroup | undefined;
-		const index = indexOf(subject, space.subjects);
-		if (index !== -1) {
-			space.subjects.splice(index, 1);
-		} else {
-			parentGroup = findParentGroup(subject, space)!;
-			const index = indexOf(subject, parentGroup.subjects);
-			parentGroup.subjects.splice(index as number, 1);
-		}
-		listView.subjectDeleted({ space, group: parentGroup, subject });
-		closeSubjectIfCan({ space, group: parentGroup, subject });
-		dialog.hide();
-	};
-	const onDeleteClicked = async (event: React.MouseEvent) => {
-		event.preventDefault();
-		event.stopPropagation();
-		const parentGroup = findParentGroup(subject, space);
-		const label = parentGroup ? `${space.name} / ${parentGroup.name} / ${subject.name}` : `${space.name} / ${subject.name}`;
-		dialog.show(
-			<div data-widget='dialog-console-delete'>
-				<span>Are you sure to delete subject?</span>
-				<span data-widget='dialog-console-group'>{label}</span>
-			</div>,
-			<Fragment>
-				<div style={{ flexGrow: 1 }}/>
-				<Button inkType={ButtonType.PRIMARY} onClick={onDeleteSubjectConfirmClicked}>Yes</Button>
-				<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
-			</Fragment>
-		);
-	};
+	});
 
 	return <SubjectContainer onClick={onSubjectClicked}>
 		<div>
@@ -179,7 +125,7 @@ export const Subject = (props: {
 				: <Fragment>
 					<div>{subject.topicCount}</div>
 					<div>{subject.graphicsCount}</div>
-					<div data-visit-advise={visitAdvise}>{dayjs(subject.lastVisitTime).fromNow()}</div>
+					<div data-visit-advise={visitAdvice}>{dayjs(subject.lastVisitTime).fromNow()}</div>
 					<div>{dayjs(subject.createdAt).fromNow()}</div>
 					<div>
 						<FontAwesomeIcon icon={faTrashAlt} onClick={onDeleteClicked}

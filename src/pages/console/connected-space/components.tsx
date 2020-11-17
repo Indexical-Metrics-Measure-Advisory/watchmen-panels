@@ -26,6 +26,7 @@ export const Body = styled.div.attrs({
 	'data-widget': 'console-space-body'
 })`
 	flex-grow: 1;
+	display: flex;
 `;
 
 export enum MenuStateAlignment {
@@ -176,7 +177,7 @@ export const useMenu = (options: {
 				top: top + height + offsetY
 			});
 		}
-	}, [ containerRef, offsetX, offsetY, changeState ]);
+	}, [ containerRef, state.align, offsetX, offsetY, changeState ]);
 	useEffect(() => {
 		if (!state.visible) {
 			return;

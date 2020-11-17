@@ -5,10 +5,15 @@ import Path, { toConnectedSpace, toSpaceGroup, toSpaceSubject } from '../../../c
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
 
 export enum SpaceEvent {
+	GROUP_CLOSED = 'group-closed',
+	SUBJECT_CLOSED = 'subject-closed'
 }
 
 export type ActiveGroups = Array<ConsoleSpaceGroup>;
 export type ActiveSubjects = Array<ConsoleSpaceSubject>;
+
+export type GroupClosedListener = (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
+export type SubjectClosedListener = (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
 
 export interface SpaceContextStore {
 	activeGroupId?: string;
@@ -21,10 +26,14 @@ export interface SpaceContext {
 	isGroupOpened: (group: ConsoleSpaceGroup) => boolean;
 	openGroupIfCan: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
 	closeGroupIfCan: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
+	addGroupClosedListener: (listener: GroupClosedListener) => void;
+	removeGroupClosedListener: (listener: GroupClosedListener) => void;
 
 	isSubjectOpened: (subject: ConsoleSpaceSubject) => boolean;
 	openSubjectIfCan: (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
 	closeSubjectIfCan: (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
+	addSubjectClosedListener: (listener: SubjectClosedListener) => void;
+	removeSubjectClosedListener: (listener: SubjectClosedListener) => void;
 }
 
 const Context = React.createContext<SpaceContext>({} as SpaceContext);
@@ -37,7 +46,6 @@ export const SpaceContextProvider = (props: {
 
 	const location = useLocation();
 	const history = useHistory();
-	// eslint-disable-next-line
 	const [ emitter ] = useState(new EventEmitter());
 	// eslint-disable-next-line
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
@@ -67,7 +75,7 @@ export const SpaceContextProvider = (props: {
 			const match = matchPath<{ groupId: string }>(location.pathname, Path.CONSOLE_CONNECTED_SPACE_GROUP);
 			// eslint-disable-next-line
 			if (match && match.params.groupId == group.groupId) {
-				// current opened, switch to another tab
+				// current opened, switch to another tab or another group
 				if (activeGroups.length === 0) {
 					// no more group opened
 					delete store.activeGroupId;
@@ -80,9 +88,13 @@ export const SpaceContextProvider = (props: {
 					store.activeGroupId = activeGroups[0].groupId;
 					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_GROUP, space.connectId, activeGroups[0].groupId));
 				}
+			} else {
+				emitter.emit(SpaceEvent.GROUP_CLOSED, { space, group });
 			}
 		}
 	};
+	const addGroupClosedListener = (listener: GroupClosedListener) => emitter.on(SpaceEvent.GROUP_CLOSED, listener);
+	const removeGroupClosedListener = (listener: GroupClosedListener) => emitter.off(SpaceEvent.GROUP_CLOSED, listener);
 
 	// eslint-disable-next-line
 	const isSubjectOpened = (subject: ConsoleSpaceSubject) => activeSubjects.some(s => s.subjectId == subject.subjectId);
@@ -98,15 +110,16 @@ export const SpaceContextProvider = (props: {
 		history.push(toSpaceSubject(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, subject.subjectId));
 	};
 	const closeSubjectIfCan = (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => {
-		const { space, subject } = options;
+		const { space, group, subject } = options;
 		// eslint-disable-next-line
 		const index = activeSubjects.findIndex(s => s.subjectId == subject.subjectId);
 		if (index !== -1) {
 			activeSubjects.splice(index, 1);
+			// check if current is subjects tab opening
 			const match = matchPath<{ subjectId: string }>(location.pathname, Path.CONSOLE_CONNECTED_SPACE_SUBJECT);
 			// eslint-disable-next-line
 			if (match && match.params.subjectId == subject.subjectId) {
-				// current opened, switch to another tab
+				// current opened, switch to another tab or another subject
 				if (activeSubjects.length === 0) {
 					// no more subject opened
 					delete store.activeSubjectId;
@@ -119,15 +132,37 @@ export const SpaceContextProvider = (props: {
 					store.activeSubjectId = activeSubjects[0].subjectId;
 					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[0].subjectId));
 				}
+			} else {
+				if (activeSubjects.length === 0) {
+					// no more subject opened
+					delete store.activeSubjectId;
+				} else if (index !== 0) {
+					// not first one, use previous one
+					store.activeSubjectId = activeSubjects[index - 1].subjectId;
+				} else {
+					store.activeSubjectId = activeSubjects[0].subjectId;
+				}
+				emitter.emit(SpaceEvent.SUBJECT_CLOSED, { space, group, subject });
 			}
 		}
 	};
+	const addSubjectClosedListener = (listener: SubjectClosedListener) => emitter.on(SpaceEvent.SUBJECT_CLOSED, listener);
+	const removeSubjectClosedListener = (listener: SubjectClosedListener) => emitter.off(SpaceEvent.SUBJECT_CLOSED, listener);
 
 	return <Context.Provider value={{
 		store,
 
-		isGroupOpened, openGroupIfCan, closeGroupIfCan,
-		isSubjectOpened, openSubjectIfCan, closeSubjectIfCan
+		isGroupOpened,
+		openGroupIfCan,
+		closeGroupIfCan,
+		addGroupClosedListener,
+		removeGroupClosedListener,
+
+		isSubjectOpened,
+		openSubjectIfCan,
+		closeSubjectIfCan,
+		addSubjectClosedListener,
+		removeSubjectClosedListener
 	}}>{children}</Context.Provider>;
 };
 

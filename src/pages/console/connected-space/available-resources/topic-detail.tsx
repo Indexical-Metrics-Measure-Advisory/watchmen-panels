@@ -1,4 +1,4 @@
-import { faLink, faSoap, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
+import { faLink, faSoap, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -240,7 +240,7 @@ export const TopicDetail = (props: { space: ConsoleSpace }) => {
 		<FactorList>
 			<TopicHeader>
 				<div>{topic?.name || 'No Selection'}</div>
-				<FontAwesomeIcon icon={faWindowMinimize} onClick={hideDetail}/>
+				<FontAwesomeIcon icon={faTimes} onClick={hideDetail}/>
 			</TopicHeader>
 			<TopicBody>
 				{

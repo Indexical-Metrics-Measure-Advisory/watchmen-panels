@@ -7,6 +7,7 @@ import { ResourcesList } from './resources-list';
 const Container = styled.div`
 	display: flex;
 	min-height: 100%;
+	width: 100%;
 `;
 
 const AvailableResourcesContent = (props: {

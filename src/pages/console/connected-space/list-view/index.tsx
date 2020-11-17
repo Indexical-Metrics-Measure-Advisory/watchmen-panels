@@ -11,6 +11,7 @@ const Container = styled.div.attrs({
 	display: flex;
 	flex-direction: column;
 	min-height: 100%;
+	width: 100%;
 	padding: calc(var(--margin) / 2) var(--margin);
 `;
 

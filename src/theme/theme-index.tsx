@@ -70,6 +70,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-waive-color: ${({ theme }) => theme.consoleWaiveColor};
 		--console-shadow: ${({ theme }) => theme.consoleShadow};
 		--console-hover-shadow: ${({ theme }) => theme.consoleHoverShadow};
+		--console-primary-shadow: ${({ theme }) => theme.consolePrimaryShadow};
+		--console-primary-hover-shadow: ${({ theme }) => theme.consolePrimaryHoverShadow};
 		
 		--console-menu-width: ${({ theme }) => theme.consoleMenuWidth}px;
 		--console-menu-height: ${({ theme }) => theme.consoleMenuHeight}px;

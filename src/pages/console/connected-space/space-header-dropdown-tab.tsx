@@ -1,14 +1,14 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faCube, faEllipsisH, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Children, ForwardedRef, forwardRef, useReducer, useRef, useState } from 'react';
+import React, { Children, ForwardedRef, forwardRef, useEffect, useReducer, useRef, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
 import { LinkButton } from '../component/link-button';
 import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
-import { useSpaceContext } from './space-context';
+import { GroupClosedListener, SubjectClosedListener, useSpaceContext } from './space-context';
 import { TabContainer } from './tabs';
 
 interface SubjectItem {
@@ -169,8 +169,18 @@ export const GroupTab = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
 
 	const location = useLocation();
-	const { store: { activeGroupId }, isGroupOpened, openGroupIfCan, closeGroupIfCan } = useSpaceContext();
+	const {
+		store: { activeGroupId },
+		isGroupOpened, openGroupIfCan, closeGroupIfCan,
+		addGroupClosedListener, removeGroupClosedListener
+	} = useSpaceContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		// group already be removed from active stack, force update is only option here
+		const groupClosedListener: GroupClosedListener = () => forceUpdate();
+		addGroupClosedListener(groupClosedListener);
+		return () => removeGroupClosedListener(groupClosedListener);
+	}, [ addGroupClosedListener, removeGroupClosedListener ]);
 
 	const { groups } = space;
 	let openedGroups = groups.filter(isGroupOpened).sort((g1, g2) => g1.name.toUpperCase().localeCompare(g2.name.toUpperCase()));
@@ -186,10 +196,7 @@ export const GroupTab = (props: { space: ConnectedConsoleSpace }) => {
 
 	const onGroupTabClicked = () => openGroupIfCan({ space, group: activeGroup });
 	const onGroupOpenClicked = (group: ConsoleSpaceGroup) => openGroupIfCan({ space, group });
-	const onGroupCloseClicked = (group: ConsoleSpaceGroup) => {
-		closeGroupIfCan({ space, group });
-		forceUpdate();
-	};
+	const onGroupCloseClicked = (group: ConsoleSpaceGroup) => closeGroupIfCan({ space, group });
 	const asKey = (group: ConsoleSpaceGroup) => group.groupId;
 	const asLabel = (group: ConsoleSpaceGroup) => group.name;
 
@@ -210,15 +217,9 @@ const asSubjectLabel = (data: { group?: ConsoleSpaceGroup, subject: ConsoleSpace
 	return group ? `${group.name} / ${subject.name}` : subject.name;
 };
 
-export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
-	const { space } = props;
-
-	const location = useLocation();
-	const { store: { activeSubjectId }, isSubjectOpened, openSubjectIfCan, closeSubjectIfCan } = useSpaceContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-
+const getAllSubjects = (space: ConnectedConsoleSpace, isSubjectOpened: (subject: ConsoleSpaceSubject) => boolean) => {
 	const { groups } = space;
-	const allSubjects = [
+	return [
 		...space.subjects.map(s => ({
 			group: void 0,
 			subject: s
@@ -227,9 +228,10 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 			group: g,
 			subject: s
 		}))).flat()
-	];
-	// eslint-disable-next-line
-	let openedSubjects = allSubjects.filter(({ subject }) => isSubjectOpened(subject))
+	].filter(({ subject }) => isSubjectOpened(subject));
+};
+const sortSubjects = (subjects: Array<SubjectItem>) => {
+	return subjects
 		.sort((s1, s2) => {
 			switch (true) {
 				case !s1.group && !s2.group:
@@ -248,6 +250,28 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 					}
 			}
 		});
+};
+
+export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
+	const { space } = props;
+
+	const location = useLocation();
+	const {
+		store: { activeSubjectId },
+		isSubjectOpened, openSubjectIfCan, closeSubjectIfCan,
+		addSubjectClosedListener, removeSubjectClosedListener
+	} = useSpaceContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		// subject already be removed from active stack, force update is only option here
+		const subjectClosedListener: SubjectClosedListener = () => forceUpdate();
+		addSubjectClosedListener(subjectClosedListener);
+		return () => removeSubjectClosedListener(subjectClosedListener);
+	}, [ addSubjectClosedListener, removeSubjectClosedListener ]);
+
+	// eslint-disable-next-line
+	const allSubjects = getAllSubjects(space, isSubjectOpened);
+	let openedSubjects = sortSubjects(allSubjects);
 	// eslint-disable-next-line
 	const activeSubject = openedSubjects.length !== 0 ? openedSubjects.find(s => s.subject.subjectId == activeSubjectId)! : null;
 
@@ -259,13 +283,8 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 	openedSubjects = openedSubjects.filter(s => s !== activeSubject);
 
 	const onSubjectTabClicked = () => openSubjectIfCan({ space, ...activeSubject });
-	const onSubjectOpenClicked = ({ subject, group }: SubjectItem) => {
-		openSubjectIfCan({ space, group, subject });
-	};
-	const onSubjectCloseClicked = ({ subject, group }: SubjectItem) => {
-		closeSubjectIfCan({ space, group, subject });
-		forceUpdate();
-	};
+	const onSubjectOpenClicked = ({ subject, group }: SubjectItem) => openSubjectIfCan({ space, group, subject });
+	const onSubjectCloseClicked = ({ subject, group }: SubjectItem) => closeSubjectIfCan({ space, group, subject });
 	const asKey = ({ subject }: SubjectItem) => subject.subjectId;
 	const asLabel = ({ subject, group }: SubjectItem) => asSubjectLabel({ group, subject });
 
