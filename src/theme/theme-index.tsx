@@ -263,11 +263,35 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	    font-family: var(--code-font-family);
 	}
 	
-	div[data-widget='dialog-console-delete'] {
+	div[data-widget='dialog-console-delete'],
+	div[data-widget='dialog-console-rename'] {
 		display: flex;
 		flex-direction: column;
 		line-height: 1.8em;
     	margin-bottom: var(--margin);
+	}
+	div[data-widget='dialog-console-rename'] {
+		margin-bottom: 0;
+		> span:first-child {
+			margin-bottom: calc(var(--margin) / 3);
+		}
+		> input {
+			border-radius: 0;
+			border-top: 0;
+			border-left: 0;
+			border-right: 0;
+			padding-left: 0;
+			padding-right: 0;
+			&[data-error=true] + span {
+				opacity: 1;
+			}
+		}
+		> span:last-child {
+			font-size: 0.8em;
+			color: var(--console-danger-color);	
+			opacity: 0;
+			transition: all 300ms ease-in-out;
+		}
 	}
 	span[data-widget='dialog-console-group'] {
 		font-family: var(--console-title-font-family);

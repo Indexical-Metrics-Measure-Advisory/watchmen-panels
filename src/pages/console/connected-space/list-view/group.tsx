@@ -234,23 +234,23 @@ export const Group = (props: {
 		await createSubject({ space, group, subject: newSubject });
 		openSubjectIfCan({ space, group, subject: newSubject });
 	};
-	const onDeleteGroupConfirmClicked = async () => {
-		try {
-			await deleteGroup(group);
-		} catch (e) {
-			console.groupCollapsed(`%cError on delete group.`, 'color:rgb(251,71,71)');
-			console.error('Space: ', space);
-			console.error('Group: ', group);
-			console.error(e);
-			console.groupEnd();
-		}
-		const index = space.groups.findIndex(exists => exists === group);
-		space.groups.splice(index, 1);
-		listView.groupDeleted({ space, group });
-		closeGroupIfCan({ space, group });
-		dialog.hide();
-	};
 	const onDeleteGroupClicked = () => {
+		const onDeleteGroupConfirmClicked = async () => {
+			try {
+				await deleteGroup(group);
+			} catch (e) {
+				console.groupCollapsed(`%cError on delete group.`, 'color:rgb(251,71,71)');
+				console.error('Space: ', space);
+				console.error('Group: ', group);
+				console.error(e);
+				console.groupEnd();
+			}
+			const index = space.groups.findIndex(exists => exists === group);
+			space.groups.splice(index, 1);
+			listView.groupDeleted({ space, group });
+			closeGroupIfCan({ space, group });
+			dialog.hide();
+		};
 		dialog.show(
 			<div data-widget='dialog-console-delete'>
 				<span>Are you sure to delete group?</span>

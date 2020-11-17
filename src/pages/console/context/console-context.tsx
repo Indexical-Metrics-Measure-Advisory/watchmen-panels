@@ -8,7 +8,7 @@ import {
 	ConsoleNotificationsUsable,
 	useConsoleNotifications
 } from './console-nofitications';
-import { ConsoleSpacesStorage, useConsoleSpaces } from './console-spaces';
+import { ConsoleSpacesStorage, ConsoleSpacesUsable, useConsoleSpaces } from './console-spaces';
 import { ConsoleTooltipContextProvider } from './console-tooltip';
 
 export interface ConsoleUser {
@@ -20,7 +20,7 @@ export interface ConsoleContext {
 	user: ConsoleUser;
 	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable;
 	mails: ConsoleMailsStorage & ConsoleMailsUsable;
-	spaces: ConsoleSpacesStorage;
+	spaces: ConsoleSpacesStorage & ConsoleSpacesUsable;
 	dashboards: ConsoleDashboardsStorage;
 	favorites: ConsoleFavoritesStorage & ConsoleFavoritesUsable;
 }

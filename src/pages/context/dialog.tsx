@@ -70,9 +70,6 @@ export const DialogProvider = (props: { children?: ((props: any) => React.ReactN
 			setDialog({ visible: false, content: dialog.content });
 		},
 		show: (content?: ((props: any) => React.ReactNode) | React.ReactNode, buttons?: ((props: any) => React.ReactNode) | React.ReactNode) => {
-			if (dialog.visible) {
-				return;
-			}
 			const padding = window.innerWidth - document.body.clientWidth;
 			if (padding > 0) {
 				document.body.style.paddingRight = `${padding}px`;

@@ -43,24 +43,24 @@ export interface MenuState {
 	visible: boolean;
 }
 
-export const Menu = styled.div.attrs<MenuState & { itemCount: number }>
+export const Menu = styled.div.attrs<MenuState & { itemCount: number, separatorCount?: number }>
 (({
 	  align = MenuStateAlignment.LEFT,
 	  left, right, top,
-	  visible, itemCount
+	  visible, itemCount, separatorCount = 0
   }) => {
 	return {
 		style: {
 			left: align === MenuStateAlignment.LEFT ? left : (align === MenuStateAlignment.CENTER ? ((left + right) / 2) : 'unset'),
 			right: align === MenuStateAlignment.RIGHT ? `calc(100vw - ${right}px)` : 'unset',
 			top,
-			height: 2 + 30 * Math.min(10, itemCount),
+			height: 2 + 30 * Math.min(10, itemCount) + separatorCount * 13,
 			transform: `${visible ? 'scaleY(1)' : 'scaleY(0)'} ${align === MenuStateAlignment.CENTER ? 'translateX(-50%)' : ''}`,
 			opacity: visible ? 1 : 0,
 			pointerEvents: visible ? 'auto' : 'none'
 		}
 	};
-})<MenuState & { itemCount: number }>`
+})<MenuState & { itemCount: number, separatorCount?: number }>`
 	display: flex;
 	flex-direction: column;
 	position: fixed;
@@ -184,5 +184,11 @@ export const useMenu = (options: {
 			window.removeEventListener('focus', hide, true);
 		};
 	}, [ state.visible, state.align, offsetX, offsetY, containerRef, changeState ]);
-
 };
+
+export const MenuSeparator = styled.div`
+	display: block;
+	min-height: 1px;
+	margin: 6px 0;
+	background-color: var(--border-color);
+`;

@@ -50,10 +50,7 @@ const DefaultTheme = {
 	inputIndent: 10,
 
 	// dialog
-	dialogBoxShadow: '0 4px 12px rgba(37, 38, 94, 0.3),' +
-		'4px 0 12px rgba(37, 38, 94, 0.3),' +
-		'-4px 0 12px rgba(37, 38, 94, 0.3),' +
-		'0 -4px 12px rgba(37, 38, 94, 0.3)',
+	dialogBoxShadow: '0 0 20px 0 rgba(37, 38, 94, 0.8)',
 
 	// header
 	headerBgColor: '#fff',

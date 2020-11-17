@@ -1,11 +1,18 @@
-import { faCaretDown, faCompactDisc, faCube, faGlobe, faPoll } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faCaretDown, faCompactDisc, faCube, faGlobe, faPenAlt, faPoll } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { useRef, useState } from 'react';
+import React, { Fragment, useReducer, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { createGroup, createSubject } from '../../../services/console/space';
+import Path from '../../../common/path';
+import { createGroup, createSubject, deleteSpace } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
-import { hideMenu, Menu, MenuItem, MenuState, showMenu, useMenu } from './components';
+import Button, { ButtonType } from '../../component/button';
+import Input from '../../component/input';
+import { useDialog } from '../../context/dialog';
+import { useConsoleContext } from '../context/console-context';
+import { hideMenu, Menu, MenuItem, MenuSeparator, MenuState, showMenu, useMenu } from './components';
 import { useSpaceContext } from './space-context';
 
 const Title = styled.div.attrs({
@@ -41,8 +48,12 @@ const Title = styled.div.attrs({
 export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	const { space } = props;
 
+	const history = useHistory();
+	const dialog = useDialog();
+	const { spaces: { deleteSpace: deleteSpaceFromMemory, spaceRenamed } } = useConsoleContext();
 	const { openGroupIfCan, openSubjectIfCan } = useSpaceContext();
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ menuShown, setMenuShown ] = useState<MenuState>({
 		left: 0,
 		right: 0,
@@ -79,12 +90,75 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		await createSubject({ space, subject: newSubject });
 		openSubjectIfCan({ space, subject: newSubject });
 	};
+	const onRenameClicked = () => {
+		let name = '';
+		const onTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+			name = event.target.value;
+			showDialog(createContent(!name));
+		};
+		const showDialog = (content: JSX.Element) => {
+			dialog.show(
+				content,
+				<Fragment>
+					<div style={{ flexGrow: 1 }}/>
+					<Button inkType={ButtonType.PRIMARY} onClick={onRenameConfirmClicked}>Yes</Button>
+					<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
+				</Fragment>
+			);
+		};
+		const createContent = (error: boolean = false) => {
+			return <div data-widget='dialog-console-rename'>
+				<span>Rename <span data-widget='dialog-console-group'>{space.name}</span> to:</span>
+				<Input onChange={onTextChanged} value={name}
+				       data-error={error}
+				       placeholder='new name...'/>
+				<span>Name is required.</span>
+			</div>;
+		};
+		const onRenameConfirmClicked = async () => {
+			if (!name) {
+				showDialog(createContent(true));
+				return;
+			}
+			space.name = name;
+			spaceRenamed(space);
+			dialog.hide();
+			forceUpdate();
+		};
+		showDialog(createContent());
+	};
+	const onDeleteClicked = () => {
+		const onDeleteConfirmClicked = async () => {
+			try {
+				await deleteSpace(space);
+			} catch (e) {
+				console.groupCollapsed(`%cError on delete space.`, 'color:rgb(251,71,71)');
+				console.error('Space: ', space);
+				console.error(e);
+				console.groupEnd();
+			}
+			dialog.hide();
+			history.replace(Path.CONSOLE_HOME);
+			deleteSpaceFromMemory(space);
+		};
+		dialog.show(
+			<div data-widget='dialog-console-delete'>
+				<span>Are you sure to delete space?</span>
+				<span data-widget='dialog-console-group'>{space.name}</span>
+			</div>,
+			<Fragment>
+				<div style={{ flexGrow: 1 }}/>
+				<Button inkType={ButtonType.PRIMARY} onClick={onDeleteConfirmClicked}>Yes</Button>
+				<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
+			</Fragment>
+		);
+	};
 
 	return <Title onClick={onTitleClicked} ref={containerRef}>
 		<FontAwesomeIcon icon={space.type === ConsoleSpaceType.PUBLIC ? faGlobe : faCompactDisc}/>
 		<span>{space.name}</span>
 		<FontAwesomeIcon icon={faCaretDown} data-menu-shown={menuShown.visible}/>
-		<Menu {...menuShown} itemCount={2}>
+		<Menu {...menuShown} itemCount={4} separatorCount={1}>
 			<MenuItem onClick={onAddGroupClicked}>
 				<FontAwesomeIcon icon={faCube}/>
 				<span>Add Group</span>
@@ -92,6 +166,15 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 			<MenuItem onClick={onAddSubjectClicked}>
 				<FontAwesomeIcon icon={faPoll}/>
 				<span>Add Subject</span>
+			</MenuItem>
+			<MenuSeparator/>
+			<MenuItem onClick={onRenameClicked}>
+				<FontAwesomeIcon icon={faPenAlt}/>
+				<span>Rename</span>
+			</MenuItem>
+			<MenuItem onClick={onDeleteClicked}>
+				<FontAwesomeIcon icon={faTrashAlt}/>
+				<span>Delete Space</span>
 			</MenuItem>
 		</Menu>
 	</Title>;

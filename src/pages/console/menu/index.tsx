@@ -8,7 +8,7 @@ import {
 	faStar,
 	faTachometerAlt
 } from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
@@ -84,7 +84,25 @@ export const ConsoleMenu = () => {
 	const theme = useTheme();
 	const minWidth = (theme as Theme).consoleMenuWidth;
 	const maxWidth = (theme as Theme).consoleMenuMaxWidth;
-	const { menu: { menuWidth, setMenuWidth }, favorites, spaces: { connected: spaces } } = useConsoleContext();
+	const {
+		menu: { menuWidth, setMenuWidth },
+		favorites,
+		spaces: {
+			connected: spaces,
+			addSpaceDeletedListener, removeSpaceDeletedListener,
+			addSpaceRenamedListener, removeSpaceRenamedListener
+		}
+	} = useConsoleContext();
+
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		addSpaceDeletedListener(forceUpdate);
+		addSpaceRenamedListener(forceUpdate);
+		return () => {
+			removeSpaceDeletedListener(forceUpdate);
+			removeSpaceRenamedListener(forceUpdate);
+		};
+	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener ]);
 
 	const onResize = (newWidth: number) => {
 		setMenuWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));

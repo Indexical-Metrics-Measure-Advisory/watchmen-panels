@@ -1,6 +1,6 @@
 import { faCompactDisc, faGlobe, faSolarPanel, faThumbtack } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
@@ -183,7 +183,11 @@ export const Favorite = () => {
 			hide, pin, unpin
 		},
 		dashboards: { items: dashboards },
-		spaces: { connected: spaces }
+		spaces: {
+			connected: spaces,
+			addSpaceDeletedListener, removeSpaceDeletedListener,
+			addSpaceRenamedListener, removeSpaceRenamedListener
+		}
 	} = useConsoleContext();
 
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -202,6 +206,15 @@ export const Favorite = () => {
 			};
 		}
 	}, [ pinned, hide ]);
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		addSpaceDeletedListener(forceUpdate);
+		addSpaceRenamedListener(forceUpdate);
+		return () => {
+			removeSpaceDeletedListener(forceUpdate);
+			removeSpaceRenamedListener(forceUpdate);
+		};
+	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener ]);
 
 	const itemCount = items.length;
 	const displayItemCount = Math.min(itemCount, 5);

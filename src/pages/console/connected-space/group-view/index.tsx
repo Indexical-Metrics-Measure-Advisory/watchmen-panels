@@ -311,8 +311,6 @@ export const GroupView = (props: {
 					})}
 			</SubjectListBody>
 		</SubjectList>
-		<LinkButton onClick={onMaxClicked} ignoreHorizontalPadding={true}>
-			Show Subject List
-		</LinkButton>
+		<LinkButton onClick={onMaxClicked} ignoreHorizontalPadding={true}>Show Subjects</LinkButton>
 	</GroupViewContainer>;
 };

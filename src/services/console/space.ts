@@ -272,6 +272,8 @@ export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 	} ];
 };
 
+export const deleteSpace = async (space: ConnectedConsoleSpace): Promise<void> => {
+};
 // TODO demo purpose
 let newGroupId = 10000;
 let newSubjectId = 10000;
@@ -279,12 +281,10 @@ export const createGroup = async (data: { space: ConnectedConsoleSpace, group: C
 	data.group.groupId = `${newGroupId++}`;
 };
 export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {
-
 };
 
 export const createSubject = async (data: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }): Promise<void> => {
 	data.subject.subjectId = `${newSubjectId++}`;
 };
 export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
-
 };
