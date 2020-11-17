@@ -4,14 +4,14 @@ import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '.
 export const getVisitAdvice = (lastVisitTime: string) => {
 	const lastVisit = dayjs(lastVisitTime);
 	const days = dayjs().diff(lastVisit, 'day');
-	let visitAdvise = '';
 	if (days > 365) {
-		visitAdvise = 'year';
+		return 'year';
 	} else if (days > 30) {
-		visitAdvise = 'month';
+		return 'month';
 	} else if (days > 7) {
-		visitAdvise = 'week';
+		return 'week';
 	}
+	return void 0;
 };
 
 export const findSubjectIndex = (subject: ConsoleSpaceSubject, subjects: Array<ConsoleSpaceSubject>): number => {

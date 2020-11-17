@@ -1,7 +1,7 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faCube, faEllipsisH, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Children, ForwardedRef, forwardRef, useEffect, useReducer, useRef, useState } from 'react';
+import React, { ForwardedRef, forwardRef, useEffect, useReducer, useRef, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
@@ -53,6 +53,7 @@ const DropdownMenuItem = styled(MenuItem)`
 		}
 	}
 	> button:nth-child(3) {
+		margin-left: calc(var(--margin) / 4);
 		opacity: 0;
 		pointer-events: none;
 	}
@@ -64,12 +65,13 @@ export const DropdownTab = forwardRef((props: {
 	label?: string;
 	onTabClicked: () => void;
 	showDropdown: () => void;
+	dropdownItemsCount: number;
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
 }, ref: ForwardedRef<HTMLDivElement>) => {
 	const {
 		active,
 		icon, label,
-		onTabClicked, showDropdown,
+		onTabClicked, showDropdown, dropdownItemsCount,
 		children
 	} = props;
 
@@ -83,7 +85,7 @@ export const DropdownTab = forwardRef((props: {
 		<FontAwesomeIcon icon={icon}/>
 		<span>{label}</span>
 		{children
-			? <span>{Children.count(children) + 1}</span>
+			? <span>{dropdownItemsCount + 1}</span>
 			: null}
 		{children
 			? <LinkButton onClick={onMoreClicked} ignoreHorizontalPadding={true}>
@@ -148,6 +150,7 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 
 	return <DropdownTab active={active} icon={icon} label={label}
 	                    onTabClicked={onTabClicked} showDropdown={showDropdown}
+	                    dropdownItemsCount={dropdownItems.length}
 	                    ref={containerRef}>
 		{dropdownItems.length !== 0
 			? <Menu {...menuState} itemCount={dropdownItems.length}>

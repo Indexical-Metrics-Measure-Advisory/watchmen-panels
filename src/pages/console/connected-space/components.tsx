@@ -66,7 +66,7 @@ export const Menu = styled.div.attrs<MenuState & { itemCount: number }>
 	position: fixed;
 	font-family: var(--font-family);
 	min-width: 200px;
-	max-width: 300px;
+	max-width: 400px;
 	background-color: var(--invert-color);
 	border-radius: var(--border-radius);
 	border: var(--border);

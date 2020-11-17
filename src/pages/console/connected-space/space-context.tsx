@@ -75,7 +75,7 @@ export const SpaceContextProvider = (props: {
 			const match = matchPath<{ groupId: string }>(location.pathname, Path.CONSOLE_CONNECTED_SPACE_GROUP);
 			// eslint-disable-next-line
 			if (match && match.params.groupId == group.groupId) {
-				// current opened, switch to another tab or another group
+				// current is active tab, and active group
 				if (activeGroups.length === 0) {
 					// no more group opened
 					delete store.activeGroupId;
@@ -89,6 +89,20 @@ export const SpaceContextProvider = (props: {
 					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_GROUP, space.connectId, activeGroups[0].groupId));
 				}
 			} else {
+				// whether current is active tab or not
+				// eslint-disable-next-line
+				if (store.activeGroupId == group.groupId) {
+					// current is active group
+					if (activeGroups.length === 0) {
+						// no more group opened
+						delete store.activeGroupId;
+					} else if (index !== 0) {
+						// not first one, use previous one
+						store.activeGroupId = activeGroups[index - 1].groupId;
+					} else {
+						store.activeGroupId = activeGroups[0].groupId;
+					}
+				}
 				emitter.emit(SpaceEvent.GROUP_CLOSED, { space, group });
 			}
 		}
@@ -115,11 +129,10 @@ export const SpaceContextProvider = (props: {
 		const index = activeSubjects.findIndex(s => s.subjectId == subject.subjectId);
 		if (index !== -1) {
 			activeSubjects.splice(index, 1);
-			// check if current is subjects tab opening
 			const match = matchPath<{ subjectId: string }>(location.pathname, Path.CONSOLE_CONNECTED_SPACE_SUBJECT);
 			// eslint-disable-next-line
 			if (match && match.params.subjectId == subject.subjectId) {
-				// current opened, switch to another tab or another subject
+				// current is active tab, and active subject
 				if (activeSubjects.length === 0) {
 					// no more subject opened
 					delete store.activeSubjectId;
@@ -133,14 +146,19 @@ export const SpaceContextProvider = (props: {
 					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[0].subjectId));
 				}
 			} else {
-				if (activeSubjects.length === 0) {
-					// no more subject opened
-					delete store.activeSubjectId;
-				} else if (index !== 0) {
-					// not first one, use previous one
-					store.activeSubjectId = activeSubjects[index - 1].subjectId;
-				} else {
-					store.activeSubjectId = activeSubjects[0].subjectId;
+				// whether current is active tab or not
+				// eslint-disable-next-line
+				if (store.activeSubjectId == subject.subjectId) {
+					// current is active subject
+					if (activeSubjects.length === 0) {
+						// no more subject opened
+						delete store.activeSubjectId;
+					} else if (index !== 0) {
+						// not first one, use previous one
+						store.activeSubjectId = activeSubjects[index - 1].subjectId;
+					} else {
+						store.activeSubjectId = activeSubjects[0].subjectId;
+					}
 				}
 				emitter.emit(SpaceEvent.SUBJECT_CLOSED, { space, group, subject });
 			}

@@ -60,6 +60,9 @@ export const ListByVisit = (props: { space: ConnectedConsoleSpace }) => {
 			timeGroups[0].subjects.push(subject);
 		}
 	});
+	timeGroups.forEach(timeGroup =>
+		timeGroup.subjects
+			.sort((s1, s2) => s2.lastVisitTime.localeCompare(s1.lastVisitTime)));
 
 	return <Container data-visible={viewType === ViewType.BY_VISIT}>
 		{timeGroups.map(group => {

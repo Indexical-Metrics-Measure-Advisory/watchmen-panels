@@ -52,16 +52,23 @@ export const LinkButton = (props: {
 	const { tooltip, center = false, ignoreHorizontalPadding, onClick, children } = props;
 
 	const buttonRef = useRef<HTMLButtonElement>(null);
-	const { mouseEnter, mouseLeave } = useTooltip({
+	const { mouseEnter, mouseLeave, hide } = useTooltip({
 		show: !!tooltip,
 		tooltip,
 		ref: buttonRef,
 		rect: () => ({ align: center ? TooltipAlignment.CENTER : TooltipAlignment.LEFT, offsetY: 10 })
 	});
 
+	const onClicked = (event: React.MouseEvent) => {
+		if (onClick) {
+			hide && hide();
+			onClick(event);
+		}
+	};
+
 	return <Button ignore-horizontal-padding={ignoreHorizontalPadding}
 	               onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}
-	               onClick={onClick}
+	               onClick={onClicked}
 	               ref={buttonRef}>
 		{children}
 	</Button>;

@@ -139,19 +139,19 @@ const SubjectCard = styled.div`
 		opacity: 0.2;
 		pointer-events: none;
 	}
-	&[data-visit-advise=week] {
+	&[data-visit-advice=week] {
 		border-color: transparent;
 		&:before {
 			background-color: var(--console-info-color);
 		}
 	}
-	&[data-visit-advise=month] {
+	&[data-visit-advice=month] {
 		border-color: transparent;
 		&:before {
 			background-color: var(--console-warn-color);
 		}
 	}
-	&[data-visit-advise=year] {
+	&[data-visit-advice=year] {
 		border-color: transparent;
 		&:before {
 			background-color: var(--console-danger-color);
@@ -234,6 +234,7 @@ export const GroupView = (props: {
 	const onSortByVisitDescClicked = () => setSort(SortType.BY_VISIT_DESC);
 	const onMaxClicked = () => setMin(false);
 	const onMinClicked = () => setMin(true);
+	const onOpenClicked = (subject: ConsoleSpaceSubject) => () => openSubjectIfCan({ space, group, subject });
 	const onDeleteClicked = (subject: ConsoleSpaceSubject) => onDeleteSubjectClicked({
 		dialog,
 		space,
@@ -277,7 +278,8 @@ export const GroupView = (props: {
 					? <div>No Subject.</div>
 					: subjects.map(subject => {
 						const visitAdvice = getVisitAdvice(subject.lastVisitTime);
-						return <SubjectCard data-visit-advise={visitAdvice} key={subject.subjectId}>
+						return <SubjectCard data-visit-advice={visitAdvice} key={subject.subjectId}
+						                    onClick={onOpenClicked(subject)}>
 							<div>
 								<span>{subject.name}</span>
 								<LinkButton onClick={onDeleteClicked(subject)} ignoreHorizontalPadding={true}
