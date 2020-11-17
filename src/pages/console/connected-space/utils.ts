@@ -5,13 +5,15 @@ export const getVisitAdvice = (lastVisitTime: string) => {
 	const lastVisit = dayjs(lastVisitTime);
 	const days = dayjs().diff(lastVisit, 'day');
 	if (days > 365) {
-		return 'year';
+		return 'ancient';
 	} else if (days > 30) {
-		return 'month';
+		return 'year';
 	} else if (days > 7) {
+		return 'month';
+	} else if (days > 1) {
 		return 'week';
 	}
-	return void 0;
+	return 'recent';
 };
 
 export const findSubjectIndex = (subject: ConsoleSpaceSubject, subjects: Array<ConsoleSpaceSubject>): number => {

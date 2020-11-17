@@ -122,19 +122,23 @@ const DefaultTheme = {
 	// console group
 	consoleGroupBgColor: 'rgba(181,188,194,0.2)',
 	consoleGroupQuoteColor: 'rgba(181,188,194)',
-	consoleGroupBgColorUngroup: 'rgba(119,177,127,0.2)',
-	consoleGroupQuoteColorUngroup: 'rgb(119,177,127)',
-	consoleGroupBgColorRecent: 'rgba(119,177,127,0.2)',
-	consoleGroupQuoteColorRecent: 'rgb(119,177,127)',
-	consoleGroupBgColorMonth: 'rgba(138,53,193,0.1)',
-	consoleGroupQuoteColorMonth: 'rgb(138,53,193)',
-	consoleGroupBgColorYear: 'rgba(255,161,0,0.1)',
-	consoleGroupQuoteColorYear: 'rgb(255,161,0)',
-	consoleGroupBgColorAncient: 'rgba(246,52,27, 0.1)',
-	consoleGroupQuoteColorAncient: 'rgb(246,52,27)',
+	consoleBgColorUngroup: 'rgba(119,177,127,0.2)',
+	consoleColorUngroup: 'rgb(119,177,127)',
 
 	// console subject
-	consoleSubjectHeight: 40
+	consoleSubjectHeight: 40,
+
+	// console visit colors
+	consoleBgColorRecent: 'rgba(119,177,127,0.2)',
+	consoleColorRecent: 'rgb(119,177,127)',
+	consoleBgColorWeek: 'rgba(53,149,193,0.1)',
+	consoleColorWeek: 'rgb(53,149,193)',
+	consoleBgColorMonth: 'rgba(138,53,193,0.1)',
+	consoleColorMonth: 'rgb(138,53,193)',
+	consoleBgColorYear: 'rgba(255,161,0,0.1)',
+	consoleColorYear: 'rgb(255,161,0)',
+	consoleBgColorAncient: 'rgba(246,52,27, 0.1)',
+	consoleColorAncient: 'rgb(246,52,27)'
 };
 
 export default DefaultTheme;

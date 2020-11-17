@@ -22,7 +22,6 @@ const SubjectContainer = styled.div.attrs({
 	margin: 0 calc(var(--margin) / 2) 1px;
 	padding: 0 calc(var(--margin) / 2);
 	background-color: var(--bg-color);
-	
 	cursor: pointer;
 	&:nth-child(2) {
 		border-top-left-radius: calc(var(--border-radius));
@@ -65,14 +64,17 @@ const SubjectContainer = styled.div.attrs({
 		transition: all 300ms ease-in-out;
 		pointer-events: none;
 	}
-	> div[data-visit-advise=week] {
-		color: var(--console-info-color);
+	> div[data-visit-advice=week] {
+		color: var(--console-color-week);
 	}
-	> div[data-visit-advise=month] {
-		color: var(--console-warn-color);
+	> div[data-visit-advice=month] {
+		color: var(--console-color-month);
 	}
-	> div[data-visit-advise=year] {
-		color: var(--console-danger-color);
+	> div[data-visit-advice=year] {
+		color: var(--console-color-year);
+	}
+	> div[data-visit-advice=ancient] {
+		color: var(--console-color-ancient);
 	}
 `;
 
@@ -125,7 +127,7 @@ export const Subject = (props: {
 				: <Fragment>
 					<div>{subject.topicCount}</div>
 					<div>{subject.graphicsCount}</div>
-					<div data-visit-advise={visitAdvice}>{dayjs(subject.lastVisitTime).fromNow()}</div>
+					<div data-visit-advice={visitAdvice}>{dayjs(subject.lastVisitTime).fromNow()}</div>
 					<div>{dayjs(subject.createdAt).fromNow()}</div>
 					<div>
 						<FontAwesomeIcon icon={faTrashAlt} onClick={onDeleteClicked}

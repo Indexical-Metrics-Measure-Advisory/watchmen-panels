@@ -136,25 +136,37 @@ const SubjectCard = styled.div`
 		border-radius: calc(var(--border-radius) * 2);
 		background-color: transparent;
 		z-index: 1;
-		opacity: 0.2;
+		//opacity: 0.2;
 		pointer-events: none;
+	}
+	&[data-visit-advice=recent] {
+		border-color: transparent;
+		&:before {
+			background-color: var(--console-bg-color-recent);
+		}
 	}
 	&[data-visit-advice=week] {
 		border-color: transparent;
 		&:before {
-			background-color: var(--console-info-color);
+			background-color: var(--console-bg-color-week);
 		}
 	}
 	&[data-visit-advice=month] {
 		border-color: transparent;
 		&:before {
-			background-color: var(--console-warn-color);
+			background-color: var(--console-bg-color-month);
 		}
 	}
 	&[data-visit-advice=year] {
 		border-color: transparent;
 		&:before {
-			background-color: var(--console-danger-color);
+			background-color: var(--console-bg-color-year);
+		}
+	}
+	&[data-visit-advice=ancient] {
+		border-color: transparent;
+		&:before {
+			background-color: var(--console-bg-color-ancient);
 		}
 	}
 	> div {

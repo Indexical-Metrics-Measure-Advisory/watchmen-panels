@@ -30,9 +30,10 @@ export const ListByVisit = (props: { space: ConnectedConsoleSpace }) => {
 
 	const timeGroups: Array<ConsoleSpaceGroup & { colorSuffix: string }> = [
 		{ groupId: '-1', name: 'Most Recently', subjects: [], colorSuffix: 'recent' },
-		{ groupId: '-2', name: 'In A Month', subjects: [], colorSuffix: 'month' },
-		{ groupId: '-3', name: 'In A Year', subjects: [], colorSuffix: 'year' },
-		{ groupId: '-4', name: 'Long Long Ago', subjects: [], colorSuffix: 'ancient' }
+		{ groupId: '-2', name: 'In A Week', subjects: [], colorSuffix: 'week' },
+		{ groupId: '-3', name: 'In A Month', subjects: [], colorSuffix: 'month' },
+		{ groupId: '-4', name: 'In A Year', subjects: [], colorSuffix: 'year' },
+		{ groupId: '-5', name: 'Long Long Ago', subjects: [], colorSuffix: 'ancient' }
 	];
 
 	const now = dayjs();
@@ -51,10 +52,12 @@ export const ListByVisit = (props: { space: ConnectedConsoleSpace }) => {
 		const { lastVisitTime } = subject;
 		const days = now.diff(dayjs(lastVisitTime), 'day');
 		if (days > 365) {
-			timeGroups[3].subjects.push(subject);
+			timeGroups[4].subjects.push(subject);
 		} else if (days > 30) {
-			timeGroups[2].subjects.push(subject);
+			timeGroups[3].subjects.push(subject);
 		} else if (days > 7) {
+			timeGroups[2].subjects.push(subject);
+		} else if (days > 1) {
 			timeGroups[1].subjects.push(subject);
 		} else {
 			timeGroups[0].subjects.push(subject);

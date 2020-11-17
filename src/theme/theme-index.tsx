@@ -103,19 +103,22 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		
 		--console-group-bg-color: ${({ theme }) => theme.consoleGroupBgColor};
 		--console-group-quote-color: ${({ theme }) => theme.consoleGroupQuoteColor};
-		--console-group-bg-color-ungroup: ${({ theme }) => theme.consoleGroupBgColorUngroup};
-		--console-group-quote-color-ungroup: ${({ theme }) => theme.consoleGroupQuoteColorUngroup};
-		--console-group-bg-color-recent: ${({ theme }) => theme.consoleGroupBgColorRecent};
-		--console-group-quote-color-recent: ${({ theme }) => theme.consoleGroupQuoteColorRecent};
-		--console-group-bg-color-month: ${({ theme }) => theme.consoleGroupBgColorMonth};
-		--console-group-quote-color-month: ${({ theme }) => theme.consoleGroupQuoteColorMonth};
-		--console-group-bg-color-year: ${({ theme }) => theme.consoleGroupBgColorYear};
-		--console-group-quote-color-year: ${({ theme }) => theme.consoleGroupQuoteColorYear};
-		--console-group-bg-color-ancient: ${({ theme }) => theme.consoleGroupBgColorAncient};
-		--console-group-quote-color-ancient: ${({ theme }) => theme.consoleGroupQuoteColorAncient};
+		--console-bg-color-ungroup: ${({ theme }) => theme.consoleBgColorUngroup};
+		--console-color-ungroup: ${({ theme }) => theme.consoleColorUngroup};
 		
 		--console-subject-height: ${({ theme }) => theme.consoleSubjectHeight}px;
 		
+		--console-bg-color-recent: ${({ theme }) => theme.consoleBgColorRecent};
+		--console-color-recent: ${({ theme }) => theme.consoleColorRecent};
+		--console-bg-color-week: ${({ theme }) => theme.consoleBgColorWeek};
+		--console-color-week: ${({ theme }) => theme.consoleColorWeek};
+		--console-bg-color-month: ${({ theme }) => theme.consoleBgColorMonth};
+		--console-color-month: ${({ theme }) => theme.consoleColorMonth};
+		--console-bg-color-year: ${({ theme }) => theme.consoleBgColorYear};
+		--console-color-year: ${({ theme }) => theme.consoleColorYear};
+		--console-bg-color-ancient: ${({ theme }) => theme.consoleBgColorAncient};
+		--console-color-ancient: ${({ theme }) => theme.consoleColorAncient};
+
 		width: 100%;
 		
 		//&::-webkit-scrollbar {

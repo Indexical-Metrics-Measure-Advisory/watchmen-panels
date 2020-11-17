@@ -27,7 +27,7 @@ const GroupContainer = styled.div.attrs({
 	flex-direction: column;
 	position: relative;
 	border-radius: calc(var(--border-radius) * 2);
-	background-color: ${({ colorSuffix }) => colorSuffix ? `var(--console-group-bg-color-${colorSuffix})` : 'var(--console-group-bg-color)'};
+	background-color: ${({ colorSuffix }) => colorSuffix ? `var(--console-bg-color-${colorSuffix})` : 'var(--console-group-bg-color)'};
 	padding: 0 calc(var(--margin) / 2);
 	margin-bottom: var(--margin);
 	overflow: hidden;
@@ -40,7 +40,7 @@ const GroupContainer = styled.div.attrs({
 		left: 0;
 		width: 4px;
 		height: 100%;
-		background-color: ${({ colorSuffix }) => colorSuffix ? `var(--console-group-quote-color-${colorSuffix})` : 'var(--console-group-quote-color)'};
+		background-color: ${({ colorSuffix }) => colorSuffix ? `var(--console-color-${colorSuffix})` : 'var(--console-group-quote-color)'};
 	}
 	&:hover {
 		div[data-widget='console-list-view-header-buttons'] {
