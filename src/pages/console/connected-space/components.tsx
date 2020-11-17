@@ -83,23 +83,24 @@ export const MenuItem = styled.div`
 	color: var(--console-font-color);
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
-	&:before {
-		content: '';
-		display: block;
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: var(--console-waive-color);
-		opacity: 0;
-		transition: opacity 300ms ease-in-out;
-	}
+	//&:before {
+	//	content: '';
+	//	display: block;
+	//	position: absolute;
+	//	top: 0;
+	//	left: 0;
+	//	width: 100%;
+	//	height: 100%;
+	//	background-color: var(--console-waive-color);
+	//	opacity: 0;
+	//	transition: opacity 300ms ease-in-out;
+	//}
 	&:hover {
 		color: var(--console-primary-color);
-		&:before {
-			opacity: 0.2;
-		}
+		text-decoration: underline;
+		//&:before {
+		//	opacity: 0.05;
+		//}
 	}
 	> svg:first-child {
 		margin-right: calc(var(--margin) / 3);

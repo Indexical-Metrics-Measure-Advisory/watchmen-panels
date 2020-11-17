@@ -46,7 +46,7 @@ export const LinkButton = (props: {
 	tooltip?: string;
 	center?: boolean;
 	ignoreHorizontalPadding?: boolean;
-	onClick: () => void;
+	onClick: (event: React.MouseEvent) => void;
 	children: ((props: any) => React.ReactNode) | React.ReactNode
 }) => {
 	const { tooltip, center = false, ignoreHorizontalPadding, onClick, children } = props;

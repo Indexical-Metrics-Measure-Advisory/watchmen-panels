@@ -11,7 +11,7 @@ export const Tabs = styled.div`
 	padding-top: 8px;
 	height: 50px;
 `;
-const TabContainer = styled.div<{ active: boolean }>`
+export const TabContainer = styled.div<{ active: boolean }>`
 	display: flex;
 	position: relative;
 	align-items: center;
