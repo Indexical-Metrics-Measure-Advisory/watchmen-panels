@@ -38,7 +38,7 @@ const DropdownTabContainer = styled(TabContainer)`
 		transform: scaleX(0.8) scaleY(0.8);
 		transition: all 300ms ease-in-out;
 	}
-	> button:nth-child(4) {
+	> button {
 		margin-left: calc(var(--margin) / 4);
 		color: ${({ active }) => active ? 'var(--console-primary-color)' : 'var(--console-font-color)'};
 		opacity: ${({ active }) => active ? 1 : 0.6};
@@ -64,6 +64,7 @@ export const DropdownTab = forwardRef((props: {
 	icon: IconProp;
 	label?: string;
 	onTabClicked: () => void;
+	onTabCloseClicked: () => void;
 	showDropdown: () => void;
 	dropdownItemsCount: number;
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
@@ -71,7 +72,7 @@ export const DropdownTab = forwardRef((props: {
 	const {
 		active,
 		icon, label,
-		onTabClicked, showDropdown, dropdownItemsCount,
+		onTabClicked, onTabCloseClicked, showDropdown, dropdownItemsCount,
 		children
 	} = props;
 
@@ -79,6 +80,11 @@ export const DropdownTab = forwardRef((props: {
 		event.preventDefault();
 		event.stopPropagation();
 		showDropdown();
+	};
+	const onCloseClicked = (event: React.MouseEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+		onTabCloseClicked();
 	};
 
 	return <DropdownTabContainer active={active} onClick={onTabClicked} ref={ref}>
@@ -92,6 +98,9 @@ export const DropdownTab = forwardRef((props: {
 				<FontAwesomeIcon icon={faEllipsisH}/>
 			</LinkButton>
 			: null}
+		<LinkButton onClick={onCloseClicked} ignoreHorizontalPadding={true}>
+			<FontAwesomeIcon icon={faTimes}/>
+		</LinkButton>
 		{children}
 		<div/>
 		<div/>
@@ -104,6 +113,7 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 		icon: IconProp;
 		label: string;
 		onClicked: () => void;
+		onCloseClicked: () => void;
 	},
 	dropdown: {
 		items: Array<T>;
@@ -115,7 +125,7 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 }) => {
 	const {
 		active,
-		tab: { icon, label, onClicked: onTabClicked },
+		tab: { icon, label, onClicked: onTabClicked, onCloseClicked: onTabCloseClicked },
 		dropdown: { items: dropdownItems, onClicked: onItemClicked, onCloseClicked: onItemCloseClicked, asKey: itemAsKey, asLabel: itemAsLabel }
 	} = props;
 
@@ -149,8 +159,8 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 	});
 
 	return <DropdownTab active={active} icon={icon} label={label}
-	                    onTabClicked={onTabClicked} showDropdown={showDropdown}
-	                    dropdownItemsCount={dropdownItems.length}
+	                    onTabClicked={onTabClicked} onTabCloseClicked={onTabCloseClicked}
+	                    showDropdown={showDropdown} dropdownItemsCount={dropdownItems.length}
 	                    ref={containerRef}>
 		{dropdownItems.length !== 0
 			? <Menu {...menuState} itemCount={dropdownItems.length}>
@@ -198,12 +208,18 @@ export const GroupTab = (props: { space: ConnectedConsoleSpace }) => {
 	openedGroups = openedGroups.filter(g => g !== activeGroup);
 
 	const onGroupTabClicked = () => openGroupIfCan({ space, group: activeGroup });
+	const onGroupTabCloseClicked = () => closeGroupIfCan({ space, group: activeGroup });
 	const onGroupOpenClicked = (group: ConsoleSpaceGroup) => openGroupIfCan({ space, group });
 	const onGroupCloseClicked = (group: ConsoleSpaceGroup) => closeGroupIfCan({ space, group });
 	const asKey = (group: ConsoleSpaceGroup) => group.groupId;
 	const asLabel = (group: ConsoleSpaceGroup) => group.name;
 
-	const tab = { icon: faCube, label: activeGroup.name, onClicked: onGroupTabClicked };
+	const tab = {
+		icon: faCube,
+		label: activeGroup.name,
+		onClicked: onGroupTabClicked,
+		onCloseClicked: onGroupTabCloseClicked
+	};
 	const dropdown = {
 		items: openedGroups,
 		onClicked: onGroupOpenClicked,
@@ -286,12 +302,18 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 	openedSubjects = openedSubjects.filter(s => s !== activeSubject);
 
 	const onSubjectTabClicked = () => openSubjectIfCan({ space, ...activeSubject });
+	const onSubjectTabCloseClicked = () => closeSubjectIfCan({ space, ...activeSubject });
 	const onSubjectOpenClicked = ({ subject, group }: SubjectItem) => openSubjectIfCan({ space, group, subject });
 	const onSubjectCloseClicked = ({ subject, group }: SubjectItem) => closeSubjectIfCan({ space, group, subject });
 	const asKey = ({ subject }: SubjectItem) => subject.subjectId;
 	const asLabel = ({ subject, group }: SubjectItem) => asSubjectLabel({ group, subject });
 
-	const tab = { icon: faCube, label: asSubjectLabel(activeSubject), onClicked: onSubjectTabClicked };
+	const tab = {
+		icon: faCube,
+		label: asSubjectLabel(activeSubject),
+		onClicked: onSubjectTabClicked,
+		onCloseClicked: onSubjectTabCloseClicked
+	};
 	const dropdown = {
 		items: openedSubjects,
 		onClicked: onSubjectOpenClicked,

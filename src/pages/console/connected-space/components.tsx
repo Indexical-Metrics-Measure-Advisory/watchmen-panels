@@ -76,18 +76,6 @@ export const Menu = styled.div.attrs<MenuState & { itemCount: number }>
 	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 1000;
-	&::-webkit-scrollbar {
-		background-color: transparent;
-		width: 4px;
-	}
-	&::-webkit-scrollbar-track {
-		background-color: var(--scrollbar-background-color);
-		border-radius: 2px;
-	}
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--console-favorite-color);
-		border-radius: 2px;
-	}
 `;
 export const MenuItem = styled.div`
 	display: flex;

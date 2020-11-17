@@ -140,10 +140,10 @@ export const SpaceContextProvider = (props: {
 				} else if (index !== 0) {
 					// not first one, use previous one
 					store.activeSubjectId = activeSubjects[index - 1].subjectId;
-					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[index - 1].subjectId));
+					history.push(toSpaceSubject(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[index - 1].subjectId));
 				} else {
 					store.activeSubjectId = activeSubjects[0].subjectId;
-					history.push(toSpaceGroup(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[0].subjectId));
+					history.push(toSpaceSubject(Path.CONSOLE_CONNECTED_SPACE_SUBJECT, space.connectId, activeSubjects[0].subjectId));
 				}
 			} else {
 				// whether current is active tab or not
