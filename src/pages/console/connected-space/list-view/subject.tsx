@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { useDialog } from '../../../context/dialog';
 import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
-import { onDeleteSubjectClicked } from '../dialog';
+import { createDeleteSubjectClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
 import { findParentGroup, findSubjectIndex, getVisitAdvice } from '../utils';
 import { useListView } from './list-context';
@@ -105,7 +105,7 @@ export const Subject = (props: {
 		}
 		openSubjectIfCan({ space, group: parentGroup, subject });
 	};
-	const onDeleteClicked = onDeleteSubjectClicked({
+	const onDeleteClicked = createDeleteSubjectClickHandler({
 		dialog,
 		space,
 		group: findParentGroup(subject, space),

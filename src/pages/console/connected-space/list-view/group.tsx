@@ -7,14 +7,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { Fragment, useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
-import { createSubject, deleteGroup } from '../../../../services/console/space';
+import { createSubject } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { Theme } from '../../../../theme/types';
-import Button, { ButtonType } from '../../../component/button';
 import { useDialog } from '../../../context/dialog';
 import { LinkButton } from '../../component/link-button';
+import { createDeleteGroupClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
 import { useListView } from './list-context';
 import { Subject } from './subject';
@@ -234,40 +234,20 @@ export const Group = (props: {
 		await createSubject({ space, group, subject: newSubject });
 		openSubjectIfCan({ space, group, subject: newSubject });
 	};
-	const onDeleteGroupClicked = () => {
-		const onDeleteGroupConfirmClicked = async () => {
-			try {
-				await deleteGroup(group);
-			} catch (e) {
-				console.groupCollapsed(`%cError on delete group.`, 'color:rgb(251,71,71)');
-				console.error('Space: ', space);
-				console.error('Group: ', group);
-				console.error(e);
-				console.groupEnd();
-			}
-			const index = space.groups.findIndex(exists => exists === group);
-			space.groups.splice(index, 1);
-			listView.groupDeleted({ space, group });
-			closeGroupIfCan({ space, group });
-			dialog.hide();
-		};
-		dialog.show(
-			<div data-widget='dialog-console-delete'>
-				<span>Are you sure to delete group?</span>
-				<span data-widget='dialog-console-group'>{space.name} / {group.name}</span>
-			</div>,
-			<Fragment>
-				<div style={{ flexGrow: 1 }}/>
-				<Button inkType={ButtonType.PRIMARY} onClick={onDeleteGroupConfirmClicked}>Yes</Button>
-				<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
-			</Fragment>
-		);
-	};
 
 	const { visible, subjects: displaySubjects } = computeDisplaySubjects({
 		filter: listView.store.filter,
 		subjects,
 		group
+	});
+	const onDeleteClicked = createDeleteGroupClickHandler({
+		dialog,
+		space,
+		group,
+		onDeleted: ({ space, group }) => {
+			listView.groupDeleted({ space, group });
+			closeGroupIfCan({ space, group });
+		}
 	});
 
 	return <GroupContainer data-visible={visible} colorSuffix={colorSuffix}>
@@ -284,7 +264,7 @@ export const Group = (props: {
 					</LinkButton>
 					: null}
 				{removable
-					? <LinkButton onClick={onDeleteGroupClicked}>
+					? <LinkButton onClick={onDeleteClicked}>
 						<FontAwesomeIcon icon={faTrashAlt}/>
 						<span>Delete Group</span>
 					</LinkButton>

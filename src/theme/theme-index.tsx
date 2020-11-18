@@ -101,6 +101,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-notification-dot-color-3: ${({ theme }) => theme.consoleNotificationDotColor3};
 		--console-notification-dot-color-4: ${({ theme }) => theme.consoleNotificationDotColor4};
 		
+		--console-space-header-height: ${({ theme }) => theme.consoleSpaceHeaderHeight}px;
+		
 		--console-group-bg-color: ${({ theme }) => theme.consoleGroupBgColor};
 		--console-group-quote-color: ${({ theme }) => theme.consoleGroupQuoteColor};
 		--console-bg-color-ungroup: ${({ theme }) => theme.consoleBgColorUngroup};
@@ -293,7 +295,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 			transition: all 300ms ease-in-out;
 		}
 	}
-	span[data-widget='dialog-console-group'] {
+	span[data-widget='dialog-console-object'] {
 		font-family: var(--console-title-font-family);
 		font-weight: var(--font-bold);
 		color: var(--console-danger-color);

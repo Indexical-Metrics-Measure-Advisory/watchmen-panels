@@ -9,10 +9,10 @@ import Path from '../../../common/path';
 import { createGroup, createSubject, deleteSpace } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import Button, { ButtonType } from '../../component/button';
-import Input from '../../component/input';
 import { useDialog } from '../../context/dialog';
 import { useConsoleContext } from '../context/console-context';
 import { hideMenu, Menu, MenuItem, MenuSeparator, MenuState, showMenu, useMenu } from './components';
+import { createRenameClickHandler } from './dialog';
 import { useSpaceContext } from './space-context';
 
 const Title = styled.div.attrs({
@@ -90,43 +90,15 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		await createSubject({ space, subject: newSubject });
 		openSubjectIfCan({ space, subject: newSubject });
 	};
-	const onRenameClicked = () => {
-		let name = '';
-		const onTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-			name = event.target.value;
-			showDialog(createContent(!name));
-		};
-		const showDialog = (content: JSX.Element) => {
-			dialog.show(
-				content,
-				<Fragment>
-					<div style={{ flexGrow: 1 }}/>
-					<Button inkType={ButtonType.PRIMARY} onClick={onRenameConfirmClicked}>Yes</Button>
-					<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
-				</Fragment>
-			);
-		};
-		const createContent = (error: boolean = false) => {
-			return <div data-widget='dialog-console-rename'>
-				<span>Rename <span data-widget='dialog-console-group'>{space.name}</span> to:</span>
-				<Input onChange={onTextChanged} value={name}
-				       data-error={error}
-				       placeholder='new name...'/>
-				<span>Name is required.</span>
-			</div>;
-		};
-		const onRenameConfirmClicked = async () => {
-			if (!name) {
-				showDialog(createContent(true));
-				return;
-			}
-			space.name = name;
+	const onRenameClicked = createRenameClickHandler({
+		dialog, space,
+		asFullName: () => space.name,
+		renameObject: (options, newName) => space.name = newName,
+		onRenamed: () => {
 			spaceRenamed(space);
-			dialog.hide();
 			forceUpdate();
-		};
-		showDialog(createContent());
-	};
+		}
+	});
 	const onDeleteClicked = () => {
 		const onDeleteConfirmClicked = async () => {
 			try {
@@ -144,7 +116,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		dialog.show(
 			<div data-widget='dialog-console-delete'>
 				<span>Are you sure to delete space?</span>
-				<span data-widget='dialog-console-group'>{space.name}</span>
+				<span data-widget='dialog-console-object'>{space.name}</span>
 			</div>,
 			<Fragment>
 				<div style={{ flexGrow: 1 }}/>

@@ -6,14 +6,18 @@ import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '.
 
 export enum SpaceEvent {
 	GROUP_CLOSED = 'group-closed',
-	SUBJECT_CLOSED = 'subject-closed'
+	GROUP_RENAMED = 'group-renamed',
+	SUBJECT_CLOSED = 'subject-closed',
+	SUBJECT_RENAMED = 'subject-renamed'
 }
 
 export type ActiveGroups = Array<ConsoleSpaceGroup>;
 export type ActiveSubjects = Array<ConsoleSpaceSubject>;
 
 export type GroupClosedListener = (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
+export type GroupRenamedListener = (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
 export type SubjectClosedListener = (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
+export type SubjectRenamedListener = (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
 
 export interface SpaceContextStore {
 	activeGroupId?: string;
@@ -28,12 +32,18 @@ export interface SpaceContext {
 	closeGroupIfCan: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
 	addGroupClosedListener: (listener: GroupClosedListener) => void;
 	removeGroupClosedListener: (listener: GroupClosedListener) => void;
+	groupRenamed: (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => void;
+	addGroupRenamedListener: (listener: GroupRenamedListener) => void;
+	removeGroupRenamedListener: (listener: GroupRenamedListener) => void;
 
 	isSubjectOpened: (subject: ConsoleSpaceSubject) => boolean;
 	openSubjectIfCan: (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
 	closeSubjectIfCan: (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
 	addSubjectClosedListener: (listener: SubjectClosedListener) => void;
 	removeSubjectClosedListener: (listener: SubjectClosedListener) => void;
+	subjectRenamed: (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => void;
+	addSubjectRenamedListener: (listener: SubjectRenamedListener) => void;
+	removeSubjectRenamedListener: (listener: SubjectRenamedListener) => void;
 }
 
 const Context = React.createContext<SpaceContext>({} as SpaceContext);
@@ -109,6 +119,12 @@ export const SpaceContextProvider = (props: {
 	};
 	const addGroupClosedListener = (listener: GroupClosedListener) => emitter.on(SpaceEvent.GROUP_CLOSED, listener);
 	const removeGroupClosedListener = (listener: GroupClosedListener) => emitter.off(SpaceEvent.GROUP_CLOSED, listener);
+	const groupRenamed = (options: { space: ConnectedConsoleSpace, group: ConsoleSpaceGroup }) => {
+		const { space, group } = options;
+		emitter.emit(SpaceEvent.GROUP_RENAMED, { space, group });
+	};
+	const addGroupRenamedListener = (listener: GroupRenamedListener) => emitter.on(SpaceEvent.GROUP_RENAMED, listener);
+	const removeGroupRenamedListener = (listener: GroupRenamedListener) => emitter.off(SpaceEvent.GROUP_RENAMED, listener);
 
 	// eslint-disable-next-line
 	const isSubjectOpened = (subject: ConsoleSpaceSubject) => activeSubjects.some(s => s.subjectId == subject.subjectId);
@@ -166,6 +182,12 @@ export const SpaceContextProvider = (props: {
 	};
 	const addSubjectClosedListener = (listener: SubjectClosedListener) => emitter.on(SpaceEvent.SUBJECT_CLOSED, listener);
 	const removeSubjectClosedListener = (listener: SubjectClosedListener) => emitter.off(SpaceEvent.SUBJECT_CLOSED, listener);
+	const subjectRenamed = (options: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }) => {
+		const { space, group, subject } = options;
+		emitter.emit(SpaceEvent.SUBJECT_RENAMED, { space, group, subject });
+	};
+	const addSubjectRenamedListener = (listener: SubjectRenamedListener) => emitter.on(SpaceEvent.SUBJECT_RENAMED, listener);
+	const removeSubjectRenamedListener = (listener: SubjectRenamedListener) => emitter.off(SpaceEvent.SUBJECT_RENAMED, listener);
 
 	return <Context.Provider value={{
 		store,
@@ -175,12 +197,18 @@ export const SpaceContextProvider = (props: {
 		closeGroupIfCan,
 		addGroupClosedListener,
 		removeGroupClosedListener,
+		groupRenamed,
+		addGroupRenamedListener,
+		removeGroupRenamedListener,
 
 		isSubjectOpened,
 		openSubjectIfCan,
 		closeSubjectIfCan,
 		addSubjectClosedListener,
-		removeSubjectClosedListener
+		removeSubjectClosedListener,
+		subjectRenamed,
+		addSubjectRenamedListener,
+		removeSubjectRenamedListener
 	}}>{children}</Context.Provider>;
 };
 

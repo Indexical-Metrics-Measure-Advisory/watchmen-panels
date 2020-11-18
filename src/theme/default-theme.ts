@@ -116,6 +116,9 @@ const DefaultTheme = {
 	consoleNotificationDotColor3: 'rgba(255,145,145,1)',
 	consoleNotificationDotColor4: 'rgba(255,204,150,1)',
 
+	// console space
+	consoleSpaceHeaderHeight: 51,
+
 	// console group
 	consoleGroupBgColor: 'rgba(181,188,194,0.2)',
 	consoleGroupQuoteColor: 'rgba(181,188,194)',

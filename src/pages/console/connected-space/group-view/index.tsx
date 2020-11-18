@@ -1,15 +1,23 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faHistory, faPoll, faSortAlphaDown, faSortAlphaUp, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+	faBars,
+	faHistory,
+	faPenAlt,
+	faPoll,
+	faSortAlphaDown,
+	faSortAlphaUp,
+	faTimes
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { createSubject } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { useDialog } from '../../../context/dialog';
 import { LinkButton } from '../../component/link-button';
-import { onDeleteSubjectClicked } from '../dialog';
+import { createDeleteGroupClickHandler, createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
 import { findParentGroup, getVisitAdvice } from '../utils';
 
@@ -86,6 +94,9 @@ const SubjectListHeader = styled.div.attrs({
 		display: flex;
 		align-items: center;
 		font-family: var(--console-title-font-family);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 	> button {
 		height: 20px;
@@ -202,7 +213,8 @@ export const GroupView = (props: {
 
 	const { groupId } = useParams<{ groupId: string }>();
 	const dialog = useDialog();
-	const { openSubjectIfCan, closeSubjectIfCan } = useSpaceContext();
+	const { closeGroupIfCan, groupRenamed, openSubjectIfCan, closeSubjectIfCan } = useSpaceContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ min, setMin ] = useState<boolean>(false);
 	const [ sort, setSort ] = useState<SortType>(SortType.BY_VISIT_ASC);
 
@@ -226,6 +238,19 @@ export const GroupView = (props: {
 		}
 	});
 
+	const onGroupDeleteClicked = createDeleteGroupClickHandler({
+		dialog, space, group,
+		onDeleted: ({ space, group }) => closeGroupIfCan({ space, group })
+	});
+	const onRenameGroupClicked = createRenameClickHandler({
+		dialog, space, group,
+		asFullName: () => `${space.name} / ${group!.name}`,
+		renameObject: (options, newName) => group.name = newName,
+		onRenamed: () => {
+			groupRenamed({ space, group });
+			forceUpdate();
+		}
+	});
 	const onAddClicked = async () => {
 		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
 		const newSubject = {
@@ -247,22 +272,33 @@ export const GroupView = (props: {
 	const onMaxClicked = () => setMin(false);
 	const onMinClicked = () => setMin(true);
 	const onOpenClicked = (subject: ConsoleSpaceSubject) => () => openSubjectIfCan({ space, group, subject });
-	const onDeleteClicked = (subject: ConsoleSpaceSubject) => onDeleteSubjectClicked({
+	const onSubjectDeleteClicked = (subject: ConsoleSpaceSubject) => createDeleteSubjectClickHandler({
 		dialog,
 		space,
 		group: findParentGroup(subject, space),
 		subject,
-		onDeleted: ({ space, group, subject }) => {
-			closeSubjectIfCan({ space, group, subject });
-		}
+		onDeleted: ({ space, group, subject }) => closeSubjectIfCan({ space, group, subject })
 	});
 
 	return <GroupViewContainer data-min={min}>
 		<SubjectList data-min={min}>
 			<SubjectListHeader>
+				<div>{group.name}</div>
+				<LinkButton onClick={onRenameGroupClicked} ignoreHorizontalPadding={true} tooltip='Rename'
+				            center={true}>
+					<FontAwesomeIcon icon={faPenAlt}/>
+				</LinkButton>
+				<LinkButton onClick={onGroupDeleteClicked} ignoreHorizontalPadding={true} tooltip='Delete Group'
+				            center={true}>
+					<FontAwesomeIcon icon={faTrashAlt}/>
+				</LinkButton>
+				<LinkButton onClick={onMinClicked} ignoreHorizontalPadding={true} tooltip='Minimize' center={true}>
+					<FontAwesomeIcon icon={faTimes}/>
+				</LinkButton>
+			</SubjectListHeader>
+			<SubjectListHeader>
 				<div>Subjects</div>
-				<LinkButton onClick={onAddClicked} ignoreHorizontalPadding={true}
-				            tooltip='Add subject' center={true}>
+				<LinkButton onClick={onAddClicked} ignoreHorizontalPadding={true} tooltip='Add subject' center={true}>
 					<FontAwesomeIcon icon={faPoll}/>
 				</LinkButton>
 				<LinkButton onClick={onSortByNameAscClicked} ignoreHorizontalPadding={true}
@@ -281,9 +317,6 @@ export const GroupView = (props: {
 				            tooltip='Sort by visit, latest on bottom' center={true}>
 					<FontAwesomeIcon icon={faHistory}/>
 				</LinkButton>
-				<LinkButton onClick={onMinClicked} ignoreHorizontalPadding={true} tooltip='Minimize' center={true}>
-					<FontAwesomeIcon icon={faTimes}/>
-				</LinkButton>
 			</SubjectListHeader>
 			<SubjectListBody>
 				{subjects.length === 0
@@ -294,7 +327,7 @@ export const GroupView = (props: {
 						                    onClick={onOpenClicked(subject)}>
 							<div>
 								<span>{subject.name}</span>
-								<LinkButton onClick={onDeleteClicked(subject)} ignoreHorizontalPadding={true}
+								<LinkButton onClick={onSubjectDeleteClicked(subject)} ignoreHorizontalPadding={true}
 								            tooltip='Delete subject' center={true}>
 									<FontAwesomeIcon icon={faTrashAlt}/>
 								</LinkButton>
@@ -311,6 +344,9 @@ export const GroupView = (props: {
 					})}
 			</SubjectListBody>
 		</SubjectList>
-		<LinkButton onClick={onMaxClicked} ignoreHorizontalPadding={true}>Show Subjects</LinkButton>
+		<LinkButton onClick={onMaxClicked} ignoreHorizontalPadding={true}
+		            tooltip='Show Group View Menus'>
+			<FontAwesomeIcon icon={faBars}/>
+		</LinkButton>
 	</GroupViewContainer>;
 };

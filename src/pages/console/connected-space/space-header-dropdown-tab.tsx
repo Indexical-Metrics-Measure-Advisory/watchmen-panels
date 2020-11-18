@@ -8,7 +8,7 @@ import Path from '../../../common/path';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
 import { LinkButton } from '../component/link-button';
 import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
-import { GroupClosedListener, SubjectClosedListener, useSpaceContext } from './space-context';
+import { SubjectClosedListener, useSpaceContext } from './space-context';
 import { TabContainer } from './tabs';
 
 interface SubjectItem {
@@ -185,15 +185,20 @@ export const GroupTab = (props: { space: ConnectedConsoleSpace }) => {
 	const {
 		store: { activeGroupId },
 		isGroupOpened, openGroupIfCan, closeGroupIfCan,
-		addGroupClosedListener, removeGroupClosedListener
+		addGroupClosedListener, removeGroupClosedListener,
+		addGroupRenamedListener, removeGroupRenamedListener
 	} = useSpaceContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
 		// group already be removed from active stack, force update is only option here
-		const groupClosedListener: GroupClosedListener = () => forceUpdate();
-		addGroupClosedListener(groupClosedListener);
-		return () => removeGroupClosedListener(groupClosedListener);
-	}, [ addGroupClosedListener, removeGroupClosedListener ]);
+		const groupListener = () => forceUpdate();
+		addGroupClosedListener(groupListener);
+		addGroupRenamedListener(groupListener);
+		return () => {
+			removeGroupClosedListener(groupListener);
+			removeGroupRenamedListener(groupListener);
+		};
+	}, [ addGroupClosedListener, removeGroupClosedListener, addGroupRenamedListener, removeGroupRenamedListener ]);
 
 	const { groups } = space;
 	let openedGroups = groups.filter(isGroupOpened).sort((g1, g2) => g1.name.toUpperCase().localeCompare(g2.name.toUpperCase()));

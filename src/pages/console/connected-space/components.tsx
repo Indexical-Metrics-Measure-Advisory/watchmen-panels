@@ -17,7 +17,7 @@ export const Header = styled.div.attrs({
 	top: 0;
 	align-items: center;
 	padding: 0 calc(var(--margin) / 2);
-	height: 51px;
+	height: var(--console-space-header-height);
 	background-color: var(--invert-color);
 	border-bottom: var(--border);
 	z-index: 2;
