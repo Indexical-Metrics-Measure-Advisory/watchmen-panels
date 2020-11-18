@@ -50,8 +50,8 @@ export const useConsoleSpaces = () => {
 	}, [ 0 ]);
 
 	const deleteSpace = (space: ConnectedConsoleSpace) => {
-		// eslint-disable-next-line
 		setState({
+			// eslint-disable-next-line
 			connected: state.connected.filter(s => s.connectId != space.connectId),
 			available: state.available
 		});
