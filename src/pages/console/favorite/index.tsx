@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
-import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
+import Path, { isConnectedSpaceOpened, isDashboardOpened, toConnectedSpace, toDashboard } from '../../../common/path';
 import { notInMe } from '../../../common/utils';
 import {
 	ConnectedConsoleSpace,
+	ConsoleDashboard,
 	ConsoleFavorite,
 	ConsoleFavoriteDashboard,
 	ConsoleFavoriteSpace,
@@ -14,7 +15,6 @@ import {
 	ConsoleSpaceType
 } from '../../../services/console/types';
 import { Theme } from '../../../theme/types';
-import { useNotImplemented } from '../../context/not-implemented';
 import { useConsoleContext } from '../context/console-context';
 
 const FavoriteContainer = styled.div.attrs({
@@ -166,7 +166,6 @@ const isFavSpace = (fav: ConsoleFavorite): fav is ConsoleFavoriteSpace => fav.ty
 export const Favorite = () => {
 	const history = useHistory();
 	const theme = useTheme() as Theme;
-	const notImpl = useNotImplemented();
 	const {
 		menu: { menuWidth },
 		favorites: {
@@ -226,6 +225,12 @@ export const Favorite = () => {
 
 		history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE, space.connectId));
 	};
+	const onDashboardClicked = (dashboard: ConsoleDashboard) => () => {
+		if (isDashboardOpened(dashboard.dashboardId)) {
+			return;
+		}
+		history.push(toDashboard(Path.CONSOLE_DASHBOARD, dashboard.dashboardId));
+	};
 
 	return <FavoriteContainer data-visible={visible} data-pinned={pinned} pinnedLeft={menuWidth}
 	                          itemCount={displayItemCount}
@@ -246,7 +251,7 @@ export const Favorite = () => {
 					if (dashboard) {
 						return {
 							name: dashboard.name,
-							item: <div onClick={notImpl.show}
+							item: <div onClick={onDashboardClicked(dashboard)}
 							           key={`dashboard-${item.dashboardId}`}>
 								<FontAwesomeIcon icon={faSolarPanel}/>
 								<span>{dashboard.name}</span>

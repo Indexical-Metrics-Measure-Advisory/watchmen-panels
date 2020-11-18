@@ -1,9 +1,10 @@
 import { faPlug, faPoll, faSatellite, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import BackgroundImage from '../../../assets/console-home-background.png';
+import Path from '../../../common/path';
 import { ConnectedConsoleSpace } from '../../../services/console/types';
-import { useNotImplemented } from '../../context/not-implemented';
 import { NarrowPageTitle } from '../component/narrow-page-title';
 import { NarrowContainer } from '../component/page-container';
 import { useConsoleContext } from '../context/console-context';
@@ -13,7 +14,7 @@ import { HomeSectionHeaderButton } from './home-section-header-button';
 import { Space } from './space';
 
 export const Home = () => {
-	const notImpl = useNotImplemented();
+	const history = useHistory();
 	const { spaces: { connected }, dashboards: { items: dashboards } } = useConsoleContext();
 
 	const spaces: Array<ConnectedConsoleSpace> =
@@ -21,10 +22,13 @@ export const Home = () => {
 			return s1.lastVisitTime.localeCompare(s2.lastVisitTime);
 		}).reverse();
 
+	const onConnectSpaceClicked = () => history.push(Path.CONSOLE_SPACES);
+	const onCreateDashboardClicked = () => history.push(Path.CONSOLE_DASHBOARDS);
+
 	return <NarrowContainer background-image={BackgroundImage}>
 		<NarrowPageTitle title='Home'/>
 		<HomeSection title='Spaces' titleIcon={faSatellite}
-		             titleOperators={<HomeSectionHeaderButton onClick={notImpl.show}>
+		             titleOperators={<HomeSectionHeaderButton onClick={onConnectSpaceClicked}>
 			             <FontAwesomeIcon icon={faPlug}/>
 			             <span>Connect New Space</span>
 		             </HomeSectionHeaderButton>}
@@ -34,7 +38,7 @@ export const Home = () => {
 			})}
 		</HomeSection>
 		<HomeSection title='Dashboards' titleIcon={faTachometerAlt}
-		             titleOperators={<HomeSectionHeaderButton onClick={notImpl.show}>
+		             titleOperators={<HomeSectionHeaderButton onClick={onCreateDashboardClicked}>
 			             <FontAwesomeIcon icon={faPoll}/>
 			             <span>Create New Dashboard</span>
 		             </HomeSectionHeaderButton>}

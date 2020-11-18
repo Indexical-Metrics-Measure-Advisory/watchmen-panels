@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import BackgroundImage from '../../../../assets/console-notifications-background.png';
-import { useNotImplemented } from '../../../context/not-implemented';
+import Path from '../../../../common/path';
 import { NarrowPageTitle } from '../../component/narrow-page-title';
 import { NarrowContainer } from '../../component/page-container';
 import { useConsoleContext } from '../../context/console-context';
@@ -10,7 +11,7 @@ import { ActiveTab, State } from '../common/types';
 import { NotificationItem } from './notification-item';
 
 export const Notification = () => {
-	const notImpl = useNotImplemented();
+	const history = useHistory();
 	const context = useConsoleContext();
 	const [ state, setState ] = useState<State>({
 		active: ActiveTab.UNREAD,
@@ -31,6 +32,7 @@ export const Notification = () => {
 		// eslint-disable-next-line
 	}, [ state ]);
 
+	const onSettingsClicked = () => history.push(Path.CONSOLE_SETTINGS_NOTIFICATION);
 	const onTabClicked = (activeTab: ActiveTab) => () => {
 		if (activeTab !== state.active) {
 			setState({ ...state, active: activeTab });
@@ -38,7 +40,7 @@ export const Notification = () => {
 	};
 
 	return <NarrowContainer background-image={BackgroundImage}>
-		<NarrowPageTitle title='Notifications' onSettingsClicked={notImpl.show}/>
+		<NarrowPageTitle title='Notifications' onSettingsClicked={onSettingsClicked}/>
 		<Tabs state={state}
 		      onUnreadClicked={onTabClicked(ActiveTab.UNREAD)} onReadClicked={onTabClicked(ActiveTab.READ)}
 		      onClearClicked={context.mails.readAll}/>

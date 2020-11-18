@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import BackgroundImage from '../../../../assets/console-inbox-background.png';
+import Path from '../../../../common/path';
 import { ConsoleMail } from '../../../../services/console/types';
-import { useNotImplemented } from '../../../context/not-implemented';
 import { NarrowPageTitle } from '../../component/narrow-page-title';
 import { NarrowContainer } from '../../component/page-container';
 import { useConsoleContext } from '../../context/console-context';
@@ -11,7 +12,7 @@ import { ActiveTab, State } from '../common/types';
 import { MailItem } from './mail-item';
 
 export const Inbox = () => {
-	const notImpl = useNotImplemented();
+	const history = useHistory();
 	const context = useConsoleContext();
 	const [ state, setState ] = useState<State>({
 		active: ActiveTab.UNREAD,
@@ -32,6 +33,7 @@ export const Inbox = () => {
 		// eslint-disable-next-line
 	}, [ state ]);
 
+	const onSettingsClicked = () => history.push(Path.CONSOLE_SETTINGS_INBOX);
 	const onTabClicked = (activeTab: ActiveTab) => () => {
 		if (activeTab !== state.active) {
 			setState({ ...state, active: activeTab });
@@ -39,7 +41,7 @@ export const Inbox = () => {
 	};
 
 	return <NarrowContainer background-image={BackgroundImage}>
-		<NarrowPageTitle title='Inbox' onSettingsClicked={notImpl.show}/>
+		<NarrowPageTitle title='Inbox' onSettingsClicked={onSettingsClicked}/>
 		<Tabs state={state}
 		      onUnreadClicked={onTabClicked(ActiveTab.UNREAD)} onReadClicked={onTabClicked(ActiveTab.READ)}
 		      onClearClicked={context.mails.readAll}/>
