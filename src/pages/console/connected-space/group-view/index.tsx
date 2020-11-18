@@ -110,12 +110,33 @@ const SubjectListBody = styled.div.attrs({
 })`
 	flex-grow: 1;
 	display: flex;
+	position: relative;
 	flex-direction: column;
+`;
+const SubjectListBodyWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding: calc(var(--margin) / 2) calc(var(--margin) / 2);
+	&::-webkit-scrollbar {
+		background-color: transparent;
+		width: 4px;
+	}
+	&::-webkit-scrollbar-track {
+		background-color: var(--scrollbar-background-color);
+		border-radius: 2px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--console-favorite-color);
+		border-radius: 2px;
+	}
 `;
-
 const SubjectCard = styled.div`
 	display: grid;
 	position: relative;
@@ -129,6 +150,9 @@ const SubjectCard = styled.div`
 	cursor: pointer;
 	margin-bottom: calc(var(--margin) / 2);
 	transition: all 300ms ease-in-out;
+	&:last-child {
+		margin-bottom: 0;
+	}
 	&:hover {
 		box-shadow: var(--console-hover-shadow);
 		> div:first-child {
@@ -319,29 +343,31 @@ export const GroupView = (props: {
 				</LinkButton>
 			</SubjectListHeader>
 			<SubjectListBody>
-				{subjects.length === 0
-					? <div>No Subject.</div>
-					: subjects.map(subject => {
-						const visitAdvice = getVisitAdvice(subject.lastVisitTime);
-						return <SubjectCard data-visit-advice={visitAdvice} key={subject.subjectId}
-						                    onClick={onOpenClicked(subject)}>
-							<div>
-								<span>{subject.name}</span>
-								<LinkButton onClick={onSubjectDeleteClicked(subject)} ignoreHorizontalPadding={true}
-								            tooltip='Delete subject' center={true}>
-									<FontAwesomeIcon icon={faTrashAlt}/>
-								</LinkButton>
-							</div>
-							<div>Topics:</div>
-							<div>{subject.topicCount}</div>
-							<div>Graphics:</div>
-							<div>{subject.graphicsCount}</div>
-							<div>Created At:</div>
-							<div>{dayjs(subject.createdAt).fromNow()}</div>
-							<div>Last Visit:</div>
-							<div>{dayjs(subject.lastVisitTime).fromNow()}</div>
-						</SubjectCard>;
-					})}
+				<SubjectListBodyWrapper>
+					{subjects.length === 0
+						? <div>No Subject.</div>
+						: subjects.map(subject => {
+							const visitAdvice = getVisitAdvice(subject.lastVisitTime);
+							return <SubjectCard data-visit-advice={visitAdvice} key={subject.subjectId}
+							                    onClick={onOpenClicked(subject)}>
+								<div>
+									<span>{subject.name}</span>
+									<LinkButton onClick={onSubjectDeleteClicked(subject)} ignoreHorizontalPadding={true}
+									            tooltip='Delete subject' center={true}>
+										<FontAwesomeIcon icon={faTrashAlt}/>
+									</LinkButton>
+								</div>
+								<div>Topics:</div>
+								<div>{subject.topicCount}</div>
+								<div>Graphics:</div>
+								<div>{subject.graphicsCount}</div>
+								<div>Created At:</div>
+								<div>{dayjs(subject.createdAt).fromNow()}</div>
+								<div>Last Visit:</div>
+								<div>{dayjs(subject.lastVisitTime).fromNow()}</div>
+							</SubjectCard>;
+						})}
+				</SubjectListBodyWrapper>
 			</SubjectListBody>
 		</SubjectList>
 		<LinkButton onClick={onMaxClicked} ignoreHorizontalPadding={true}
