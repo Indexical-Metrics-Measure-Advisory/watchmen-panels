@@ -2,65 +2,92 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { Theme } from '../../theme/types';
 
 export interface DropdownOption {
 	value: string | number | boolean;
 	label: string;
 }
 
-const DropdownContainer = styled.div.attrs({
-	'data-widget': 'dropdown'
-})`
-	position: relative;
-	padding: 6px var(--input-indent);
-	outline: none;
-	appearance: none;
-	border: var(--border);
-	border-radius: var(--border-radius);
-	font-size: var(--font-size);
-	height: var(--height);
-	line-height: var(--line-height);
-	color: var(--font-color);
-	background-color: transparent;
-	transition: all 300ms ease-in-out;
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-	width: 100%;
-	> svg {
-		opacity: 0;
-		margin-left: var(--letter-gap);
+interface State {
+	active: boolean;
+	top: number;
+	left: number;
+	width: number;
+	height: number;
+	minWidth: number;
+}
+
+const DropdownContainer = styled.div.attrs<State & { itemCount: number }>(() => {
+	return { 'data-widget': 'dropdown' };
+})<State & { itemCount: number }>(({ theme, top, height, itemCount }) => {
+	const atBottom = top + height + itemCount * (theme as Theme).height + 2 < window.innerHeight;
+	return `
+		position: relative;
+		padding: 6px var(--input-indent);
+		outline: none;
+		appearance: none;
+		border: var(--border);
+		border-radius: var(--border-radius);
+		font-size: var(--font-size);
+		height: var(--height);
+		line-height: var(--line-height);
+		color: var(--font-color);
+		background-color: transparent;
 		transition: all 300ms ease-in-out;
-	}
-	&:hover,
-	&:focus {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		width: 100%;
 		> svg {
-			opacity: 1;
+			opacity: 0;
+			margin-left: var(--letter-gap);
+			transition: all 300ms ease-in-out;
 		}
-	}
-	&[data-options-visible=true]:focus {
-		border-bottom-left-radius: 0;
-		border-bottom-right-radius: 0;
-		> div:last-child {
-			opacity: 1;
-			pointer-events: auto;
+		&:hover,
+		&:focus {
+			> svg {
+				opacity: 1;
+			}
 		}
-	}
-`;
+		&[data-options-visible=true]:focus {
+			border-bottom-left-radius: ${atBottom ? 0 : 'var(--border-radius)'};
+			border-bottom-right-radius: ${atBottom ? 0 : 'var(--border-radius)'};
+			border-top-left-radius: ${atBottom ? 'var(--border-radius)' : 0};
+			border-top-right-radius: ${atBottom ? 'var(--border-radius)' : 0};
+			> div:last-child {
+				opacity: 1;
+				pointer-events: auto;
+			}
+		}
+	`;
+});
 const Label = styled.span`
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow-x: hidden;
 	flex-grow: 1;
 `;
-const Options = styled.div`
+const Options = styled.div.attrs<State & { itemCount: number }>(({ theme, top, left, height, minWidth, itemCount }) => {
+	const atBottom = top + height + itemCount * (theme as Theme).height + 2 < window.innerHeight;
+	return {
+		style: {
+			top: atBottom ? (top + height - 1) : 'unset',
+			bottom: atBottom ? 'unset' : `calc(100vh - ${top + 1}px)`,
+			left,
+			minWidth,
+			borderTopLeftRadius: atBottom ? 0 : 'var(--border-radius)',
+			borderTopRightRadius: atBottom ? 0 : 'var(--border-radius)',
+			borderBottomLeftRadius: atBottom ? 'var(--border-radius)' : 0,
+			borderBottomRightRadius: atBottom ? 'var(--border-radius)' : 0
+		}
+	};
+})<State & { itemCount: number }>`
 	position: fixed;
 	max-height: calc(var(--height) * 8 + 2px);
 	pointer-events: none;
 	opacity: 0;
 	background-color: var(--bg-color);
-	border-bottom-left-radius: var(--border-radius);
-	border-bottom-right-radius: var(--border-radius);
 	border: var(--border);
 	transition: opacity 300ms ease-in-out;
 	z-index: 999;
@@ -79,10 +106,10 @@ const Options = styled.div`
 const getPosition = (container: HTMLDivElement) => {
 	const rect = container.getBoundingClientRect();
 	return {
-		top: `${rect.top + rect.height - 1}px`,
-		left: `${rect.left}px`,
-		width: `${rect.width}px`,
-		height: `${rect.height}px`
+		top: rect.top,
+		left: rect.left,
+		width: rect.width,
+		height: rect.height
 	};
 };
 
@@ -96,15 +123,15 @@ const Dropdown = (props: {
 	const { className, options = [], onChange, value, please = '' } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [ state, setState ] = useState({ active: false, top: '', left: '', minWidth: '' });
+	const [ state, setState ] = useState<State>({ active: false, top: 0, left: 0, width: 0, height: 0, minWidth: 0 });
 
 	useEffect(() => {
 		const onScroll = () => {
 			if (!state.active) {
 				return;
 			}
-			const { top, left, width } = getPosition(containerRef.current!);
-			setState({ ...state, top, left, minWidth: width });
+			const { top, left, width, height } = getPosition(containerRef.current!);
+			setState({ ...state, top, left, width, height, minWidth: width });
 		};
 		window.addEventListener('scroll', onScroll, true);
 		return () => {
@@ -116,30 +143,24 @@ const Dropdown = (props: {
 	const selectedLabel = selectedOption ? selectedOption.label : please;
 
 	const onClicked = () => {
-		const { top, left, width } = getPosition(containerRef.current!);
-		setState({
-			active: true,
-			top,
-			left,
-			minWidth: width
-		});
+		const { top, left, width, height } = getPosition(containerRef.current!);
+		setState({ active: true, top, left, width, height, minWidth: width });
 	};
 	const onOptionClicked = (option: DropdownOption) => async () => {
 		await onChange(option);
 		setState({ ...state, active: false });
 	};
 
+
 	return <DropdownContainer className={className}
 	                          data-options-visible={state.active}
+	                          {...state}
+	                          itemCount={options.length}
 	                          ref={containerRef}
 	                          role='input' tabIndex={0} onClick={onClicked}>
 		<Label>{selectedLabel}</Label>
 		<FontAwesomeIcon icon={faCaretDown}/>
-		<Options style={{
-			top: state.top,
-			left: state.left,
-			minWidth: state.minWidth
-		}}>
+		<Options {...state} itemCount={options.length}>
 			{options.map(option => {
 				return <span key={`${option.value}`} onClick={onOptionClicked(option)}>
 					{option.label}

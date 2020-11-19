@@ -1,12 +1,13 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import Dropdown, { DropdownOption } from '../../component/dropdown';
-import { FrequencyOptions } from '../context/console-settings';
+import { useConsoleContext } from '../context/console-context';
+import { Frequency, FrequencyOptions } from '../context/console-settings';
 import { DropdownItemBody, ItemContainer, ItemTitle } from './components';
 
 export const MailSettings = () => {
-	const [ frequency, setFrequency ] = useState<string>('4');
+	const { settings: { mailFrequency, mailFrequencyChanged } } = useConsoleContext();
 	const onFrequencyChanged = async (option: DropdownOption) => {
-		setFrequency(option.value as string);
+		mailFrequencyChanged(option.value as Frequency);
 	};
 
 	return <Fragment>
@@ -14,7 +15,7 @@ export const MailSettings = () => {
 			<ItemTitle>Mail Check Frequency</ItemTitle>
 			<DropdownItemBody>
 				<span>Every</span>
-				<Dropdown options={FrequencyOptions} onChange={onFrequencyChanged} value={frequency}/>
+				<Dropdown options={FrequencyOptions} onChange={onFrequencyChanged} value={mailFrequency}/>
 			</DropdownItemBody>
 		</ItemContainer>
 	</Fragment>;
