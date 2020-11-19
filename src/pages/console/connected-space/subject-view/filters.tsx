@@ -19,7 +19,7 @@ export const SubjectFilters = (props: {
 			            tooltip={`${min ? 'Expand' : 'Collapse'} Filters Definition`} center={true}>
 				<FontAwesomeIcon icon={min ? faExpandAlt : faCompressAlt}/>
 			</LinkButton>
-		</SubjectMenuHeader>;
+		</SubjectMenuHeader>
 		<SubjectMenuBody data-visible={!min}>
 			<SubjectMenuBodyWrapper/>
 		</SubjectMenuBody>

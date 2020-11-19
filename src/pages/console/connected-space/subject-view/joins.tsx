@@ -14,12 +14,12 @@ export const SubjectJoins = (props: {
 
 	return <Fragment>
 		<SubjectMenuHeader>
-			<div>Filters</div>
+			<div>Joins</div>
 			<LinkButton onClick={() => onMinChanged(!min)} ignoreHorizontalPadding={true}
 			            tooltip={`${min ? 'Expand' : 'Collapse'} Joins Definition`} center={true}>
 				<FontAwesomeIcon icon={min ? faExpandAlt : faCompressAlt}/>
 			</LinkButton>
-		</SubjectMenuHeader>;
+		</SubjectMenuHeader>
 		<SubjectMenuBody data-visible={!min}>
 			<SubjectMenuBodyWrapper/>
 		</SubjectMenuBody>
