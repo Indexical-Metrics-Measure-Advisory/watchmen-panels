@@ -20,7 +20,7 @@ const Paths = {
 	CONSOLE_CONNECTED_SPACE_RESOURCES: '/console/space/connected/:connectId/resources',
 	CONSOLE_CONNECTED_SPACE_GROUP: '/console/space/connected/:connectId/group/:groupId',
 	CONSOLE_CONNECTED_SPACE_SUBJECT: '/console/space/connected/:connectId/subject/:subjectId',
-	CONSOLE_DASHBOARDS: '/console/dashboards',
+	CONSOLE_DASHBOARDS: '/console/dashboard',
 	CONSOLE_DASHBOARD: '/console/dashboard/:dashboardId',
 	CONSOLE_INBOX: '/console/inbox',
 	CONSOLE_NOTIFICATION: '/console/notification',

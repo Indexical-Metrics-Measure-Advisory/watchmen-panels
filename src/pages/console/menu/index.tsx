@@ -151,6 +151,11 @@ export const ConsoleMenu = () => {
 			history.push(Path.CONSOLE_SPACES);
 		}
 	};
+	const onDashboardsClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_DASHBOARDS)) {
+			history.push(Path.CONSOLE_DASHBOARDS);
+		}
+	};
 
 	const showMenuItemTooltip = menuWidth / minWidth <= 1.5;
 
@@ -159,7 +164,9 @@ export const ConsoleMenu = () => {
 		<MenuItem icon={faHome} label='Home' showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_HOME)}
 		          onClick={onHomeClicked}/>
-		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.CONSOLE_DASHBOARDS)}
+		          onClick={onDashboardsClicked}/>
 		<FavMenu icon={faStar} label='Show Favorites' showTooltip={showMenuItemTooltip}
 		         active={favorites.visible}
 		         onClick={onFavoriteClicked}/>
