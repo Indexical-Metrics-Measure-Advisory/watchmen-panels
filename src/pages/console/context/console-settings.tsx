@@ -55,7 +55,7 @@ export const useConsoleSettings = () => {
 		if (state.notificationSubscriptionCategories.includes(category)) {
 			setState({
 				...state,
-				notificationSubscriptionCategories: state.notificationSubscriptionCategories.filter(c => c != category)
+				notificationSubscriptionCategories: state.notificationSubscriptionCategories.filter(c => c !== category)
 			});
 		}
 	};
