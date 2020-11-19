@@ -146,18 +146,19 @@ const Dropdown = (props: {
 		const { top, left, width, height } = getPosition(containerRef.current!);
 		setState({ active: true, top, left, width, height, minWidth: width });
 	};
+	const onBlurred = () => setState({ ...state, active: false });
 	const onOptionClicked = (option: DropdownOption) => async () => {
 		await onChange(option);
 		setState({ ...state, active: false });
 	};
-
 
 	return <DropdownContainer className={className}
 	                          data-options-visible={state.active}
 	                          {...state}
 	                          itemCount={options.length}
 	                          ref={containerRef}
-	                          role='input' tabIndex={0} onClick={onClicked}>
+	                          role='input' tabIndex={0}
+	                          onClick={onClicked} onBlur={onBlurred}>
 		<Label>{selectedLabel}</Label>
 		<FontAwesomeIcon icon={faCaretDown}/>
 		<Options {...state} itemCount={options.length}>
