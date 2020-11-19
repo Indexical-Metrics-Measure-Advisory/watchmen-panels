@@ -1,10 +1,11 @@
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import { ConsoleNotificationCategory } from '../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../component/dropdown';
-import { FrequencyOptions } from '../context/console-settings';
+import { useConsoleContext } from '../context/console-context';
+import { Frequency, FrequencyOptions } from '../context/console-settings';
 import { DropdownItemBody, ItemContainer, ItemTitle } from './components';
 
 const NotificationTypeList = styled.div`
@@ -66,19 +67,21 @@ const Notifications = [
 ];
 
 export const NotificationSettings = () => {
-	const [ frequency, setFrequency ] = useState<string>('3');
-	const [ notificationTypes, setNotificationTypes ] = useState<Array<ConsoleNotificationCategory>>(Notifications.map(n => n.type));
-	const onToggleNotificationSubscribeClicked = (category: ConsoleNotificationCategory) => () => {
-		let newTypes;
-		if (notificationTypes.includes(category)) {
-			newTypes = notificationTypes.filter(n => n !== category);
-		} else {
-			newTypes = [ category, ...notificationTypes ];
+	const {
+		settings: {
+			notificationFrequency, notificationSubscriptionCategories,
+			notificationFrequencyChanged, notificationCategorySubscriptionAdded, notificationCategorySubscriptionRemoved
 		}
-		setNotificationTypes(newTypes);
+	} = useConsoleContext();
+	const onToggleNotificationSubscribeClicked = (category: ConsoleNotificationCategory) => () => {
+		if (notificationSubscriptionCategories.includes(category)) {
+			notificationCategorySubscriptionRemoved(category);
+		} else {
+			notificationCategorySubscriptionAdded(category);
+		}
 	};
 	const onFrequencyChanged = async (option: DropdownOption) => {
-		setFrequency(option.value as string);
+		notificationFrequencyChanged(option.value as Frequency);
 	};
 
 	return <Fragment>
@@ -90,7 +93,7 @@ export const NotificationSettings = () => {
 					<div>Subscribe?</div>
 				</div>
 				{Notifications.map(notification => {
-					const checked = notificationTypes.some(n => n === notification.type);
+					const checked = notificationSubscriptionCategories.some(n => n === notification.type);
 					return <div key={notification.type}>
 						<div>{notification.label}</div>
 						<div data-checked={checked}>
@@ -105,7 +108,7 @@ export const NotificationSettings = () => {
 			<ItemTitle>Notification Check Frequency</ItemTitle>
 			<DropdownItemBody>
 				<span>Every</span>
-				<Dropdown options={FrequencyOptions} onChange={onFrequencyChanged} value={frequency}/>
+				<Dropdown options={FrequencyOptions} onChange={onFrequencyChanged} value={notificationFrequency}/>
 			</DropdownItemBody>
 		</ItemContainer>
 	</Fragment>;

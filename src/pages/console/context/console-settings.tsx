@@ -21,19 +21,55 @@ export const FrequencyOptions = [
 
 export interface ConsoleSettingsStorage {
 	notificationFrequency: Frequency;
-	notificationCategories: Array<ConsoleNotificationCategory>;
+	notificationSubscriptionCategories: Array<ConsoleNotificationCategory>;
 	mailFrequency: Frequency;
+}
+
+export interface ConsoleSettingsUsable {
+	notificationFrequencyChanged: (frequency: Frequency) => void;
+	notificationCategorySubscriptionAdded: (category: ConsoleNotificationCategory) => void;
+	notificationCategorySubscriptionRemoved: (category: ConsoleNotificationCategory) => void;
+	mailFrequencyChanged: (frequency: Frequency) => void;
 }
 
 export const useConsoleSettings = () => {
 	// TODO simulate data for demo purpose
-	const [ state ] = useState<ConsoleSettingsStorage>({
+	const [ state, setState ] = useState<ConsoleSettingsStorage>({
 		notificationFrequency: Frequency.MIN_15,
-		notificationCategories: Object.keys(ConsoleNotificationCategory) as Array<ConsoleNotificationCategory>,
+		notificationSubscriptionCategories: Object.keys(ConsoleNotificationCategory) as Array<ConsoleNotificationCategory>,
 		mailFrequency: Frequency.MIN_30
 	});
 
+	const notificationFrequencyChanged = (frequency: Frequency) => {
+		setState({ ...state, notificationFrequency: frequency });
+	};
+	const notificationCategorySubscriptionAdded = (category: ConsoleNotificationCategory) => {
+		if (!state.notificationSubscriptionCategories.includes(category)) {
+			setState({
+				...state,
+				notificationSubscriptionCategories: [ ...state.notificationSubscriptionCategories, category ]
+			});
+		}
+	};
+	const notificationCategorySubscriptionRemoved = (category: ConsoleNotificationCategory) => {
+		if (state.notificationSubscriptionCategories.includes(category)) {
+			setState({
+				...state,
+				notificationSubscriptionCategories: state.notificationSubscriptionCategories.filter(c => c != category)
+			});
+		}
+	};
+	const mailFrequencyChanged = (frequency: Frequency) => {
+		setState({ ...state, mailFrequency: frequency });
+	};
+
 	return {
-		...state
+		...state,
+
+		notificationFrequencyChanged,
+		notificationCategorySubscriptionAdded,
+		notificationCategorySubscriptionRemoved,
+
+		mailFrequencyChanged
 	};
 };

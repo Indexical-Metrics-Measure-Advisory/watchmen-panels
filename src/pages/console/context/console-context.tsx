@@ -8,6 +8,7 @@ import {
 	ConsoleNotificationsUsable,
 	useConsoleNotifications
 } from './console-nofitications';
+import { ConsoleSettingsStorage, ConsoleSettingsUsable, useConsoleSettings } from './console-settings';
 import { ConsoleSpacesStorage, ConsoleSpacesUsable, useConsoleSpaces } from './console-spaces';
 import { ConsoleTooltipContextProvider } from './console-tooltip';
 
@@ -23,6 +24,7 @@ export interface ConsoleContext {
 	spaces: ConsoleSpacesStorage & ConsoleSpacesUsable;
 	dashboards: ConsoleDashboardsStorage;
 	favorites: ConsoleFavoritesStorage & ConsoleFavoritesUsable;
+	settings: ConsoleSettingsStorage & ConsoleSettingsUsable;
 }
 
 const Context = React.createContext<ConsoleContext>({} as ConsoleContext);
@@ -39,6 +41,7 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 	const spaces = useConsoleSpaces();
 	const dashboards = useConsoleDashboards();
 	const favorites = useConsoleFavorites();
+	const settings = useConsoleSettings();
 
 	const context = {
 		menu,
@@ -47,7 +50,8 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 		mails,
 		spaces,
 		dashboards,
-		favorites
+		favorites,
+		settings
 	};
 
 	return <Context.Provider value={context}>
