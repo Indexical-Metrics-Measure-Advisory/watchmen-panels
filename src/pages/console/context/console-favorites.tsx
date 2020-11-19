@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { DispatchWithoutAction, useEffect, useReducer, useState } from 'react';
 import { fetchFavorites } from '../../../services/console/favorites';
 import { ConsoleFavorite } from '../../../services/console/types';
 
@@ -21,6 +21,12 @@ export interface ConsoleFavoritesUsable {
 	unpin: () => void;
 }
 
+const mergeToState = (newData: Partial<ConsoleFavoritesStorage>, forceUpdate: DispatchWithoutAction) => {
+	// @ts-ignore
+	Object.keys(newData).forEach(key => state[key] = newData[key]);
+	forceUpdate();
+};
+
 export const useConsoleFavorites = () => {
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ state ] = useState<ConsoleFavoritesStorage>({
@@ -29,31 +35,26 @@ export const useConsoleFavorites = () => {
 		visible: false
 	});
 
-	const mergeToState = (newData: Partial<ConsoleFavoritesStorage>) => {
-		// @ts-ignore
-		Object.keys(newData).forEach(key => state[key] = newData[key]);
-		forceUpdate();
-	};
 	const remove = (fav: ConsoleFavorite) => {
-		mergeToState({ items: state.items.filter(f => f !== fav) });
+		mergeToState({ items: state.items.filter(f => f !== fav) }, forceUpdate);
 	};
 	const add = (fav: ConsoleFavorite) => {
-		mergeToState({ items: [ ...state.items, fav ] });
+		mergeToState({ items: [ ...state.items, fav ] }, forceUpdate);
 	};
 	const show = (rect: DOMRect, isMenuExpanded: boolean) => mergeToState({
 		visible: true,
 		invoker: { rect, isMenuExpanded }
-	});
-	const hide = () => mergeToState({ visible: false });
-	const pin = () => mergeToState({ pinned: true });
-	const unpin = () => mergeToState({ pinned: false, visible: false });
+	}, forceUpdate);
+	const hide = () => mergeToState({ visible: false }, forceUpdate);
+	const pin = () => mergeToState({ pinned: true }, forceUpdate);
+	const unpin = () => mergeToState({ pinned: false, visible: false }, forceUpdate);
 
 	// TODO simulate data for demo purpose
 	useEffect(() => {
 		(async () => {
 			try {
 				const items = await fetchFavorites();
-				mergeToState({ items });
+				mergeToState({ items }, forceUpdate);
 			} catch (e) {
 				console.groupCollapsed(`%cError on fetch favorites.`, 'color:rgb(251,71,71)');
 				console.error(e);

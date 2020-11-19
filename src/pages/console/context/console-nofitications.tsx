@@ -49,7 +49,7 @@ export const useConsoleNotifications = () => {
 	// TODO simulate data for demo purpose
 	useEffect(() => {
 		setTimeout(() => notifications.fetchLatest(), 30000);
-	}, []);
+	}, [ notifications ]);
 
 	return notifications;
 };
