@@ -39,10 +39,8 @@ const CategoryLabel: { [key in ConsoleNotificationCategory]: string } = {
 	SPACE_PUSHED: 'New Space Go Live',
 	TOPIC_PUSHED: 'New Topic Go Live',
 	FACTOR_PUSHED: 'New Factor Go Live',
-	INDICATOR_PUSHED: 'New Indicator Go Live',
 
 	REPORT_PUSHED: 'New Report Go Live',
-	CHART_PUSHED: 'New Chart Go Live',
 
 	GROUP_JOINED: 'Group Joined',
 	GROUP_LEFT: 'Group Left',
@@ -51,9 +49,7 @@ const CategoryLabel: { [key in ConsoleNotificationCategory]: string } = {
 	SPACE_LEFT: 'Space Left',
 
 	SUBSCRIBE_REPORT_CHANGED: 'Subscribed Report Definition Changed',
-	SUBSCRIBE_REPORT_DELETED: 'Subscribed Report Deleted',
-	SUBSCRIBE_CHART_CHANGED: 'Subscribed Chart Definition Change',
-	SUBSCRIBE_CHART_DELETED: 'Subscribed Chart Deleted'
+	SUBSCRIBE_REPORT_DELETED: 'Subscribed Report Deleted'
 };
 const CategoryColor = (category: ConsoleNotificationCategory) => {
 	switch (category) {
@@ -62,10 +58,8 @@ const CategoryColor = (category: ConsoleNotificationCategory) => {
 		case ConsoleNotificationCategory.SPACE_PUSHED:
 		case ConsoleNotificationCategory.TOPIC_PUSHED:
 		case ConsoleNotificationCategory.FACTOR_PUSHED:
-		case ConsoleNotificationCategory.INDICATOR_PUSHED:
 			return 2;
 		case ConsoleNotificationCategory.REPORT_PUSHED:
-		case ConsoleNotificationCategory.CHART_PUSHED:
 			return 3;
 		case ConsoleNotificationCategory.GROUP_JOINED:
 		case ConsoleNotificationCategory.GROUP_LEFT:
@@ -74,8 +68,6 @@ const CategoryColor = (category: ConsoleNotificationCategory) => {
 			return 4;
 		case ConsoleNotificationCategory.SUBSCRIBE_REPORT_CHANGED:
 		case ConsoleNotificationCategory.SUBSCRIBE_REPORT_DELETED:
-		case ConsoleNotificationCategory.SUBSCRIBE_CHART_CHANGED:
-		case ConsoleNotificationCategory.SUBSCRIBE_CHART_DELETED:
 		default:
 			return void 0;
 	}

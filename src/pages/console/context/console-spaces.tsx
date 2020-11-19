@@ -46,8 +46,7 @@ export const useConsoleSpaces = () => {
 				console.groupEnd();
 			}
 		})();
-		// eslint-disable-next-line
-	}, [ 0 ]);
+	}, []);
 
 	const deleteSpace = (space: ConnectedConsoleSpace) => {
 		setState({

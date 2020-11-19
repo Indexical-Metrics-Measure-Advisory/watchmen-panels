@@ -24,6 +24,8 @@ const Paths = {
 	CONSOLE_DASHBOARD: '/console/dashboard/:dashboardId',
 	CONSOLE_INBOX: '/console/inbox',
 	CONSOLE_NOTIFICATION: '/console/notification',
+	CONSOLE_TIMELINE: '/console/timeline',
+	CONSOLE_SETTINGS: '/console/settings',
 	CONSOLE_SETTINGS_INBOX: '/console/settings/inbox',
 	CONSOLE_SETTINGS_NOTIFICATION: '/console/settings/notification'
 };

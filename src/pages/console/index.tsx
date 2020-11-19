@@ -10,6 +10,7 @@ import { ConsoleMenu } from './menu';
 import { Inbox } from './message/inbox';
 import { Notification } from './message/notification';
 import { Messenger } from './messenger';
+import { SettingsPanel as Settings } from './settings';
 
 const Container = styled.div.attrs({
 	'data-widget': 'console-container'
@@ -39,6 +40,7 @@ export const ConsoleIndex = () => {
 					<Route path={Path.CONSOLE_CONNECTED_SPACE}><ConnectedSpace/></Route>
 					<Route path={Path.CONSOLE_INBOX}><Inbox/></Route>
 					<Route path={Path.CONSOLE_NOTIFICATION}><Notification/></Route>
+					<Route path={Path.CONSOLE_SETTINGS}><Settings/></Route>
 					<Route path='*'><Redirect to={Path.CONSOLE_HOME}/></Route>
 				</Switch>
 			</main>

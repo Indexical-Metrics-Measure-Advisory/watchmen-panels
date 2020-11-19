@@ -16,8 +16,8 @@ export const listUnreadNotifications = async (options?: {
 				notifications: [
 					{
 						id: '5',
-						subject: 'Awesome chart for investigating customers distribution.',
-						category: ConsoleNotificationCategory.CHART_PUSHED,
+						subject: 'Awesome report for investigating customers distribution.',
+						category: ConsoleNotificationCategory.REPORT_PUSHED,
 						body: 'A distribution diagram of customers of age bracket and place of residence.',
 						sender: 'Damon Lindelof',
 						createDate: '2020/11/05 20:18:19'

@@ -23,8 +23,7 @@ export const useConsoleDashboards = () => {
 				console.groupEnd();
 			}
 		})();
-		// eslint-disable-next-line
-	}, [ 0 ]);
+	}, []);
 
 	return {
 		...state

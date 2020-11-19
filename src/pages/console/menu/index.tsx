@@ -1,5 +1,6 @@
-import { faBell, faComments, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+import { faBell, faComments } from '@fortawesome/free-regular-svg-icons';
 import {
+	faCog,
 	faCompactDisc,
 	faGlobe,
 	faHome,
@@ -122,6 +123,11 @@ export const ConsoleMenu = () => {
 			history.push(Path.CONSOLE_INBOX);
 		}
 	};
+	const onTimelineClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_TIMELINE)) {
+			history.push(Path.CONSOLE_TIMELINE);
+		}
+	};
 	const onFavoriteClicked = (rect: DOMRect) => {
 		const { visible } = favorites;
 		if (!visible) {
@@ -134,6 +140,16 @@ export const ConsoleMenu = () => {
 		}
 
 		history.push(toConnectedSpace(Path.CONSOLE_CONNECTED_SPACE, space.connectId));
+	};
+	const onSettingsClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_SETTINGS)) {
+			history.push(Path.CONSOLE_SETTINGS);
+		}
+	};
+	const onSpaceConnectClicked = () => {
+		if (!matchPath(location.pathname, Path.CONSOLE_SPACES)) {
+			history.push(Path.CONSOLE_SPACES);
+		}
 	};
 
 	const showMenuItemTooltip = menuWidth / minWidth <= 1.5;
@@ -154,7 +170,9 @@ export const ConsoleMenu = () => {
 		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_INBOX)}
 		          onClick={onInboxClicked}/>
-		<MenuItem icon={faComments} iconSize={1.2} label='Show Timeline' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faComments} iconSize={1.2} label='Show Timeline' showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.CONSOLE_TIMELINE)}
+		          onClick={onTimelineClicked}/>
 		<MenuSeparator width={menuWidth}/>
 		<SpaceMenus>
 			{spaces
@@ -167,10 +185,13 @@ export const ConsoleMenu = () => {
 					                  key={`space-${space.connectId}`}/>;
 				})}
 		</SpaceMenus>
-		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Space' showTooltip={showMenuItemTooltip}/>
+		<ConnectMenu icon={faPlus} iconSize={0.8} label='Connect New Space' showTooltip={showMenuItemTooltip}
+		             onClick={onSpaceConnectClicked}/>
 		<Placeholder/>
 		<MenuSeparator width={menuWidth}/>
-		<MenuItem icon={faQuestionCircle} iconSize={1.2} label='Help' showTooltip={showMenuItemTooltip}/>
+		<MenuItem icon={faCog} iconSize={1.2} label='Settings' showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.CONSOLE_SETTINGS)}
+		          onClick={onSettingsClicked}/>
 		<MenuUser/>
 		<ResizeHandle width={menuWidth} onResize={onResize}/>
 	</MenuContainer>;

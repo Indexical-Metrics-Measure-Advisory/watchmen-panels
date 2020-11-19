@@ -49,8 +49,7 @@ export const useConsoleNotifications = () => {
 	// TODO simulate data for demo purpose
 	useEffect(() => {
 		setTimeout(() => notifications.fetchLatest(), 30000);
-		// eslint-disable-next-line
-	}, [ 0 ]);
+	}, []);
 
 	return notifications;
 };
