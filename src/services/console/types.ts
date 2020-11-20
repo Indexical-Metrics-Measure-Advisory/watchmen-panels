@@ -104,6 +104,7 @@ export interface ConsoleSpaceSubjectDataSetColumn {
 }
 
 export interface ConsoleSpaceSubjectDataSetJoin {
+	relationId: string;
 }
 
 export interface ConsoleSpaceSubject {

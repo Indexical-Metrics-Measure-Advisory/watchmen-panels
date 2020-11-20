@@ -11,6 +11,7 @@ import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../di
 import { useSpaceContext } from '../space-context';
 import { SubjectColumns } from './columns';
 import { SubjectMenuHeader } from './components';
+import { SubjectContextProvider } from './context';
 import { SubjectFilters } from './filters';
 import { SubjectJoins } from './joins';
 
@@ -112,24 +113,18 @@ const initDataSet = (subject: ConsoleSpaceSubject) => {
 	}
 };
 
-export const SubjectView = (props: {
+export const SubjectViewContent = (props: {
 	space: ConnectedConsoleSpace;
-	visible: boolean;
+	group?: ConsoleSpaceGroup;
+	subject: ConsoleSpaceSubject;
 }) => {
-	const { space, visible } = props;
+	const { space, group, subject } = props;
 
-	const { subjectId } = useParams<{ subjectId: string }>();
 	const dialog = useDialog();
 	const { closeSubjectIfCan, subjectRenamed } = useSpaceContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ min, setMin ] = useState<Min>({ all: false, filters: false, columns: false, joins: false });
 
-	if (!visible) {
-		return null;
-	}
-
-	// eslint-disable-next-line
-	const { group, subject } = findSubject(space, subjectId);
 	initDataSet(subject);
 
 	const onDeleteSubjectClicked = createDeleteSubjectClickHandler({
@@ -167,11 +162,29 @@ export const SubjectView = (props: {
 			</SubjectMenuHeader>
 			<SubjectFilters subject={subject} min={min.filters} onMinChanged={changeMinState('filters')}/>
 			<SubjectColumns space={space} subject={subject} min={min.columns} onMinChanged={changeMinState('columns')}/>
-			<SubjectJoins subject={subject} min={min.joins} onMinChanged={changeMinState('joins')}/>
+			<SubjectJoins space={space} subject={subject} min={min.joins} onMinChanged={changeMinState('joins')}/>
 		</SubjectMenu>
 		<LinkButton onClick={changeMinAllState(false)} ignoreHorizontalPadding={true}
 		            tooltip='Show Subject View Menus'>
 			<FontAwesomeIcon icon={faBars}/>
 		</LinkButton>
 	</SubjectViewContainer>;
+};
+
+export const SubjectView = (props: {
+	space: ConnectedConsoleSpace;
+	visible: boolean;
+}) => {
+	const { space, visible } = props;
+	if (!visible) {
+		return null;
+	}
+
+	// eslint-disable-next-line
+	const { subjectId } = useParams<{ subjectId: string }>();
+	const { group, subject } = findSubject(space, subjectId);
+
+	return <SubjectContextProvider space={space} group={group} subject={subject}>
+		<SubjectViewContent space={space} group={group} subject={subject}/>
+	</SubjectContextProvider>;
 };

@@ -9,8 +9,8 @@ import {
 } from '../../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../../component/dropdown';
 import { LinkButton } from '../../component/link-button';
-import { useConsoleContext } from '../../context/console-context';
 import { SubjectMenuBody, SubjectMenuBodyWrapper, SubjectMenuHeader } from './components';
+import { useSubjectContext } from './context';
 
 const ColumnRowContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-column-row'
@@ -43,16 +43,14 @@ const ColumnRowContainer = styled.div.attrs({
 
 const ColumnRow = (props: {
 	column: ConsoleSpaceSubjectDataSetColumn;
-	topicOptions: Array<DropdownOption>;
-	factorOptions: { [key in string]: Array<DropdownOption> };
 	removeColumn: (column: ConsoleSpaceSubjectDataSetColumn) => void;
 }) => {
 	const {
 		column,
-		topicOptions, factorOptions,
 		removeColumn
 	} = props;
 
+	const { defs: { topics: topicOptions, factors: factorOptions } } = useSubjectContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
 	const onColumnTopicChanged = (column: ConsoleSpaceSubjectDataSetColumn) => async ({ value }: DropdownOption) => {
@@ -90,28 +88,15 @@ export const SubjectColumns = (props: {
 	onMinChanged: (min: boolean) => void;
 }) => {
 	const {
-		space, subject,
+		subject,
 		min, onMinChanged
 	} = props;
 
 	const { dataset = {} } = subject;
 	const { columns = [] } = dataset;
 
-	const { spaces: { available } } = useConsoleContext();
+	const { defs: { space: spaceDef } } = useSubjectContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-
-	// eslint-disable-next-line
-	const spaceDef = available.find(s => s.spaceId == space.spaceId)!;
-	const topicOptions = spaceDef.topics.map(topic => ({ label: topic.name, value: topic.topicId, topic }));
-	const factorOptions = spaceDef.topics.reduce((all, topic) => {
-		all[topic.topicId] = topic.factors.map(factor => ({
-			label: factor.label,
-			value: factor.factorId,
-			factor,
-			topic
-		}));
-		return all;
-	}, {} as { [key in string]: Array<DropdownOption> });
 
 	const onSortClicked = () => {
 		columns.sort((c1, c2) => {
@@ -148,6 +133,7 @@ export const SubjectColumns = (props: {
 	};
 	const onAddColumnClicked = () => {
 		columns.push({});
+		onMinChanged(false);
 		forceUpdate();
 	};
 	const onRemoveColumn = (column: ConsoleSpaceSubjectDataSetColumn) => {
@@ -181,7 +167,6 @@ export const SubjectColumns = (props: {
 					const { topicId, factorId } = column;
 					return <ColumnRow key={`${topicId}-${factorId}-${index}`}
 					                  column={column}
-					                  topicOptions={topicOptions} factorOptions={factorOptions}
 					                  removeColumn={onRemoveColumn}/>;
 				})}
 			</SubjectMenuBodyWrapper>
