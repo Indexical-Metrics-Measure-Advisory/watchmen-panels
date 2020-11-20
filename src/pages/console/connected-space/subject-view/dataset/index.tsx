@@ -31,6 +31,8 @@ const DataSetDefinition = styled.div.attrs({
 	overflow: hidden;
 	&[data-visible=false] {
 		opacity: 0;
+		width: 0;
+		min-width: 0;
 		pointer-events: none;
 	}
 `;

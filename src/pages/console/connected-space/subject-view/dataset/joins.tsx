@@ -36,7 +36,6 @@ const JoinRowContainer = styled.div`
 		> span:first-child,
 		> div:last-child > span {
 			> span {
-				//width: calc(50% - 16px);
 				overflow-x: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
