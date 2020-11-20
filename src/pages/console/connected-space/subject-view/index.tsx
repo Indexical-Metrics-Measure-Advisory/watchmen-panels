@@ -1,5 +1,5 @@
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faDatabase, faPenAlt } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faDatabase, faPenAlt, faTable } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -115,10 +115,6 @@ export const SubjectViewContent = (props: {
 
 	return <SubjectViewContainer>
 		<SubjectViewMenu>
-			<LinkButton onClick={onVisibleChanged('dataset')} ignoreHorizontalPadding={true}
-			            tooltip='Show DataSet Definition'>
-				<FontAwesomeIcon icon={faDatabase}/>
-			</LinkButton>
 			<LinkButton onClick={onRenameSubjectClicked} ignoreHorizontalPadding={true} tooltip='Rename'
 			            center={true}>
 				<FontAwesomeIcon icon={faPenAlt}/>
@@ -126,6 +122,20 @@ export const SubjectViewContent = (props: {
 			<LinkButton onClick={onDeleteSubjectClicked} ignoreHorizontalPadding={true} tooltip='Delete Group'
 			            center={true}>
 				<FontAwesomeIcon icon={faTrashAlt}/>
+			</LinkButton>
+			<LinkButton onClick={onVisibleChanged('dataset')} ignoreHorizontalPadding={true}
+			            tooltip='Show DataSet Definition'>
+				<FontAwesomeIcon icon={faDatabase}/>
+			</LinkButton>
+			<LinkButton onClick={() => {
+			}} ignoreHorizontalPadding={true}
+			            tooltip='Show DataSet'>
+				<FontAwesomeIcon icon={faTable}/>
+			</LinkButton>
+			<LinkButton onClick={() => {
+			}} ignoreHorizontalPadding={true}
+			            tooltip='Show Graphics'>
+				<FontAwesomeIcon icon={faChartBar}/>
 			</LinkButton>
 		</SubjectViewMenu>
 		<DataSet space={space} subject={subject}
