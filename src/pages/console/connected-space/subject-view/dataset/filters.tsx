@@ -1,9 +1,9 @@
 import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment } from 'react';
-import { ConsoleSpaceSubject } from '../../../../services/console/types';
-import { LinkButton } from '../../component/link-button';
-import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from './components';
+import { ConsoleSpaceSubject } from '../../../../../services/console/types';
+import { LinkButton } from '../../../component/link-button';
+import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 
 export const SubjectFilters = (props: {
 	subject: ConsoleSpaceSubject;

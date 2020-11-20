@@ -6,11 +6,11 @@ import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectDataSetColumn
-} from '../../../../services/console/types';
-import Dropdown, { DropdownOption } from '../../../component/dropdown';
-import { LinkButton } from '../../component/link-button';
-import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from './components';
-import { useSubjectContext } from './context';
+} from '../../../../../services/console/types';
+import Dropdown, { DropdownOption } from '../../../../component/dropdown';
+import { LinkButton } from '../../../component/link-button';
+import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
+import { useSubjectContext } from '../context';
 
 const ColumnRowContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-column-row'

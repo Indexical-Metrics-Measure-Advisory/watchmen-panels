@@ -2,10 +2,10 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../services/console/types';
-import { LinkButton } from '../../component/link-button';
+import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
+import { LinkButton } from '../../../component/link-button';
+import { SubjectPanelHeader } from '../components';
 import { SubjectColumns } from './columns';
-import { SubjectPanelHeader } from './components';
 import { SubjectFilters } from './filters';
 import { SubjectJoins } from './joins';
 

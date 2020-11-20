@@ -12,19 +12,24 @@ import styled from 'styled-components';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
-	ConsoleSpaceSubjectDataSetJoin
-} from '../../../../services/console/types';
-import Dropdown, { DropdownOption } from '../../../component/dropdown';
-import { LinkButton } from '../../component/link-button';
-import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from './components';
-import { useSubjectContext } from './context';
+	ConsoleSpaceSubjectDataSetJoin,
+	ConsoleTopic,
+	ConsoleTopicFactor
+} from '../../../../../services/console/types';
+import Dropdown, { DropdownOption } from '../../../../component/dropdown';
+import { LinkButton } from '../../../component/link-button';
+import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
+import { useSubjectContext } from '../context';
 
 const JoinRowContainer = styled.div`
 	display: flex;
 	position: relative;
 	font-size: 0.8em;
-	padding: calc(var(--margin) / 4) 0;
-	margin: 0 calc(var(--margin) / 2);
+	padding: 0 calc(var(--margin) / 2);
+	margin-top: calc(var(--margin) / 4);
+	&:last-child {
+		margin-bottom: calc(var(--margin) / 4);
+	}
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
 		flex-grow: 1;
@@ -104,10 +109,37 @@ export const SubjectJoins = (props: {
 	const { dataset = {} } = subject;
 	const { joins = [] } = dataset;
 
-	const { defs: { space: spaceDef } } = useSubjectContext();
+	const { defs: { relations } } = useSubjectContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
 	const onSortClicked = () => {
+		const asLabel = ({
+			                 source: { topic: sourceTopic, factors: sourceFactors },
+			                 target: { topic: targetTopic, factors: targetFactors }
+		                 }: {
+			source: { topic: ConsoleTopic, factors: Array<ConsoleTopicFactor> },
+			target: { topic: ConsoleTopic, factors: Array<ConsoleTopicFactor> },
+		}) => {
+			return `${sourceTopic.name}[${sourceFactors.map(f => f.label).join(', ')}];${targetTopic.name}[${targetFactors.map(f => f.label).join(', ')}]`;
+		};
+		joins.sort((j1, j2) => {
+			if (!j1.relationId) {
+				return !j2.relationId ? 0 : 1;
+			} else if (!j2.relationId) {
+				return -1;
+				// eslint-disable-next-line
+			} else if (j1.relationId == j2.relationId) {
+				return 0;
+			}
+
+			// eslint-disable-next-line
+			const r1 = relations.find(r => r.value == j1.relationId)!;
+			// eslint-disable-next-line
+			const r2 = relations.find(r => r.value == j2.relationId)!;
+			const l1 = asLabel(r1);
+			const l2 = asLabel(r2);
+			return l1.localeCompare(l2);
+		});
 	};
 	const onAddJoinClicked = () => {
 		const join = {};
