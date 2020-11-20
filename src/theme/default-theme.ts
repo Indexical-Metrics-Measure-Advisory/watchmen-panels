@@ -127,6 +127,7 @@ const DefaultTheme = {
 
 	// console subject
 	consoleSubjectHeight: 40,
+	consoleSubjectTopicBgColor: 'rgba(181,188,194,0.2)',
 
 	// console visit colors
 	consoleBgColorRecent: 'rgba(119,177,127,0.2)',

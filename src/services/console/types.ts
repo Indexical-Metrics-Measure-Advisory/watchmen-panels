@@ -94,6 +94,18 @@ export interface ConsoleSpace {
 	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
+export interface ConsoleSpaceSubjectDataSetFilter {
+
+}
+
+export interface ConsoleSpaceSubjectDataSetColumn {
+	topicId?: string;
+	factorId?: string;
+}
+
+export interface ConsoleSpaceSubjectDataSetJoin {
+}
+
 export interface ConsoleSpaceSubject {
 	subjectId: string;
 	name: string;
@@ -101,6 +113,11 @@ export interface ConsoleSpaceSubject {
 	graphicsCount: number,
 	lastVisitTime: string,
 	createdAt: string
+	dataset?: {
+		filters?: Array<ConsoleSpaceSubjectDataSetFilter>;
+		columns?: Array<ConsoleSpaceSubjectDataSetColumn>;
+		joins?: Array<ConsoleSpaceSubjectDataSetJoin>;
+	}
 }
 
 export interface ConsoleSpaceGroup {
@@ -115,15 +132,6 @@ export interface ConnectedConsoleSpace extends ConsoleSpace {
 	lastVisitTime: string;
 	groups: Array<ConsoleSpaceGroup>;
 	subjects: Array<ConsoleSpaceSubject>;
-}
-
-export interface PublicConsoleSpace extends ConnectedConsoleSpace {
-	type: ConsoleSpaceType.PUBLIC;
-}
-
-export interface PrivateConsoleSpace extends ConnectedConsoleSpace {
-	type: ConsoleSpaceType.PRIVATE;
-	// TODO filter declarations here
 }
 
 export interface ConsoleDashboard {

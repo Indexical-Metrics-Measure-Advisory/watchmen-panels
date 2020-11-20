@@ -17,6 +17,17 @@ export const SubjectMenuHeader = styled.div.attrs({
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+		> span:nth-child(2) {
+			margin-left: calc(var(--margin) / 4);
+			font-size: 0.8em;
+			background-color: var(--console-primary-color);
+			color: var(--invert-color);
+			padding: 1px 10px;
+			border-radius: 0.8em;
+			height: 1.6em;
+			transform: scale(0.7,0.7);
+			opacity: 0.7;
+		}
 	}
 	> button {
 		height: 20px;

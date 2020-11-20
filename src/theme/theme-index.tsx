@@ -109,6 +109,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-color-ungroup: ${({ theme }) => theme.consoleColorUngroup};
 		
 		--console-subject-height: ${({ theme }) => theme.consoleSubjectHeight}px;
+		--console-subject-topic-bg-color: ${({ theme }) => theme.consoleSubjectTopicBgColor};
 		
 		--console-bg-color-recent: ${({ theme }) => theme.consoleBgColorRecent};
 		--console-color-recent: ${({ theme }) => theme.consoleColorRecent};

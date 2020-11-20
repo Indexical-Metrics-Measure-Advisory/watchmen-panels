@@ -95,6 +95,22 @@ const findSubject = (space: ConnectedConsoleSpace, subjectId: string) => {
 		return { subject, group: (void 0) };
 	}
 };
+const initDataSet = (subject: ConsoleSpaceSubject) => {
+	let { dataset } = subject;
+	if (!dataset) {
+		dataset = { filters: [], columns: [], joins: [] };
+		subject.dataset = dataset;
+	}
+	if (!dataset.filters) {
+		dataset.filters = [];
+	}
+	if (!dataset.columns) {
+		dataset.columns = [];
+	}
+	if (!dataset.joins) {
+		dataset.joins = [];
+	}
+};
 
 export const SubjectView = (props: {
 	space: ConnectedConsoleSpace;
@@ -114,6 +130,7 @@ export const SubjectView = (props: {
 
 	// eslint-disable-next-line
 	const { group, subject } = findSubject(space, subjectId);
+	initDataSet(subject);
 
 	const onDeleteSubjectClicked = createDeleteSubjectClickHandler({
 		dialog, space, group, subject,
@@ -148,9 +165,9 @@ export const SubjectView = (props: {
 					<FontAwesomeIcon icon={faTimes}/>
 				</LinkButton>
 			</SubjectMenuHeader>
-			<SubjectFilters min={min.filters} onMinChanged={changeMinState('filters')}/>
-			<SubjectColumns min={min.columns} onMinChanged={changeMinState('columns')}/>
-			<SubjectJoins min={min.joins} onMinChanged={changeMinState('joins')}/>
+			<SubjectFilters subject={subject} min={min.filters} onMinChanged={changeMinState('filters')}/>
+			<SubjectColumns space={space} subject={subject} min={min.columns} onMinChanged={changeMinState('columns')}/>
+			<SubjectJoins subject={subject} min={min.joins} onMinChanged={changeMinState('joins')}/>
 		</SubjectMenu>
 		<LinkButton onClick={changeMinAllState(false)} ignoreHorizontalPadding={true}
 		            tooltip='Show Subject View Menus'>
