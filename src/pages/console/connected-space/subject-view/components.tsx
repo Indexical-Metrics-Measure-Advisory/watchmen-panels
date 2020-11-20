@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const SubjectMenuHeader = styled.div.attrs({
-	'data-widget': 'console-subject-view-menu-header'
+export const SubjectPanelHeader = styled.div.attrs({
+	'data-widget': 'console-subject-view-panel-header'
 })`
 	display: flex;
 	align-items: center;
@@ -36,8 +36,8 @@ export const SubjectMenuHeader = styled.div.attrs({
 		}
 	}
 `;
-export const SubjectMenuBody = styled.div.attrs({
-	'data-widget': 'console-subject-view-menu-body'
+export const SubjectPanelBody = styled.div.attrs({
+	'data-widget': 'console-subject-view-panel-body'
 })`
 	flex-grow: 1;
 	display: flex;
@@ -53,7 +53,7 @@ export const SubjectMenuBody = styled.div.attrs({
 		margin-top: -1px;
 	}
 `;
-export const SubjectMenuBodyWrapper = styled.div`
+export const SubjectPanelBodyWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	position: absolute;

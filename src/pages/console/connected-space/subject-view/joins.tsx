@@ -1,134 +1,104 @@
-import { faCompressAlt, faExchangeAlt, faExpandAlt, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCompressAlt,
+	faExchangeAlt,
+	faExpandAlt,
+	faPlus,
+	faSortAlphaDown,
+	faTimes
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer } from 'react';
 import styled from 'styled-components';
 import {
 	ConnectedConsoleSpace,
-	ConsoleSpace,
 	ConsoleSpaceSubject,
-	ConsoleTopicRelationship
+	ConsoleSpaceSubjectDataSetJoin
 } from '../../../../services/console/types';
-import Dropdown from '../../../component/dropdown';
+import Dropdown, { DropdownOption } from '../../../component/dropdown';
 import { LinkButton } from '../../component/link-button';
-import { SubjectMenuBody, SubjectMenuBodyWrapper, SubjectMenuHeader } from './components';
+import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from './components';
 import { useSubjectContext } from './context';
 
 const JoinRowContainer = styled.div`
-	display: grid;
+	display: flex;
 	position: relative;
-	grid-template-columns: calc(50% - 32px) 32px calc(50% - 32px) 32px;
-	grid-row-gap: 2px;
 	font-size: 0.8em;
 	padding: calc(var(--margin) / 4) 0;
 	margin: 0 calc(var(--margin) / 2);
-	&:after {
-		content: '';
-		display: block;
-		position: absolute;
-		width: 100%;
-		height: 1px;
-		left: 0;
-		bottom: 0;
-		background-color: var(--border-color);
-		opacity: 0.6;
-	}
-	&:last-child {
-		margin-bottom: calc(var(--margin) / 4);
-		&:after {
-			display: none;
-		}
-	}
-	> div:nth-child(2),
-	> div:nth-child(4) {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-	> div:nth-child(1),
-	> div:nth-child(3) {
-		display: flex;
-		align-items: center;
-		height: 32px;
-		> div[data-widget=dropdown] {
-			font-size: 0.8em;
-			color: var(--console-font-color);
-			border-color: transparent;
-			transition: all 300ms ease-in-out;
-			&:hover,
-			&:focus {
-				border-color: var(--border-color);
+	> div[data-widget=dropdown] {
+		font-size: 0.8em;
+		flex-grow: 1;
+		> span:first-child,
+		> div:last-child > span {
+			> span {
+				//width: calc(50% - 16px);
+				overflow-x: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				> span:last-child {
+					flex-grow: 1;
+				}
+			}
+			> svg {
+				min-width: 32px;
 			}
 		}
 	}
+	> button {
+		min-width: 32px;
+		margin-left: calc(var(--margin) / 4);
+	}
 `;
 
-const convertRelationTopic = (options: { spaceDef: ConsoleSpace, topicId: string, factorNames: Array<string> }) => {
-	const { spaceDef, topicId, factorNames } = options;
-	// eslint-disable-next-line
-	const topic = spaceDef.topics.find(t => t.topicId == topicId)!;
-	const factorLabels = factorNames.map(name => topic.factors.find(factor => factor.name === name)!.label);
-	const factorLabel = factorLabels.length === 1 ? factorLabels[0] : `${factorLabels[0]}, and ${factorLabels.length - 1} more...`;
-	return {
-		topic,
-		factorLabel: `${topic.name}, ${factorLabel}`,
-		factorLabels: factorLabels.map((label, index) => ({
-			label: `${index + 1}: ${topic.name}, ${label}`,
-			value: 'label'
-		}))
-	};
-};
-
 export const JoinRow = (props: {
-	relation: ConsoleTopicRelationship;
-	removeJoin: (relationId: string) => void;
+	join: ConsoleSpaceSubjectDataSetJoin;
+	removeJoin: (join: ConsoleSpaceSubjectDataSetJoin) => void;
 }) => {
-	const { relation, removeJoin } = props;
+	const { join, removeJoin } = props;
 
-	const { defs: { space: spaceDef } } = useSubjectContext();
+	const { defs: { relations } } = useSubjectContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	const { sourceTopicId, sourceFactorNames, targetTopicId, targetFactorNames } = relation;
-	const { factorLabel: sourceFactorLabel, factorLabels: sourceFactorLabels } = convertRelationTopic({
-		spaceDef,
-		topicId: sourceTopicId,
-		factorNames: sourceFactorNames
-	});
-	const { factorLabel: targetFactorLabel, factorLabels: targetFactorLabels } = convertRelationTopic({
-		spaceDef,
-		topicId: targetTopicId,
-		factorNames: targetFactorNames
-	});
-	const nothing = async () => {
+	const onRelationChanged = async ({ value }: DropdownOption) => {
+		join.relationId = value as string;
+		forceUpdate();
 	};
-	const onJoinRemoveClicked = () => removeJoin(relation.relationId);
+	const onJoinRemoveClicked = () => removeJoin(join);
+
+	const relationOptions =
+		relations.map(({
+			               value,
+			               source: { topic: sourceTopic, factors: sourceFactors },
+			               target: { topic: targetTopic, factors: targetFactors }
+		               }) => {
+			return {
+				value,
+				label: <Fragment>
+					<span>{sourceTopic.name}[{sourceFactors.map(f => f.label).join(', ')}]</span>
+					<FontAwesomeIcon icon={faExchangeAlt}/>
+					<span>{targetTopic.name}[{targetFactors.map(f => f.label).join(', ')}]</span>
+				</Fragment>
+			};
+		});
 
 	return <JoinRowContainer>
-		<div>
-			<Dropdown options={sourceFactorLabels} onChange={nothing} please={sourceFactorLabel}/>
-		</div>
-		<div>
-			<FontAwesomeIcon icon={faExchangeAlt}/>
-		</div>
-		<div>
-			<Dropdown options={targetFactorLabels} onChange={nothing} please={targetFactorLabel}/>
-		</div>
-		<div>
-			<LinkButton onClick={onJoinRemoveClicked} ignoreHorizontalPadding={true}
-			            tooltip={'Remove Join'} center={true}>
-				<FontAwesomeIcon icon={faTimes}/>
-			</LinkButton>
-		</div>
+		<Dropdown options={relationOptions} onChange={onRelationChanged} value={join.relationId}/>
+		<LinkButton onClick={onJoinRemoveClicked} ignoreHorizontalPadding={true}
+		            tooltip={'Remove Join'} center={true}>
+			<FontAwesomeIcon icon={faTimes}/>
+		</LinkButton>
 	</JoinRowContainer>;
 };
 
 export const SubjectJoins = (props: {
 	space: ConnectedConsoleSpace;
 	subject: ConsoleSpaceSubject;
-	min: boolean;
-	onMinChanged: (min: boolean) => void;
+	collapsed: boolean;
+	onCollapsedChanged: (collapsed: boolean) => void;
 }) => {
 	const {
 		subject,
-		min, onMinChanged
+		collapsed, onCollapsedChanged
 	} = props;
 
 	const { dataset = {} } = subject;
@@ -137,18 +107,22 @@ export const SubjectJoins = (props: {
 	const { defs: { space: spaceDef } } = useSubjectContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	const { topicRelations = [] } = spaceDef;
-
-	const onAddJoinClicked = () => {
+	const onSortClicked = () => {
 	};
-	const onRemoveJoin = (relationId: string) => {
-		const index = joins.findIndex(join => join.relationId == relationId);
+	const onAddJoinClicked = () => {
+		const join = {};
+		joins.push(join);
+		onCollapsedChanged(false);
+		forceUpdate();
+	};
+	const onRemoveJoin = (join: ConsoleSpaceSubjectDataSetJoin) => {
+		const index = joins.indexOf(join);
 		joins.splice(index, 1);
 		forceUpdate();
 	};
 
 	return <Fragment>
-		<SubjectMenuHeader>
+		<SubjectPanelHeader>
 			<div>
 				<span>Joins</span>
 				<span>{joins.length}</span>
@@ -157,20 +131,22 @@ export const SubjectJoins = (props: {
 			            tooltip='Add Join' center={true}>
 				<FontAwesomeIcon icon={faPlus}/>
 			</LinkButton>
-			<LinkButton onClick={() => onMinChanged(!min)} ignoreHorizontalPadding={true}
-			            tooltip={`${min ? 'Expand' : 'Collapse'} Joins Definition`} center={true}>
-				<FontAwesomeIcon icon={min ? faExpandAlt : faCompressAlt}/>
+			<LinkButton onClick={onSortClicked} ignoreHorizontalPadding={true}
+			            tooltip='Sort' center={true}>
+				<FontAwesomeIcon icon={faSortAlphaDown}/>
 			</LinkButton>
-		</SubjectMenuHeader>
-		<SubjectMenuBody data-visible={!min}>
-			<SubjectMenuBodyWrapper>
-				{joins.map(({ relationId }) => {
-					// eslint-disable-next-line
-					const relation = topicRelations.find(relation => relation.relationId == relationId)!;
-					return <JoinRow relation={relation} key={relation.relationId}
+			<LinkButton onClick={() => onCollapsedChanged(!collapsed)} ignoreHorizontalPadding={true}
+			            tooltip={`${collapsed ? 'Expand' : 'Collapse'} Joins Definition`} center={true}>
+				<FontAwesomeIcon icon={collapsed ? faExpandAlt : faCompressAlt}/>
+			</LinkButton>
+		</SubjectPanelHeader>
+		<SubjectPanelBody data-visible={!collapsed}>
+			<SubjectPanelBodyWrapper>
+				{joins.map((join, index) => {
+					return <JoinRow join={join} key={`${join.relationId}-${index}`}
 					                removeJoin={onRemoveJoin}/>;
 				})}
-			</SubjectMenuBodyWrapper>
-		</SubjectMenuBody>
+			</SubjectPanelBodyWrapper>
+		</SubjectPanelBody>
 	</Fragment>;
 };

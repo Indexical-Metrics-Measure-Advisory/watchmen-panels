@@ -1,5 +1,5 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faBars, faPenAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase, faPenAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -9,17 +9,11 @@ import { useDialog } from '../../../context/dialog';
 import { LinkButton } from '../../component/link-button';
 import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
-import { SubjectColumns } from './columns';
-import { SubjectMenuHeader } from './components';
 import { SubjectContextProvider } from './context';
-import { SubjectFilters } from './filters';
-import { SubjectJoins } from './joins';
+import { DataSet } from './dataset';
 
-interface Min {
-	all: boolean;
-	filters: boolean;
-	columns: boolean;
-	joins: boolean;
+interface Visible {
+	dataset: boolean;
 }
 
 const SubjectViewContainer = styled.div.attrs({
@@ -28,51 +22,27 @@ const SubjectViewContainer = styled.div.attrs({
 	display: flex;
 	position: relative;
 	width: 100%;
-	&[data-min=true] {
-		> button {
-			opacity: 1;
-			pointer-events: auto;
-			&:hover {
-				box-shadow: var(--console-primary-hover-shadow);
-			}
-		}
-	}
+`;
+const SubjectViewMenu = styled.div`
+	display: flex;
+	position: absolute;
+	top: calc(var(--margin) / 2);
+	left: calc(var(--margin) / 2);
 	> button {
-		display: block;
-		position: absolute;
-		opacity: 0;
 		font-family: var(--console-title-font-family);
 		color: var(--invert-color);
 		background-color: var(--console-primary-color);
-		top: calc(var(--margin) / 2);
-		left: calc(var(--margin) / 2);
 		white-space: nowrap;
 		padding: 6px calc(var(--margin) / 2);
-		border-radius: var(--border-radius);
 		box-shadow: var(--console-primary-shadow);
-		pointer-events: none;
-		z-index: 1;
-		transition: all 300ms ease-in-out;
-		&:hover:before {
-			 display: none;
-		}
-	}
-`;
-const SubjectMenu = styled.div.attrs({
-	'data-widget': 'console-subject-view-menu'
-})`
-	display: flex;
-	position: relative;
-	flex-direction: column;
-	width: 500px;
-	height: 100%;
-	border-right: var(--border);
-	box-shadow: var(--console-hover-shadow);
-	transition: all 300ms ease-in-out;
-	overflow: hidden;
-	&[data-min=true] {
-		width: 0;
-		border-right-width: 0;
+		&:first-child {
+			border-top-left-radius: var(--border-radius);
+			border-bottom-left-radius: var(--border-radius);
+		}		
+		&:last-child {
+			border-top-right-radius: var(--border-radius);
+			border-bottom-right-radius: var(--border-radius);
+		}		
 	}
 `;
 
@@ -123,7 +93,7 @@ export const SubjectViewContent = (props: {
 	const dialog = useDialog();
 	const { closeSubjectIfCan, subjectRenamed } = useSpaceContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-	const [ min, setMin ] = useState<Min>({ all: false, filters: false, columns: false, joins: false });
+	const [ visible, setVisible ] = useState<Visible>({ dataset: false });
 
 	initDataSet(subject);
 
@@ -140,34 +110,26 @@ export const SubjectViewContent = (props: {
 			forceUpdate();
 		}
 	});
-	const changeMinAllState = (value: boolean) => () => setMin({ ...min, all: value });
-	const changeMinState = (key: keyof Min) => (value: boolean) => setMin({ ...min, [key]: value });
+	const onVisibleChanged = (key: keyof Visible) => () => setVisible({ ...visible, [key]: !visible[key] });
+	const changeVisible = (key: keyof Visible) => (value: boolean) => setVisible({ ...visible, [key]: value });
 
-	return <SubjectViewContainer data-min={min.all}>
-		<SubjectMenu data-min={min.all}>
-			<SubjectMenuHeader>
-				<div>{subject.name}</div>
-				<LinkButton onClick={onRenameSubjectClicked} ignoreHorizontalPadding={true} tooltip='Rename'
-				            center={true}>
-					<FontAwesomeIcon icon={faPenAlt}/>
-				</LinkButton>
-				<LinkButton onClick={onDeleteSubjectClicked} ignoreHorizontalPadding={true} tooltip='Delete Group'
-				            center={true}>
-					<FontAwesomeIcon icon={faTrashAlt}/>
-				</LinkButton>
-				<LinkButton onClick={changeMinAllState(true)} ignoreHorizontalPadding={true} tooltip='Minimize'
-				            center={true}>
-					<FontAwesomeIcon icon={faTimes}/>
-				</LinkButton>
-			</SubjectMenuHeader>
-			<SubjectFilters subject={subject} min={min.filters} onMinChanged={changeMinState('filters')}/>
-			<SubjectColumns space={space} subject={subject} min={min.columns} onMinChanged={changeMinState('columns')}/>
-			<SubjectJoins space={space} subject={subject} min={min.joins} onMinChanged={changeMinState('joins')}/>
-		</SubjectMenu>
-		<LinkButton onClick={changeMinAllState(false)} ignoreHorizontalPadding={true}
-		            tooltip='Show Subject View Menus'>
-			<FontAwesomeIcon icon={faBars}/>
-		</LinkButton>
+	return <SubjectViewContainer>
+		<SubjectViewMenu>
+			<LinkButton onClick={onVisibleChanged('dataset')} ignoreHorizontalPadding={true}
+			            tooltip='Show DataSet Definition'>
+				<FontAwesomeIcon icon={faDatabase}/>
+			</LinkButton>
+			<LinkButton onClick={onRenameSubjectClicked} ignoreHorizontalPadding={true} tooltip='Rename'
+			            center={true}>
+				<FontAwesomeIcon icon={faPenAlt}/>
+			</LinkButton>
+			<LinkButton onClick={onDeleteSubjectClicked} ignoreHorizontalPadding={true} tooltip='Delete Group'
+			            center={true}>
+				<FontAwesomeIcon icon={faTrashAlt}/>
+			</LinkButton>
+		</SubjectViewMenu>
+		<DataSet space={space} subject={subject}
+		         visible={visible.dataset} onVisibleChanged={changeVisible('dataset')}/>
 	</SubjectViewContainer>;
 };
 

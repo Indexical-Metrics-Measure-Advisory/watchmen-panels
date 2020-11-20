@@ -3,27 +3,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment } from 'react';
 import { ConsoleSpaceSubject } from '../../../../services/console/types';
 import { LinkButton } from '../../component/link-button';
-import { SubjectMenuBody, SubjectMenuBodyWrapper, SubjectMenuHeader } from './components';
+import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from './components';
 
 export const SubjectFilters = (props: {
 	subject: ConsoleSpaceSubject;
-	min: boolean;
-	onMinChanged: (min: boolean) => void;
+	collapsed: boolean;
+	onCollapsedChanged: (collapsed: boolean) => void;
 }) => {
 	const {
-		min, onMinChanged
+		collapsed, onCollapsedChanged
 	} = props;
 
 	return <Fragment>
-		<SubjectMenuHeader>
+		<SubjectPanelHeader>
 			<div>Filters</div>
-			<LinkButton onClick={() => onMinChanged(!min)} ignoreHorizontalPadding={true}
-			            tooltip={`${min ? 'Expand' : 'Collapse'} Filters Definition`} center={true}>
-				<FontAwesomeIcon icon={min ? faExpandAlt : faCompressAlt}/>
+			<LinkButton onClick={() => onCollapsedChanged(!collapsed)} ignoreHorizontalPadding={true}
+			            tooltip={`${collapsed ? 'Expand' : 'Collapse'} Filters Definition`} center={true}>
+				<FontAwesomeIcon icon={collapsed ? faExpandAlt : faCompressAlt}/>
 			</LinkButton>
-		</SubjectMenuHeader>
-		<SubjectMenuBody data-visible={!min}>
-			<SubjectMenuBodyWrapper/>
-		</SubjectMenuBody>
+		</SubjectPanelHeader>
+		<SubjectPanelBody data-visible={!collapsed}>
+			<SubjectPanelBodyWrapper/>
+		</SubjectPanelBody>
 	</Fragment>;
 };

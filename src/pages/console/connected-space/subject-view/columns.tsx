@@ -9,14 +9,13 @@ import {
 } from '../../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../../component/dropdown';
 import { LinkButton } from '../../component/link-button';
-import { SubjectMenuBody, SubjectMenuBodyWrapper, SubjectMenuHeader } from './components';
+import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from './components';
 import { useSubjectContext } from './context';
 
 const ColumnRowContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-column-row'
 })`
-	display: grid;
-	grid-template-columns: 1fr 1fr auto;
+	display: flex;
 	padding: 0 calc(var(--margin) / 2);
 	margin-top: calc(var(--margin) / 4);
 	&:last-child {
@@ -24,6 +23,7 @@ const ColumnRowContainer = styled.div.attrs({
 	}
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
+		flex-grow: 1;
 		&:first-child {
 			background-color: var(--console-subject-topic-bg-color);
 			border-top-right-radius: 0;
@@ -36,7 +36,7 @@ const ColumnRowContainer = styled.div.attrs({
 		}
 	}
 	> button {
-		width: 32px;
+		min-width: 32px;
 		margin-left: calc(var(--margin) / 4);
 	}
 `;
@@ -84,12 +84,12 @@ const ColumnRow = (props: {
 export const SubjectColumns = (props: {
 	space: ConnectedConsoleSpace;
 	subject: ConsoleSpaceSubject;
-	min: boolean;
-	onMinChanged: (min: boolean) => void;
+	collapsed: boolean;
+	onCollapsedChanged: (collapsed: boolean) => void;
 }) => {
 	const {
 		subject,
-		min, onMinChanged
+		collapsed, onCollapsedChanged
 	} = props;
 
 	const { dataset = {} } = subject;
@@ -132,8 +132,9 @@ export const SubjectColumns = (props: {
 		forceUpdate();
 	};
 	const onAddColumnClicked = () => {
-		columns.push({});
-		onMinChanged(false);
+		const column = {};
+		columns.push(column);
+		onCollapsedChanged(false);
 		forceUpdate();
 	};
 	const onRemoveColumn = (column: ConsoleSpaceSubjectDataSetColumn) => {
@@ -143,7 +144,7 @@ export const SubjectColumns = (props: {
 	};
 
 	return <Fragment>
-		<SubjectMenuHeader>
+		<SubjectPanelHeader>
 			<div>
 				<span>Columns</span>
 				<span>{columns.length}</span>
@@ -156,20 +157,20 @@ export const SubjectColumns = (props: {
 			            tooltip='Sort' center={true}>
 				<FontAwesomeIcon icon={faSortAlphaDown}/>
 			</LinkButton>
-			<LinkButton onClick={() => onMinChanged(!min)} ignoreHorizontalPadding={true}
-			            tooltip={`${min ? 'Expand' : 'Collapse'} Columns Definition`} center={true}>
-				<FontAwesomeIcon icon={min ? faExpandAlt : faCompressAlt}/>
+			<LinkButton onClick={() => onCollapsedChanged(!collapsed)} ignoreHorizontalPadding={true}
+			            tooltip={`${collapsed ? 'Expand' : 'Collapse'} Columns Definition`} center={true}>
+				<FontAwesomeIcon icon={collapsed ? faExpandAlt : faCompressAlt}/>
 			</LinkButton>
-		</SubjectMenuHeader>
-		<SubjectMenuBody data-visible={!min}>
-			<SubjectMenuBodyWrapper>
+		</SubjectPanelHeader>
+		<SubjectPanelBody data-visible={!collapsed}>
+			<SubjectPanelBodyWrapper>
 				{columns.map((column, index) => {
 					const { topicId, factorId } = column;
 					return <ColumnRow key={`${topicId}-${factorId}-${index}`}
 					                  column={column}
 					                  removeColumn={onRemoveColumn}/>;
 				})}
-			</SubjectMenuBodyWrapper>
-		</SubjectMenuBody>
+			</SubjectPanelBodyWrapper>
+		</SubjectPanelBody>
 	</Fragment>;
 };

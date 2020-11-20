@@ -6,7 +6,7 @@ import { Theme } from '../../theme/types';
 
 export interface DropdownOption {
 	value: string | number | boolean;
-	label: string;
+	label: string | ((props: any) => React.ReactNode) | React.ReactNode;
 }
 
 interface State {
