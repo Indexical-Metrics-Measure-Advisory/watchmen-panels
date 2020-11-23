@@ -72,8 +72,28 @@ const demoTopics: Array<ConsoleTopic> = [
 			{ factorId: '303', name: 'lastName', label: 'Last Name', type: ConsoleTopicFactorType.TEXT },
 			{ factorId: '304', name: 'fullName', label: 'Full Name', type: ConsoleTopicFactorType.TEXT },
 			{ factorId: '305', name: 'dateOfBirth', label: 'Birth Date', type: ConsoleTopicFactorType.DATETIME },
-			{ factorId: '306', name: 'gender', label: 'Gender', type: ConsoleTopicFactorType.ENUM, enum: 'Gender' },
-			{ factorId: '307', name: 'city', label: 'City', type: ConsoleTopicFactorType.ENUM, enum: 'City' }
+			{
+				factorId: '306',
+				name: 'gender',
+				label: 'Gender',
+				type: ConsoleTopicFactorType.ENUM,
+				enum: JSON.stringify([ { value: 'F', label: 'Female' }, { value: 'M', label: 'Male' } ])
+			},
+			{
+				factorId: '307',
+				name: 'city',
+				label: 'City',
+				type: ConsoleTopicFactorType.ENUM,
+				enum: JSON.stringify([
+					{ value: 'AU', label: 'Augusta' },
+					{ value: 'BO', label: 'Boston' },
+					{ value: 'CO', label: 'Concord' },
+					{ value: 'HA', label: 'Hartford' },
+					{ value: 'MO', label: 'Montpelier' },
+					{ value: 'NY', label: 'New York' },
+					{ value: 'PR', label: 'Providence' }
+				])
+			}
 		]
 	}
 ];

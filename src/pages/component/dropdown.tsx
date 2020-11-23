@@ -116,11 +116,12 @@ const getPosition = (container: HTMLDivElement) => {
 const Dropdown = (props: {
 	className?: string,
 	options: Array<DropdownOption>,
-	onChange: (option: DropdownOption) => Promise<void>,
+	onChange: (option: DropdownOption) => Promise<void | { active: boolean }>,
 	value?: string | number | boolean,
 	please?: string
+	select?: (value: string | number | boolean) => ((props: any) => React.ReactNode) | React.ReactNode;
 }) => {
-	const { className, options = [], onChange, value, please = '' } = props;
+	const { className, options = [], onChange, value, please = '', select, ...rest } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [ state, setState ] = useState<State>({ active: false, top: 0, left: 0, width: 0, height: 0, minWidth: 0 });
@@ -139,8 +140,15 @@ const Dropdown = (props: {
 		};
 	});
 
-	const selectedOption = options.find(option => option.value === value);
-	const selectedLabel = selectedOption ? selectedOption.label : please;
+	let selectedLabel;
+	if (value == null) {
+		selectedLabel = please;
+	} else if (select) {
+		selectedLabel = select(value) || please;
+	} else {
+		const selectedOption = options.find(option => option.value === value);
+		selectedLabel = selectedOption ? selectedOption.label : please;
+	}
 
 	const onClicked = () => {
 		const { top, left, width, height } = getPosition(containerRef.current!);
@@ -148,13 +156,18 @@ const Dropdown = (props: {
 	};
 	const onBlurred = () => setState({ ...state, active: false });
 	const onOptionClicked = (option: DropdownOption) => async () => {
-		await onChange(option);
-		setState({ ...state, active: false });
+		const ret = await onChange(option);
+		if (!ret) {
+			setState({ ...state, active: false });
+		} else {
+			setState({ ...state, active: ret.active });
+		}
 	};
 
 	return <DropdownContainer className={className}
 	                          data-options-visible={state.active}
 	                          {...state}
+	                          {...rest}
 	                          itemCount={options.length}
 	                          ref={containerRef}
 	                          role='input' tabIndex={0}

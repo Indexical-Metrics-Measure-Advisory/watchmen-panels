@@ -53,7 +53,9 @@ export const SubjectPanelBody = styled.div.attrs({
 		margin-top: -1px;
 	}
 `;
-export const SubjectPanelBodyWrapper = styled.div`
+export const SubjectPanelBodyWrapper = styled.div.attrs({
+	'data-widget': 'console-subject-panel-body-wrapper'
+})`
 	display: flex;
 	flex-direction: column;
 	position: absolute;

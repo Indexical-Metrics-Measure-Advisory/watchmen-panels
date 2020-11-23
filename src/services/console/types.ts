@@ -95,7 +95,34 @@ export interface ConsoleSpace {
 }
 
 export interface ConsoleSpaceSubjectDataSetFilter {
+}
 
+export enum FilterJointType {
+	AND = 'and',
+	OR = 'or'
+}
+
+export interface ConsoleSpaceSubjectDataSetFilterJoint extends ConsoleSpaceSubjectDataSetFilter {
+	jointType: FilterJointType;
+	filters: Array<ConsoleSpaceSubjectDataSetFilter>;
+}
+
+export enum FilterExpressionOperator {
+	EQUALS = 'equals',
+	NOT_EQUALS = 'not-equals',
+	LESS = 'less',
+	LESS_EQUALS = 'less-equals',
+	MORE = 'more',
+	MORE_EQUALS = 'more-equals',
+	IN = 'in',
+	NOT_IN = 'not-in'
+}
+
+export interface ConsoleSpaceSubjectDataSetFilterExpression extends ConsoleSpaceSubjectDataSetFilter {
+	topicId?: string;
+	factorId?: string;
+	operator?: FilterExpressionOperator;
+	value?: string;
 }
 
 export interface ConsoleSpaceSubjectDataSetColumn {

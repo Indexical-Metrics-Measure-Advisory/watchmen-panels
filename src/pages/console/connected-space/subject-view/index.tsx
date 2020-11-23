@@ -4,7 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
+import {
+	ConnectedConsoleSpace,
+	ConsoleSpaceGroup,
+	ConsoleSpaceSubject,
+	FilterJointType
+} from '../../../../services/console/types';
 import { useDialog } from '../../../context/dialog';
 import { LinkButton } from '../../component/link-button';
 import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
@@ -69,11 +74,13 @@ const findSubject = (space: ConnectedConsoleSpace, subjectId: string) => {
 const initDataSet = (subject: ConsoleSpaceSubject) => {
 	let { dataset } = subject;
 	if (!dataset) {
-		dataset = { filters: [], columns: [], joins: [] };
+		dataset = { filters: [ { jointType: FilterJointType.AND, filters: [] } ], columns: [], joins: [] };
 		subject.dataset = dataset;
 	}
 	if (!dataset.filters) {
-		dataset.filters = [];
+		dataset.filters = [ { jointType: FilterJointType.AND, filters: [] } ];
+	} else if (dataset.filters.length === 0) {
+		dataset.filters.push({ jointType: FilterJointType.AND, filters: [] });
 	}
 	if (!dataset.columns) {
 		dataset.columns = [];

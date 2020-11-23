@@ -6,6 +6,7 @@ export default styled.input`
 	padding: 6px var(--input-indent);
 	border: var(--border);
 	border-radius: var(--border-radius);
+	font-family: var(--font-family);
 	font-size: var(--font-size);
 	height: var(--height);
 	line-height: var(--line-height);

@@ -21,10 +21,11 @@ import { LinkButton } from '../../../component/link-button';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
 
-const JoinRowContainer = styled.div`
+const JoinRowContainer = styled.div.attrs({
+	'data-widget': 'console-subject-view-join-row'
+})`
 	display: flex;
 	position: relative;
-	font-size: 0.8em;
 	padding: 0 calc(var(--margin) / 2);
 	margin-top: calc(var(--margin) / 4);
 	&:last-child {
@@ -33,6 +34,10 @@ const JoinRowContainer = styled.div`
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
 		flex-grow: 1;
+		&:first-child {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
 		> span:first-child,
 		> div:last-child > span {
 			> span {
@@ -50,7 +55,15 @@ const JoinRowContainer = styled.div`
 	}
 	> button {
 		min-width: 32px;
-		margin-left: calc(var(--margin) / 4);
+		border: var(--border);
+		border-left-color: transparent;
+		border-top-right-radius: var(--border-radius);
+		border-bottom-right-radius: var(--border-radius);
+		margin-left: -1px;
+		&:hover:before {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
 	}
 `;
 

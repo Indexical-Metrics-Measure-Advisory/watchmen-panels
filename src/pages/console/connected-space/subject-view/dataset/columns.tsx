@@ -21,6 +21,18 @@ const ColumnRowContainer = styled.div.attrs({
 	&:last-child {
 		margin-bottom: calc(var(--margin) / 4);
 	}
+	&[data-show-factor=false] {
+		> div[data-widget=dropdown]:nth-child(2) {
+			width: 0;
+			border: 0;
+			padding: 0;
+		}
+	}
+	&[data-show-factor=true] {
+		> div[data-widget=dropdown]:nth-child(2) {
+			flex-grow: 1;
+		}
+	}
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
 		flex-grow: 1;
@@ -30,14 +42,23 @@ const ColumnRowContainer = styled.div.attrs({
 			border-bottom-right-radius: 0;
 		}
 		&:nth-child(2) {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-			border-left: 0;
+			flex-grow: 0;
+			border-radius: 0;
+			border-left-color: transparent;
+			margin-left: -1px;
 		}
 	}
 	> button {
 		min-width: 32px;
-		margin-left: calc(var(--margin) / 4);
+		border: var(--border);
+		border-left-color: transparent;
+		border-top-right-radius: var(--border-radius);
+		border-bottom-right-radius: var(--border-radius);
+		margin-left: -1px;
+		&:hover:before {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
 	}
 `;
 
@@ -45,15 +66,12 @@ const ColumnRow = (props: {
 	column: ConsoleSpaceSubjectDataSetColumn;
 	removeColumn: (column: ConsoleSpaceSubjectDataSetColumn) => void;
 }) => {
-	const {
-		column,
-		removeColumn
-	} = props;
+	const { column, removeColumn } = props;
 
 	const { defs: { topics: topicOptions, factors: factorOptions } } = useSubjectContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	const onColumnTopicChanged = (column: ConsoleSpaceSubjectDataSetColumn) => async ({ value }: DropdownOption) => {
+	const onColumnTopicChanged = async ({ value }: DropdownOption) => {
 		const originTopicId = column.topicId;
 		column.topicId = value as string;
 		// eslint-disable-next-line
@@ -62,17 +80,19 @@ const ColumnRow = (props: {
 			forceUpdate();
 		}
 	};
-	const onColumnFactorChanged = (column: ConsoleSpaceSubjectDataSetColumn) => async ({ value }: DropdownOption) => {
+	const onColumnFactorChanged = async ({ value }: DropdownOption) => {
 		column.factorId = value as string;
 		forceUpdate();
 	};
 	const onColumnRemoveClicked = () => removeColumn(column);
 
-	return <ColumnRowContainer>
-		<Dropdown options={topicOptions} please='Topic'
-		          value={column.topicId} onChange={onColumnTopicChanged(column)}/>
+	const showFactor = !!column.topicId;
+
+	return <ColumnRowContainer data-show-factor={showFactor}>
+		<Dropdown options={topicOptions} please='Topic?'
+		          value={column.topicId} onChange={onColumnTopicChanged}/>
 		<Dropdown options={factorOptions[column.topicId || ''] || []}
-		          value={column.factorId} onChange={onColumnFactorChanged(column)}/>
+		          value={column.factorId} onChange={onColumnFactorChanged}/>
 		<LinkButton onClick={onColumnRemoveClicked} ignoreHorizontalPadding={true}
 		            tooltip={'Remove Column'} center={true}>
 			<FontAwesomeIcon icon={faTimes}/>
