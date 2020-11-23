@@ -15,7 +15,7 @@ import { LinkButton } from '../../component/link-button';
 import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
 import { SubjectContextProvider } from './context';
-import { DataSet } from './dataset';
+import { DataSetDef } from './dataset-def';
 
 interface Visible {
 	dataset: boolean;
@@ -145,8 +145,8 @@ export const SubjectViewContent = (props: {
 				<FontAwesomeIcon icon={faChartBar}/>
 			</LinkButton>
 		</SubjectViewMenu>
-		<DataSet space={space} subject={subject}
-		         visible={visible.dataset} onVisibleChanged={changeVisible('dataset')}/>
+		<DataSetDef space={space} subject={subject}
+		            visible={visible.dataset} onVisibleChanged={changeVisible('dataset')}/>
 	</SubjectViewContainer>;
 };
 

@@ -37,7 +37,7 @@ const DataSetDefinition = styled.div.attrs({
 	}
 `;
 
-export const DataSet = (props: {
+export const DataSetDef = (props: {
 	space: ConnectedConsoleSpace;
 	subject: ConsoleSpaceSubject;
 	visible: boolean
