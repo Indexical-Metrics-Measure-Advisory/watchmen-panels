@@ -11,6 +11,7 @@ const ExpressionTopic = styled.div`
 	flex-basis: 0;
 	border-top-left-radius: var(--border-radius);
 	border-bottom-left-radius: var(--border-radius);
+	transition: all 300ms ease-in-out;
 	&[data-grow=true] {
 		flex-grow: 1;
 	}

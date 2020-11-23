@@ -119,6 +119,7 @@ const ExpressionValueContainer = styled.div`
 	flex-grow: 0;
 	overflow-x: hidden;
 	margin-left: -1px;
+	transition: all 300ms ease-in-out;
 	&[data-visible=true] {
 		flex-grow: 1;
 	}

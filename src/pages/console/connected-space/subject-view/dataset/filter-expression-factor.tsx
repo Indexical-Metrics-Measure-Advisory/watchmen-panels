@@ -9,8 +9,8 @@ const ExpressionFactor = styled.div`
 	min-width: 0;
 	flex-grow: 0;
 	flex-basis: 0;
-	display: flex;
 	overflow-x: hidden;
+	transition: all 300ms ease-in-out;
 	&[data-visible=true] {
 		min-width: 150px;
 	}

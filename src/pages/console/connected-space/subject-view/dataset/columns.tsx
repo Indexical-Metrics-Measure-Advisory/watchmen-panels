@@ -1,105 +1,15 @@
-import { faCompressAlt, faExpandAlt, faPlus, faSortAlphaDown, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt, faPlus, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer } from 'react';
-import styled from 'styled-components';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectDataSetColumn
 } from '../../../../../services/console/types';
-import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { LinkButton } from '../../../component/link-button';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
-
-const ColumnRowContainer = styled.div.attrs({
-	'data-widget': 'console-subject-view-column-row'
-})`
-	display: flex;
-	padding: 0 calc(var(--margin) / 2);
-	margin-top: calc(var(--margin) / 4);
-	&:last-child {
-		margin-bottom: calc(var(--margin) / 4);
-	}
-	&[data-show-factor=false] {
-		> div[data-widget=dropdown]:nth-child(2) {
-			width: 0;
-			border: 0;
-			padding: 0;
-		}
-	}
-	&[data-show-factor=true] {
-		> div[data-widget=dropdown]:nth-child(2) {
-			flex-grow: 1;
-		}
-	}
-	> div[data-widget=dropdown] {
-		font-size: 0.8em;
-		flex-grow: 1;
-		&:first-child {
-			background-color: var(--console-subject-topic-bg-color);
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-		&:nth-child(2) {
-			flex-grow: 0;
-			border-radius: 0;
-			border-left-color: transparent;
-			margin-left: -1px;
-		}
-	}
-	> button {
-		min-width: 32px;
-		border: var(--border);
-		border-left-color: transparent;
-		border-top-right-radius: var(--border-radius);
-		border-bottom-right-radius: var(--border-radius);
-		margin-left: -1px;
-		&:hover:before {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-		}
-	}
-`;
-
-const ColumnRow = (props: {
-	column: ConsoleSpaceSubjectDataSetColumn;
-	removeColumn: (column: ConsoleSpaceSubjectDataSetColumn) => void;
-}) => {
-	const { column, removeColumn } = props;
-
-	const { defs: { topics: topicOptions, factors: factorOptions } } = useSubjectContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-
-	const onColumnTopicChanged = async ({ value }: DropdownOption) => {
-		const originTopicId = column.topicId;
-		column.topicId = value as string;
-		// eslint-disable-next-line
-		if (originTopicId != column.topicId) {
-			delete column.factorId;
-			forceUpdate();
-		}
-	};
-	const onColumnFactorChanged = async ({ value }: DropdownOption) => {
-		column.factorId = value as string;
-		forceUpdate();
-	};
-	const onColumnRemoveClicked = () => removeColumn(column);
-
-	const showFactor = !!column.topicId;
-
-	return <ColumnRowContainer data-show-factor={showFactor}>
-		<Dropdown options={topicOptions} please='Topic?'
-		          value={column.topicId} onChange={onColumnTopicChanged}/>
-		<Dropdown options={factorOptions[column.topicId || ''] || []}
-		          value={column.factorId} onChange={onColumnFactorChanged}/>
-		<LinkButton onClick={onColumnRemoveClicked} ignoreHorizontalPadding={true}
-		            tooltip={'Remove Column'} center={true}>
-			<FontAwesomeIcon icon={faTimes}/>
-		</LinkButton>
-	</ColumnRowContainer>;
-};
-
+import { Column } from './column';
 
 export const SubjectColumns = (props: {
 	space: ConnectedConsoleSpace;
@@ -186,9 +96,9 @@ export const SubjectColumns = (props: {
 			<SubjectPanelBodyWrapper>
 				{columns.map((column, index) => {
 					const { topicId, factorId } = column;
-					return <ColumnRow key={`${topicId}-${factorId}-${index}`}
-					                  column={column}
-					                  removeColumn={onRemoveColumn}/>;
+					return <Column key={`${topicId}-${factorId}-${index}`}
+					               column={column}
+					               removeColumn={onRemoveColumn}/>;
 				})}
 			</SubjectPanelBodyWrapper>
 		</SubjectPanelBody>

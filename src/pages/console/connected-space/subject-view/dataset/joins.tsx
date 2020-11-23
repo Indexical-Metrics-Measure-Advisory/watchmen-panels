@@ -34,6 +34,7 @@ const JoinRowContainer = styled.div.attrs({
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
 		flex-grow: 1;
+		max-width: calc(100% - 31px);
 		&:first-child {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
