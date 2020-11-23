@@ -47,10 +47,12 @@ const computeSpaceDefs = (available: Array<ConsoleSpace>, space: ConnectedConsol
 			value: relation.relationId,
 			label: '',
 			source: {
+				// eslint-disable-next-line
 				topic: topicOptions.find(topic => topic.value == relation.sourceTopicId)!.topic,
 				factors: relation.sourceFactorNames.map(factorName => factorOptions[relation.sourceTopicId]!.find(({ factor }) => factor.name === factorName)!.factor)
 			},
 			target: {
+				// eslint-disable-next-line
 				topic: topicOptions.find(topic => topic.value == relation.targetTopicId)!.topic,
 				factors: relation.targetFactorNames.map(factorName => factorOptions[relation.targetTopicId]!.find(({ factor }) => factor.name === factorName)!.factor)
 			},
