@@ -15,12 +15,12 @@ import styled, { useTheme } from 'styled-components';
 import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import { Theme } from '../../../theme/types';
+import { MenuItem } from '../../component/console/menu/menu-item';
+import { MenuLogo } from '../../component/console/menu/menu-logo';
+import { MenuSeparator } from '../../component/console/menu/menu-separator';
+import { MenuUser } from '../../component/console/menu/menu-user';
+import { ResizeHandle } from '../../component/console/menu/resize-handle';
 import { useConsoleContext } from '../context/console-context';
-import { MenuItem } from './menu-item';
-import { MenuLogo } from './menu-logo';
-import { MenuSeparator } from './menu-separator';
-import { MenuUser } from './menu-user';
-import { ResizeHandle } from './resize-handle';
 
 const MenuContainer = styled.div.attrs({
 	'data-widget': 'menu-container'
@@ -86,6 +86,7 @@ export const ConsoleMenu = () => {
 	const minWidth = (theme as Theme).consoleMenuWidth;
 	const maxWidth = (theme as Theme).consoleMenuMaxWidth;
 	const {
+		user,
 		menu: { menuWidth, setMenuWidth },
 		favorites,
 		spaces: {
@@ -199,7 +200,7 @@ export const ConsoleMenu = () => {
 		<MenuItem icon={faCog} iconSize={1.2} label='Settings' showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.CONSOLE_SETTINGS)}
 		          onClick={onSettingsClicked}/>
-		<MenuUser/>
+		<MenuUser user={user}/>
 		<ResizeHandle width={menuWidth} onResize={onResize}/>
 	</MenuContainer>;
 };

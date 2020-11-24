@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { TooltipAlignment, useTooltip } from '../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../../component/console/context/console-tooltip';
 
 export const createLinkButtonBackgroundAnimation = ({ opacity = 0.2 }) => {
 	return `

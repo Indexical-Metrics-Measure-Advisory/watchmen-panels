@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { ConsoleMenuUsable, useConsoleMenu } from '../../component/console/context/console-menu';
+import { ConsoleTooltipContextProvider } from '../../component/console/context/console-tooltip';
+import { ConsoleUser } from '../../component/console/types';
 import { ConsoleDashboardsStorage, useConsoleDashboards } from './console-dashboards';
 import { ConsoleFavoritesStorage, ConsoleFavoritesUsable, useConsoleFavorites } from './console-favorites';
 import { ConsoleMailsStorage, ConsoleMailsUsable, useConsoleMails } from './console-mails';
-import { ConsoleMenuUsable, useConsoleMenu } from './console-menu';
 import {
 	ConsoleNotificationsStorage,
 	ConsoleNotificationsUsable,
@@ -10,11 +12,6 @@ import {
 } from './console-nofitications';
 import { ConsoleSettingsStorage, ConsoleSettingsUsable, useConsoleSettings } from './console-settings';
 import { ConsoleSpacesStorage, ConsoleSpacesUsable, useConsoleSpaces } from './console-spaces';
-import { ConsoleTooltipContextProvider } from './console-tooltip';
-
-export interface ConsoleUser {
-	name: string;
-}
 
 export interface ConsoleContext {
 	menu: ConsoleMenuUsable;
@@ -53,6 +50,7 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 		favorites,
 		settings
 	};
+	console.log(context);
 
 	return <Context.Provider value={context}>
 		<ConsoleTooltipContextProvider>

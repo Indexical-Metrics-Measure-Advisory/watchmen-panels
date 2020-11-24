@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Logo from '../../component/logo';
+import Logo from '../../logo';
 
 const LogoContainer = styled.div.attrs({ 'data-widget': 'console-logo-container' })`
 	display: flex;
@@ -20,11 +20,16 @@ const TopTitle = styled.div`
 	letter-spacing: 2px;
 	font-variant: petite-caps;
 	margin-left: calc((var(--console-menu-width) - var(--console-menu-item-icon-size)) / 2);
+	overflow-x: hidden;
+	white-space: nowrap;
 `;
 
-export const MenuLogo = () => {
+export const MenuLogo = (props: {
+	title?: string;
+}) => {
+	const { title = 'Watchmen' } = props;
 	return <LogoContainer>
 		<TopLogo/>
-		<TopTitle>Watchmen</TopTitle>
+		<TopTitle>{title}</TopTitle>
 	</LogoContainer>;
 };

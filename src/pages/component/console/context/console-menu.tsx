@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from 'styled-components';
-import { Theme } from '../../../theme/types';
+import { Theme } from '../../../../theme/types';
 
 export interface ConsoleMenuUsable {
 	menuWidth: number;

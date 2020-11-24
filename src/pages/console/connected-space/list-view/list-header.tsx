@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
+import { TooltipAlignment, useTooltip } from '../../../component/console/context/console-tooltip';
 import Input from '../../../component/input';
 import Radio from '../../../component/radio';
-import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
 import { useListView } from './list-context';
 import { ViewType } from './types';
 

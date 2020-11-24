@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { UserAvatar } from '../component/user-avatar';
-import { useConsoleContext } from '../context/console-context';
+import { UserAvatar } from '../../../console/component/user-avatar';
+import { ConsoleUser } from '../types';
 
 const UserContainer = styled.div.attrs({ 'data-widget': 'console-user-container' })`
 	display: flex;
@@ -19,11 +19,11 @@ const UserName = styled.div`
 	font-variant: petite-caps;
 `;
 
-export const MenuUser = () => {
-	const context = useConsoleContext();
+export const MenuUser = (props: { user: ConsoleUser }) => {
+	const { user: { name } } = props;
 
 	return <UserContainer>
-		<UserAvatar name={context.user.name}/>
-		<UserName>{context.user.name}</UserName>
+		<UserAvatar name={name}/>
+		<UserName>{name}</UserName>
 	</UserContainer>;
 };

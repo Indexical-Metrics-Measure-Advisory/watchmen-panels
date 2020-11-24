@@ -2,8 +2,8 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
+import { TooltipAlignment, useTooltip } from '../../../component/console/context/console-tooltip';
 import { createLinkButtonBackgroundAnimation } from '../../component/link-button';
-import { TooltipAlignment, useTooltip } from '../../context/console-tooltip';
 
 const Read = styled.div`
 	display: flex;

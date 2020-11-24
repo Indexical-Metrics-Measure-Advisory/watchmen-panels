@@ -2,7 +2,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { TooltipAlignment, useTooltip } from '../context/console-tooltip';
+import { TooltipAlignment, useTooltip } from '../../component/console/context/console-tooltip';
 
 const FavBtn = styled.div.attrs({
 	'data-widget': 'console-home-section-card-fav-btn'
