@@ -4,7 +4,13 @@ import styled from 'styled-components';
 import Path from '../../common/path';
 import { AdminContextProvider } from './context/admin-context';
 import { AdminMenu } from './menu';
-import { Tasks } from './tasks';
+import { Pipeline } from './pipeline';
+import { Reports } from './report';
+import { Spaces } from './space';
+import { Tasks } from './task';
+import { Topics } from './topic';
+import { Users } from './user';
+import { UserGroups } from './user-group';
 
 const Container = styled.div.attrs({
 	'data-widget': 'console-container'
@@ -29,12 +35,12 @@ const AdminIndex = () => {
 			<AdminMenu/>
 			<main>
 				<Switch>
-					<Route path={Path.ADMIN_TOPICS}><Tasks/></Route>
-					<Route path={Path.ADMIN_REPORTS}><Tasks/></Route>
-					<Route path={Path.ADMIN_SPACES}><Tasks/></Route>
-					<Route path={Path.ADMIN_PIPELINE}><Tasks/></Route>
-					<Route path={Path.ADMIN_USER_GROUPS}><Tasks/></Route>
-					<Route path={Path.ADMIN_USERS}><Tasks/></Route>
+					<Route path={Path.ADMIN_TOPICS}><Topics/></Route>
+					<Route path={Path.ADMIN_REPORTS}><Reports/></Route>
+					<Route path={Path.ADMIN_SPACES}><Spaces/></Route>
+					<Route path={Path.ADMIN_PIPELINE}><Pipeline/></Route>
+					<Route path={Path.ADMIN_USER_GROUPS}><UserGroups/></Route>
+					<Route path={Path.ADMIN_USERS}><Users/></Route>
 					<Route path={Path.ADMIN_TASKS}><Tasks/></Route>
 					<Route path='*'><Redirect to={Path.ADMIN_TASKS}/></Route>
 				</Switch>
