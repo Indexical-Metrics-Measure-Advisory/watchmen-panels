@@ -162,16 +162,17 @@ const DateTimeYearOfFactorFilterValue = (props: {
 };
 
 const TillNowOptions = [
-	{ value: '1', label: 'This week' },
-	{ value: '2', label: 'In 3 days' },
-	{ value: '3', label: 'In 5 days' },
-	{ value: '4', label: 'In 7 days' },
-	{ value: '5', label: 'In 10 days' },
-	{ value: '6', label: 'In 15 days' },
-	{ value: '7', label: 'This month' },
-	{ value: '8', label: 'This quarter' },
-	{ value: '9', label: 'This half year' },
-	{ value: '10', label: 'This year' }
+	{ value: '1', label: 'In 3 days' },
+	{ value: '2', label: 'In 5 days' },
+	{ value: '3', label: 'In 7 days' },
+	{ value: '4', label: 'In 10 days' },
+	{ value: '5', label: 'In 15 days' },
+	{ value: '6', label: 'In 30 days' },
+	{ value: '7', label: 'This week' },
+	{ value: '8', label: 'This month' },
+	{ value: '9', label: 'This quarter' },
+	{ value: '10', label: 'This half year' },
+	{ value: '11', label: 'This year' }
 ];
 const DateTimeFactorFilterTillNowValue = (props: {
 	filter: ConsoleSpaceSubjectDataSetFilterExpression;
