@@ -128,10 +128,9 @@ const DateTimeFactorFilterValue = (props: {
 		return null;
 	}
 
-	const onFilterValueOptionChanged = async (value?: string): Promise<{ active: boolean }> => {
+	const onFilterValueOptionChanged = async (value?: string) => {
 		filter.value = value;
 		forceUpdate();
-		return { active: true };
 	};
 
 	return <Calendar value={value as string} onChange={onFilterValueOptionChanged}/>;

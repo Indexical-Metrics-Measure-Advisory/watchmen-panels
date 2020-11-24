@@ -13,6 +13,7 @@ const DefaultTheme = {
 	hoverColor: '#d3dce6',
 	activeColor: 'rgba(43,80,174,0.5)',
 	invertBgColor: 'rgb(1,34,96,0.9)',
+	hoverShadow: '0 0 11px 0 rgba(0, 0, 0, 0.2)',
 
 	// font
 	fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",

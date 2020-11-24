@@ -24,6 +24,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--hover-color: ${({ theme }) => theme.hoverColor};
 		--active-color: ${({ theme }) => theme.activeColor};
 		--invert-bg-color: ${({ theme }) => theme.invertBgColor};
+		--hover-shadow: ${({ theme }) => theme.hoverShadow};
 		
 		--font-family: ${({ theme }) => theme.fontFamily};
 		--code-font-family: ${({ theme }) => theme.codeFontFamily};
