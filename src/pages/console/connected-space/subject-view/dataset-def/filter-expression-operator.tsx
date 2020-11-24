@@ -7,6 +7,7 @@ import {
 } from '../../../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { useSubjectContext } from '../context';
+import { needExactDateTime, notExactDateTimeOperators } from './utils';
 
 const operatorOptions: Array<{ value: ExpressionOperator, label: string }> = [
 	{ value: ExpressionOperator.EQUALS, label: 'Is' },
@@ -16,7 +17,14 @@ const operatorOptions: Array<{ value: ExpressionOperator, label: string }> = [
 	{ value: ExpressionOperator.MORE, label: 'Greater than' },
 	{ value: ExpressionOperator.MORE_EQUALS, label: 'Greater than or equal to' },
 	{ value: ExpressionOperator.IN, label: 'In set' },
-	{ value: ExpressionOperator.NOT_IN, label: 'Not in set' }
+	{ value: ExpressionOperator.NOT_IN, label: 'Not in set' },
+	{ value: ExpressionOperator.YEAR_OF, label: 'Year of' },
+	{ value: ExpressionOperator.HALF_YEAR_OF, label: 'Half year of' },
+	{ value: ExpressionOperator.QUARTER_OF, label: 'Quarter of' },
+	{ value: ExpressionOperator.MONTH_OF, label: 'Month of' },
+	{ value: ExpressionOperator.WEEK_OF_YEAR, label: 'Week of year' },
+	{ value: ExpressionOperator.WEEK_OF_MONTH, label: 'Week of month' },
+	{ value: ExpressionOperator.WEEKDAYS, label: 'Weekday' }
 ];
 
 const Operator = styled.div`
@@ -58,19 +66,22 @@ export const FilterExpressionOperator = (props: {
 	let operatorDropdownOptions = operatorOptions;
 	if (type === ConsoleTopicFactorType.BOOLEAN) {
 		operatorDropdownOptions = operatorDropdownOptions.filter(opt => [ ExpressionOperator.EQUALS ].includes(opt.value));
-		filter.operator = ExpressionOperator.EQUALS;
-		filter.value = 'true';
 	} else if (type === ConsoleTopicFactorType.DATETIME) {
 		operatorDropdownOptions = operatorDropdownOptions.filter(opt => ![ ExpressionOperator.IN, ExpressionOperator.NOT_IN ].includes(opt.value));
-		filter.operator = ExpressionOperator.EQUALS;
-		delete filter.value;
 	} else if (type === ConsoleTopicFactorType.ENUM) {
 		operatorDropdownOptions = operatorDropdownOptions.filter(opt => [ ExpressionOperator.EQUALS, ExpressionOperator.NOT_EQUALS ].includes(opt.value));
-		delete filter.value;
+	} else {
+		operatorDropdownOptions = operatorDropdownOptions.filter(opt => !notExactDateTimeOperators.includes(opt.value));
 	}
 
 	const onFilterOperatorChanged = async ({ value }: DropdownOption) => {
+		const originalOperator = filter.operator;
 		filter.operator = value as ExpressionOperator;
+		if (type === ConsoleTopicFactorType.DATETIME
+			&& !!originalOperator && originalOperator !== filter.operator
+			&& (!needExactDateTime(originalOperator) || !needExactDateTime(filter.operator))) {
+			delete filter.value;
+		}
 		onOperatorChanged();
 	};
 

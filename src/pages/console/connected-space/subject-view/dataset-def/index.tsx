@@ -16,7 +16,7 @@ interface Collapsed {
 }
 
 const DataSetDefinition = styled.div.attrs({
-	'data-widget': 'console-subject-view-menu'
+	'data-widget': 'console-subject-view-dataset-def'
 })`
 	display: flex;
 	position: relative;
@@ -34,6 +34,20 @@ const DataSetDefinition = styled.div.attrs({
 		width: 0;
 		min-width: 0;
 		pointer-events: none;
+	}
+	div[data-widget=dropdown] > div:last-child {
+		&::-webkit-scrollbar {
+			background-color: transparent;
+			width: 4px;
+		}
+		&::-webkit-scrollbar-track {
+			background-color: transparent;
+			border-radius: 2px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--console-favorite-color);
+			border-radius: 2px;
+		}
 	}
 `;
 

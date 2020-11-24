@@ -115,7 +115,15 @@ export enum FilterExpressionOperator {
 	MORE = 'more',
 	MORE_EQUALS = 'more-equals',
 	IN = 'in',
-	NOT_IN = 'not-in'
+	NOT_IN = 'not-in',
+	// for date time
+	YEAR_OF = 'year-of',
+	HALF_YEAR_OF = 'half-year-of',
+	QUARTER_OF = 'quarter-of',
+	MONTH_OF = 'month-of',
+	WEEK_OF_YEAR = 'week-of-year',
+	WEEK_OF_MONTH = 'week-of-month',
+	WEEKDAYS = 'weekdays'
 }
 
 export interface ConsoleSpaceSubjectDataSetFilterExpression extends ConsoleSpaceSubjectDataSetFilter {

@@ -21,7 +21,7 @@ interface State {
 const DropdownContainer = styled.div.attrs<State & { itemCount: number }>(() => {
 	return { 'data-widget': 'dropdown' };
 })<State & { itemCount: number }>(({ theme, top, height, itemCount }) => {
-	const atBottom = top + height + itemCount * (theme as Theme).height + 2 < window.innerHeight;
+	const atBottom = top + height + Math.min(itemCount, 8) * (theme as Theme).height + 2 < window.innerHeight;
 	return `
 		position: relative;
 		padding: 6px var(--input-indent);
@@ -69,7 +69,7 @@ const Label = styled.span`
 	flex-grow: 1;
 `;
 const Options = styled.div.attrs<State & { itemCount: number }>(({ theme, top, left, height, minWidth, itemCount }) => {
-	const atBottom = top + height + itemCount * (theme as Theme).height + 2 < window.innerHeight;
+	const atBottom = top + height + Math.min(itemCount, 8) * (theme as Theme).height + 2 < window.innerHeight;
 	return {
 		style: {
 			top: atBottom ? (top + height - 1) : 'unset',

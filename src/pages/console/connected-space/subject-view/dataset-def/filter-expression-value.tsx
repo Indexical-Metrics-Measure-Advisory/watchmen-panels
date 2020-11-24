@@ -1,16 +1,19 @@
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import dayjs from 'dayjs';
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import {
 	ConsoleSpaceSubjectDataSetFilterExpression,
 	ConsoleTopicFactor,
-	ConsoleTopicFactorType
+	ConsoleTopicFactorType,
+	FilterExpressionOperator as ExpressionOperator
 } from '../../../../../services/console/types';
 import { Calendar } from '../../../../component/calendar';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import Input from '../../../../component/input';
 import { useSubjectContext } from '../context';
+import { needExactDateTime } from './utils';
 
 const PlainFactorFilterValue = (props: {
 	filter: ConsoleSpaceSubjectDataSetFilterExpression;
@@ -72,17 +75,19 @@ const EnumItem = styled.div`
 const EnumFactorFilterValue = (props: {
 	filter: ConsoleSpaceSubjectDataSetFilterExpression;
 	factor?: ConsoleTopicFactor;
+	options?: Array<DropdownOption>;
+	accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => boolean;
 }) => {
-	const { filter, factor } = props;
+	const { filter, factor, options, accept } = props;
 	const { value } = filter;
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	if (!factor || factor.type !== ConsoleTopicFactorType.ENUM) {
+	if (!factor || !accept(factor, filter)) {
 		return null;
 	}
 
 	const values = (value || '').split(',').map(v => v.trim()).filter(v => v);
-	const valueOptions = JSON.parse(factor!.enum!);
+	const valueOptions = options || JSON.parse(factor!.enum!);
 	const valueDropdownOptions = valueOptions.map(({ value, label }: { value: string, label: string }) => {
 		return {
 			value,
@@ -120,11 +125,11 @@ const DateTimeFactorFilterValue = (props: {
 	factor?: ConsoleTopicFactor;
 }) => {
 	const { filter, factor } = props;
-	const { value } = filter;
+	const { operator, value } = filter;
 
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	if (!factor || factor.type !== ConsoleTopicFactorType.DATETIME) {
+	if (!factor || factor.type !== ConsoleTopicFactorType.DATETIME || !needExactDateTime(operator)) {
 		return null;
 	}
 
@@ -134,6 +139,26 @@ const DateTimeFactorFilterValue = (props: {
 	};
 
 	return <Calendar value={value as string} onChange={onFilterValueOptionChanged}/>;
+};
+
+const DateTimeYearOfFactorFilterValue = (props: {
+	filter: ConsoleSpaceSubjectDataSetFilterExpression;
+	factorType?: ConsoleTopicFactorType;
+}) => {
+	const { filter, factorType } = props;
+	const { operator } = filter;
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+
+	if (!factorType || factorType !== ConsoleTopicFactorType.DATETIME || operator !== ExpressionOperator.YEAR_OF) {
+		return null;
+	}
+
+	const onFilterValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+		filter.value = event.target.value;
+		forceUpdate();
+	};
+	return <Input value={filter.value || ''} onChange={onFilterValueChanged}
+	              placeholder='Full year concatenated by comma'/>;
 };
 
 const ExpressionValueContainer = styled.div`
@@ -158,6 +183,67 @@ const ExpressionValueContainer = styled.div`
 	}
 `;
 
+const now = dayjs();
+const DateTimeEnums = {
+	HalfYear: {
+		options: [ { value: '1', label: 'First half' }, { value: '2', label: 'Second half' } ],
+		accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => factor.type === ConsoleTopicFactorType.DATETIME && filter.operator === ExpressionOperator.HALF_YEAR_OF
+	},
+	Quarter: {
+		options: [
+			{ value: '1', label: 'First quarter' },
+			{ value: '2', label: 'Second quarter' },
+			{ value: '3', label: 'Third quarter' },
+			{ value: '4', label: 'Fourth quarter' }
+		],
+		accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => factor.type === ConsoleTopicFactorType.DATETIME && filter.operator === ExpressionOperator.QUARTER_OF
+	},
+	Month: {
+		options: new Array(12).fill(1).map((v, index) => {
+			return {
+				value: `${index}`,
+				label: now.month(index).format('MMMM')
+			};
+		}),
+		accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => factor.type === ConsoleTopicFactorType.DATETIME && filter.operator === ExpressionOperator.MONTH_OF
+	},
+	WeekOfYear: {
+		options: new Array(52).fill(1).map((v, index) => {
+			const x = index + 1;
+			const y = x % 10;
+			return {
+				value: `${x}`,
+				label: y === 1 ? `${x}st` : (y === 2 ? `${x}nd` : (y === 3 ? `${x}rd` : `${x}th`))
+			};
+		}),
+		accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => factor.type === ConsoleTopicFactorType.DATETIME && filter.operator === ExpressionOperator.WEEK_OF_YEAR
+	},
+	WeekOfMonth: {
+		options: new Array(5).fill(1).map((v, index) => {
+			const x = index + 1;
+			const y = x % 10;
+			return {
+				value: `${x}`,
+				label: y === 1 ? `${x}st` : (y === 2 ? `${x}nd` : (y === 3 ? `${x}rd` : `${x}th`))
+			};
+		}),
+		accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => factor.type === ConsoleTopicFactorType.DATETIME && filter.operator === ExpressionOperator.WEEK_OF_MONTH
+	},
+	Weekdays: {
+		options: [
+			...new Array(7).fill(1).map((v, index) => {
+				return {
+					value: `${index}`,
+					label: now.day(index).format('dddd')
+				};
+			}),
+			{ value: '7', label: 'Workdays' },
+			{ value: '8', label: 'Weekend' }
+		],
+		accept: (factor: ConsoleTopicFactor, filter: ConsoleSpaceSubjectDataSetFilterExpression) => factor.type === ConsoleTopicFactorType.DATETIME && filter.operator === ExpressionOperator.WEEKDAYS
+	}
+};
+
 export const FilterExpressionValue = (props: {
 	filter: ConsoleSpaceSubjectDataSetFilterExpression;
 	visible: boolean;
@@ -174,7 +260,15 @@ export const FilterExpressionValue = (props: {
 	return <ExpressionValueContainer data-visible={visible}>
 		<PlainFactorFilterValue filter={filter} factorType={factorType}/>
 		<BooleanFactorFilterValue filter={filter} factorType={factorType}/>
-		<EnumFactorFilterValue filter={filter} factor={factor}/>
+		<EnumFactorFilterValue filter={filter} factor={factor}
+		                       accept={(factor) => factor.type === ConsoleTopicFactorType.ENUM}/>
 		<DateTimeFactorFilterValue filter={filter} factor={factor}/>
+		<DateTimeYearOfFactorFilterValue filter={filter} factorType={factorType}/>
+		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.HalfYear}/>
+		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.Quarter}/>
+		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.Month}/>
+		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.WeekOfYear}/>
+		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.WeekOfMonth}/>
+		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.Weekdays}/>
 	</ExpressionValueContainer>;
 };
