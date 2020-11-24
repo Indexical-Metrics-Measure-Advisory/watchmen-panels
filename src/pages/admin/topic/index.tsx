@@ -26,7 +26,7 @@ export const Topics = () => {
 		if (searchRef.current) {
 			searchRef.current.focus();
 		}
-	}, []);
+	}, [ searchRef ]);
 
 	return <PlainNarrowContainer>
 		<NarrowPageTitle title='Topics'/>
