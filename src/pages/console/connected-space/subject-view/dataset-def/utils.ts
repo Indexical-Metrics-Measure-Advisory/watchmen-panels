@@ -12,7 +12,7 @@ export const notExactDateTimeOperators = [
 	FilterExpressionOperator.YEAR_OF, FilterExpressionOperator.HALF_YEAR_OF,
 	FilterExpressionOperator.QUARTER_OF, FilterExpressionOperator.MONTH_OF,
 	FilterExpressionOperator.WEEK_OF_YEAR, FilterExpressionOperator.WEEK_OF_MONTH,
-	FilterExpressionOperator.WEEKDAYS
+	FilterExpressionOperator.WEEKDAYS, FilterExpressionOperator.TILL_NOW
 ];
 export const needExactDateTime = (operator?: FilterExpressionOperator): boolean => {
 	return !!operator && !notExactDateTimeOperators.includes(operator);

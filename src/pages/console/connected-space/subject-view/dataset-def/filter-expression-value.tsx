@@ -161,6 +161,39 @@ const DateTimeYearOfFactorFilterValue = (props: {
 	              placeholder='Full year concatenated by comma'/>;
 };
 
+const TillNowOptions = [
+	{ value: '1', label: 'This week' },
+	{ value: '2', label: 'In 3 days' },
+	{ value: '3', label: 'In 5 days' },
+	{ value: '4', label: 'In 7 days' },
+	{ value: '5', label: 'In 10 days' },
+	{ value: '6', label: 'In 15 days' },
+	{ value: '7', label: 'This month' },
+	{ value: '8', label: 'This quarter' },
+	{ value: '9', label: 'This half year' },
+	{ value: '10', label: 'This year' }
+];
+const DateTimeFactorFilterTillNowValue = (props: {
+	filter: ConsoleSpaceSubjectDataSetFilterExpression;
+	factorType?: ConsoleTopicFactorType;
+}) => {
+	const { filter, factorType } = props;
+	const { operator } = filter;
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+
+	if (factorType !== ConsoleTopicFactorType.DATETIME || operator !== ExpressionOperator.TILL_NOW) {
+		return null;
+	}
+
+	const onFilterValueOptionChanged = async ({ value }: DropdownOption) => {
+		filter.value = value as string;
+		forceUpdate();
+	};
+
+	return <Dropdown options={TillNowOptions} value={filter.value} onChange={onFilterValueOptionChanged}/>;
+};
+
+
 const ExpressionValueContainer = styled.div`
 	width: 0;
 	flex-grow: 0;
@@ -270,5 +303,6 @@ export const FilterExpressionValue = (props: {
 		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.WeekOfYear}/>
 		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.WeekOfMonth}/>
 		<EnumFactorFilterValue filter={filter} factor={factor} {...DateTimeEnums.Weekdays}/>
+		<DateTimeFactorFilterTillNowValue filter={filter} factorType={factorType}/>
 	</ExpressionValueContainer>;
 };

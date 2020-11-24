@@ -18,6 +18,7 @@ const operatorOptions: Array<{ value: ExpressionOperator, label: string }> = [
 	{ value: ExpressionOperator.MORE_EQUALS, label: 'Greater than or equal to' },
 	{ value: ExpressionOperator.IN, label: 'In set' },
 	{ value: ExpressionOperator.NOT_IN, label: 'Not in set' },
+	{ value: ExpressionOperator.TILL_NOW, label: 'Till now' },
 	{ value: ExpressionOperator.YEAR_OF, label: 'Year of' },
 	{ value: ExpressionOperator.HALF_YEAR_OF, label: 'Half year of' },
 	{ value: ExpressionOperator.QUARTER_OF, label: 'Quarter of' },
@@ -67,7 +68,26 @@ export const FilterExpressionOperator = (props: {
 	if (type === ConsoleTopicFactorType.BOOLEAN) {
 		operatorDropdownOptions = operatorDropdownOptions.filter(opt => [ ExpressionOperator.EQUALS ].includes(opt.value));
 	} else if (type === ConsoleTopicFactorType.DATETIME) {
-		operatorDropdownOptions = operatorDropdownOptions.filter(opt => ![ ExpressionOperator.IN, ExpressionOperator.NOT_IN ].includes(opt.value));
+		operatorDropdownOptions = operatorDropdownOptions
+			.filter(opt => ![ ExpressionOperator.IN, ExpressionOperator.NOT_IN ].includes(opt.value))
+			.map(({ value, label }) => {
+				switch (value) {
+					case ExpressionOperator.LESS:
+						label = 'Earlier than';
+						break;
+					case ExpressionOperator.LESS_EQUALS:
+						label = 'Earlier than or is';
+						break;
+					case ExpressionOperator.MORE:
+						label = 'Later than';
+						break;
+					case ExpressionOperator.MORE_EQUALS:
+						label = 'Later than or is';
+						break;
+					default:
+				}
+				return { value, label };
+			});
 	} else if (type === ConsoleTopicFactorType.ENUM) {
 		operatorDropdownOptions = operatorDropdownOptions.filter(opt => [ ExpressionOperator.EQUALS, ExpressionOperator.NOT_EQUALS ].includes(opt.value));
 	} else {

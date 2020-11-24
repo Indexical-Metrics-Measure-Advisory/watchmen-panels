@@ -123,7 +123,8 @@ export enum FilterExpressionOperator {
 	MONTH_OF = 'month-of',
 	WEEK_OF_YEAR = 'week-of-year',
 	WEEK_OF_MONTH = 'week-of-month',
-	WEEKDAYS = 'weekdays'
+	WEEKDAYS = 'weekdays',
+	TILL_NOW = 'till-now'
 }
 
 export interface ConsoleSpaceSubjectDataSetFilterExpression extends ConsoleSpaceSubjectDataSetFilter {

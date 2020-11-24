@@ -97,6 +97,9 @@ const Options = styled.div.attrs<State & { itemCount: number }>(({ theme, top, l
 		display: flex;
 		align-items: center;
 		padding: 6px var(--input-indent);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 		&:hover {
 			background-color: var(--hover-color);
 		}
