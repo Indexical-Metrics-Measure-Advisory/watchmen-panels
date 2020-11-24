@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import ProcessDataImage1 from '../../assets/process-data-1.png';
 import ProcessDataImage2 from '../../assets/process-data-2.png';
 import ProcessDataImage3 from '../../assets/process-data-3.png';
+import ProcessDataImage4 from '../../assets/process-data-4.png';
 import Path from '../../common/path';
 import { BigButton, ButtonType } from '../component/button';
 import Page from '../component/page';
@@ -71,6 +72,9 @@ const HomeIndex = () => {
 	const onStartConsoleClicked = () => {
 		history.push(Path.CONSOLE);
 	};
+	const onStartAdminClicked = () => {
+		history.push(Path.ADMIN);
+	};
 
 	return <HomePage>
 		<Slide>
@@ -103,6 +107,21 @@ const HomeIndex = () => {
 		<Slide>
 			<SlideContent>
 				<Title>
+					View Your Data<br/>
+					In Your Way
+				</Title>
+				<Description>
+					Customize the way you work with data analysis and mining by core features, consolidate
+					datasets, reports and more. Save time on operations so you can focus on growing your business.
+				</Description>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartConsoleClicked}>Try Console</BigButton>
+			</SlideContent>
+			<img src={ProcessDataImage3} alt=''/>
+		</Slide>
+		<Slide>
+			<img src={ProcessDataImage4} alt=''/>
+			<SlideContent>
+				<Title>
 					Sustainability made easy<br/>
 					on Enterprise Edition
 				</Title>
@@ -110,9 +129,8 @@ const HomeIndex = () => {
 					Pipelines on data lake or stream, continuous investigating constructive and valuable indicators
 					extracting and recognizing dynamically.
 				</Description>
-				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartConsoleClicked}>Try Console</BigButton>
+				<BigButton inkType={ButtonType.PRIMARY} onClick={onStartAdminClicked}>Try Admin Console</BigButton>
 			</SlideContent>
-			<img src={ProcessDataImage3} alt=''/>
 		</Slide>
 	</HomePage>;
 };

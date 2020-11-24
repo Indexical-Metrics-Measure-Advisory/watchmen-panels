@@ -27,7 +27,14 @@ const Paths = {
 	CONSOLE_TIMELINE: '/console/timeline',
 	CONSOLE_SETTINGS: '/console/settings',
 	CONSOLE_SETTINGS_INBOX: '/console/settings/inbox',
-	CONSOLE_SETTINGS_NOTIFICATION: '/console/settings/notification'
+	CONSOLE_SETTINGS_NOTIFICATION: '/console/settings/notification',
+
+	ADMIN: '/admin',
+	ADMIN_HOME: '/admin/home',
+	ADMIN_DASHBOARDS: '/admin/dashboard',
+	ADMIN_DASHBOARD: '/admin/dashboard/:dashboardId',
+	ADMIN_INBOX: '/admin/inbox',
+	ADMIN_NOTIFICATION: '/admin/notification'
 };
 export default Paths;
 
