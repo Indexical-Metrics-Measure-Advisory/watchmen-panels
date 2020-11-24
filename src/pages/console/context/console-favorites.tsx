@@ -3,6 +3,7 @@ import { fetchFavorites } from '../../../services/console/favorites';
 import { ConsoleFavorite } from '../../../services/console/types';
 
 export interface ConsoleFavoritesStorage {
+	initialized: boolean;
 	items: Array<ConsoleFavorite>;
 	pinned: boolean;
 	visible: boolean;
@@ -24,6 +25,7 @@ export interface ConsoleFavoritesUsable {
 export const useConsoleFavorites = () => {
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ state ] = useState<ConsoleFavoritesStorage>({
+		initialized: false,
 		items: [],
 		pinned: false,
 		visible: false
@@ -44,24 +46,30 @@ export const useConsoleFavorites = () => {
 		visible: true,
 		invoker: { rect, isMenuExpanded }
 	});
-	const hide = () => mergeToState({ visible: false });
+	const hide = () => {
+		if (state.visible) {
+			mergeToState({ visible: false });
+		}
+	};
 	const pin = () => mergeToState({ pinned: true });
 	const unpin = () => mergeToState({ pinned: false, visible: false });
 
 	// TODO simulate data for demo purpose
 	useEffect(() => {
-		(async () => {
-			try {
-				const items = await fetchFavorites();
-				mergeToState({ items });
-			} catch (e) {
-				console.groupCollapsed(`%cError on fetch favorites.`, 'color:rgb(251,71,71)');
-				console.error(e);
-				console.groupEnd();
-			}
-		})();
+		if (!state.initialized) {
+			(async () => {
+				try {
+					const items = await fetchFavorites();
+					mergeToState({ initialized: true, items });
+				} catch (e) {
+					console.groupCollapsed(`%cError on fetch favorites.`, 'color:rgb(251,71,71)');
+					console.error(e);
+					console.groupEnd();
+				}
+			})();
+		}
 		// eslint-disable-next-line
-	}, []);
+	}, [ state.initialized ]);
 
 	return {
 		...state,

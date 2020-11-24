@@ -38,6 +38,7 @@ export const FilterExpressionTopic = (props: {
 		if (originTopicId != filter.topicId) {
 			delete filter.factorId;
 			delete filter.operator;
+			delete filter.value;
 			onTopicChanged();
 		}
 	};

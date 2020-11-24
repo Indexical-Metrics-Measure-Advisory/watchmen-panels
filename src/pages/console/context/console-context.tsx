@@ -50,7 +50,6 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 		favorites,
 		settings
 	};
-	console.log(context);
 
 	return <Context.Provider value={context}>
 		<ConsoleTooltipContextProvider>

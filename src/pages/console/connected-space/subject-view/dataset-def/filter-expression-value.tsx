@@ -7,6 +7,7 @@ import {
 	ConsoleTopicFactor,
 	ConsoleTopicFactorType
 } from '../../../../../services/console/types';
+import { Calendar } from '../../../../component/calendar';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import Input from '../../../../component/input';
 import { useSubjectContext } from '../context';
@@ -18,7 +19,7 @@ const PlainFactorFilterValue = (props: {
 	const { filter, factorType } = props;
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	if (!factorType || [ ConsoleTopicFactorType.BOOLEAN, ConsoleTopicFactorType.ENUM ].includes(factorType)) {
+	if (!factorType || [ ConsoleTopicFactorType.BOOLEAN, ConsoleTopicFactorType.ENUM, ConsoleTopicFactorType.DATETIME ].includes(factorType)) {
 		return null;
 	}
 
@@ -114,6 +115,28 @@ const EnumFactorFilterValue = (props: {
 	                 select={renderSelect}/>;
 };
 
+const DateTimeFactorFilterValue = (props: {
+	filter: ConsoleSpaceSubjectDataSetFilterExpression;
+	factor?: ConsoleTopicFactor;
+}) => {
+	const { filter, factor } = props;
+	const { value } = filter;
+
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+
+	if (!factor || factor.type !== ConsoleTopicFactorType.DATETIME) {
+		return null;
+	}
+
+	const onFilterValueOptionChanged = async (value?: string): Promise<{ active: boolean }> => {
+		filter.value = value;
+		forceUpdate();
+		return { active: true };
+	};
+
+	return <Calendar value={value as string} onChange={onFilterValueOptionChanged}/>;
+};
+
 const ExpressionValueContainer = styled.div`
 	width: 0;
 	flex-grow: 0;
@@ -125,7 +148,9 @@ const ExpressionValueContainer = styled.div`
 	}
 	> input,
 	> div[data-widget=dropdown],
-	> div[data-widget=dropdown]:focus {
+	> div[data-widget=dropdown]:focus,
+	> div[data-widget=calendar],
+	> div[data-widget=calendar]:focus {
 		font-size: 0.8em;
 		border-radius: 0;
 	}
@@ -151,5 +176,6 @@ export const FilterExpressionValue = (props: {
 		<PlainFactorFilterValue filter={filter} factorType={factorType}/>
 		<BooleanFactorFilterValue filter={filter} factorType={factorType}/>
 		<EnumFactorFilterValue filter={filter} factor={factor}/>
+		<DateTimeFactorFilterValue filter={filter} factor={factor}/>
 	</ExpressionValueContainer>;
 };

@@ -5,6 +5,7 @@ import { ConsoleMessage } from '../../../services/console/types';
 export type MessageEvent = string;
 
 export interface ConsoleMessagesStorage<M extends ConsoleMessage> {
+	initialized: boolean;
 	unread: Array<M>;
 	allUnreadLoaded: boolean;
 	read: Array<M>;
@@ -53,6 +54,7 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 	const [ emitter ] = useState(new EventEmitter());
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ state ] = useState<ConsoleMessagesStorage<M>>({
+		initialized: false,
 		unread: [],
 		allUnreadLoaded: false,
 		read: [],
@@ -109,11 +111,12 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 			console.groupEnd();
 		}
 	};
-	const fetchLatest = async () => {
+	const fetchLatest = async (initialized: boolean = true) => {
 		try {
 			const latest = await getLatestMessages();
 			if (latest.length !== 0) {
 				mergeToState({
+					initialized,
 					unread: distinct([ ...state.unread, ...latest ], state.read)
 				});
 				emitter.emit(latestArrivedEvent, latest[0]);

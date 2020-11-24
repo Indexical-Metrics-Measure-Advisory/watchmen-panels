@@ -61,15 +61,12 @@ export const FilterExpressionOperator = (props: {
 		filter.operator = ExpressionOperator.EQUALS;
 		filter.value = 'true';
 	} else if (type === ConsoleTopicFactorType.DATETIME) {
-		operatorDropdownOptions = operatorDropdownOptions.filter(opt =>
-			![
-				ExpressionOperator.IN, ExpressionOperator.NOT_IN
-			].includes(opt.value));
+		operatorDropdownOptions = operatorDropdownOptions.filter(opt => ![ ExpressionOperator.IN, ExpressionOperator.NOT_IN ].includes(opt.value));
+		filter.operator = ExpressionOperator.EQUALS;
+		delete filter.value;
 	} else if (type === ConsoleTopicFactorType.ENUM) {
-		operatorDropdownOptions = operatorDropdownOptions.filter(opt =>
-			[
-				ExpressionOperator.EQUALS, ExpressionOperator.NOT_EQUALS
-			].includes(opt.value));
+		operatorDropdownOptions = operatorDropdownOptions.filter(opt => [ ExpressionOperator.EQUALS, ExpressionOperator.NOT_EQUALS ].includes(opt.value));
+		delete filter.value;
 	}
 
 	const onFilterOperatorChanged = async ({ value }: DropdownOption) => {

@@ -12,6 +12,7 @@ export type ConsoleSpaceDeletedListener = (space: ConnectedConsoleSpace) => void
 export type ConsoleSpaceRenamedListener = (space: ConnectedConsoleSpace) => void;
 
 export interface ConsoleSpacesStorage {
+	initialized: boolean;
 	connected: Array<ConnectedConsoleSpace>;
 	available: Array<ConsoleSpace>;
 }
@@ -29,6 +30,7 @@ export interface ConsoleSpacesUsable {
 export const useConsoleSpaces = () => {
 	const [ emitter ] = useState(new EventEmitter());
 	const [ state, setState ] = useState<ConsoleSpacesStorage>({
+		initialized: false,
 		connected: [],
 		available: []
 	});
@@ -39,17 +41,18 @@ export const useConsoleSpaces = () => {
 			try {
 				const connected = await fetchConnectedSpaces();
 				const available = await fetchAvailableSpaces();
-				setState({ connected, available });
+				setState({ initialized: true, connected, available });
 			} catch (e) {
 				console.groupCollapsed(`%cError on fetch spaces.`, 'color:rgb(251,71,71)');
 				console.error(e);
 				console.groupEnd();
 			}
 		})();
-	}, []);
+	}, [ state.initialized ]);
 
 	const deleteSpace = (space: ConnectedConsoleSpace) => {
 		setState({
+			initialized: true,
 			// eslint-disable-next-line
 			connected: state.connected.filter(s => s.connectId != space.connectId),
 			available: state.available

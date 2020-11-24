@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ConsoleSpaceSubjectDataSetFilterExpression } from '../../../../../services/console/types';
+import {
+	ConsoleSpaceSubjectDataSetFilterExpression,
+	ConsoleTopicFactorType,
+	FilterExpressionOperator as ExpressionOperator
+} from '../../../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { useSubjectContext } from '../context';
 
@@ -39,8 +43,22 @@ export const FilterExpressionFactor = (props: {
 	const { topicId, factorId } = filter;
 	const factorDropdownOptions = factorOptions[`${topicId}`] || [];
 
-	const onFilterFactorChanged = async ({ value }: DropdownOption) => {
-		filter.factorId = value as string;
+	const onFilterFactorChanged = async (option: DropdownOption) => {
+		filter.factorId = option.value as string;
+		const { type } = (option as any).factor;
+		if (type === ConsoleTopicFactorType.BOOLEAN) {
+			filter.operator = ExpressionOperator.EQUALS;
+			filter.value = 'true';
+		} else if (type === ConsoleTopicFactorType.DATETIME) {
+			filter.operator = ExpressionOperator.EQUALS;
+			delete filter.value;
+		} else if (type === ConsoleTopicFactorType.ENUM) {
+			filter.operator = ExpressionOperator.EQUALS;
+			delete filter.value;
+		} else {
+			delete filter.operator;
+			delete filter.value;
+		}
 		onFactorChanged();
 	};
 
