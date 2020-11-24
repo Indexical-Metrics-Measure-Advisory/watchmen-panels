@@ -6,7 +6,7 @@ import {
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectDataSetColumn
 } from '../../../../../services/console/types';
-import { LinkButton } from '../../../component/link-button';
+import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
 import { Column } from './column';

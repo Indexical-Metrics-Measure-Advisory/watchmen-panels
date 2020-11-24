@@ -2,8 +2,8 @@ import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import { HorizontalLoading } from '../../component/horizontal-loading';
-import { LinkButton } from '../../component/link-button';
+import { HorizontalLoading } from '../../../component/console/horizontal-loading';
+import { LinkButton } from '../../../component/console/link-button';
 import { ActiveTab, State } from './types';
 
 const TabsContainer = styled.div.attrs({

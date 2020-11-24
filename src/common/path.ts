@@ -30,11 +30,19 @@ const Paths = {
 	CONSOLE_SETTINGS_NOTIFICATION: '/console/settings/notification',
 
 	ADMIN: '/admin',
-	ADMIN_HOME: '/admin/home',
-	ADMIN_DASHBOARDS: '/admin/dashboard',
-	ADMIN_DASHBOARD: '/admin/dashboard/:dashboardId',
-	ADMIN_INBOX: '/admin/inbox',
-	ADMIN_NOTIFICATION: '/admin/notification'
+	ADMIN_TASKS: '/admin/task',
+	ADMIN_TASK: '/admin/task/:taskId',
+	ADMIN_SPACES: '/admin/space',
+	ADMIN_SPACE: '/admin/space/:spaceId',
+	ADMIN_TOPICS: '/admin/topic',
+	ADMIN_TOPIC: '/admin/topic/:topicId',
+	ADMIN_REPORTS: '/admin/report',
+	ADMIN_REPORT: '/admin/report/:reportId',
+	ADMIN_PIPELINE: '/admin/pipeline',
+	ADMIN_USER_GROUPS: '/admin/group',
+	ADMIN_USER_GROUP: '/admin/group/:groupId',
+	ADMIN_USERS: '/admin/user',
+	ADMIN_USER: '/admin/user/:userId'
 };
 export default Paths;
 

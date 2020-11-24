@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { UserAvatar } from '../../../console/component/user-avatar';
 import { ConsoleUser } from '../types';
+import { UserAvatar } from '../user-avatar';
 
 const UserContainer = styled.div.attrs({ 'data-widget': 'console-user-container' })`
 	display: flex;

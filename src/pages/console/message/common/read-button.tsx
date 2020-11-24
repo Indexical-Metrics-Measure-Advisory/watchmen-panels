@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { TooltipAlignment, useTooltip } from '../../../component/console/context/console-tooltip';
-import { createLinkButtonBackgroundAnimation } from '../../component/link-button';
+import { createLinkButtonBackgroundAnimation } from '../../../component/console/link-button';
 
 const Read = styled.div`
 	display: flex;

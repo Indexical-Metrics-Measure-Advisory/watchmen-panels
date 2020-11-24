@@ -5,7 +5,7 @@ export const PageContainer = styled.div<{ 'background-image': string }>`
 		content: '';
 		position: fixed;
 		left: 0;
-		top: 0;
+		top: 0;	
 		width: 100vw;
 		height: 100vh;
 		z-index: -1;
@@ -20,6 +20,17 @@ export const PageContainer = styled.div<{ 'background-image': string }>`
 	}
 `;
 export const NarrowContainer = styled(PageContainer).attrs({
+	'data-widget': 'console-narrow-page-container'
+})`
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	max-width: 1000px;
+	min-width: 600px;
+	margin: var(--margin) auto;
+`;
+export const PlainNarrowContainer = styled.div.attrs({
 	'data-widget': 'console-narrow-page-container'
 })`
 	flex-grow: 1;

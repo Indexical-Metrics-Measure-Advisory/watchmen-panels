@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConsoleSpace, ConsoleTopic, ConsoleTopicFactor } from '../../../../services/console/types';
 import { TooltipAlignment, useTooltip } from '../../../component/console/context/console-tooltip';
-import { UserAvatar } from '../../component/user-avatar';
+import { UserAvatar } from '../../../component/console/user-avatar';
 import { usePalette } from './palette-context';
 import { TopicSelectionGraphics } from './types';
 

@@ -5,8 +5,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ConsoleMail, ConsoleNotification } from '../../services/console/types';
-import { createLinkButtonBackgroundAnimation } from './component/link-button';
-import { UserAvatar } from './component/user-avatar';
+import { createLinkButtonBackgroundAnimation } from '../component/console/link-button';
+import { UserAvatar } from '../component/console/user-avatar';
 import { useConsoleContext } from './context/console-context';
 import { ConsoleNotificationEvent } from './context/console-nofitications';
 

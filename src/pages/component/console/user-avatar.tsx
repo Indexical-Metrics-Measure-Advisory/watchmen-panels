@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { BaseColors24 } from '../../../charts/color-theme';
-import { TooltipAlignment, useTooltip } from '../../component/console/context/console-tooltip';
+import { TooltipAlignment, useTooltip } from './context/console-tooltip';
 
 const User = styled.div<{ color: string, 'single-character': boolean }>`
 	display: flex;

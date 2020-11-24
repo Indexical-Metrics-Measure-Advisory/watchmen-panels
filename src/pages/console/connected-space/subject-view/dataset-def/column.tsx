@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { ConsoleSpaceSubjectDataSetColumn } from '../../../../../services/console/types';
-import { LinkButton } from '../../../component/link-button';
+import { LinkButton } from '../../../../component/console/link-button';
 import { ColumnFactor } from './column-factor';
 import { ColumnTopic } from './column-topic';
 

@@ -10,8 +10,8 @@ import {
 	ConsoleSpaceSubject,
 	FilterJointType
 } from '../../../../services/console/types';
+import { LinkButton } from '../../../component/console/link-button';
 import { useDialog } from '../../../context/dialog';
-import { LinkButton } from '../../component/link-button';
 import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
 import { SubjectContextProvider } from './context';

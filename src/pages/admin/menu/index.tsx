@@ -1,5 +1,12 @@
-import { faBell } from '@fortawesome/free-regular-svg-icons';
-import { faHome, faInbox, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+	faGlobe,
+	faImages,
+	faTags,
+	faTasks,
+	faUserCog,
+	faUsersCog,
+	faWaveSquare
+} from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
@@ -46,24 +53,9 @@ export const AdminMenu = () => {
 	const onResize = (newWidth: number) => {
 		setMenuWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
 	};
-	const onHomeClicked = () => {
-		if (!matchPath(location.pathname, Path.ADMIN_HOME)) {
-			history.push(Path.ADMIN_HOME);
-		}
-	};
-	const onNotificationsClicked = () => {
-		if (!matchPath(location.pathname, Path.ADMIN_NOTIFICATION)) {
-			history.push(Path.ADMIN_NOTIFICATION);
-		}
-	};
-	const onInboxClicked = () => {
-		if (!matchPath(location.pathname, Path.ADMIN_INBOX)) {
-			history.push(Path.ADMIN_INBOX);
-		}
-	};
-	const onDashboardsClicked = () => {
-		if (!matchPath(location.pathname, Path.ADMIN_DASHBOARDS)) {
-			history.push(Path.ADMIN_DASHBOARDS);
+	const onMenuClicked = (path: string) => () => {
+		if (!matchPath(location.pathname, path)) {
+			history.push(path);
 		}
 	};
 
@@ -71,19 +63,29 @@ export const AdminMenu = () => {
 
 	return <MenuContainer width={menuWidth}>
 		<MenuLogo title='Watchmen Admin'/>
-		<MenuItem icon={faHome} label='Home' showTooltip={showMenuItemTooltip}
-		          active={!!matchPath(location.pathname, Path.ADMIN_HOME)}
-		          onClick={onHomeClicked}/>
-		<MenuItem icon={faTachometerAlt} label='Dashboards' showTooltip={showMenuItemTooltip}
-		          active={!!matchPath(location.pathname, Path.CONSOLE_DASHBOARDS)}
-		          onClick={onDashboardsClicked}/>
+		<MenuItem icon={faTags} label='Topics' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_TOPICS)}
+		          onClick={onMenuClicked(Path.ADMIN_TOPICS)}/>
+		<MenuItem icon={faImages} label='Reports' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_REPORTS)}
+		          onClick={onMenuClicked(Path.ADMIN_REPORTS)}/>
+		<MenuItem icon={faGlobe} label='Spaces' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_SPACES)}
+		          onClick={onMenuClicked(Path.ADMIN_SPACES)}/>
+		<MenuItem icon={faWaveSquare} label='Pipelines' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_PIPELINE)}
+		          onClick={onMenuClicked(Path.ADMIN_PIPELINE)}/>
 		<MenuSeparator width={menuWidth}/>
-		<MenuItem icon={faBell} label='Notifications' iconSize={1.2} showTooltip={showMenuItemTooltip}
-		          active={!!matchPath(location.pathname, Path.CONSOLE_NOTIFICATION)}
-		          onClick={onNotificationsClicked}/>
-		<MenuItem icon={faInbox} label='Inbox' showTooltip={showMenuItemTooltip}
-		          active={!!matchPath(location.pathname, Path.CONSOLE_INBOX)}
-		          onClick={onInboxClicked}/>
+		<MenuItem icon={faUsersCog} label='User Groups' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_USER_GROUPS)}
+		          onClick={onMenuClicked(Path.ADMIN_USER_GROUPS)}/>
+		<MenuItem icon={faUserCog} label='Users' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_USERS)}
+		          onClick={onMenuClicked(Path.ADMIN_USERS)}/>
+		<MenuSeparator width={menuWidth}/>
+		<MenuItem icon={faTasks} label='Tasks' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_TASKS)}
+		          onClick={onMenuClicked(Path.ADMIN_TASKS)}/>
 		<Placeholder/>
 		<MenuSeparator width={menuWidth}/>
 		<MenuUser user={user}/>

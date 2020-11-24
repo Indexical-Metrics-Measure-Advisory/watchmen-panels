@@ -6,7 +6,7 @@ import { matchPath, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
-import { LinkButton } from '../component/link-button';
+import { LinkButton } from '../../component/console/link-button';
 import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
 import { SubjectClosedListener, useSpaceContext } from './space-context';
 import { TabContainer } from './tabs';

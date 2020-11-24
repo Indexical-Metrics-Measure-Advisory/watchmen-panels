@@ -6,7 +6,7 @@ import {
 	ConsoleSpaceSubjectDataSetFilter,
 	ConsoleSpaceSubjectDataSetFilterJoint
 } from '../../../../../services/console/types';
-import { LinkButton } from '../../../component/link-button';
+import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 import { FilterJoint } from './filter-joint';
 import { isJointFilter } from './utils';

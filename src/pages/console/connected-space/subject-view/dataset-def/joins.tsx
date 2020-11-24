@@ -16,8 +16,8 @@ import {
 	ConsoleTopic,
 	ConsoleTopicFactor
 } from '../../../../../services/console/types';
+import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
-import { LinkButton } from '../../../component/link-button';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
 

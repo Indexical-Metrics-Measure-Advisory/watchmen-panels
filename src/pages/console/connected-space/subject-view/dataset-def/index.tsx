@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
-import { LinkButton } from '../../../component/link-button';
+import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
 import { SubjectColumns } from './columns';
 import { SubjectFilters } from './filters';

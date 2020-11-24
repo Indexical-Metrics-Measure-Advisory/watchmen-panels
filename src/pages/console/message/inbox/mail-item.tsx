@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ConsoleMail } from '../../../../services/console/types';
-import { UserAvatar } from '../../component/user-avatar';
+import { UserAvatar } from '../../../component/console/user-avatar';
 import { useConsoleContext } from '../../context/console-context';
 import {
 	ItemBody,

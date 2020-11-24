@@ -1,7 +1,7 @@
 import React from "react";
 import BackgroundImage from '../../../assets/console-timeline-background.png';
-import { NarrowPageTitle } from '../component/narrow-page-title';
-import { NarrowContainer } from '../component/page-container';
+import { NarrowPageTitle } from '../../component/console/narrow-page-title';
+import { NarrowContainer } from '../../component/console/page-container';
 
 export const Timeline = () => {
 	return <NarrowContainer background-image={BackgroundImage}>

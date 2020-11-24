@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { ConsoleSpaceSubjectDataSetFilterExpression } from '../../../../../services/console/types';
-import { LinkButton } from '../../../component/link-button';
+import { LinkButton } from '../../../../component/console/link-button';
 import { FilterExpressionFactor } from './filter-expression-factor';
 import { FilterExpressionOperator } from './filter-expression-operator';
 import { FilterExpressionTopic } from './filter-expression-topic';
