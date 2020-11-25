@@ -2,6 +2,7 @@ import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
+import { CarvedButton } from '../../../component/console/carved-button';
 import { HorizontalLoading } from '../../../component/console/horizontal-loading';
 import { LinkButton } from '../../../component/console/link-button';
 import { ActiveTab, State } from './types';
@@ -34,34 +35,6 @@ const Tab = styled.div`
 const TabPlaceholder = styled(HorizontalLoading)`
 	flex-grow: 1;
 `;
-const ClearAll = styled.button`
-	display: flex;
-	position: relative;
-	align-items: center;
-	justify-content: center;
-	padding: 4px calc(var(--margin) / 2);
-	border: 0;
-	border-radius: var(--border-radius);
-	appearance: none;
-	outline: none;
-	background-color: transparent;
-	color: var(--console-primary-color);
-	font-weight: var(--font-bold);
-	cursor: pointer;
-	transition: all 300ms ease-in-out;
-	&[data-visible=false] {
-		opacity: 0;
-		pointer-events: none;
-	}
-	&:hover {
-		color: var(--console-primary-color);
-		background-color: var(--invert-color);
-		box-shadow: var(--console-hover-shadow);
-	}
-	> svg {
-		margin-right: calc(var(--margin) / 4);
-	}
-`;
 
 export const Tabs = (props: {
 	state: State;
@@ -80,9 +53,9 @@ export const Tabs = (props: {
 		</Tab>
 		<TabPlaceholder
 			visible={!(state.active === ActiveTab.UNREAD ? state.unreadInitialized : state.readInitialized)}/>
-		<ClearAll data-visible={state.active === ActiveTab.UNREAD} onClick={onClearClicked}>
+		<CarvedButton data-visible={state.active === ActiveTab.UNREAD} onClick={onClearClicked}>
 			<FontAwesomeIcon icon={faCheckCircle}/>
 			<span>Clear All</span>
-		</ClearAll>
+		</CarvedButton>
 	</TabsContainer>;
 };
