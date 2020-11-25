@@ -27,3 +27,31 @@ export interface QueriedReport {
 	groupCount: number;
 	spaceCount: number;
 }
+
+export interface QueriedSpace {
+	spaceId: string;
+	name: string;
+	description?: string;
+	topicCount: number;
+	reportCount: number;
+	groupCount: number;
+	connectionCount: number;
+}
+
+export interface QueriedUserGroup {
+	userGroupId: string;
+	name: string;
+	description?: string;
+	userCount: number;
+	spaceCount: number;
+	topicCount: number;
+	reportCount: number;
+}
+
+export interface QueriedUser {
+	userId: string;
+	name: string;
+	spaceCount: number;
+	topicCount: number;
+	reportCount: number;
+}

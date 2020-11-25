@@ -112,6 +112,51 @@ const Bottom = styled.div`
 	}
 `;
 
+export const SingleSearchItemCard = styled.div`
+	display: flex;
+	flex-direction: column;
+	padding: calc(var(--margin) / 2) var(--margin);
+	position: relative;
+	border-radius: calc(var(--border-radius) * 2);
+	box-shadow: var(--console-shadow);
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	&:hover {
+		box-shadow: var(--console-hover-shadow);
+	}
+	> div:first-child {
+		display: flex;
+		align-items: center;
+		font-family: var(--console-title-font-family);
+		font-size: 1.4em;
+	}
+	> div:nth-child(2) {
+		display: flex;
+		flex-grow: 1;
+		position: relative;
+		word-break: break-word;
+		font-size: 0.8em;
+		opacity: 0.8;
+		margin-top: calc(var(--margin) / 2);
+		min-height: 3.5em;
+		line-height: 1.5em;
+	}
+	> div:nth-child(3) {
+		display: flex;
+		justify-content: space-around;
+		line-height: 1.2em;
+		opacity: 0.7;
+		margin-top: calc(var(--margin) / 2);
+		> button {
+			font-size: 0.8em;
+			color: var(--console-font-color);
+			svg {
+				margin-right: calc(var(--margin) / 4);
+			}
+		}
+	}
+`;
+
 export const SingleSearch = <T extends any>(props: {
 	searchPlaceholder?: string;
 	listData: (options: { search: string; pageNumber: number; pageSize: number }) => Promise<DataPage<T>>;
