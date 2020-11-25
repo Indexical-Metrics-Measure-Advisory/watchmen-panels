@@ -33,9 +33,7 @@ export const SubjectFilters = (props: {
 		onCollapsedChanged(false);
 		forceUpdate();
 	};
-	const onRemoveJoint = () => {
-		// do nothing, top level joint cannot be removed
-	};
+	const onRemoveFilter = () => forceUpdate();
 
 	const countFilters = (filters: Array<ConsoleSpaceSubjectDataSetFilter>): number => {
 		return filters.reduce((count: number, filter) => {
@@ -67,7 +65,7 @@ export const SubjectFilters = (props: {
 		<SubjectPanelBody data-visible={!collapsed}>
 			<SubjectPanelBodyWrapper>
 				<FilterJoint joint={filters[0] as ConsoleSpaceSubjectDataSetFilterJoint}
-				             removeJoint={onRemoveJoint}
+				             removeFilter={onRemoveFilter} childrenFiltersChanged={forceUpdate}
 				             level={0}/>
 			</SubjectPanelBodyWrapper>
 		</SubjectPanelBody>

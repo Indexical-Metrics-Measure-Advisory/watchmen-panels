@@ -79,12 +79,14 @@ const Filters = styled.div.attrs({
 const FilterRow = (props: {
 	filter: ConsoleSpaceSubjectDataSetFilter;
 	removeFilter: (filter: ConsoleSpaceSubjectDataSetFilter) => void;
+	childrenFiltersChanged: () => void;
 	level: number;
 }) => {
-	const { filter, removeFilter, level } = props;
+	const { filter, removeFilter, childrenFiltersChanged, level } = props;
 
 	if (isJointFilter(filter)) {
-		return <FilterJoint joint={filter} level={level} removeJoint={removeFilter}/>;
+		return <FilterJoint joint={filter} level={level}
+		                    removeFilter={removeFilter} childrenFiltersChanged={childrenFiltersChanged}/>;
 	} else if (isExpressionFilter(filter)) {
 		return <FilterExpression filter={filter} level={level} removeFilter={removeFilter}/>;
 	} else {
@@ -94,10 +96,11 @@ const FilterRow = (props: {
 
 export const FilterJoint = (props: {
 	joint: ConsoleSpaceSubjectDataSetFilterJoint;
-	removeJoint: (filter: ConsoleSpaceSubjectDataSetFilterJoint) => void;
+	removeFilter: (filter: ConsoleSpaceSubjectDataSetFilter) => void;
+	childrenFiltersChanged: () => void;
 	level: number;
 }) => {
-	const { joint, removeJoint, level } = props;
+	const { joint, removeFilter, childrenFiltersChanged, level } = props;
 	const { filters = [] } = joint;
 
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
@@ -110,16 +113,15 @@ export const FilterJoint = (props: {
 		joint.jointType = joint.jointType === FilterJointType.AND ? FilterJointType.OR : FilterJointType.AND;
 		forceUpdate();
 	};
-	const removeFilter = (filter: ConsoleSpaceSubjectDataSetFilter) => {
-		const length = filters.length;
-		if (length > 1 || level === 0) {
-			// at lease two joint filters, or current joint is top level
-			const index = filters.indexOf(filter);
-			filters.splice(index, 1);
-			forceUpdate();
+	const removeChildFilter = (filter: ConsoleSpaceSubjectDataSetFilter) => {
+		const index = filters.indexOf(filter);
+		filters.splice(index, 1);
+		if (filters.length === 0) {
+			// all child filters are removed
+			// then remove the joint
+			removeFilter(joint);
 		} else {
-			// all filters were removed, then remove myself
-			removeJoint(joint);
+			childrenFiltersChanged();
 		}
 	};
 
@@ -131,7 +133,9 @@ export const FilterJoint = (props: {
 		</Joint>
 		<Filters>
 			{filters.map((filter, index) => {
-				return <FilterRow key={index} filter={filter} removeFilter={removeFilter} level={level + 1}/>;
+				return <FilterRow key={index} filter={filter}
+				                  removeFilter={removeChildFilter} childrenFiltersChanged={childrenFiltersChanged}
+				                  level={level + 1}/>;
 			})}
 		</Filters>
 	</JointRow>;
