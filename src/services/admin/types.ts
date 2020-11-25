@@ -17,3 +17,13 @@ export interface QueriedTopic {
 	groupCount: number;
 	spaceCount: number;
 }
+
+export interface QueriedReport {
+	reportId: string;
+	name: string;
+	description?: string;
+	predefined: boolean;
+	topicCount: number;
+	groupCount: number;
+	spaceCount: number;
+}

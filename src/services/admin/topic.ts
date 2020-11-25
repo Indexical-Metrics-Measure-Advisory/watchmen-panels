@@ -27,7 +27,7 @@ export const listTopics = async (options: {
 	pageNumber?: number;
 	pageSize?: number;
 }): Promise<DataPage<QueriedTopic>> => {
-	const { pageNumber = 1, pageSize = 20 } = options;
+	const { pageNumber = 1, pageSize = 9 } = options;
 
 	return new Promise(resolve => {
 		setTimeout(() => {
