@@ -1,12 +1,14 @@
 import React from "react";
-import { NarrowPageTitle } from '../../component/console/narrow-page-title';
-import { PlainNarrowContainer } from '../../component/console/page-container';
+import { Container } from '../../console/connected-space/components';
+import { Body } from "./components";
+import { PipelineContextProvider } from './pipeline-context';
+import { PipelineHeader } from './pipeline-header';
 
 export const Pipeline = () => {
-	return <PlainNarrowContainer>
-		<NarrowPageTitle title='Pipeline'/>
-		<div style={{ marginTop: 50, fontSize: '2em', opacity: 0.5 }}>
-			Coming soon...
-		</div>
-	</PlainNarrowContainer>;
+	return <PipelineContextProvider>
+		<Container>
+			<PipelineHeader/>
+			<Body/>
+		</Container>
+	</PipelineContextProvider>;
 };
