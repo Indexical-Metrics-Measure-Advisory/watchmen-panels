@@ -55,3 +55,9 @@ export interface QueriedUser {
 	topicCount: number;
 	reportCount: number;
 }
+
+export interface QueriedTopicForPipeline {
+	topicId: string;
+	code: string;
+	name: string;
+}

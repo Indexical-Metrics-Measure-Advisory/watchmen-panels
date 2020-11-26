@@ -1,4 +1,4 @@
-import { DataPage, QueriedTopic } from './types';
+import { DataPage, QueriedTopic, QueriedTopicForPipeline } from './types';
 
 const DemoTopics = [
 	{
@@ -39,5 +39,13 @@ export const listTopics = async (options: {
 				pageCount: 3
 			});
 		}, 3000);
+	});
+};
+
+export const listTopicsForPipeline = async (search: string): Promise<Array<QueriedTopicForPipeline>> => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve(DemoTopics);
+		}, 500);
 	});
 };

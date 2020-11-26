@@ -3,7 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { notInMe } from '../../../common/utils';
-import { ConsoleTopic, ConsoleTopicFactor } from '../../../services/console/types';
+import { listTopicsForPipeline } from '../../../services/admin/topic';
+import { QueriedTopicForPipeline } from '../../../services/admin/types';
+import { ConsoleTopicFactor } from '../../../services/console/types';
 import Input from '../../component/input';
 import { Header } from './components';
 
@@ -29,7 +31,7 @@ interface SearchState {
 }
 
 interface Status {
-	topic?: ConsoleTopic;
+	topic?: QueriedTopicForPipeline;
 	factor?: ConsoleTopicFactor;
 	direction?: Direction;
 }
@@ -48,6 +50,10 @@ const Title = styled.div.attrs<{ order: number }>(({ order }) => {
 	padding-right: 10px;
 	margin-right: 10px;
 	transition: all 300ms ease-in-out;
+	&[data-visible=false] {
+		opacity: 0;
+		pointer-events: none;
+	}
 	&:not([data-first=true]) {
 		padding-left: calc(var(--margin) / 2 + 10px);
 		margin-left: -10px;
@@ -152,6 +158,11 @@ const SearchPanel = styled.div.attrs<SearchState>(({ visible, top, left }) => {
 			height: 32px;
 			padding: 0 calc(var(--margin) / 2);
 			opacity: 0.7;
+			overflow: hidden;
+			transition: height 300ms ease-in-out;
+			&[data-visible=false] {
+				height: 0;
+			}
 		}
 	}
 	> div:nth-child(3) {
@@ -182,8 +193,12 @@ export const PipelineHeader = () => {
 	const searchPanelRef = useRef<HTMLDivElement>(null);
 	const searchTextRef = useRef<HTMLInputElement>(null);
 	const [ status, setStatus ] = useState<Status>({});
+	const [ topicCandidates, setTopicCandidates ] = useState<{
+		searched: boolean;
+		searchText: string; data: Array<QueriedTopicForPipeline>
+	}>({ searched: false, searchText: '', data: [] });
 	const [ searchState, setSearchState ] = useState<SearchState>({ visible: false, top: 0, left: 0, searchText: '' });
-	const [ searcher, setSearcher ] = useState<number | null>(null);
+	const [ topicSearcher, setTopicSearcher ] = useState<number | null>(null);
 	useEffect(() => {
 		const onFocus = (event: FocusEvent) => {
 			if (searchPanelRef.current && notInMe(searchPanelRef.current, event.target)) {
@@ -205,6 +220,10 @@ export const PipelineHeader = () => {
 	}) => {
 		const { ref, placeholder, what } = options;
 		const { top, left, height } = ref.current!.getBoundingClientRect();
+		if (what === SearchWhat.TOPIC) {
+			// clear previous topic search results
+			setTopicCandidates({ searched: false, searchText: '', data: [] });
+		}
 		setSearchState({
 			visible: true,
 			top: top + height - 5,
@@ -229,13 +248,36 @@ export const PipelineHeader = () => {
 		ref: chooseDirectionRef,
 		what: SearchWhat.DIRECTION
 	});
+	const doSearchTopic = (searchText: string) => {
+		if (topicSearcher) {
+			clearTimeout(topicSearcher);
+		}
+		const search = async () => {
+			if (topicSearcher) {
+				clearTimeout(topicSearcher);
+			}
+			try {
+				const topics = await listTopicsForPipeline(searchText);
+				setTopicCandidates({ searched: true, searchText, data: topics });
+			} catch (e) {
+				console.groupCollapsed(`%cError on fetch topics.`, 'color:rgb(251,71,71)');
+				console.error(e);
+				console.groupEnd();
+				setTopicCandidates({ searched: true, searchText, data: [] });
+			}
+		};
+		setTopicSearcher(setTimeout(search, 300));
+	};
+	const doSearchFactor = (searchText: string) => {
+		// TODO
+	};
 	const onSearchTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchState({ ...searchState, searchText: event.target.value });
-		if (searcher) {
-			clearTimeout(searcher);
+		if (searchState.what === SearchWhat.TOPIC) {
+			doSearchTopic(event.target.value);
+		} else if (searchState.what === SearchWhat.FACTOR) {
+			doSearchFactor(event.target.value);
 		}
-		setSearcher(setTimeout(() => {
-		}, 300));
 	};
 	const onDirectionClicked = (direction: Direction) => () => {
 		setStatus({ ...status, direction });
@@ -245,14 +287,28 @@ export const PipelineHeader = () => {
 	const isSearchTopic = searchState.visible && searchState.what === SearchWhat.TOPIC;
 	const isSearchFactor = searchState.visible && searchState.what === SearchWhat.FACTOR;
 	const isChangeDirection = searchState.visible && searchState.what === SearchWhat.DIRECTION;
-	const isSearching = searchState.visible && searchState.searchText.trim().length !== 0;
+
+	let showSearchLabel = true;
+	let searchLabel = 'Searching...';
+	if (topicCandidates.searched) {
+		if (topicCandidates.data.length === 0) {
+			searchLabel = 'No matched topic.';
+		} else {
+			showSearchLabel = false;
+		}
+	} else if (searchState.searchText.trim().length === 0) {
+		searchLabel = 'Waiting for criteria...';
+	}
 
 	return <Header>
-		<Title onClick={onChooseDirectionClicked} data-searching={isChangeDirection} order={4} ref={chooseDirectionRef}>
+		<Title onClick={onChooseDirectionClicked} data-searching={isChangeDirection} data-visible={!!status.factor}
+		       order={4} ref={chooseDirectionRef}>
 			<span>{status.direction ? status.direction : 'Choose Direction'}</span>
 			<FontAwesomeIcon icon={faCaretDown}/>
 		</Title>
-		<Title onClick={onChooseFactorClicked} data-searching={isSearchFactor} order={3} ref={chooseFactorRef}>
+		<Title onClick={onChooseFactorClicked} data-searching={isSearchFactor} data-visible={!!status.topic}
+		       order={3}
+		       ref={chooseFactorRef}>
 			<span>Choose Factor</span>
 			<FontAwesomeIcon icon={faCaretDown}/>
 		</Title>
@@ -270,7 +326,7 @@ export const PipelineHeader = () => {
 				       onChange={onSearchTextChanged}/>
 			</div>
 			<div data-visible={isSearchTopic || isSearchFactor}>
-				<div>{isSearching ? 'Searching...' : 'Waiting for criteria...'}</div>
+				<div data-visible={showSearchLabel}>{searchLabel}</div>
 			</div>
 			<div data-visible={isChangeDirection}>
 				<span onClick={onDirectionClicked(Direction.TO_SOURCE)}>{Direction.TO_SOURCE}</span>
