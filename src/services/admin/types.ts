@@ -61,3 +61,19 @@ export interface QueriedTopicForPipeline {
 	code: string;
 	name: string;
 }
+
+export enum FactorType {
+	SEQUENCE = 'sequence',
+	NUMBER = 'number',
+	TEXT = 'text',
+	DATETIME = 'datetime',
+	BOOLEAN = 'boolean',
+	ENUM = 'enum'
+}
+
+export interface QueriedFactorForPipeline {
+	factorId: string;
+	name: string;
+	label: string;
+	type: FactorType;
+}
