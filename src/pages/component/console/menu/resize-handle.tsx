@@ -1,23 +1,34 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
+export enum ResizeHandleAlignment {
+	LEFT, RIGHT
+}
+
+interface HandleState {
+	top: number;
+	left: number;
+	resizing: boolean;
+	alignment: ResizeHandleAlignment;
+}
+
 const handleWidth = 6;
-const Handle = styled.div<{ left: number }>`
+const Handle = styled.div.attrs<HandleState>(({ top = 0, left, resizing, alignment }) => {
+	return {
+		style: {
+			top,
+			left: alignment === ResizeHandleAlignment.LEFT ? (resizing ? 0 : (left - handleWidth / 2)) : 'unset',
+			right: alignment === ResizeHandleAlignment.RIGHT ? (resizing ? 0 : (left - handleWidth / 2)) : 'unset',
+			width: resizing ? '100vw' : handleWidth,
+			paddingLeft: resizing ? (alignment === ResizeHandleAlignment.LEFT ? (left - handleWidth / 2) : `calc(100% - ${left + handleWidth / 2}px)`) : 0
+		}
+	};
+})<HandleState>`
 	display: block;
 	position: fixed;
-	top: 0;
-	left: ${({ left }) => `${left - handleWidth / 2}px`};
-	width: ${handleWidth}px;
 	height: 100vh;
 	z-index: 5000;
 	background-color: transparent;
-	&[data-resizing=true] {
-		&:hover {
-			left: 0;
-			width: 100vw;
-			padding-left: ${({ left }) => `${left - handleWidth / 2}px`};
-		}
-	}
 	&:before {
 		content: '';
 		display: block;
@@ -38,18 +49,20 @@ const Handle = styled.div<{ left: number }>`
 `;
 
 export const ResizeHandle = (props: {
+	top?: number;
 	width: number;
 	onResize: (width: number) => void;
+	alignment?: ResizeHandleAlignment
 }) => {
-	const { width, onResize } = props;
+	const { top = 0, width, onResize, alignment = ResizeHandleAlignment.LEFT } = props;
 
 	const handleRef = useRef<HTMLDivElement>(null);
 	const [ resizing, setResizing ] = useState(false);
 
 	const canStartResize = (x: number) => Math.abs(x - width) <= 3;
-	const onMouseDown = (event: React.MouseEvent) => {
-		const { target, button, clientX } = event;
-		if (button === 0 && canStartResize(clientX)) {
+	const onMouseDown = ({ target, button, clientX }: React.MouseEvent) => {
+		const x = alignment === ResizeHandleAlignment.LEFT ? clientX : (window.innerWidth - clientX);
+		if (button === 0 && canStartResize(x)) {
 			setResizing(true);
 			const onResizeEnd = (event: Event) => {
 				const { target } = event;
@@ -61,18 +74,20 @@ export const ResizeHandle = (props: {
 			target.addEventListener('mouseleave', onResizeEnd);
 		}
 	};
-	const onMouseMove = (event: React.MouseEvent) => {
+	const onMouseMove = ({ clientX }: React.MouseEvent) => {
+		const x = alignment === ResizeHandleAlignment.LEFT ? clientX : (window.innerWidth - clientX);
 		if (!resizing) {
-			if (canStartResize(event.clientX)) {
+			if (canStartResize(x)) {
 				handleRef.current!.style.cursor = 'col-resize';
 			} else {
 				handleRef.current!.style.cursor = 'default';
 			}
 		} else {
-			onResize(event.clientX);
+			onResize(x);
 		}
 	};
 
-	return <Handle left={width} data-resizing={resizing} ref={handleRef}
+	return <Handle top={top} left={width} alignment={alignment}
+	               resizing={resizing} ref={handleRef}
 	               onMouseDown={onMouseDown} onMouseMove={onMouseMove}/>;
 };

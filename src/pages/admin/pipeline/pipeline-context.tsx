@@ -1,28 +1,28 @@
 import { EventEmitter } from 'events';
 import React, { useState } from 'react';
 import { QueriedFactorForPipeline, QueriedTopicForPipeline } from '../../../services/admin/types';
-import { Direction } from './types';
 
 export enum PipelineEvent {
 	TOPIC_CHANGED = 'topic-changed',
 	FACTOR_CHANGED = 'factor-changed',
-	DIRECTION_CHANGED = 'direction-changed'
 }
 
 export type TopicChangeListener = (topic: QueriedTopicForPipeline) => void;
+export type FactorChangeListener = (factor: QueriedFactorForPipeline) => void;
 
 export interface PipelineContextStore {
 	topic?: QueriedTopicForPipeline;
 	factor?: QueriedFactorForPipeline;
-	direction?: Direction;
 }
 
 export interface PipelineContextUsable {
 	changeTopic: (topic: QueriedTopicForPipeline) => void;
 	addTopicChangedListener: (listener: TopicChangeListener) => void;
 	removeTopicChangedListener: (listener: TopicChangeListener) => void;
+
 	changeFactor: (factor: QueriedFactorForPipeline) => void;
-	changeDirection: (direction: Direction) => void;
+	addFactorChangedListener: (listener: FactorChangeListener) => void;
+	removeFactorChangedListener: (listener: FactorChangeListener) => void;
 }
 
 export interface PipelineContext extends PipelineContextUsable {
@@ -46,20 +46,19 @@ export const PipelineContextProvider = (props: {
 	};
 	const addTopicChangedListener = (listener: TopicChangeListener) => emitter.on(PipelineEvent.TOPIC_CHANGED, listener);
 	const removeTopicChangedListener = (listener: TopicChangeListener) => emitter.off(PipelineEvent.TOPIC_CHANGED, listener);
+
 	const changeFactor = (factor: QueriedFactorForPipeline) => {
 		store.factor = factor;
 		emitter.emit(PipelineEvent.FACTOR_CHANGED, factor);
 	};
-	const changeDirection = (direction: Direction) => {
-		store.direction = direction;
-		emitter.emit(PipelineEvent.DIRECTION_CHANGED, direction);
-	};
+	const addFactorChangedListener = (listener: FactorChangeListener) => emitter.on(PipelineEvent.FACTOR_CHANGED, listener);
+	const removeFactorChangedListener = (listener: FactorChangeListener) => emitter.off(PipelineEvent.FACTOR_CHANGED, listener);
 
 	return <Context.Provider value={{
 		store,
 
 		changeTopic, addTopicChangedListener, removeTopicChangedListener,
-		changeFactor, changeDirection
+		changeFactor, addFactorChangedListener, removeFactorChangedListener
 	}}>{children}</Context.Provider>;
 };
 
