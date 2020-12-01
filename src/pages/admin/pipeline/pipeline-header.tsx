@@ -1,6 +1,6 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
 import { LinkButton } from '../../component/console/link-button';
 import { usePipelineContext } from './pipeline-context';
@@ -67,11 +67,14 @@ const Buttons = styled.div`
 `;
 
 const MenuToggleButton = () => {
-	const { store: { menuVisible }, changeMenuVisible } = usePipelineContext();
+	const { store: { menuVisible }, changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener } = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		addMenuVisibilityListener(forceUpdate);
+		return () => removeMenuVisibilityListener(forceUpdate);
+	});
 
 	const onMenuClicked = () => {
-		forceUpdate();
 		changeMenuVisible(!menuVisible);
 	};
 

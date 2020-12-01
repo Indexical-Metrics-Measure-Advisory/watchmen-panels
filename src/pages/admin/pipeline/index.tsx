@@ -12,6 +12,7 @@ const Container = styled.div.attrs({
 	grid-template-columns: 1fr auto;
 	grid-template-rows: auto 1fr;
 	flex-grow: 1;
+	overflow: hidden;
 `;
 
 export const Pipeline = () => {

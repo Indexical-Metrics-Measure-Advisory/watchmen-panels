@@ -56,12 +56,6 @@ export interface QueriedUser {
 	reportCount: number;
 }
 
-export interface QueriedTopicForPipeline {
-	topicId: string;
-	code: string;
-	name: string;
-}
-
 export enum FactorType {
 	SEQUENCE = 'sequence',
 	NUMBER = 'number',
@@ -75,5 +69,21 @@ export interface QueriedFactorForPipeline {
 	factorId: string;
 	name: string;
 	label: string;
+	description?: string;
 	type: FactorType;
+}
+
+export enum TopicType {
+	RAW = 'raw',
+	DISTINCT = 'distinct',
+	AGGREGATE = 'aggregate',
+	TIME = 'time'
+}
+
+export interface QueriedTopicForPipeline {
+	topicId: string;
+	code: string;
+	name: string;
+	type: TopicType;
+	factors: Array<QueriedFactorForPipeline>;
 }

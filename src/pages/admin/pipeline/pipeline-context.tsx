@@ -1,26 +1,35 @@
 import { EventEmitter } from 'events';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { listTopicsForPipeline } from '../../../services/admin/topic';
 import { QueriedFactorForPipeline, QueriedTopicForPipeline } from '../../../services/admin/types';
 
 export enum PipelineEvent {
+	TOPICS_CHANGED = 'topics-changed',
 	TOPIC_CHANGED = 'topic-changed',
 	FACTOR_CHANGED = 'factor-changed',
 
 	MENU_VISIBLE = 'menu-visible'
 }
 
+export type TopicsChangeListener = () => void;
 export type TopicChangeListener = (topic: QueriedTopicForPipeline) => void;
 export type FactorChangeListener = (factor: QueriedFactorForPipeline) => void;
 export type MenuVisibilityListener = (visible: boolean) => void;
 
 export interface PipelineContextStore {
+	topics: Array<QueriedTopicForPipeline>;
+
 	topic?: QueriedTopicForPipeline;
 	factor?: QueriedFactorForPipeline;
 
 	menuVisible: boolean;
+	topicsLoadCompleted: boolean;
 }
 
 export interface PipelineContextUsable {
+	addTopicsChangedListener: (listener: TopicsChangeListener) => void;
+	removeTopicsChangedListener: (listener: TopicsChangeListener) => void;
+
 	changeTopic: (topic: QueriedTopicForPipeline) => void;
 	addTopicChangedListener: (listener: TopicChangeListener) => void;
 	removeTopicChangedListener: (listener: TopicChangeListener) => void;
@@ -48,11 +57,35 @@ export const PipelineContextProvider = (props: {
 
 	const [ emitter ] = useState<EventEmitter>(new EventEmitter());
 	const [ store ] = useState<PipelineContextStore>({
-		menuVisible: true
+		topics: [],
+		menuVisible: true,
+		topicsLoadCompleted: false
 	});
+
+	useEffect(() => {
+		(async () => {
+			let pageNumber = 1;
+			while (true) {
+				const { data, completed } = await listTopicsForPipeline(pageNumber);
+				store.topics = [ ...store.topics, ...data ]
+					.sort((a, b) => {
+						return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+					});
+				store.topicsLoadCompleted = completed;
+				emitter.emit(PipelineEvent.TOPICS_CHANGED);
+				if (completed) {
+					break;
+				}
+				pageNumber++;
+			}
+		})();
+	}, [ store, emitter ]);
 
 	return <Context.Provider value={{
 		store,
+
+		addTopicsChangedListener: (listener: TopicsChangeListener) => emitter.on(PipelineEvent.TOPICS_CHANGED, listener),
+		removeTopicsChangedListener: (listener: TopicsChangeListener) => emitter.off(PipelineEvent.TOPICS_CHANGED, listener),
 
 		changeTopic: (topic: QueriedTopicForPipeline) => emitter.emit(PipelineEvent.TOPIC_CHANGED, store.topic = topic),
 		addTopicChangedListener: (listener: TopicChangeListener) => emitter.on(PipelineEvent.TOPIC_CHANGED, listener),
