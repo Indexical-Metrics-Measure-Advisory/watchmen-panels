@@ -68,9 +68,6 @@ const TopicTitle = styled.div`
 	align-items: center;
 	height: 32px;
 	padding: 0 calc(var(--margin) / 2);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	cursor: pointer;
 	&:hover {
 		background-color: var(--hover-color);
@@ -97,9 +94,16 @@ const TopicTitle = styled.div`
 	}
 	> div:nth-child(2) {
 		font-size: 0.8em;
+		min-height: 20px;
 		height: 20px;
+		min-width: 20px;
 		width: 20px;
 		margin-right: calc(var(--margin) / 4);
+	}
+	> span {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 `;
 const Factors = styled.div.attrs<{ visible: boolean, count: number }>(({ visible, count }) => {
@@ -146,7 +150,9 @@ const Factors = styled.div.attrs<{ visible: boolean, count: number }>(({ visible
 		}
 		> div:first-child {
 			font-size: 0.8em;
+			min-height: 20px;
 			height: 20px;
+			min-width: 20px;
 			width: 20px;
 			margin-right: calc(var(--margin) / 4);
 		}
