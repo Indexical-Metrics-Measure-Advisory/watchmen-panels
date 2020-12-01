@@ -1,8 +1,9 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { LinkButton } from '../../component/console/link-button';
+import { usePipelineContext } from './pipeline-context';
 
 const Header = styled.div.attrs({
 	'data-widget': 'console-pipeline-header'
@@ -65,18 +66,27 @@ const Buttons = styled.div`
 	}
 `;
 
-export const PipelineHeader = () => {
-	const onMenuClicked = () => {
+const MenuToggleButton = () => {
+	const { store: { menuVisible }, changeMenuVisible } = usePipelineContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
+	const onMenuClicked = () => {
+		forceUpdate();
+		changeMenuVisible(!menuVisible);
 	};
+
+	return <LinkButton ignoreHorizontalPadding={true} onClick={onMenuClicked}>
+		<FontAwesomeIcon icon={faBars}/>
+	</LinkButton>;
+
+};
+export const PipelineHeader = () => {
 
 	return <Header>
 		<Slice>Pipelines</Slice>
 		<Placeholder/>
 		<Buttons>
-			<LinkButton ignoreHorizontalPadding={true} onClick={onMenuClicked}>
-				<FontAwesomeIcon icon={faBars}/>
-			</LinkButton>
+			<MenuToggleButton/>
 		</Buttons>
 	</Header>;
 };
