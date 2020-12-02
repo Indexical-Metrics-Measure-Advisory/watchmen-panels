@@ -140,7 +140,10 @@ const DefaultTheme = {
 	consoleBgColorYear: 'rgba(255,161,0,0.1)',
 	consoleColorYear: 'rgb(255,161,0)',
 	consoleBgColorAncient: 'rgba(246,52,27, 0.1)',
-	consoleColorAncient: 'rgb(246,52,27)'
+	consoleColorAncient: 'rgb(246,52,27)',
+
+	// console navigator hover color
+	consoleNavigatorHoverColor: '#edf1f8'
 };
 
 export default DefaultTheme;

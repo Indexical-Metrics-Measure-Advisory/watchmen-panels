@@ -45,21 +45,37 @@ const Button = styled.button<{ 'ignore-horizontal-padding'?: boolean }>`
 export const LinkButton = (props: {
 	tooltip?: string;
 	center?: boolean;
+	right?: boolean;
+	offsetX?: number;
+	offsetY?: number;
 	ignoreHorizontalPadding?: boolean;
-	onClick?: (event: React.MouseEvent) => void;
+	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	children: ((props: any) => React.ReactNode) | React.ReactNode
 }) => {
-	const { tooltip, center = false, ignoreHorizontalPadding, onClick, children } = props;
+	const {
+		tooltip,
+		center = false,
+		right = false,
+		offsetX = 0,
+		offsetY = 10,
+		ignoreHorizontalPadding,
+		onClick,
+		children
+	} = props;
 
 	const buttonRef = useRef<HTMLButtonElement>(null);
 	const { mouseEnter, mouseLeave, hide } = useTooltip({
 		show: !!tooltip,
 		tooltip,
 		ref: buttonRef,
-		rect: () => ({ align: center ? TooltipAlignment.CENTER : TooltipAlignment.LEFT, offsetY: 10 })
+		rect: () => ({
+			align: center ? TooltipAlignment.CENTER : (right ? TooltipAlignment.RIGHT : TooltipAlignment.LEFT),
+			offsetY,
+			offsetX
+		})
 	});
 
-	const onClicked = (event: React.MouseEvent) => {
+	const onClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
 		if (onClick) {
 			hide && hide();
 			onClick(event);

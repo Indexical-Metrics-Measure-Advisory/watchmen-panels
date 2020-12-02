@@ -122,9 +122,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-color-year: ${({ theme }) => theme.consoleColorYear};
 		--console-bg-color-ancient: ${({ theme }) => theme.consoleBgColorAncient};
 		--console-color-ancient: ${({ theme }) => theme.consoleColorAncient};
-
+		--console-navigator-hover-color: ${({ theme }) => theme.consoleNavigatorHoverColor};
 		width: 100%;
-		
 		//&::-webkit-scrollbar {
 		//	background-color: var(--scrollbar-background-color);
 		//	width: 15px;

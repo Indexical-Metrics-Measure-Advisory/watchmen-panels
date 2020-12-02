@@ -1,12 +1,12 @@
-import { faChevronRight, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useReducer, useState } from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
-import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { Theme } from '../../../theme/types';
+import { LinkButton } from '../../component/console/link-button';
 import { ResizeHandle, ResizeHandleAlignment } from '../../component/console/menu/resize-handle';
-import { UserAvatar } from '../../component/console/user-avatar';
 import { usePipelineContext } from './pipeline-context';
+import { NavigatorTopic } from './pipeline-navigator-topic';
 
 const ScrollWidth = 15;
 const Navigator = styled.div.attrs<{ width: number, visible: boolean }>(({ theme, width, visible }) => {
@@ -57,137 +57,6 @@ const Body = styled.div`
 		border-radius: 2px;
 	}
 `;
-const Topic = styled.div`
-	display: flex;
-	flex-direction: column;
-	font-size: 0.8em;
-`;
-const TopicTitle = styled.div`
-	display: flex;
-	position: relative;
-	align-items: center;
-	height: 32px;
-	padding: 0 calc(var(--margin) / 2);
-	cursor: pointer;
-	&:hover {
-		background-color: var(--hover-color);
-	}
-	&[data-factors-visible=true] {
-		&:before {
-			content: '';
-			display: block;
-			position: absolute;
-			width: 1px;
-			height: 7px;
-			top: 25px;
-			left: calc(var(--margin) / 2 + 3px);
-			background-color: var(--console-waive-color);
-		}
-		> svg:first-child {
-			transform: rotateZ(90deg);
-		}
-	}
-	> svg:first-child {
-		margin-right: calc(var(--margin) / 4);
-		color: var(--console-waive-color);
-		transition: transform 300ms ease-in-out;
-	}
-	> div:nth-child(2) {
-		font-size: 0.8em;
-		min-height: 20px;
-		height: 20px;
-		min-width: 20px;
-		width: 20px;
-		margin-right: calc(var(--margin) / 4);
-	}
-	> span {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-`;
-const Factors = styled.div.attrs<{ visible: boolean, count: number }>(({ visible, count }) => {
-	return {
-		style: {
-			height: visible ? count * 32 : 0
-		}
-	};
-})<{ visible: boolean, count: number }>`
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	overflow: hidden;
-	transition: height 300ms ease-in-out;
-	> div {
-		display: flex;
-		position: relative;
-		align-items: center;
-		height: 32px;
-		padding: 0 calc(var(--margin) / 2) 0 calc(var(--margin) / 2 + 15px);
-		cursor: pointer;
-		&:hover {
-			background-color: var(--hover-color);
-		}
-		&:before,
-		&:after {
-			content: '';
-			display: block;
-			position: absolute;
-			background-color: var(--console-waive-color);
-		}
-		&:before {
-			left: calc(var(--margin) / 2 + 3px);
-			top: -16px;
-			height: 32px;
-			width: 1px;
-		}
-		&:after {
-			left: calc(var(--margin) / 2 + 3px);
-			top: 16px;
-			width: 8px;
-			height: 1px;
-			transform: translateY(-50%);
-		}
-		> div:first-child {
-			font-size: 0.8em;
-			min-height: 20px;
-			height: 20px;
-			min-width: 20px;
-			width: 20px;
-			margin-right: calc(var(--margin) / 4);
-		}
-		> span:nth-child(2) {
-			flex-grow: 1;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-	}
-`;
-
-const TopicItem = (props: { topic: QueriedTopicForPipeline }) => {
-	const { topic } = props;
-
-	const [ factorsVisible, setFactorsVisible ] = useState<boolean>(false);
-
-	const onTitleClicked = () => setFactorsVisible(!factorsVisible);
-
-	return <Topic>
-		<TopicTitle data-factors-visible={factorsVisible} onClick={onTitleClicked}>
-			<FontAwesomeIcon icon={faChevronRight}/>
-			<UserAvatar name={topic.type}/>
-			<span>{topic.name}</span>
-		</TopicTitle>
-		<Factors visible={factorsVisible} count={topic.factors.length}>
-			{topic.factors.map(factor => {
-				return <div key={factor.factorId}>
-					<UserAvatar name={factor.type}/>
-					<span>{factor.label}</span>
-				</div>;
-			})}
-		</Factors>
-	</Topic>;
-};
 
 const Spin = keyframes`
 	from {
@@ -206,7 +75,7 @@ const LoadingInCenterDiv = styled.div`
 	> svg {
 		font-size: 3em;
 		opacity: 0.2;
-		filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+		filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
 		animation: ${Spin} infinite 2s forwards linear;
 		margin-bottom: calc(var(--margin) / 4);
 	}
@@ -299,9 +168,12 @@ export const PipelineNavigator = () => {
 	return <Navigator width={width - ScrollWidth} visible={menuVisible}>
 		<Title>
 			<span>Topics</span>
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Locate In Navigator' right={true} offsetX={-8}>
+				<FontAwesomeIcon icon={faCrosshairs}/>
+			</LinkButton>
 		</Title>
 		<Body>
-			{topics.map(topic => <TopicItem topic={topic} key={topic.topicId}/>)}
+			{topics.map(topic => <NavigatorTopic topic={topic} key={topic.topicId}/>)}
 			<LoadingInCenter/>
 		</Body>
 		<LoadingInBottom/>
