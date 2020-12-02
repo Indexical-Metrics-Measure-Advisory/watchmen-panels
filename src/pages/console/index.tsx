@@ -31,7 +31,7 @@ const Container = styled.div.attrs({
 	}
 `;
 
-export const ConsoleIndex = () => {
+const ConsoleIndex = () => {
 	return <ConsoleContextProvider>
 		<Container>
 			<ConsoleMenu/>
@@ -52,3 +52,5 @@ export const ConsoleIndex = () => {
 		</Container>
 	</ConsoleContextProvider>;
 };
+
+export default ConsoleIndex;
