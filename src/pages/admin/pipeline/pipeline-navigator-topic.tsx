@@ -1,10 +1,12 @@
 import { faBezierCurve, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
+import { fetchPipeline } from '../../../services/admin/topic';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { LinkButton } from '../../component/console/link-button';
 import { UserAvatar } from '../../component/console/user-avatar';
+import { useDialog } from '../../context/dialog';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorFactors } from './pipeline-nagivator-factor';
 
@@ -72,14 +74,26 @@ const TopicContent = styled.div`
 export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 	const { topic } = props;
 
-	const { changeTopic } = usePipelineContext();
+	const { show: showDialog, hide: hideDialog } = useDialog();
+	const { changePipeline } = usePipelineContext();
 	const [ factorsVisible, setFactorsVisible ] = useState<boolean>(false);
 
 	const onTitleClicked = () => setFactorsVisible(!factorsVisible);
-	const onShowPipelineClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+	const onShowPipelineClicked = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
-		changeTopic(topic);
+		showDialog(
+			<div data-widget='dialog-console-loading'>
+				<span>Loading pipeline of topic <span data-widget='dialog-console-object'>{topic.name}</span>.</span>
+				<span>Don't close current page, it should take a while.</span>
+			</div>,
+			<Fragment>
+				<div style={{ flexGrow: 1 }}/>
+			</Fragment>
+		);
+		const pipeline = await fetchPipeline(topic.topicId);
+		hideDialog();
+		changePipeline(topic, pipeline);
 	};
 
 	return <TopicContainer>

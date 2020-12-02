@@ -87,3 +87,7 @@ export interface QueriedTopicForPipeline {
 	type: TopicType;
 	factors: Array<QueriedFactorForPipeline>;
 }
+
+export interface Pipeline {
+
+}

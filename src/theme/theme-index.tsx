@@ -256,22 +256,20 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	    overflow-x: hidden;
 	    width: 100%;
 	}
-	
 	a,
 	a:visited {
 		color: var(--font-color);
 	}
-	
 	code {
-	    font-family: var(--code-font-family);
+		font-family: var(--code-font-family);
 	}
-	
 	div[data-widget='dialog-console-delete'],
-	div[data-widget='dialog-console-rename'] {
+	div[data-widget='dialog-console-rename'],
+	div[data-widget='dialog-console-loading'] {
 		display: flex;
 		flex-direction: column;
 		line-height: 1.8em;
-    	margin-bottom: var(--margin);
+		margin-bottom: var(--margin);
 	}
 	div[data-widget='dialog-console-rename'] {
 		margin-bottom: 0;

@@ -30,6 +30,7 @@ const Slice = styled.div`
 	font-family: var(--console-title-font-family);
 	font-size: 1.6em;
 	padding: 0 calc(var(--margin) / 3);
+	margin-right: calc(var(--margin) / 3);
 	&:first-child {
 		padding-left: calc(var(--margin) / 2);
 	}
@@ -67,11 +68,19 @@ const Buttons = styled.div`
 `;
 
 const MenuToggleButton = () => {
-	const { store: { menuVisible }, changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener } = usePipelineContext();
+	const {
+		store: { menuVisible },
+		changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener,
+		addPipelineChangedListener, removePipelineChangedListener
+	} = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
 		addMenuVisibilityListener(forceUpdate);
-		return () => removeMenuVisibilityListener(forceUpdate);
+		addPipelineChangedListener(forceUpdate);
+		return () => {
+			removeMenuVisibilityListener(forceUpdate);
+			removePipelineChangedListener(forceUpdate);
+		};
 	});
 
 	const onMenuClicked = () => {
@@ -84,9 +93,19 @@ const MenuToggleButton = () => {
 
 };
 export const PipelineHeader = () => {
+	const {
+		store: { topic },
+		addPipelineChangedListener, removePipelineChangedListener
+	} = usePipelineContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		addPipelineChangedListener(forceUpdate);
+		return () => removePipelineChangedListener(forceUpdate);
+	});
 
 	return <Header>
 		<Slice>Pipelines</Slice>
+		{topic ? <Slice>{topic.name}</Slice> : null}
 		<Placeholder/>
 		<Buttons>
 			<MenuToggleButton/>

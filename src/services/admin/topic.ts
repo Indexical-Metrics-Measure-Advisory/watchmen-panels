@@ -1,4 +1,4 @@
-import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
+import { DataPage, FactorType, Pipeline, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
 
 const DemoTopics = [
 	{
@@ -104,5 +104,11 @@ export const listTopicsForPipeline = async (pageNumber: number, pageSize: number
 			data: DemoTopics,
 			completed: true
 		}), 5000);
+	});
+};
+
+export const fetchPipeline = async (topicId: string): Promise<Pipeline> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve(), 5000);
 	});
 };
