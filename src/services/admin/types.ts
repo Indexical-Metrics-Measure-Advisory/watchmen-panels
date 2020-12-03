@@ -89,6 +89,7 @@ export interface QueriedTopicForPipeline {
 }
 
 export interface Stage {
+	stageId: string;
 }
 
 export interface Pipeline {
