@@ -4,9 +4,9 @@ import Path from '../common/path';
 import Home from './home';
 import Welcome from './welcome';
 
-const Guide = lazy(() => import(/** guide */ './guide'));
-const Console = lazy(() => import(/** console */ './console'));
-const Admin = lazy(() => import(/** admin */ './admin'));
+const Guide = lazy(() => import(/* webpackChunkName: "guide" */ './guide'));
+const Console = lazy(() => import(/* webpackChunkName: "console" */ './console'));
+const Admin = lazy(() => import(/* webpackChunkName: "admin" */ './admin'));
 
 export const Pages = () => {
 	return <Suspense fallback={<div/>}>

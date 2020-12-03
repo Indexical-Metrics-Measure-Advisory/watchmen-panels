@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
-import { PipelineDiagram } from './pipeline-diagram';
-import { PipelineStageEditor } from './pipeline-stage-editor';
+import { usePipelineContext } from './pipeline-context';
 
 const Body = styled.div.attrs({
 	'data-widget': 'console-pipeline-body'
@@ -10,8 +9,17 @@ const Body = styled.div.attrs({
 `;
 
 export const PipelineBody = () => {
+	const {
+		store: { topics, topic, pipeline },
+		addPipelineFlowChangedListener,
+		removePipelineFlowChangedListener
+	} = usePipelineContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		addPipelineFlowChangedListener(forceUpdate);
+		return () => removePipelineFlowChangedListener(forceUpdate);
+	});
+
 	return <Body>
-		<PipelineDiagram/>
-		<PipelineStageEditor/>
 	</Body>;
 };

@@ -1,24 +1,25 @@
 import { EventEmitter } from 'events';
 import React, { useEffect, useState } from 'react';
+import { PipelineFlow } from '../../../services/admin/pipeline-types';
 import { listTopicsForPipeline } from '../../../services/admin/topic';
-import { Pipeline, QueriedTopicForPipeline } from '../../../services/admin/types';
+import { QueriedTopicForPipeline } from '../../../services/admin/types';
 
 export enum PipelineEvent {
 	TOPICS_CHANGED = 'topics-changed',
 
-	PIPELINE_CHANGED = 'pipeline-changed',
+	PIPELINE_FLOW_CHANGED = 'pipeline-flow-changed',
 
 	MENU_VISIBLE = 'menu-visible'
 }
 
 export type TopicsChangeListener = () => void;
-export type PipelineChangeListener = (topic: QueriedTopicForPipeline, pipeline: Pipeline) => void;
+export type PipelineFlowChangeListener = (topic: QueriedTopicForPipeline, pipeline: PipelineFlow) => void;
 export type MenuVisibilityListener = (visible: boolean) => void;
 
 export interface PipelineContextStore {
 	topics: Array<QueriedTopicForPipeline>;
 
-	pipeline?: Pipeline;
+	pipeline?: PipelineFlow;
 	topic?: QueriedTopicForPipeline;
 
 	menuVisible: boolean;
@@ -29,9 +30,9 @@ export interface PipelineContextUsable {
 	addTopicsChangedListener: (listener: TopicsChangeListener) => void;
 	removeTopicsChangedListener: (listener: TopicsChangeListener) => void;
 
-	changePipeline: (topic: QueriedTopicForPipeline, pipeline: Pipeline) => void;
-	addPipelineChangedListener: (listener: PipelineChangeListener) => void;
-	removePipelineChangedListener: (listener: PipelineChangeListener) => void;
+	changePipelineFlow: (topic: QueriedTopicForPipeline, pipeline: PipelineFlow) => void;
+	addPipelineFlowChangedListener: (listener: PipelineFlowChangeListener) => void;
+	removePipelineFlowChangedListener: (listener: PipelineFlowChangeListener) => void;
 
 	changeMenuVisible: (visible: boolean) => void;
 	addMenuVisibilityListener: (listener: MenuVisibilityListener) => void;
@@ -82,9 +83,9 @@ export const PipelineContextProvider = (props: {
 		addTopicsChangedListener: (listener: TopicsChangeListener) => emitter.on(PipelineEvent.TOPICS_CHANGED, listener),
 		removeTopicsChangedListener: (listener: TopicsChangeListener) => emitter.off(PipelineEvent.TOPICS_CHANGED, listener),
 
-		changePipeline: (topic: QueriedTopicForPipeline, pipeline: Pipeline) => emitter.emit(PipelineEvent.PIPELINE_CHANGED, store.topic = topic, store.pipeline = pipeline),
-		addPipelineChangedListener: (listener: PipelineChangeListener) => emitter.on(PipelineEvent.PIPELINE_CHANGED, listener),
-		removePipelineChangedListener: (listener: PipelineChangeListener) => emitter.off(PipelineEvent.PIPELINE_CHANGED, listener),
+		changePipelineFlow: (topic: QueriedTopicForPipeline, pipeline: PipelineFlow) => emitter.emit(PipelineEvent.PIPELINE_FLOW_CHANGED, store.topic = topic, store.pipeline = pipeline),
+		addPipelineFlowChangedListener: (listener: PipelineFlowChangeListener) => emitter.on(PipelineEvent.PIPELINE_FLOW_CHANGED, listener),
+		removePipelineFlowChangedListener: (listener: PipelineFlowChangeListener) => emitter.off(PipelineEvent.PIPELINE_FLOW_CHANGED, listener),
 
 		changeMenuVisible: (visible: boolean) => emitter.emit(PipelineEvent.MENU_VISIBLE, store.menuVisible = visible),
 		addMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.on(PipelineEvent.MENU_VISIBLE, listener),

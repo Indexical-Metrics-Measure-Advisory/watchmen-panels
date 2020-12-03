@@ -75,7 +75,7 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 	const { topic } = props;
 
 	const { show: showDialog, hide: hideDialog } = useDialog();
-	const { changePipeline } = usePipelineContext();
+	const { changePipelineFlow } = usePipelineContext();
 	const [ factorsVisible, setFactorsVisible ] = useState<boolean>(false);
 
 	const onTitleClicked = () => setFactorsVisible(!factorsVisible);
@@ -91,9 +91,9 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 				<div style={{ flexGrow: 1 }}/>
 			</Fragment>
 		);
-		const pipeline = await fetchPipeline(topic.topicId);
+		const pipelineFlow = await fetchPipeline(topic.topicId);
 		hideDialog();
-		changePipeline(topic, pipeline);
+		changePipelineFlow(topic, pipelineFlow);
 	};
 
 	return <TopicContainer>

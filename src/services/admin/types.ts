@@ -88,10 +88,3 @@ export interface QueriedTopicForPipeline {
 	factors: Array<QueriedFactorForPipeline>;
 }
 
-export interface Stage {
-	stageId: string;
-}
-
-export interface Pipeline {
-	stages: Array<Stage>
-}

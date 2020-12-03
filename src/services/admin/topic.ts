@@ -1,4 +1,5 @@
-import { DataPage, FactorType, Pipeline, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
+import { PipelineFlow, PipelineTriggerType, UnitActionType, ValueType } from './pipeline-types';
+import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
 
 const DemoTopics = [
 	{
@@ -75,6 +76,31 @@ const DemoTopics = [
 			{ factorId: '306', name: 'gender', label: 'Gender', type: FactorType.ENUM },
 			{ factorId: '307', name: 'city', label: 'City', type: FactorType.ENUM }
 		]
+	},
+	{
+		topicId: '4', code: 'raw-quotation', name: 'Raw Quotation', type: TopicType.RAW,
+		raw: true,
+		factorCount: 10, reportCount: 0,
+		groupCount: 0, spaceCount: 0,
+		factors: [
+			{ factorId: '401', name: 'quotationId', label: 'Quotation Sequence', type: FactorType.SEQUENCE },
+			{ factorId: '402', name: 'quotationNo', label: 'Quotation No.', type: FactorType.TEXT },
+			{ factorId: '403', name: 'quoteDate', label: 'Quotation Create Date', type: FactorType.DATETIME },
+			{ factorId: '404', name: 'policyNo', label: 'Policy No.', type: FactorType.TEXT },
+			{ factorId: '405', name: 'issueDate', label: 'Issue Date', type: FactorType.DATETIME },
+			{ factorId: '406', name: 'holderId', label: 'Holder Id', type: FactorType.SEQUENCE },
+			{ factorId: '407', name: 'holderFirstName', label: 'Holder First Name', type: FactorType.TEXT },
+			{ factorId: '408', name: 'holderLastName', label: 'Holder Last Name', type: FactorType.TEXT },
+			{
+				factorId: '410',
+				name: 'holderDateOfBirth',
+				label: 'Policy Holder Birth Date',
+				type: FactorType.DATETIME
+			},
+			{ factorId: '411', name: 'holderGender', label: 'Holder Gender', type: FactorType.ENUM },
+			{ factorId: '412', name: 'holderCity', label: 'Holder City', type: FactorType.ENUM },
+			{ factorId: '413', name: 'premium', label: 'Holder Premium', type: FactorType.NUMBER }
+		]
 	}
 ];
 
@@ -107,8 +133,39 @@ export const listTopicsForPipeline = async (pageNumber: number, pageSize: number
 	});
 };
 
-export const fetchPipeline = async (topicId: string): Promise<Pipeline> => {
+const DemoPipelineOfPolicy = {
+	topicId: '2',
+	consume: [
+		{
+			topicId: '4', type: PipelineTriggerType.INSERT,
+			stages: [
+				{
+					units: [
+						{
+							do: [
+								{
+									type: UnitActionType.WRITE_FACTOR,
+									topicId: '2',
+									factorId: '201',
+									value: { type: ValueType.FACTOR, topicId: '4', factorId: '401' }
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+};
+
+export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {
 	return new Promise(resolve => {
-		setTimeout(() => resolve(), 5000);
+		setTimeout(() => {
+			if (topicId === '2') {
+				resolve(DemoPipelineOfPolicy);
+			} else {
+				resolve({ topicId });
+			}
+		}, 5000);
 	});
 };
