@@ -88,6 +88,9 @@ export interface QueriedTopicForPipeline {
 	factors: Array<QueriedFactorForPipeline>;
 }
 
-export interface Pipeline {
+export interface Stage {
+}
 
+export interface Pipeline {
+	stages: Array<Stage>
 }
