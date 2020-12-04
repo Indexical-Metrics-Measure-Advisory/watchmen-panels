@@ -1,4 +1,4 @@
-import { PipelineFlow, PipelineTriggerType, UnitActionType, ValueType } from './pipeline-types';
+import { PipelineFlow, PipelineTriggerType, ValueType, WriteTopicActionType } from './pipeline-types';
 import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
 
 const DemoTopics = [
@@ -129,7 +129,7 @@ export const listTopicsForPipeline = async (pageNumber: number, pageSize: number
 		setTimeout(() => resolve({
 			data: DemoTopics,
 			completed: true
-		}), 5000);
+		}), 1000);
 	});
 };
 
@@ -144,7 +144,7 @@ const DemoPipelineOfPolicy = {
 						{
 							do: [
 								{
-									type: UnitActionType.WRITE_FACTOR,
+									type: WriteTopicActionType.WRITE_FACTOR,
 									topicId: '2',
 									factorId: '201',
 									value: { type: ValueType.FACTOR, topicId: '4', factorId: '401' }
@@ -155,7 +155,8 @@ const DemoPipelineOfPolicy = {
 				}
 			]
 		}
-	]
+	],
+	produce: []
 };
 
 export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {
@@ -164,8 +165,8 @@ export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {
 			if (topicId === '2') {
 				resolve(DemoPipelineOfPolicy);
 			} else {
-				resolve({ topicId });
+				resolve({ topicId, consume: [], produce: [] });
 			}
-		}, 5000);
+		}, 1000);
 	});
 };

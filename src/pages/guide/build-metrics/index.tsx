@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import Path, { toDomain } from '../../../common/path';
 import { BigButton, ButtonType } from '../../component/button';
 import { useAlert } from '../../context/alert';
@@ -97,7 +97,7 @@ const BuildMetrics = () => {
 		setRnd(true);
 	};
 	const onQuitExportClicked = () => setRnd(false);
-	const onAddParagraphClicked = () => setTexts([ ...texts, { text: 'New paragraph content here.', uuid: uuid() } ]);
+	const onAddParagraphClicked = () => setTexts([ ...texts, { text: 'New paragraph content here.', uuid: v4() } ]);
 
 	const onNoObjectsClicked = () => history.push(toDomain(Path.GUIDE_IMPORT_DATA, guide.getDomain().code));
 

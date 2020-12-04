@@ -71,15 +71,15 @@ const MenuToggleButton = () => {
 	const {
 		store: { menuVisible },
 		changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener,
-		addPipelineFlowChangedListener, removePipelineFlowChangedListener
+		addFlowChangedListener, removeFlowChangedListener
 	} = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
 		addMenuVisibilityListener(forceUpdate);
-		addPipelineFlowChangedListener(forceUpdate);
+		addFlowChangedListener(forceUpdate);
 		return () => {
 			removeMenuVisibilityListener(forceUpdate);
-			removePipelineFlowChangedListener(forceUpdate);
+			removeFlowChangedListener(forceUpdate);
 		};
 	});
 
@@ -95,12 +95,12 @@ const MenuToggleButton = () => {
 export const PipelineHeader = () => {
 	const {
 		store: { topic },
-		addPipelineFlowChangedListener, removePipelineFlowChangedListener
+		addFlowChangedListener, removeFlowChangedListener
 	} = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
-		addPipelineFlowChangedListener(forceUpdate);
-		return () => removePipelineFlowChangedListener(forceUpdate);
+		addFlowChangedListener(forceUpdate);
+		return () => removeFlowChangedListener(forceUpdate);
 	});
 
 	return <Header>
