@@ -27,6 +27,12 @@ export interface UnitAction {
 	type?: UnitActionType;
 }
 
+export enum FactorValueArithmetic {
+	YEAR_OF = 'year-of',
+	MONTH_OF = 'month-of',
+	WEEK_OF = 'week-of'
+}
+
 export enum ValueType {
 	IN_MEMORY = 'in-memory',
 	FACTOR = 'factor'
@@ -45,6 +51,10 @@ export interface FactorValue {
 	type: ValueType.FACTOR;
 	topicId: string;
 	factorId: string;
+}
+
+export interface ComputedFactorValue extends FactorValue {
+	arithmetic: FactorValueArithmetic.YEAR_OF;
 }
 
 export interface WriteTopic extends UnitAction {

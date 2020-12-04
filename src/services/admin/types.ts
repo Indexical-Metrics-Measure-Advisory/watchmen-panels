@@ -78,6 +78,7 @@ export enum TopicType {
 	DISTINCT = 'distinct',
 	AGGREGATE = 'aggregate',
 	TIME = 'time',
+	RATIO = 'ratio',
 	NOT_DEFINED = 'not-defined'
 }
 

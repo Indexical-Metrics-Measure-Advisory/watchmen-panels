@@ -9,7 +9,6 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		padding: 0;
 		box-sizing: border-box;
 	}
-	
 	html {
 		--primary-color: ${({ theme }) => theme.primaryColor};
 		--primary-hover-color: ${({ theme }) => theme.primaryHoverColor};
@@ -18,14 +17,13 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--success-color: ${({ theme }) => theme.successColor};
 		--success-hover-color: ${({ theme }) => theme.successHoverColor};
 		--invert-color: ${({ theme }) => theme.invertColor};
-		--bg-color:  ${({ theme }) => theme.bgColor};
-		--bg-color-opacity:  ${({ theme }) => theme.bgColorOpacity};
-		--bg-color-opacity7:  ${({ theme }) => theme.bgColorOpacity7};
+		--bg-color: ${({ theme }) => theme.bgColor};
+		--bg-color-opacity: ${({ theme }) => theme.bgColorOpacity};
+		--bg-color-opacity7: ${({ theme }) => theme.bgColorOpacity7};
 		--hover-color: ${({ theme }) => theme.hoverColor};
 		--active-color: ${({ theme }) => theme.activeColor};
 		--invert-bg-color: ${({ theme }) => theme.invertBgColor};
 		--hover-shadow: ${({ theme }) => theme.hoverShadow};
-		
 		--font-family: ${({ theme }) => theme.fontFamily};
 		--code-font-family: ${({ theme }) => theme.codeFontFamily};
 		--font-size: ${({ theme }) => theme.fontSize}px;
@@ -37,30 +35,21 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--title-font-size: ${({ theme }) => theme.titleFontSize}px;
 		--title-line-height: ${({ theme }) => theme.titleLineHeight}px;
 		--letter-gap: ${({ theme }) => theme.letterGap}px;
-		
 		--height: ${({ theme }) => theme.height}px;
-		
 		--border-color: ${({ theme }) => theme.borderColor};
 		--border: ${({ theme }) => theme.border};
 		--border-radius: ${({ theme }) => theme.borderRadius}px;
-		
 		--scrollbar-background-color: ${({ theme }) => theme.scrollbarBgColor};
 		--scrollbar-thumb-background-color: ${({ theme }) => theme.scrollbarThumbBgColor};
 		--scrollbar-border-color: ${({ theme }) => theme.scrollbarBorderColor};
-		
 		--input-indent: ${({ theme }) => theme.inputIndent}px;
-		
 		--dialog-box-shadow: ${({ theme }) => theme.dialogBoxShadow};
-		
 		--header-bg-color: ${({ theme }) => theme.headerBgColor};
 		--header-box-shadow: ${({ theme }) => theme.headerBoxShadow};
 		--header-z-index: ${({ theme }) => theme.headerZIndex};
-		
 		--footer-bg-color: ${({ theme }) => theme.footerBgColor};
 		--footer-color: ${({ theme }) => theme.footerColor};
-		
 		--margin: ${({ theme }) => theme.deskPageMargin}px;
-		
 		--console-font-color: ${({ theme }) => theme.consoleFontColor};
 		--console-hover-color: ${({ theme }) => theme.consoleHoverColor};
 		--console-primary-color: ${({ theme }) => theme.consolePrimaryColor};
@@ -73,24 +62,18 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-hover-shadow: ${({ theme }) => theme.consoleHoverShadow};
 		--console-primary-shadow: ${({ theme }) => theme.consolePrimaryShadow};
 		--console-primary-hover-shadow: ${({ theme }) => theme.consolePrimaryHoverShadow};
-		
 		--console-menu-width: ${({ theme }) => theme.consoleMenuWidth}px;
 		--console-menu-height: ${({ theme }) => theme.consoleMenuHeight}px;
 		--console-menu-max-width: ${({ theme }) => theme.consoleMenuMaxWidth}px;
 		--console-menu-item-icon-size: ${({ theme }) => theme.consoleMenuItemIconSize}px;
 		--console-menu-separator-color: ${({ theme }) => theme.consoleMenuSeparatorColor};
-		
 		--console-tooltip-bg-color: ${({ theme }) => theme.consoleTooltipBgColor};
 		--console-tooltip-min-height: ${({ theme }) => theme.consoleTooltipMinHeight};
-		
 		--console-title-font-family: ${({ theme }) => theme.consoleTitleFontFamily};
 		--console-title-font-weight: ${({ theme }) => theme.consoleTitleFontWeight};
-		
 		--console-favorite-color: ${({ theme }) => theme.consoleFavoriteColor};
 		--console-favorite-pinned-height: ${({ theme }) => theme.consoleFavoritePinnedHeight}px;
-		
 		--console-home-section-body-bg-color: ${({ theme }) => theme.consoleHomeSectionBodyBgColor};
-		
 		--console-message-header-bg-color: ${({ theme }) => theme.consoleMessageHeaderBgColor};
 		--console-mail-color: ${({ theme }) => theme.consoleMailColor};
 		--console-notification-color-1: ${({ theme }) => theme.consoleNotificationColor1};
@@ -101,17 +84,13 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-notification-dot-color-2: ${({ theme }) => theme.consoleNotificationDotColor2};
 		--console-notification-dot-color-3: ${({ theme }) => theme.consoleNotificationDotColor3};
 		--console-notification-dot-color-4: ${({ theme }) => theme.consoleNotificationDotColor4};
-		
 		--console-space-header-height: ${({ theme }) => theme.consoleSpaceHeaderHeight}px;
-		
 		--console-group-bg-color: ${({ theme }) => theme.consoleGroupBgColor};
 		--console-group-quote-color: ${({ theme }) => theme.consoleGroupQuoteColor};
 		--console-bg-color-ungroup: ${({ theme }) => theme.consoleBgColorUngroup};
 		--console-color-ungroup: ${({ theme }) => theme.consoleColorUngroup};
-		
 		--console-subject-height: ${({ theme }) => theme.consoleSubjectHeight}px;
 		--console-subject-topic-bg-color: ${({ theme }) => theme.consoleSubjectTopicBgColor};
-		
 		--console-bg-color-recent: ${({ theme }) => theme.consoleBgColorRecent};
 		--console-color-recent: ${({ theme }) => theme.consoleColorRecent};
 		--console-bg-color-week: ${({ theme }) => theme.consoleBgColorWeek};
@@ -123,6 +102,12 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-bg-color-ancient: ${({ theme }) => theme.consoleBgColorAncient};
 		--console-color-ancient: ${({ theme }) => theme.consoleColorAncient};
 		--console-navigator-hover-color: ${({ theme }) => theme.consoleNavigatorHoverColor};
+		--console-raw-topic-color: ${({ theme }) => theme.consoleRawTopicColor};
+		--console-distinct-topic-color: ${({ theme }) => theme.consoleDistinctTopicColor};
+		--console-aggregate-topic-color: ${({ theme }) => theme.consoleAggregateTopicColor};
+		--console-time-topic-color: ${({ theme }) => theme.consoleTimeTopicColor};
+		--console-ratio-topic-color: ${({ theme }) => theme.consoleRatioTopicColor};
+		--console-undefined-topic-color: ${({ theme }) => theme.consoleUndefinedTopicColor};
 		width: 100%;
 		//&::-webkit-scrollbar {
 		//	background-color: var(--scrollbar-background-color);
@@ -136,7 +121,6 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		//&::-webkit-scrollbar-corner {
 		//	background-color: var(--scrollbar-background-color);
 		//}
-		
 		&[data-on-print='true'] {
 			body {
 				background-color: transparent;
@@ -190,24 +174,23 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 			}
 		}
 	}
-	
 	.ql-editor .ql-font-Microsoft-YaHei {
-  		font-family: Microsoft YaHei;
+		font-family: Microsoft YaHei;
 	}
 	.ql-editor .ql-font-SimHei {
-	  	font-family: SimHei;
+		font-family: SimHei;
 	}
 	.ql-editor .ql-font-Arial {
-	  	font-family: Arial;
+		font-family: Arial;
 	}
 	.ql-editor .ql-font-Times-New-Roman {
-	  	font-family: Times New Roman;
+		font-family: Times New Roman;
 	}
 	.ql-editor .ql-font-Tahoma {
-	  	font-family: Tahoma;
+		font-family: Tahoma;
 	}
 	.ql-editor .ql-font-Verdana {
-	  	font-family: Verdana;
+		font-family: Verdana;
 	}
 	.ql-snow .ql-picker.ql-font .ql-picker-label::before,
 	.ql-snow .ql-picker.ql-font .ql-picker-item::before {
@@ -237,24 +220,22 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=Verdana]::before {
 		content: "Verdana";
 	}
-	
 	@media (max-width: ${({ theme }) => theme.maxMobileWidth}px) {
 		html {
 			--margin: ${({ theme }) => theme.mobilePageMargin}px;
 		}
 	}
-	
 	body {
-	    margin: 0;
-	    font-family: var(--font-family);
-	    font-size: var(--font-size);
-	    color: var(--font-color);
-	    -webkit-font-smoothing: antialiased;
-	    -moz-osx-font-smoothing: grayscale;
-	    position: relative;
-	    background-color: var(--bg-color);
-	    overflow-x: hidden;
-	    width: 100%;
+		margin: 0;
+		font-family: var(--font-family);
+		font-size: var(--font-size);
+		color: var(--font-color);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		position: relative;
+		background-color: var(--bg-color);
+		overflow-x: hidden;
+		width: 100%;
 	}
 	a,
 	a:visited {
@@ -289,7 +270,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		}
 		> span:last-child {
 			font-size: 0.8em;
-			color: var(--console-danger-color);	
+			color: var(--console-danger-color);
 			opacity: 0;
 			transition: all 300ms ease-in-out;
 		}

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
-import { UserAvatar } from '../../component/console/user-avatar';
+import { FactorIcon } from './components';
 
 const FactorsContainer = styled.div.attrs<{ visible: boolean, count: number }>(({ visible, count }) => {
 	return {
@@ -71,7 +71,7 @@ export const NavigatorFactors = (props: {
 	return <FactorsContainer visible={visible} count={topic.factors.length}>
 		{topic.factors.map(factor => {
 			return <div key={factor.factorId}>
-				<UserAvatar name={factor.type}/>
+				<FactorIcon factor={factor}/>
 				<span>{factor.label}</span>
 			</div>;
 		})}

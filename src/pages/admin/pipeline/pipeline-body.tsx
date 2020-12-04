@@ -11,6 +11,8 @@ const Body = styled.div.attrs({
 })`
 	display: flex;
 	position: relative;
+	align-self: stretch;
+	overflow: hidden;
 `;
 const Ordering = styled.div`
 	display: flex;
@@ -45,7 +47,7 @@ const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 	// key is topic, value is pipeline array which triggered by this topic
 	const sourceMap = new Map<string, Array<WellKnownPipeline>>();
 	const targetMap = new Map<string, Array<WellKnownPipeline>>();
-	flow.consume.forEach(pipeline => {
+	[ flow.consume, flow.produce ].forEach(pipelines => pipelines.forEach(pipeline => {
 		const { topicId, stages } = pipeline;
 
 		// compute targets of given pipeline's
@@ -79,7 +81,7 @@ const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 				endsTo.push(wellKnown);
 			}
 		});
-	});
+	}));
 	return { starts: sourceMap, ends: targetMap };
 };
 

@@ -1,4 +1,10 @@
-import { PipelineFlow, PipelineTriggerType, ValueType, WriteTopicActionType } from './pipeline-types';
+import {
+	FactorValueArithmetic,
+	PipelineFlow,
+	PipelineTriggerType,
+	ValueType,
+	WriteTopicActionType
+} from './pipeline-types';
 import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
 
 const DemoTopics = [
@@ -99,7 +105,57 @@ const DemoTopics = [
 			},
 			{ factorId: '411', name: 'holderGender', label: 'Holder Gender', type: FactorType.ENUM },
 			{ factorId: '412', name: 'holderCity', label: 'Holder City', type: FactorType.ENUM },
-			{ factorId: '413', name: 'premium', label: 'Holder Premium', type: FactorType.NUMBER }
+			{ factorId: '413', name: 'premium', label: 'Premium', type: FactorType.NUMBER }
+		]
+	},
+	{
+		topicId: '5', code: 'weekly-policy-premium', name: 'Weekly Policy Premium', type: TopicType.TIME,
+		raw: false,
+		factorCount: 3, reportCount: 0, groupCount: 0, spaceCount: 0,
+		factors: [
+			{ factorId: '501', name: 'year', label: 'Year', type: FactorType.NUMBER },
+			{ factorId: '502', name: 'week', label: 'Week', type: FactorType.NUMBER },
+			{ factorId: '503', name: 'premium', label: 'Premium Sum', type: FactorType.NUMBER }
+		]
+	},
+	{
+		topicId: '6', code: 'monthly-policy-premium', name: 'Monthly Policy Premium', type: TopicType.TIME,
+		raw: false,
+		factorCount: 3, reportCount: 0, groupCount: 0, spaceCount: 0,
+		factors: [
+			{ factorId: '601', name: 'year', label: 'Year', type: FactorType.NUMBER },
+			{ factorId: '602', name: 'month', label: 'Month', type: FactorType.NUMBER },
+			{ factorId: '603', name: 'premium', label: 'Premium Sum', type: FactorType.NUMBER }
+		]
+	},
+	{
+		topicId: '7', code: 'raw-endorsement', name: 'Raw Endorsement', type: TopicType.RAW,
+		raw: true,
+		factorCount: 10, reportCount: 0,
+		groupCount: 0, spaceCount: 0,
+		factors: [
+			{ factorId: '701', name: 'endorsementId', label: 'Endorsement Sequence', type: FactorType.SEQUENCE },
+			{ factorId: '702', name: 'endorsementNo', label: 'Endorsement No.', type: FactorType.TEXT },
+			{ factorId: '703', name: 'endorsementDate', label: 'Endorsement Create Date', type: FactorType.DATETIME },
+			{ factorId: '704', name: 'policyNo', label: 'Policy No.', type: FactorType.TEXT },
+			{ factorId: '705', name: 'effectiveDate', label: 'Effective Date', type: FactorType.DATETIME },
+			{ factorId: '706', name: 'premium', label: 'Premium', type: FactorType.NUMBER }
+		]
+	},
+	{
+		topicId: '8',
+		code: 'weekly-policy-premium-increment',
+		name: 'Weekly Policy Premium Increment',
+		type: TopicType.RATIO,
+		raw: false,
+		factorCount: 3,
+		reportCount: 0,
+		groupCount: 0,
+		spaceCount: 0,
+		factors: [
+			{ factorId: '801', name: 'year', label: 'Year', type: FactorType.NUMBER },
+			{ factorId: '802', name: 'week', label: 'Week', type: FactorType.NUMBER },
+			{ factorId: '803', name: 'incrementRatio', label: 'Increment Ratio', type: FactorType.NUMBER }
 		]
 	}
 ];
@@ -154,9 +210,119 @@ const DemoPipelineOfPolicy = {
 					]
 				}
 			]
+		},
+		{
+			topicId: '7', type: PipelineTriggerType.INSERT,
+			stages: [
+				{
+					units: [
+						{
+							do: [
+								{
+									type: WriteTopicActionType.WRITE_FACTOR,
+									topicId: '2',
+									factorId: '201',
+									value: { type: ValueType.FACTOR, topicId: '4', factorId: '401' }
+								}
+							]
+						}
+					]
+				}
+			]
 		}
 	],
-	produce: []
+	produce: [
+		{
+			topicId: '2', type: PipelineTriggerType.INSERT_OR_MERGE,
+			stages: [
+				{
+					units: [
+						{
+							do: [
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '5', factorId: '501',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '2',
+										factorId: '205',
+										arithmetic: FactorValueArithmetic.YEAR_OF
+									}
+								},
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '5', factorId: '502',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '2',
+										factorId: '205',
+										arithmetic: FactorValueArithmetic.WEEK_OF
+									}
+								},
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '5', factorId: '503',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '2',
+										factorId: '207'
+									}
+								}
+							]
+						},
+						{
+							do: [
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '6', factorId: '601',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '2',
+										factorId: '205',
+										arithmetic: FactorValueArithmetic.YEAR_OF
+									}
+								},
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '6', factorId: '602',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '2',
+										factorId: '205',
+										arithmetic: FactorValueArithmetic.MONTH_OF
+									}
+								},
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '6', factorId: '603',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '2',
+										factorId: '207'
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			topicId: '5', type: PipelineTriggerType.INSERT_OR_MERGE,
+			stages: [
+				{
+					units: [
+						{
+							do: [
+								{
+									type: WriteTopicActionType.WRITE_FACTOR, topicId: '8', factorId: '801',
+									value: {
+										type: ValueType.FACTOR,
+										topicId: '5',
+										factorId: '501'
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
 };
 
 export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {

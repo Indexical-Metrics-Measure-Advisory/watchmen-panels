@@ -139,11 +139,19 @@ const DefaultTheme = {
 	consoleColorMonth: 'rgb(138,53,193)',
 	consoleBgColorYear: 'rgba(255,161,0,0.1)',
 	consoleColorYear: 'rgb(255,161,0)',
-	consoleBgColorAncient: 'rgba(246,52,27, 0.1)',
+	consoleBgColorAncient: 'rgba(246,52,27,0.1)',
 	consoleColorAncient: 'rgb(246,52,27)',
 
 	// console navigator hover color
-	consoleNavigatorHoverColor: '#edf1f8'
+	consoleNavigatorHoverColor: '#edf1f8',
+
+	// console pipeline topic color
+	consoleRawTopicColor: 'rgba(119,177,127,0.7)',
+	consoleDistinctTopicColor: 'rgba(53,149,193,0.7)',
+	consoleAggregateTopicColor: 'rgba(138,53,193,0.7)',
+	consoleTimeTopicColor: 'rgba(255,161,0,0.7)',
+	consoleRatioTopicColor: 'rgba(246,52,27,0.7)',
+	consoleUndefinedTopicColor: 'rgba(181,188,194,0.7)'
 };
 
 export default DefaultTheme;

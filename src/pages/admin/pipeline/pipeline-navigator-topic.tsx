@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { fetchPipeline } from '../../../services/admin/topic';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { LinkButton } from '../../component/console/link-button';
-import { UserAvatar } from '../../component/console/user-avatar';
 import { useDialog } from '../../context/dialog';
+import { TopicIcon } from './components';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorFactors } from './pipeline-nagivator-factor';
 
@@ -50,11 +50,6 @@ const TopicContent = styled.div`
 		transition: transform 300ms ease-in-out;
 	}
 	> div:nth-child(2) {
-		font-size: 0.8em;
-		min-height: 20px;
-		height: 20px;
-		min-width: 20px;
-		width: 20px;
 		margin-right: calc(var(--margin) / 4);
 	}
 	> span {
@@ -99,7 +94,7 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 	return <TopicContainer>
 		<TopicContent data-factors-visible={factorsVisible} onClick={onTitleClicked}>
 			<FontAwesomeIcon icon={faChevronRight}/>
-			<UserAvatar name={topic.type}/>
+			<TopicIcon topic={topic}/>
 			<span>{topic.name}</span>
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Show Pipeline' right={true} offsetX={-8}
 			            onClick={onShowPipelineClicked}>

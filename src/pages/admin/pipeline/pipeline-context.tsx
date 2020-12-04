@@ -9,12 +9,14 @@ export enum PipelineEvent {
 
 	FLOW_CHANGED = 'flow-changed',
 
-	MENU_VISIBLE = 'menu-visible'
+	MENU_VISIBLE = 'menu-visible',
+	TOPIC_SELECTION_CHANGED = 'topic-selection-changed'
 }
 
 export type TopicsChangeListener = () => void;
 export type FlowChangeListener = (topic: QueriedTopicForPipeline, flow: PipelineFlow) => void;
 export type MenuVisibilityListener = (visible: boolean) => void;
+export type TopicSelectionChangeListener = (topic?: QueriedTopicForPipeline) => void;
 
 export interface PipelineContextStore {
 	topics: Array<QueriedTopicForPipeline>;
@@ -24,6 +26,8 @@ export interface PipelineContextStore {
 
 	menuVisible: boolean;
 	topicsLoadCompleted: boolean;
+
+	selectedTopic?: QueriedTopicForPipeline;
 }
 
 export interface PipelineContextUsable {
@@ -37,6 +41,10 @@ export interface PipelineContextUsable {
 	changeMenuVisible: (visible: boolean) => void;
 	addMenuVisibilityListener: (listener: MenuVisibilityListener) => void;
 	removeMenuVisibilityListener: (listener: MenuVisibilityListener) => void;
+
+	changeSelectedTopic: (topic?: QueriedTopicForPipeline) => void;
+	addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
+	removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
 }
 
 export interface PipelineContext extends PipelineContextUsable {
@@ -91,7 +99,14 @@ export const PipelineContextProvider = (props: {
 
 		changeMenuVisible: (visible: boolean) => emitter.emit(PipelineEvent.MENU_VISIBLE, store.menuVisible = visible),
 		addMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.on(PipelineEvent.MENU_VISIBLE, listener),
-		removeMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.off(PipelineEvent.MENU_VISIBLE, listener)
+		removeMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.off(PipelineEvent.MENU_VISIBLE, listener),
+
+		changeSelectedTopic: (topic?: QueriedTopicForPipeline) => {
+			store.selectedTopic = topic;
+			emitter.emit(PipelineEvent.TOPIC_SELECTION_CHANGED, topic);
+		},
+		addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.on(PipelineEvent.TOPIC_SELECTION_CHANGED, listener),
+		removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.off(PipelineEvent.TOPIC_SELECTION_CHANGED, listener)
 	}}>{children}</Context.Provider>;
 };
 
