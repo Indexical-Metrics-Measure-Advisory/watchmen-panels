@@ -1,15 +1,10 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
-import { v4 } from 'uuid';
-import {
-	Pipeline,
-	PipelineFlow,
-	UnitAction,
-	WriteTopic,
-	WriteTopicActionType
-} from '../../../services/admin/pipeline-types';
+import { PipelineFlow, UnitAction, WriteTopic, WriteTopicActionType } from '../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
+import { PipelineCanvas } from './pipeline-canvas';
 import { usePipelineContext } from './pipeline-context';
+import { ArrangedPipelines, WellKnownPipeline } from './types';
 
 const Body = styled.div.attrs({
 	'data-widget': 'console-pipeline-body'
@@ -34,16 +29,6 @@ const Ordering = styled.div`
 		pointer-events: auto;
 	}
 `;
-
-interface WellKnownPipeline extends Pipeline {
-	targetTopicIds: Array<string>;
-	origin: Pipeline;
-}
-
-interface ArrangedPipelines {
-	starts: Map<string, Array<WellKnownPipeline>>;
-	ends: Map<string, Array<WellKnownPipeline>>;
-}
 
 const isWriteTopicAction = (action: UnitAction): action is WriteTopic => {
 	return !!action.type && Object.values(WriteTopicActionType).includes(action.type);
@@ -98,46 +83,6 @@ const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 	return { starts: sourceMap, ends: targetMap };
 };
 
-const Pipelines = (props: {
-	topic?: QueriedTopicForPipeline;
-	topics: Map<string, QueriedTopicForPipeline>;
-	arranged: ArrangedPipelines;
-	visible: boolean;
-}) => {
-	const { topic, topics, arranged: { starts, ends }, visible } = props;
-
-	if (!visible) {
-		return null;
-	}
-
-	const nodes: Array<JSX.Element> = [];
-
-	// compute pipelines from root to given topic
-	let targetTopicId = topic?.topicId;
-	while (targetTopicId) {
-		const pipelines = ends.get(targetTopicId);
-		if (!pipelines || pipelines.length === 0) {
-			// reach start
-			break;
-		}
-
-		const pipeline = pipelines[0];
-		const { topicId: sourceTopicId } = pipeline;
-		const topic = topics.get(pipeline.topicId) || { topicId: sourceTopicId, name: sourceTopicId };
-		const node = <div key={v4()}>
-			<div>{topic.name}</div>
-			<span>{pipelines.length - 1}</span>
-		</div>;
-		nodes.unshift(node);
-		// move backward, target is me
-		targetTopicId = sourceTopicId;
-	}
-
-	return <div>
-		{nodes}
-	</div>;
-};
-
 export const PipelineBody = () => {
 	const {
 		store: { topics, topic, flow },
@@ -162,7 +107,7 @@ export const PipelineBody = () => {
 		new Map<string, QueriedTopicForPipeline>());
 
 	return <Body>
-		<Pipelines topic={topic} topics={topicMap} arranged={arranged} visible={ordered}/>
+		<PipelineCanvas topic={topic} topics={topicMap} arranged={arranged} visible={ordered}/>
 		<Ordering data-visible={flow != null && !ordered}>Arrange pipelines...</Ordering>
 	</Body>;
 };

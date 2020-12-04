@@ -77,7 +77,8 @@ export enum TopicType {
 	RAW = 'raw',
 	DISTINCT = 'distinct',
 	AGGREGATE = 'aggregate',
-	TIME = 'time'
+	TIME = 'time',
+	NOT_DEFINED = 'not-defined'
 }
 
 export interface QueriedTopicForPipeline {
