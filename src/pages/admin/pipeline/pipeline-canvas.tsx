@@ -81,6 +81,8 @@ export const PipelineCanvas = (props: {
 	// compute pipelines from given topic to end
 	const fromCurrent = computePipelinesFrom(topic, arranged, topics);
 
+	console.log([ ...toCurrent, current, ...fromCurrent ]);
+
 	return <PipelinesCanvasContainer>
 		{/*{[ ...toCurrent, current ]}*/}
 	</PipelinesCanvasContainer>;
