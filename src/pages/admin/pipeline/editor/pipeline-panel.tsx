@@ -12,7 +12,7 @@ const Container = styled.div`
 	margin-top: calc(var(--margin) / 4);
 	border: var(--border);
 	border-color: var(--pipeline-border-color);
-	border-radius: var(--border-radius);
+	border-radius: calc(var(--border-radius) * 3);
 	overflow: hidden;
 `;
 const Title = styled.div`
@@ -22,7 +22,7 @@ const Title = styled.div`
 	height: 32px;
 	line-height: 32px;
 	background-color: var(--pipeline-bg-color);
-	padding: 0 calc(var(--margin) / 4);
+	padding: 0 calc(var(--margin) / 2);
 	> div:first-child {
 		flex-grow: 1;
 	}
