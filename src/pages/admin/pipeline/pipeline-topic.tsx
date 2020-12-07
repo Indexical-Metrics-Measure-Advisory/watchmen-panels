@@ -4,6 +4,7 @@ import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
 import { QueriedTopicForPipeline, TopicType } from '../../../services/admin/types';
 import { usePipelineContext } from './pipeline-context';
+import { buildPipelineCanvasTopicStyles } from './styles';
 import { WellKnownPipeline } from './types';
 
 const Topic = styled.div.attrs({
@@ -25,42 +26,7 @@ const Topic = styled.div.attrs({
 	&:last-child {
 		margin-bottom: var(--margin);
 	}
-	&[data-topic-type=${TopicType.RAW}] {
-		border-color: var(--console-raw-topic-color);
-		> div[data-widget-type='corner'] {
-			background-color: var(--console-raw-topic-color);
-		}
-	}
-	&[data-topic-type=${TopicType.DISTINCT}] {
-		border-color: var(--console-distinct-topic-color);
-		> div[data-widget-type='corner'] {
-			background-color: var(--console-distinct-topic-color);
-		}
-	}
-	&[data-topic-type=${TopicType.AGGREGATE}] {
-		border-color: var(--console-aggregate-topic-color);
-		> div[data-widget-type='corner'] {
-			background-color: var(--console-aggregate-topic-color);
-		}
-	}
-	&[data-topic-type=${TopicType.TIME}] {
-		border-color: var(--console-time-topic-color);
-		> div[data-widget-type='corner'] {
-			background-color: var(--console-time-topic-color);
-		}
-	}
-	&[data-topic-type=${TopicType.RATIO}] {
-		border-color: var(--console-ratio-topic-color);
-		> div[data-widget-type='corner'] {
-			background-color: var(--console-ratio-topic-color);
-		}
-	}
-	&[data-topic-type=${TopicType.NOT_DEFINED}] {
-		border-color: var(--console-undefined-topic-color);
-		> div[data-widget-type='corner'] {
-			background-color: var(--console-undefined-topic-color);
-		}
-	}
+	${buildPipelineCanvasTopicStyles()}
 `;
 const Corner = styled.div`
 	display: flex;
@@ -188,7 +154,7 @@ export const PipelineTopic = (props: {
 	next?: QueriedTopicForPipeline;
 	current?: boolean;
 }) => {
-	const { topic, toMe = [], fromMe = [], toNext, previous, next, current = false } = props;
+	const { topic, toMe = [], fromMe = [], previous, next, current = false } = props;
 
 	const {
 		store: { selectedTopic },

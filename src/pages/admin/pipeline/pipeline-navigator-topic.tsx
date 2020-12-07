@@ -1,6 +1,6 @@
 import { faBezierCurve, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fetchPipeline } from '../../../services/admin/topic';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
@@ -70,13 +70,27 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 	const { topic } = props;
 
 	const { show: showDialog, hide: hideDialog } = useDialog();
-	const { changeFlow } = usePipelineContext();
+	const {
+		store: { topic: current },
+		changeFlow, addFlowChangedListener, removeFlowChangedListener
+	} = usePipelineContext();
 	const [ factorsVisible, setFactorsVisible ] = useState<boolean>(false);
+	const [ active, setActive ] = useState(current === topic);
+	useEffect(() => {
+		const onFlowChanged = (pickedTopic: QueriedTopicForPipeline) => setActive(pickedTopic === topic);
+		addFlowChangedListener(onFlowChanged);
+		return () => removeFlowChangedListener(onFlowChanged);
+	});
 
 	const onTitleClicked = () => setFactorsVisible(!factorsVisible);
 	const onShowPipelineClicked = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
+
+		if (active) {
+			return;
+		}
+
 		showDialog(
 			<div data-widget='dialog-console-loading'>
 				<span>Loading pipeline of topic <span data-widget='dialog-console-object'>{topic.name}</span>.</span>

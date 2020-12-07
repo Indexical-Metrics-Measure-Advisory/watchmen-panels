@@ -151,7 +151,10 @@ const DefaultTheme = {
 	consoleAggregateTopicColor: 'rgba(138,53,193,0.7)',
 	consoleTimeTopicColor: 'rgba(255,161,0,0.7)',
 	consoleRatioTopicColor: 'rgba(246,52,27,0.7)',
-	consoleUndefinedTopicColor: 'rgba(181,188,194,0.7)'
+	consoleUndefinedTopicColor: 'rgba(181,188,194,0.7)',
+
+	pipelineBorderColor: 'rgba(94, 119, 171, 0.2)',
+	pipelineBgColor: 'rgba(94, 119, 171, 0.1)'
 };
 
 export default DefaultTheme;

@@ -1,9 +1,11 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PipelineFlow, UnitAction, WriteTopic, WriteTopicActionType } from '../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { PipelineCanvas } from './pipeline-canvas';
 import { usePipelineContext } from './pipeline-context';
+import { PipelineEditor } from './pipeline-editor';
+import { buildPipelines } from './pipelines-builder';
 import { ArrangedPipelines, WellKnownPipeline } from './types';
 
 const Body = styled.div.attrs({
@@ -88,15 +90,21 @@ const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 export const PipelineBody = () => {
 	const {
 		store: { topics, topic, flow },
-		addFlowChangedListener,
-		removeFlowChangedListener
+		changeSelectedTopic,
+		addFlowChangedListener, removeFlowChangedListener
 	} = usePipelineContext();
 	const [ ordered, setOrdered ] = useState(false);
 	const [ arranged, setArranged ] = useState<ArrangedPipelines>({ starts: new Map(), ends: new Map() });
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
-		addFlowChangedListener(forceUpdate);
-		return () => removeFlowChangedListener(forceUpdate);
+		const onFlowChanged = () => {
+			// clear selected topic, arranged pipelines
+			// set ordered to false to trigger repaint
+			changeSelectedTopic();
+			setArranged({ starts: new Map(), ends: new Map() });
+			setOrdered(false);
+		};
+		addFlowChangedListener(onFlowChanged);
+		return () => removeFlowChangedListener(onFlowChanged);
 	});
 	useEffect(() => {
 		if (flow && topic) {
@@ -107,9 +115,11 @@ export const PipelineBody = () => {
 
 	const topicMap = topics.reduce((map, topic) => map.set(topic.topicId, topic),
 		new Map<string, QueriedTopicForPipeline>());
+	const nodes = buildPipelines({ topic, arranged, topics: topicMap });
 
 	return <Body>
-		<PipelineCanvas topic={topic} topics={topicMap} arranged={arranged} visible={ordered}/>
+		<PipelineCanvas topic={topic} nodes={nodes} visible={ordered}/>
+		<PipelineEditor nodes={nodes} visible={ordered}/>
 		<Ordering data-visible={flow != null && !ordered}>Arrange pipelines...</Ordering>
 	</Body>;
 };

@@ -1,4 +1,5 @@
 import { Pipeline } from '../../../services/admin/pipeline-types';
+import { QueriedTopicForPipeline } from '../../../services/admin/types';
 
 export interface WellKnownPipeline extends Pipeline {
 	targetTopicIds: Array<string>;
@@ -10,3 +11,12 @@ export interface ArrangedPipelines {
 	ends: Map<string, Array<WellKnownPipeline>>;
 }
 
+export interface PipelinesTopicNode {
+	topic: QueriedTopicForPipeline;
+	toMe?: Array<WellKnownPipeline>;
+	fromMe?: Array<WellKnownPipeline>;
+	toNext?: WellKnownPipeline;
+	previous?: QueriedTopicForPipeline;
+	next?: QueriedTopicForPipeline;
+	current?: boolean;
+}

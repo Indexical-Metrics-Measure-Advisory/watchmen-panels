@@ -59,7 +59,11 @@ export const PipelineContextProvider = (props: {
 }) => {
 	const { children } = props;
 
-	const [ emitter ] = useState<EventEmitter>(new EventEmitter());
+	const [ emitter ] = useState<EventEmitter>(() => {
+		const emitter = new EventEmitter();
+		emitter.setMaxListeners(1000);
+		return emitter;
+	});
 	const [ store ] = useState<PipelineContextStore>({
 		topics: [],
 		menuVisible: true,

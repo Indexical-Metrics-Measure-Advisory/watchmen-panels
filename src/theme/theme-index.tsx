@@ -108,6 +108,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--console-time-topic-color: ${({ theme }) => theme.consoleTimeTopicColor};
 		--console-ratio-topic-color: ${({ theme }) => theme.consoleRatioTopicColor};
 		--console-undefined-topic-color: ${({ theme }) => theme.consoleUndefinedTopicColor};
+		--pipeline-border-color: ${({ theme }) => theme.pipelineBorderColor};
+		--pipeline-bg-color: ${({ theme }) => theme.pipelineBgColor};
 		width: 100%;
 		//&::-webkit-scrollbar {
 		//	background-color: var(--scrollbar-background-color);
