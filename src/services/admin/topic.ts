@@ -1,5 +1,5 @@
 import {
-	FactorValueArithmetic,
+	DatePartArithmetic,
 	PipelineFlow,
 	PipelineTriggerType,
 	ValueType,
@@ -245,7 +245,7 @@ const DemoPipelineOfPolicy = {
 										type: ValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
-										arithmetic: FactorValueArithmetic.YEAR_OF
+										arithmetic: DatePartArithmetic.YEAR_OF
 									}
 								},
 								{
@@ -254,7 +254,7 @@ const DemoPipelineOfPolicy = {
 										type: ValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
-										arithmetic: FactorValueArithmetic.WEEK_OF
+										arithmetic: DatePartArithmetic.WEEK_OF
 									}
 								},
 								{
@@ -275,7 +275,7 @@ const DemoPipelineOfPolicy = {
 										type: ValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
-										arithmetic: FactorValueArithmetic.YEAR_OF
+										arithmetic: DatePartArithmetic.YEAR_OF
 									}
 								},
 								{
@@ -284,7 +284,7 @@ const DemoPipelineOfPolicy = {
 										type: ValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
-										arithmetic: FactorValueArithmetic.MONTH_OF
+										arithmetic: DatePartArithmetic.MONTH_OF
 									}
 								},
 								{

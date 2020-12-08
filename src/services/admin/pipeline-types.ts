@@ -37,34 +37,40 @@ export interface UnitAction {
 	type: UnitActionType;
 }
 
-export enum FactorValueArithmetic {
+export enum DatePartArithmetic {
 	YEAR_OF = 'year-of',
 	MONTH_OF = 'month-of',
 	WEEK_OF = 'week-of'
 }
+
+export type SimpleFuncArithmetic = DatePartArithmetic;
 
 export enum ValueType {
 	IN_MEMORY = 'in-memory',
 	FACTOR = 'factor'
 }
 
-export interface Value {
+export interface AValue {
 	type?: ValueType;
 }
 
-export interface InMemoryValue {
+export interface InMemoryValue extends AValue {
 	type: ValueType.IN_MEMORY;
 	name: string;
 }
 
-export interface FactorValue {
+export interface FactorValue extends AValue {
 	type: ValueType.FACTOR;
 	topicId: string;
 	factorId: string;
 }
 
-export interface ComputedFactorValue extends FactorValue {
-	arithmetic: FactorValueArithmetic.YEAR_OF;
+export interface SimpleFuncFactorValue extends FactorValue {
+	arithmetic: SimpleFuncArithmetic
+}
+
+export interface ComputedDatePartFactorValue extends SimpleFuncFactorValue {
+	arithmetic: DatePartArithmetic;
 }
 
 export interface WriteTopic extends UnitAction {
@@ -72,11 +78,11 @@ export interface WriteTopic extends UnitAction {
 	topicId: string;
 }
 
-export interface WriteFactor extends WriteTopic {
+export interface UnitActionWriteFactor extends WriteTopic {
 	type: WriteTopicActionType.WRITE_FACTOR;
 	topicId: string;
 	factorId: string;
-	value: Value;
+	value: AValue;
 }
 
 export enum UnitActionAlarmGrade {
