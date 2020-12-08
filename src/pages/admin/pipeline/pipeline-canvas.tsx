@@ -15,6 +15,8 @@ const PipelinesCanvasContainer = styled.div`
 	align-content: start;
 	overflow-x: hidden;
 	overflow-y: auto;
+	min-width: 365px;
+	max-width: 365px;
 	&::-webkit-scrollbar {
 		background-color: transparent;
 		width: 4px;

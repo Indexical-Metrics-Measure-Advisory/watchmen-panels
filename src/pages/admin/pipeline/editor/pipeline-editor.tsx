@@ -1,11 +1,9 @@
-import { faEdit } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
-import Input from '../../../component/input';
 import { WellKnownPipeline } from '../types';
+import { AutoSwitchInput } from './auto-switch-input';
 import { StageEditor } from './pipeline-stage';
 import { PipelineTrigger } from './pipeline-trigger';
 
@@ -15,7 +13,7 @@ const Container = styled.div`
 	margin-top: calc(var(--margin) / 4);
 	border: var(--border);
 	border-color: var(--pipeline-border-color);
-	border-radius: calc(var(--border-radius) * 3);
+	border-radius: var(--border-radius);
 	overflow: hidden;
 `;
 const Title = styled.div`
@@ -25,30 +23,10 @@ const Title = styled.div`
 	height: 32px;
 	line-height: 32px;
 	background-color: var(--pipeline-bg-color);
-	padding: 0 calc(var(--margin) / 2);
+	padding: 0 calc(var(--margin) / 2) 0 calc(var(--margin) / 4);
 	> div:first-child {
 		flex-grow: 1;
-		padding-right: var(--margin);
-		> input {
-			height: 24px;
-			line-height: 24px;
-			font-family: var(--console-title-font-family);
-			border-top: 0;
-			border-left: 0;
-			border-right: 0;
-			border-color: var(--console-font-color);
-			border-radius: 0;
-			padding: 0;
-			width: 100%;
-		}
-		> svg {
-			margin-left: calc(var(--margin) / 3);
-			cursor: pointer;
-			transition: all 300ms ease-in-out;
-			&:hover {
-				color: var(--console-favorite-color);
-			}
-		}
+		margin-right: calc(var(--margin) / 4);
 	}
 	> div:nth-child(2) {
 		font-size: 0.8em;
@@ -76,22 +54,20 @@ export const PipelineEditor = (props: {
 }) => {
 	const { outbound, inDiagram, index, pipeline } = props;
 
-	const [ editing, setEditing ] = useState(false);
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
-	const onEditClicked = () => setEditing(true);
-
-	const pipelineName = pipeline.name || 'Untitled Pipeline';
+	const onNameChange = (value: string) => {
+		// TODO pipeline name changed, to notify or save?
+		pipeline.name = value;
+		forceUpdate();
+	};
 
 	return <Container>
 		<Title>
-			{editing
-				? <div>
-					<Input value={pipelineName}/>
-				</div>
-				: <div>
-					<span>#{index} {pipelineName} ({outbound ? 'Outbound' : 'Inbound'})</span>
-					<FontAwesomeIcon icon={faEdit} onClick={onEditClicked}/>
-				</div>}
+			<AutoSwitchInput onChange={onNameChange}
+			                 prefixLabel={`#${index} (${outbound ? 'Outbound' : 'Inbound'})`} value={pipeline.name}
+			                 placeholder='Untitled Pipeline'
+			                 styles={{ backgroundColor: 'transparent' }}/>
 			{inDiagram ? <div>In Diagram</div> : null}
 		</Title>
 		<Body>

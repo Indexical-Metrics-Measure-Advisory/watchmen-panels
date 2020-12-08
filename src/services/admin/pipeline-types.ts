@@ -75,6 +75,7 @@ export interface ProcessUnit {
 }
 
 export interface Stage {
+	name?: string;
 	units: Array<ProcessUnit>;
 }
 

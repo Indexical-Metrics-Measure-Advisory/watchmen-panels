@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { Stage } from '../../../../services/admin/pipeline-types';
+import { AutoSwitchInput } from './auto-switch-input';
 import { PipelineUnit } from './pipeline-unit';
 
 const StageContainer = styled.div`
@@ -9,6 +10,8 @@ const StageContainer = styled.div`
 	flex-direction: column;
 `;
 const StageTitle = styled.div`
+	display: flex;
+	align-items: center;
 	position: relative;
 	font-size: 0.8em;
 	padding: 0 calc(var(--margin) / 4);
@@ -28,13 +31,6 @@ const StageTitle = styled.div`
 		border-bottom: 0;
 		z-index: -1;
 	}
-	> span {
-		background-color: var(--bg-color);
-		border-top-right-radius: 1em;
-		border-bottom-right-radius: 1em;
-		padding: 4px calc(var(--margin) / 2);
-		margin-left: calc(var(--margin) / -4);
-	}
 `;
 const StageBody = styled.div`
 	flex-grow: 1;
@@ -46,9 +42,19 @@ export const StageEditor = (props: {
 }) => {
 	const { stage, index } = props;
 
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+
+	const onNameChanged = (value: string) => {
+		// TODO stage name changed, to notify or save?
+		stage.name = value;
+		forceUpdate();
+	};
+
 	return <StageContainer>
 		<StageTitle>
-			<span>Stage #{index}</span>
+			<AutoSwitchInput onChange={onNameChanged}
+			                 prefixLabel={`#${index}`} value={stage.name} placeholder='Untitled Stage'
+			                 styles={{ inputFontSize: '0.8em' }}/>
 		</StageTitle>
 		<StageBody>
 			{stage.units.map(unit => {

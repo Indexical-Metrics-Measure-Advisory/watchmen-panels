@@ -28,7 +28,7 @@ export const PipelineTrigger = (props: { pipeline: Pipeline }) => {
 
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const onTypeChanged = (newType: PipelineTriggerType) => {
-		// TODO pipeline type changed, notify & save?
+		// TODO pipeline trigger type changed, notify & save?
 		pipeline.type = newType;
 		forceUpdate();
 	};
