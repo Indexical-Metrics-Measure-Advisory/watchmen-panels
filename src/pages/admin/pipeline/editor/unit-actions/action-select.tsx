@@ -1,4 +1,4 @@
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -257,6 +257,6 @@ export const ActionSelect = (props: {
 				</Fragment>;
 			})}
 		</Dropdown>
-		<div onClick={onCaretClicked}><FontAwesomeIcon icon={faCaretDown}/></div>
+		<div onClick={onCaretClicked}><FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/></div>
 	</ActionSelectContainer>;
 };
