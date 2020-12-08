@@ -85,8 +85,8 @@ export const Editor = (props: {
 		</EditorTitle>
 		<EditorBody>
 			{inDiagramOutboundPipeline ?
-				<PipelineEditor outbound={true} inDiagram={true} topic={topic} pipeline={inDiagramOutboundPipeline}
-				                index={1}/> : null}
+				<PipelineEditor outbound={true} inDiagram={true} topic={topic}
+				                pipeline={inDiagramOutboundPipeline}/> : null}
 		</EditorBody>
 	</EditorContainer>;
 };

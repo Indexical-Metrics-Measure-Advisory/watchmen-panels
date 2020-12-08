@@ -48,11 +48,10 @@ const Body = styled.div`
 export const PipelineEditor = (props: {
 	outbound: boolean;
 	inDiagram: boolean;
-	index: number;
 	topic: QueriedTopicForPipeline;
 	pipeline: WellKnownPipeline;
 }) => {
-	const { outbound, inDiagram, index, pipeline } = props;
+	const { outbound, inDiagram, pipeline } = props;
 
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
@@ -65,7 +64,7 @@ export const PipelineEditor = (props: {
 	return <Container>
 		<Title>
 			<AutoSwitchInput onChange={onNameChange}
-			                 prefixLabel={`#${index} (${outbound ? 'Outbound' : 'Inbound'})`} value={pipeline.name}
+			                 prefixLabel={`# ${outbound ? 'Outbound' : 'Inbound'}`} value={pipeline.name}
 			                 placeholder='Untitled Pipeline'
 			                 styles={{ backgroundColor: 'transparent' }}/>
 			{inDiagram ? <div>In Diagram</div> : null}

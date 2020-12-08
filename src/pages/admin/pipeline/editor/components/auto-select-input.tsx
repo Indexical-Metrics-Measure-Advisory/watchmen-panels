@@ -5,6 +5,8 @@ import Input from '../../../../component/input';
 const AnInput = styled(Input)`
 	height: 24px;
 	line-height: 24px;
+	padding-top: 0;
+	padding-bottom: 0;
 	color: var(--console-font-color);
 	text-overflow: ellipsis;
 `;
