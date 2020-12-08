@@ -13,7 +13,19 @@ const EditorContainer = styled.div`
 	flex-grow: 1;
 	height: 100%;
 	padding: calc(var(--margin) / 2);
-	overflow: hidden;
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		background-color: transparent;
+		width: 4px;
+	}
+	&::-webkit-scrollbar-track {
+		background-color: transparent;
+		border-radius: 2px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--console-favorite-color);
+		border-radius: 2px;
+	}
 `;
 const EditorTitle = styled.div`
 	display: flex;
@@ -46,6 +58,7 @@ const EditorTitle = styled.div`
 `;
 const EditorBody = styled.div`
 	flex-grow: 1;
+	margin-bottom: var(--margin);
 `;
 
 export const Editor = (props: {

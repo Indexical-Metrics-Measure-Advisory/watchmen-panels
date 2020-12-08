@@ -35,6 +35,7 @@ const Ordering = styled.div`
 `;
 
 const isWriteTopicAction = (action: UnitAction): action is WriteTopic => {
+	// @ts-ignore
 	return !!action.type && Object.values(WriteTopicActionType).includes(action.type);
 };
 const getOrCreateFromMap = <T extends any>(key: string, map: Map<string, Array<T>>) => {

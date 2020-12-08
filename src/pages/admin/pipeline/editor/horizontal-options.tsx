@@ -21,6 +21,7 @@ const Options = styled.div`
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
 	&:hover {
+		border-color: transparent;
 		box-shadow: var(--console-primary-hover-shadow);
 	}
 	&[data-expanded=true] {

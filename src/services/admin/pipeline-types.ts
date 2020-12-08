@@ -14,17 +14,26 @@ export interface CompositeCondition extends Condition {
 	children: Array<Condition>;
 }
 
+export enum SystemActionType {
+	ALARM = 'alarm'
+}
+
+export enum ReadTopicActionType {
+	FIND_ROW = 'find-row',
+	EXISTS = 'exists'
+}
+
 export enum WriteTopicActionType {
-	MERGE_ROW = 'write-row',
+	MERGE_ROW = 'merge-row',
 	INSERT_ROW = 'insert-row',
 	INSERT_OR_MERGE_ROW = 'insert-or-merge-row',
 	WRITE_FACTOR = 'write-factor'
 }
 
-export type UnitActionType = WriteTopicActionType;
+export type UnitActionType = WriteTopicActionType | ReadTopicActionType | SystemActionType;
 
 export interface UnitAction {
-	type?: UnitActionType;
+	type: UnitActionType;
 }
 
 export enum FactorValueArithmetic {
