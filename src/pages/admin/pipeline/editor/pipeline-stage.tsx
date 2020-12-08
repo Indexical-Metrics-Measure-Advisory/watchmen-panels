@@ -5,11 +5,15 @@ import { Stage } from '../../../../services/admin/pipeline-types';
 import { AutoSwitchInput } from './components/auto-switch-input';
 import { PipelineUnit } from './pipeline-unit';
 
-const StageContainer = styled.div`
+const StageContainer = styled.div.attrs({
+	'data-widget': 'stage'
+})`
 	display: flex;
 	flex-direction: column;
 `;
-const StageTitle = styled.div`
+const StageTitle = styled.div.attrs({
+	'data-widget': 'stage-title'
+})`
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -32,7 +36,9 @@ const StageTitle = styled.div`
 		z-index: -1;
 	}
 `;
-const StageBody = styled.div`
+const StageBody = styled.div.attrs({
+	'data-widget': 'stage-body'
+})`
 	flex-grow: 1;
 `;
 

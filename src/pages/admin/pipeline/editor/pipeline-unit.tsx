@@ -7,12 +7,20 @@ import { UnitActionNodes } from './pipeline-unit-actions';
 import { ActionLead } from './unit-actions/action-lead';
 import { ActionSelect } from './unit-actions/action-select';
 
-const UnitContainer = styled.div`
+const UnitContainer = styled.div.attrs({
+	'data-widget': 'stage-units'
+})`
 	display: flex;
 	position: relative;
 	flex-direction: column;
 	font-size: 0.8em;
-	&:before {
+	&:not(:first-child) {
+		padding-top: calc(var(--margin) / 4);
+	}
+	&:not(:last-child) {
+		padding-bottom: calc(var(--margin) / 4);
+	}
+	&:not(:last-child):before {
 		content: '';
 		display: block;
 		position: absolute;
@@ -29,19 +37,25 @@ const UnitSection = styled.div`
 	grid-template-columns: 120px 1fr;
 	padding: 0 calc(var(--margin) / 2);
 `;
-const UnitSectionLabel = styled.div`
+const UnitSectionLabel = styled.div.attrs({
+	'data-widget': 'stage-unit-label'
+})`
 	white-space: nowrap;
 	font-weight: var(--font-demi-bold);
 	height: 32px;
 	line-height: 32px;
 	align-self: start;
 `;
-const UnitCondition = styled(UnitSection)`
+const UnitCondition = styled(UnitSection).attrs({
+	'data-widget': 'stage-unit-condition'
+})`
 	> div:nth-child(2) {
 		align-self: center;
 	}
 `;
-const UnitActions = styled(UnitSection)`
+const UnitActions = styled(UnitSection).attrs({
+	'data-widget': 'stage-unit-actions'
+})`
 	> div:nth-child(2n) {
 		display: flex;
 		flex-direction: column;
