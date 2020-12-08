@@ -73,12 +73,23 @@ export interface ComputedDatePartFactorValue extends SimpleFuncFactorValue {
 	arithmetic: DatePartArithmetic;
 }
 
-export interface WriteTopic extends UnitAction {
+export interface UnitActionWriteTopic extends UnitAction {
 	type: WriteTopicActionType;
 	topicId: string;
 }
 
-export interface UnitActionWriteFactor extends WriteTopic {
+export interface UnitActionInsertRow extends UnitActionWriteTopic {
+	type: WriteTopicActionType.INSERT_ROW;
+	mapping: any;
+}
+
+export interface UnitActionMergeRow extends UnitActionWriteTopic {
+	type: WriteTopicActionType.MERGE_ROW | WriteTopicActionType.INSERT_OR_MERGE_ROW;
+	mapping: any;
+	unique: any;
+}
+
+export interface UnitActionWriteFactor extends UnitActionWriteTopic {
 	type: WriteTopicActionType.WRITE_FACTOR;
 	topicId: string;
 	factorId: string;

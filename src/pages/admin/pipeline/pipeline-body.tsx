@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { PipelineFlow, UnitAction, WriteTopic, WriteTopicActionType } from '../../../services/admin/pipeline-types';
+import {
+	PipelineFlow,
+	UnitAction,
+	UnitActionWriteTopic,
+	WriteTopicActionType
+} from '../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { PipelineCanvas } from './pipeline-canvas';
 import { usePipelineContext } from './pipeline-context';
@@ -34,7 +39,7 @@ const WaitData = styled.div`
 	}
 `;
 
-const isWriteTopicAction = (action: UnitAction): action is WriteTopic => {
+const isWriteTopicAction = (action: UnitAction): action is UnitActionWriteTopic => {
 	// @ts-ignore
 	return !!action.type && Object.values(WriteTopicActionType).includes(action.type);
 };
