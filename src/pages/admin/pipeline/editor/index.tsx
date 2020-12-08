@@ -13,7 +13,7 @@ const EditorContainer = styled.div`
 	flex-grow: 1;
 	height: 100%;
 	padding: calc(var(--margin) / 2);
-	overflow-y: auto;
+	overflow-y: scroll;
 	&::-webkit-scrollbar {
 		background-color: transparent;
 		width: 4px;

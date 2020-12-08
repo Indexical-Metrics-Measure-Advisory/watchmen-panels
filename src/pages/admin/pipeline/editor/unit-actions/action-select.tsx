@@ -1,11 +1,12 @@
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
 	ReadTopicActionType,
 	SystemActionType,
 	UnitAction,
+	UnitActionAlarmGrade,
 	UnitActionType,
 	WriteTopicActionType
 } from '../../../../../services/admin/pipeline-types';
@@ -162,6 +163,22 @@ const ActionTypes = [
 	{ label: 'System', enum: SystemActionType }
 ];
 
+interface ActionDefault {
+	keep: Array<string>,
+	default: { [key in string]: number | string | boolean }
+}
+
+const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType | SystemActionType]: ActionDefault } = {
+	[WriteTopicActionType.INSERT_ROW]: { keep: [], default: {} },
+	[WriteTopicActionType.MERGE_ROW]: { keep: [], default: {} },
+	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: { keep: [], default: {} },
+	[WriteTopicActionType.WRITE_FACTOR]: { keep: [], default: {} },
+	[ReadTopicActionType.EXISTS]: { keep: [], default: {} },
+	[ReadTopicActionType.FIND_ROW]: { keep: [], default: {} },
+	[SystemActionType.COPY_TO_MEMORY]: { keep: [], default: {} },
+	[SystemActionType.ALARM]: { keep: [ 'grade' ], default: { grade: UnitActionAlarmGrade.MEDIUM } }
+};
+
 const ActionTypeButton = (props: {
 	type: UnitActionType;
 	current: UnitActionType;
@@ -183,6 +200,11 @@ export const ActionSelect = (props: {
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
+	useEffect(() => {
+		const onScroll = () => setExpanded(false);
+		window.addEventListener('scroll', onScroll, true);
+		return () => window.removeEventListener('scroll', onScroll, true);
+	});
 
 	const collapse = () => setExpanded(false);
 	const onExpandClick = () => {
@@ -203,6 +225,13 @@ export const ActionSelect = (props: {
 			return;
 		}
 		action.type = type;
+		const actionDefault = OnActionTypeChanged[type];
+		// remove irrelevant properties
+		Object.keys(action)
+			.filter(key => key !== 'type' && !actionDefault.keep.includes(key))
+			.forEach(key => delete (action as any)[key]);
+		// set default values
+		Object.keys(actionDefault.default).forEach(key => (action as any)[key] = actionDefault.default[key]);
 		setExpanded(false);
 		onTypeChanged();
 	};

@@ -16,7 +16,7 @@ const Body = styled.div.attrs({
 	align-self: stretch;
 	overflow: hidden;
 `;
-const Ordering = styled.div`
+const WaitData = styled.div`
 	display: flex;
 	position: absolute;
 	width: 100%;
@@ -121,6 +121,7 @@ export const PipelineBody = () => {
 	return <Body>
 		<PipelineCanvas topic={topic} nodes={nodes} visible={ordered}/>
 		<PipelineEditor nodes={nodes} visible={ordered}/>
-		<Ordering data-visible={flow != null && !ordered}>Arrange pipelines...</Ordering>
+		<WaitData data-visible={flow == null}>Pick a topic please.</WaitData>
+		<WaitData data-visible={flow != null && !ordered}>Arrange pipelines...</WaitData>
 	</Body>;
 };

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { WellKnownPipeline } from '../types';
-import { AutoSwitchInput } from './auto-switch-input';
+import { AutoSwitchInput } from './components/auto-switch-input';
 import { StageEditor } from './pipeline-stage';
 import { PipelineTrigger } from './pipeline-trigger';
 

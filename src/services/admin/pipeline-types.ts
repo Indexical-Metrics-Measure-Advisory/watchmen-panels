@@ -15,7 +15,8 @@ export interface CompositeCondition extends Condition {
 }
 
 export enum SystemActionType {
-	ALARM = 'alarm'
+	ALARM = 'alarm',
+	COPY_TO_MEMORY = 'copy-to-memory'
 }
 
 export enum ReadTopicActionType {
@@ -76,6 +77,17 @@ export interface WriteFactor extends WriteTopic {
 	topicId: string;
 	factorId: string;
 	value: Value;
+}
+
+export enum UnitActionAlarmGrade {
+	LOW = 'low',
+	MEDIUM = 'medium',
+	HIGH = 'high',
+	CRITICAL = 'critical'
+}
+
+export interface UnitActionAlarm extends UnitAction {
+	grade: UnitActionAlarmGrade;
 }
 
 export interface ProcessUnit {

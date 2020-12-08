@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import Input from '../../../component/input';
+import Input from '../../../../component/input';
 
 const AnInput = styled(Input)`
 	height: 24px;

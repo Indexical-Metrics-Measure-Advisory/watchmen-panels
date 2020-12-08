@@ -2,7 +2,7 @@ import React, { Fragment, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { ProcessUnit, UnitAction } from '../../../../services/admin/pipeline-types';
-import { HorizontalOptions } from './horizontal-options';
+import { HorizontalOptions } from './components/horizontal-options';
 import { UnitActionNodes } from './pipeline-unit-actions';
 import { ActionLead } from './unit-actions/action-lead';
 import { ActionSelect } from './unit-actions/action-select';

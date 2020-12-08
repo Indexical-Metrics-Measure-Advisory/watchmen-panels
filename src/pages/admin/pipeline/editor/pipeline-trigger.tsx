@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeline-types';
-import { HorizontalOptions } from './horizontal-options';
+import { HorizontalOptions } from './components/horizontal-options';
 
 const Trigger = styled.div`
 	display: grid;

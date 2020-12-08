@@ -2,7 +2,7 @@ import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { Stage } from '../../../../services/admin/pipeline-types';
-import { AutoSwitchInput } from './auto-switch-input';
+import { AutoSwitchInput } from './components/auto-switch-input';
 import { PipelineUnit } from './pipeline-unit';
 
 const StageContainer = styled.div`
