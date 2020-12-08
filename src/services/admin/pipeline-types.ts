@@ -88,6 +88,7 @@ export enum PipelineTriggerType {
 
 export interface Pipeline {
 	topicId: string;
+	name?: string;
 	type: PipelineTriggerType;
 	stages: Array<Stage>;
 }

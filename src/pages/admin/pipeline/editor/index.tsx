@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { PipelinesTopicNode } from '../types';
-import { PipelinePanel } from './pipeline-panel';
+import { PipelineEditor } from './pipeline-editor';
 
 const EditorContainer = styled.div`
 	display: grid;
@@ -72,8 +72,8 @@ export const Editor = (props: {
 		</EditorTitle>
 		<EditorBody>
 			{inDiagramOutboundPipeline ?
-				<PipelinePanel outbound={true} inDiagram={true} topic={topic} pipeline={inDiagramOutboundPipeline}
-				               index={1}/> : null}
+				<PipelineEditor outbound={true} inDiagram={true} topic={topic} pipeline={inDiagramOutboundPipeline}
+				                index={1}/> : null}
 		</EditorBody>
 	</EditorContainer>;
 };
