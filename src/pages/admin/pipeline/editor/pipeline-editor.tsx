@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
+import { usePipelineContext } from '../pipeline-context';
 import { WellKnownPipeline } from '../types';
 import { AutoSwitchInput } from './components/auto-switch-input';
 import { StageEditor } from './pipeline-stage';
@@ -53,11 +54,13 @@ export const PipelineEditor = (props: {
 }) => {
 	const { outbound, inDiagram, pipeline } = props;
 
+	const { changeSelectedPipeline } = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
 	const onNameChange = (value: string) => {
 		// TODO pipeline name changed, to notify or save?
 		pipeline.name = value;
+		changeSelectedPipeline(pipeline);
 		forceUpdate();
 	};
 

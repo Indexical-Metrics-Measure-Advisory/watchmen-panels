@@ -114,9 +114,6 @@ export const PipelineContextProvider = (props: {
 		removeMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.off(PipelineEvent.MENU_VISIBLE, listener),
 
 		changeSelectedTopic: (topic?: QueriedTopicForPipeline) => {
-			if (store.selectedTopic === topic) {
-				return;
-			}
 			store.selectedTopic = topic;
 			delete store.selectedPipeline;
 			emitter.emit(PipelineEvent.TOPIC_SELECTION_CHANGED, topic);
@@ -125,9 +122,6 @@ export const PipelineContextProvider = (props: {
 		removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.off(PipelineEvent.TOPIC_SELECTION_CHANGED, listener),
 
 		changeSelectedPipeline: (pipeline?: WellKnownPipeline) => {
-			if (store.selectedPipeline === pipeline) {
-				return;
-			}
 			store.selectedPipeline = pipeline;
 			emitter.emit(PipelineEvent.PIPELINE_SELECTION_CHANGED, pipeline);
 		},

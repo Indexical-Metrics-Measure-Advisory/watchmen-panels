@@ -70,16 +70,13 @@ const Buttons = styled.div`
 const MenuToggleButton = () => {
 	const {
 		store: { menuVisible },
-		changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener,
-		addFlowChangedListener, removeFlowChangedListener
+		changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener
 	} = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
 		addMenuVisibilityListener(forceUpdate);
-		addFlowChangedListener(forceUpdate);
 		return () => {
 			removeMenuVisibilityListener(forceUpdate);
-			removeFlowChangedListener(forceUpdate);
 		};
 	});
 
@@ -94,18 +91,63 @@ const MenuToggleButton = () => {
 
 export const PipelineHeader = () => {
 	const {
-		store: { topic },
-		addFlowChangedListener, removeFlowChangedListener
+		store: { topic, selectedTopic, selectedPipeline },
+		addFlowChangedListener, removeFlowChangedListener,
+		addTopicSelectionChangedListener, removeTopicSelectionChangedListener,
+		addPipelineSelectionChangedListener, removePipelineSelectionChangedListener
 	} = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
 		addFlowChangedListener(forceUpdate);
-		return () => removeFlowChangedListener(forceUpdate);
+		addTopicSelectionChangedListener(forceUpdate);
+		addPipelineSelectionChangedListener(forceUpdate);
+		return () => {
+			removeFlowChangedListener(forceUpdate);
+			removeTopicSelectionChangedListener(forceUpdate);
+			removePipelineSelectionChangedListener(forceUpdate);
+		};
 	});
+
+	const asDirection = () => {
+		if (!selectedPipeline) {
+			return '';
+		} else if (selectedPipeline.topicId === selectedTopic?.topicId) {
+			return 'From ';
+		} else {
+			return 'To ';
+		}
+	};
+	const buildTopicSlice = () => {
+		if (!topic) {
+			return null;
+		} else if (topic === selectedTopic) {
+			return <Slice>{`${asDirection()} ${topic.name}`.trim()}</Slice>;
+		} else {
+			return <Slice>Through {topic.name}</Slice>;
+		}
+	};
+	const buildSelectedTopicSlice = () => {
+		if (!selectedTopic) {
+			return null;
+		} else if (selectedTopic === topic) {
+			return null;
+		} else {
+			return <Slice>{`${asDirection()} ${selectedTopic.name}`.trim()}</Slice>;
+		}
+	};
+	const buildPipelineSlice = () => {
+		if (selectedPipeline) {
+			return <Slice>{selectedPipeline.name || 'Untitled Pipeline'}</Slice>;
+		} else {
+			return null;
+		}
+	};
 
 	return <Header>
 		<Slice>Pipelines</Slice>
-		{topic ? <Slice>{topic.name}</Slice> : null}
+		{buildTopicSlice()}
+		{buildSelectedTopicSlice()}
+		{buildPipelineSlice()}
 		<Placeholder/>
 		<Buttons>
 			<MenuToggleButton/>

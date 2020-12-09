@@ -86,16 +86,20 @@ export const Editor = (props: {
 	const inboundCount = node.toMe?.length || 0;
 	const outboundCount = node.fromMe?.length || 0;
 
+	const selectNextPipeline = () => {
+		if (node.toNext) {
+			changeSelectedPipeline(node.toNext);
+			return node.toNext;
+		}
+	};
 	let pipeline = selectedPipeline;
 	if (pipeline) {
 		// check the given selected pipeline is belongs to current topic or not
-		if (!node.toMe?.includes(pipeline) || !node.fromMe?.includes(pipeline) || node.toNext !== pipeline) {
-			pipeline = node.toNext;
-			changeSelectedPipeline(pipeline);
+		if (!node.toMe?.includes(pipeline) && !node.fromMe?.includes(pipeline) && node.toNext !== pipeline) {
+			pipeline = selectNextPipeline();
 		}
 	} else {
-		pipeline = node.toNext;
-		changeSelectedPipeline(pipeline);
+		pipeline = selectNextPipeline();
 	}
 
 	return <EditorContainer>
