@@ -5,6 +5,11 @@ export const ActionBody = styled.div`
 	grid-auto-rows: minmax(32px, auto);
 	align-items: center;
 `;
+export const ActionBody2Columns = styled(ActionBody)`
+	grid-template-columns: auto 1fr;
+	grid-column-gap: calc(var(--margin) / 2);
+`;
+
 export const ActionBodyItemLabel = styled.div`
 	font-variant: petite-caps;
 `;

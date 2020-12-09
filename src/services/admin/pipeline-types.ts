@@ -73,9 +73,12 @@ export interface ComputedDatePartFactorValue extends SimpleFuncFactorValue {
 	arithmetic: DatePartArithmetic;
 }
 
-export interface UnitActionWriteTopic extends UnitAction {
+export interface UnitActionTopicRelated extends UnitAction {
+	topicId?: string;
+}
+
+export interface UnitActionWriteTopic extends UnitActionTopicRelated {
 	type: WriteTopicActionType;
-	topicId: string;
 }
 
 export interface UnitActionInsertRow extends UnitActionWriteTopic {

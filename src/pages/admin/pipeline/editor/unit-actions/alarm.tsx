@@ -1,14 +1,8 @@
 import React, { useReducer } from 'react';
-import styled from 'styled-components';
 import { UnitAction, UnitActionAlarm, UnitActionAlarmSeverity } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { HorizontalOptions } from '../components/horizontal-options';
-import { ActionBody, ActionBodyItemLabel } from './action-body';
-
-const AlarmActionBody = styled(ActionBody)`
-	grid-template-columns: auto 1fr;
-	grid-column-gap: calc(var(--margin) / 2);
-`;
+import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
 const asDisplaySeverity = (severity: UnitActionAlarmSeverity): string => {
 	return severity.split('-').map(word => {
@@ -35,7 +29,7 @@ export const Alarm = (props: { action: UnitAction }) => {
 		forceUpdate();
 	};
 
-	return <AlarmActionBody>
+	return <ActionBody2Columns>
 		<ActionBodyItemLabel>Severity:</ActionBodyItemLabel>
 		<HorizontalOptions label={asDisplaySeverity(severity)}
 		                   options={Object.values(UnitActionAlarmSeverity).filter(candidate => candidate !== severity)}
@@ -43,5 +37,5 @@ export const Alarm = (props: { action: UnitAction }) => {
 		                   onSelect={onSeverityChanged}/>
 		<ActionBodyItemLabel>Message:</ActionBodyItemLabel>
 		<ActionInput value={message} onChange={onMessageChanged}/>
-	</AlarmActionBody>;
+	</ActionBody2Columns>;
 };

@@ -81,7 +81,7 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 	position: fixed;
 	flex-direction: column;
 	z-index: 1000;
-	max-height: 256px;
+	height: 180px;
 	transform: scaleY(0);
 	transition: transform 300ms ease-in-out;
 	pointer-events: none;

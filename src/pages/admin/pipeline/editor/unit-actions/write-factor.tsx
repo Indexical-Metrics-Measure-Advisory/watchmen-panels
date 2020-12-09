@@ -6,8 +6,6 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 	const { action } = props;
 	const write = action as UnitActionWriteFactor;
 
-	console.log(write);
-
-	return <ActionBody>
+	return <ActionBody>{write.type}
 	</ActionBody>;
 };
