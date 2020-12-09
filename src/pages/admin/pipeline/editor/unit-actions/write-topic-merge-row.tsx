@@ -1,11 +1,11 @@
 import React from 'react';
-import { UnitAction, UnitActionInsertRow } from '../../../../../services/admin/pipeline-types';
+import { UnitAction, UnitActionMergeRow } from '../../../../../services/admin/pipeline-types';
 import { TopicFinder } from '../components/topic-finder';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
-export const WriteTopicInsertRow = (props: { action: UnitAction }) => {
+export const WriteTopicMergeRow = (props: { action: UnitAction }) => {
 	const { action } = props;
-	const write = action as UnitActionInsertRow;
+	const write = action as UnitActionMergeRow;
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>

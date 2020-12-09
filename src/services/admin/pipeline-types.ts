@@ -97,6 +97,14 @@ export interface UnitActionWriteFactor extends FactorHolder, UnitActionWriteTopi
 	value: FactorValueLikes;
 }
 
+export interface UnitActionFindRow extends TopicHolder, UnitAction {
+	type: ReadTopicActionType.FIND_ROW;
+}
+
+export interface UnitActionExists extends TopicHolder, UnitAction {
+	type: ReadTopicActionType.EXISTS;
+}
+
 export enum UnitActionAlarmSeverity {
 	LOW = 'low',
 	MEDIUM = 'medium',

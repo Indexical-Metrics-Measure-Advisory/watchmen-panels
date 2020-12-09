@@ -42,6 +42,7 @@ const UnitSectionLabel = styled.div.attrs({
 })`
 	white-space: nowrap;
 	font-weight: var(--font-demi-bold);
+	font-variant: petite-caps;
 	height: 32px;
 	line-height: 32px;
 	align-self: start;

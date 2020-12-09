@@ -17,6 +17,7 @@ const FinderContainer = styled.div`
 	> input {
 		width: 100%;
 		cursor: pointer;
+		text-overflow: ellipsis;
 	}
 `;
 const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atTop }) => {
