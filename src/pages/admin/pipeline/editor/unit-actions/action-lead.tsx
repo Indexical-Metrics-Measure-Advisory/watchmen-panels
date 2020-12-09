@@ -3,7 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
 
-const AL = styled.div`
+const AL = styled.div.attrs({
+	'data-widget': 'pipeline-unit-action-lead'
+})`
 	white-space: nowrap;
 	font-weight: var(--font-demi-bold);
 	height: 32px;

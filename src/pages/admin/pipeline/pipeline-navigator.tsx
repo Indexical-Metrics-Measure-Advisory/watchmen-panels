@@ -1,9 +1,8 @@
-import { faCircleNotch, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useReducer, useState } from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 import { Theme } from '../../../theme/types';
-import { LinkButton } from '../../component/console/link-button';
 import { ResizeHandle, ResizeHandleAlignment } from '../../component/console/menu/resize-handle';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorTopic } from './pipeline-navigator-topic';
@@ -163,14 +162,17 @@ export const PipelineNavigator = () => {
 		};
 	});
 
+	// const onLocateTopicClicked = () => {
+	// };
 	const onResize = (width: number) => setWidth(Math.min(Math.max(width, ScrollWidth), 500));
 
 	return <Navigator width={width - ScrollWidth} visible={menuVisible}>
 		<Title>
 			<span>Topics</span>
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Locate In Navigator' right={true} offsetX={-8}>
-				<FontAwesomeIcon icon={faCrosshairs}/>
-			</LinkButton>
+			{/*<LinkButton ignoreHorizontalPadding={true} tooltip='Locate In Navigator' right={true} offsetX={-8}*/}
+			{/*            onClick={onLocateTopicClicked}>*/}
+			{/*	<FontAwesomeIcon icon={faCrosshairs}/>*/}
+			{/*</LinkButton>*/}
 		</Title>
 		<Body>
 			{topics.map(topic => <NavigatorTopic topic={topic} key={topic.topicId}/>)}

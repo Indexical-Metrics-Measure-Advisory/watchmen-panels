@@ -5,3 +5,6 @@ export const ActionBody = styled.div`
 	grid-auto-rows: minmax(32px, auto);
 	align-items: center;
 `;
+export const ActionBodyItemLabel = styled.div`
+	font-variant: petite-caps;
+`;

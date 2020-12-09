@@ -80,11 +80,13 @@ export interface UnitActionWriteTopic extends UnitAction {
 
 export interface UnitActionInsertRow extends UnitActionWriteTopic {
 	type: WriteTopicActionType.INSERT_ROW;
+	// TODO
 	mapping: any;
 }
 
 export interface UnitActionMergeRow extends UnitActionWriteTopic {
 	type: WriteTopicActionType.MERGE_ROW | WriteTopicActionType.INSERT_OR_MERGE_ROW;
+	// TODO
 	mapping: any;
 	unique: any;
 }
@@ -96,7 +98,7 @@ export interface UnitActionWriteFactor extends UnitActionWriteTopic {
 	value: AValue;
 }
 
-export enum UnitActionAlarmGrade {
+export enum UnitActionAlarmSeverity {
 	LOW = 'low',
 	MEDIUM = 'medium',
 	HIGH = 'high',
@@ -104,7 +106,8 @@ export enum UnitActionAlarmGrade {
 }
 
 export interface UnitActionAlarm extends UnitAction {
-	grade: UnitActionAlarmGrade;
+	severity: UnitActionAlarmSeverity;
+	message?: string;
 }
 
 export interface ProcessUnit {

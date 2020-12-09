@@ -81,7 +81,7 @@ const UnitActionNode = (props: { action: UnitAction }) => {
 
 	return <Fragment>
 		<ActionLead/>
-		<div>
+		<div data-widget='pipeline-unit-action'>
 			<ActionSelect action={action} onTypeChanged={forceUpdate}/>
 			{
 				// @ts-ignore

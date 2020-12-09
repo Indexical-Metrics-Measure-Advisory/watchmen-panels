@@ -1,10 +1,17 @@
 import React, { useReducer } from 'react';
-import { UnitAction, UnitActionAlarm, UnitActionAlarmGrade } from '../../../../../services/admin/pipeline-types';
+import styled from 'styled-components';
+import { UnitAction, UnitActionAlarm, UnitActionAlarmSeverity } from '../../../../../services/admin/pipeline-types';
+import { ActionInput } from '../components/action-input';
 import { HorizontalOptions } from '../components/horizontal-options';
-import { ActionBody } from './action-body';
+import { ActionBody, ActionBodyItemLabel } from './action-body';
 
-const asDisplayGrade = (grade: UnitActionAlarmGrade): string => {
-	return grade.split('-').map(word => {
+const AlarmActionBody = styled(ActionBody)`
+	grid-template-columns: auto 1fr;
+	grid-column-gap: calc(var(--margin) / 2);
+`;
+
+const asDisplaySeverity = (severity: UnitActionAlarmSeverity): string => {
+	return severity.split('-').map(word => {
 		if ([ 'or', 'and', 'to', 'from' ].includes(word)) {
 			return word;
 		} else {
@@ -16,18 +23,25 @@ const asDisplayGrade = (grade: UnitActionAlarmGrade): string => {
 export const Alarm = (props: { action: UnitAction }) => {
 	const { action } = props;
 	const alarm = action as UnitActionAlarm;
-	const { grade } = alarm;
+	const { severity, message = '' } = alarm;
 
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-	const onGradeChanged = (grade: UnitActionAlarmGrade) => {
-		alarm.grade = grade;
+	const onSeverityChanged = (severity: UnitActionAlarmSeverity) => {
+		alarm.severity = severity;
+		forceUpdate();
+	};
+	const onMessageChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+		alarm.message = event.target.value;
 		forceUpdate();
 	};
 
-	return <ActionBody>
-		<HorizontalOptions label={asDisplayGrade(grade)}
-		                   options={Object.values(UnitActionAlarmGrade).filter(candidate => candidate !== grade)}
-		                   toLabel={(grade) => asDisplayGrade(grade)}
-		                   onSelect={onGradeChanged}/>
-	</ActionBody>;
+	return <AlarmActionBody>
+		<ActionBodyItemLabel>Severity:</ActionBodyItemLabel>
+		<HorizontalOptions label={asDisplaySeverity(severity)}
+		                   options={Object.values(UnitActionAlarmSeverity).filter(candidate => candidate !== severity)}
+		                   toLabel={(severity) => asDisplaySeverity(severity)}
+		                   onSelect={onSeverityChanged}/>
+		<ActionBodyItemLabel>Message:</ActionBodyItemLabel>
+		<ActionInput value={message} onChange={onMessageChanged}/>
+	</AlarmActionBody>;
 };

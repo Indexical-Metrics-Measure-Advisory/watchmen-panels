@@ -10,7 +10,9 @@ import { TopicIcon } from './components';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorFactors } from './pipeline-nagivator-factor';
 
-const TopicContainer = styled.div`
+const TopicContainer = styled.div.attrs({
+	'data-widget': 'pipeline-navigator-topic'
+})`
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8em;
@@ -105,7 +107,7 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 		changeFlow(topic, flow);
 	};
 
-	return <TopicContainer>
+	return <TopicContainer data-topic-id={topic.topicId}>
 		<TopicContent data-factors-visible={factorsVisible} onClick={onTitleClicked}>
 			<FontAwesomeIcon icon={faChevronRight}/>
 			<TopicIcon topic={topic}/>

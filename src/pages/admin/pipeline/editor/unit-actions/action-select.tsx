@@ -6,7 +6,7 @@ import {
 	ReadTopicActionType,
 	SystemActionType,
 	UnitAction,
-	UnitActionAlarmGrade,
+	UnitActionAlarmSeverity,
 	UnitActionType,
 	WriteTopicActionType
 } from '../../../../../services/admin/pipeline-types';
@@ -32,7 +32,6 @@ const ActionSelectContainer = styled.div`
 	outline: none;
 	appearance: none;
 	white-space: nowrap;
-	overflow: hidden;
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
 	&[data-expanded=true],
@@ -52,6 +51,9 @@ const ActionSelectContainer = styled.div`
 		transform: rotateZ(180deg);
 	}
 	> div:first-child {
+		position: relative;
+		font-weight: var(--font-bold);
+		font-variant: petite-caps;
 		border-top-left-radius: 12px;
 		border-bottom-left-radius: 12px;
 		transition: all 300ms ease-in-out;
@@ -169,14 +171,14 @@ interface ActionDefault {
 }
 
 const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType | SystemActionType]: ActionDefault } = {
-	[WriteTopicActionType.INSERT_ROW]: { keep: [], default: {} },
-	[WriteTopicActionType.MERGE_ROW]: { keep: [], default: {} },
-	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: { keep: [], default: {} },
-	[WriteTopicActionType.WRITE_FACTOR]: { keep: [], default: {} },
-	[ReadTopicActionType.EXISTS]: { keep: [], default: {} },
-	[ReadTopicActionType.FIND_ROW]: { keep: [], default: {} },
+	[WriteTopicActionType.INSERT_ROW]: { keep: [ 'topicId' ], default: {} },
+	[WriteTopicActionType.MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
+	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
+	[WriteTopicActionType.WRITE_FACTOR]: { keep: [ 'topicId', 'factorId' ], default: {} },
+	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: {} },
+	[ReadTopicActionType.FIND_ROW]: { keep: [ 'topicId' ], default: {} },
 	[SystemActionType.COPY_TO_MEMORY]: { keep: [], default: {} },
-	[SystemActionType.ALARM]: { keep: [ 'grade' ], default: { grade: UnitActionAlarmGrade.MEDIUM } }
+	[SystemActionType.ALARM]: { keep: [ 'severity' ], default: { severity: UnitActionAlarmSeverity.MEDIUM } }
 };
 
 const ActionTypeButton = (props: {
