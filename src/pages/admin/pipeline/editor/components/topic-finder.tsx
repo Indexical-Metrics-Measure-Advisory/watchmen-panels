@@ -20,9 +20,11 @@ interface FilteredTopic {
 }
 
 const TopicFinderContainer = styled.div`
+	display: flex;
 	position: relative;
 	> input {
 		width: 100%;
+		cursor: pointer;
 	}
 `;
 const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atTop }) => {
@@ -76,26 +78,38 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atT
 			z-index: -1;
 		}
 	}
+	> input {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		background-color: var(--bg-color);
+		border-color: transparent;
+		border-bottom: var(--border);
+		&:hover,
+		&:focus {
+			border-bottom-color: var(--border-color);
+			box-shadow: none;
+		}
+	}
 	> div {
 		height: 28px;
 		line-height: 28px;
 		padding: 0 var(--input-indent);
-	}
-	> div[data-visible=false]:first-child {
-		display: none;
-	}
-	> div:not(:first-child) {
-		cursor: pointer;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		&:hover {
-			color: var(--invert-color);
-			background-color: var(--console-primary-color);
+		&[data-visible=false] {
+			display: none;
 		}
-		> span:nth-child(2n) {
-			font-weight: 800;
-			font-variant: petite-caps;
+		&:not(:nth-child(2)) {
+			cursor: pointer;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			&:hover {
+				color: var(--invert-color);
+				background-color: var(--console-primary-color);
+			}
+			> span:nth-child(2n) {
+				font-weight: 800;
+				font-variant: petite-caps;
+			}
 		}
 	}
 `;
@@ -162,14 +176,11 @@ export const TopicFinder = (props: {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	const searchInputRef = useRef<HTMLInputElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ left: 0, width: 0, atTop: false });
-	const [ filterTopics, setFilterTopics ] = useState<{ value: string, filtered: Array<FilteredTopic> }>(() => {
-		return {
-			value: topicName,
-			filtered: filterTopic(topics, topicName)
-		};
-	});
+	const [ searchText, setSearchText ] = useState<string>(topicName);
+	const [ filterTopics, setFilterTopics ] = useState<Array<FilteredTopic>>(filterTopic(topics, topicName));
 	const [ filterTimeout, setFilterTimeout ] = useState<number | null>(null);
 	useEffect(() => {
 		const collapse = (event: Event) => {
@@ -192,13 +203,15 @@ export const TopicFinder = (props: {
 		if (!expanded) {
 			const rect = inputRef.current!.getBoundingClientRect();
 			const top = rect.top + rect.height + 2;
-			const bottom = top + 28 * count;
+			const bottom = top + 28 * (count + 1);
 			if (bottom > window.innerHeight) {
 				setDropdownRect({ bottom: rect.top - 2, left: rect.left, width: rect.width, atTop: true });
 			} else {
 				setDropdownRect({ top, left: rect.left, width: rect.width, atTop: false });
 			}
 			setExpanded(true);
+			searchInputRef.current!.focus();
+			searchInputRef.current!.select();
 		}
 	};
 	const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,31 +220,33 @@ export const TopicFinder = (props: {
 			clearTimeout(filterTimeout);
 		}
 
-		setFilterTopics({ value, filtered: filterTopics.filtered });
+		setSearchText(value);
 		setFilterTimeout(setTimeout(() => {
 			const filtered = filterTopic(topics, value);
 			setFilterTimeout(null);
-			setFilterTopics({ value, filtered });
+			setFilterTopics(filtered);
 			expand(filtered.length);
 		}, 200));
 	};
-	const onInputFocus = () => expand(filterTopics.filtered.length);
+	const onInputFocus = () => expand(filterTopics.length);
 	const onTargetTopicClicked = (topic: QueriedTopicForPipeline) => () => {
 		holder.topicId = topic.topicId;
-		setFilterTopics({ value: topic.name, filtered: filterTopic(topics, topic.name) });
 		setExpanded(false);
+		setSearchText(topic.name);
+		setFilterTopics(filterTopic(topics, topic.name));
 	};
 
 	return <TopicFinderContainer ref={containerRef}>
-		<ActionInput value={filterTopics.value} onChange={onNameChanged}
-		             onFocus={onInputFocus}
+		<ActionInput value={topicName} onChange={onNameChanged}
+		             onFocus={onInputFocus} readOnly={true}
 		             ref={inputRef}/>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}
-		          data-count={filterTopics.filtered.length} tabIndex={0}>
-			<div data-visible={filterTopics.filtered.length === 0}>
-				{!filterTopics.value ? 'Key in please...' : 'No matched.'}
+		          data-count={filterTopics.length + 1}>
+			<ActionInput value={searchText} onChange={onNameChanged} ref={searchInputRef}/>
+			<div data-visible={filterTopics.length === 0}>
+				{!searchText ? 'Key in please...' : 'No matched.'}
 			</div>
-			{filterTopics.filtered.map(({ topic, parts }) => {
+			{filterTopics.map(({ topic, parts }) => {
 				return <div key={topic.topicId} onClick={onTargetTopicClicked(topic)}>
 					{parts.map(part => <span key={v4()}>{part}</span>)}
 				</div>;
