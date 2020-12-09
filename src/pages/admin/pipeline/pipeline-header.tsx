@@ -90,8 +90,8 @@ const MenuToggleButton = () => {
 	return <LinkButton ignoreHorizontalPadding={true} onClick={onMenuClicked}>
 		<FontAwesomeIcon icon={faBars}/>
 	</LinkButton>;
-
 };
+
 export const PipelineHeader = () => {
 	const {
 		store: { topic },

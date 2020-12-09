@@ -10,5 +10,6 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>Target Topic:</ActionBodyItemLabel>
 		<TopicFinder holder={write}/>
+		<ActionBodyItemLabel>Target Factor:</ActionBodyItemLabel>
 	</ActionBody2Columns>;
 };
