@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { PipelineFlow } from '../../../services/admin/pipeline-types';
 import { listTopicsForPipeline } from '../../../services/admin/topic';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
+import { WellKnownPipeline } from './types';
 
 export enum PipelineEvent {
 	TOPICS_CHANGED = 'topics-changed',
@@ -10,13 +11,15 @@ export enum PipelineEvent {
 	FLOW_CHANGED = 'flow-changed',
 
 	MENU_VISIBLE = 'menu-visible',
-	TOPIC_SELECTION_CHANGED = 'topic-selection-changed'
+	TOPIC_SELECTION_CHANGED = 'topic-selection-changed',
+	PIPELINE_SELECTION_CHANGED = 'pipeline-selection-changed'
 }
 
 export type TopicsChangeListener = () => void;
 export type FlowChangeListener = (topic: QueriedTopicForPipeline, flow: PipelineFlow) => void;
 export type MenuVisibilityListener = (visible: boolean) => void;
 export type TopicSelectionChangeListener = (topic?: QueriedTopicForPipeline) => void;
+export type PipelineSelectionChangeListener = (pipeline?: WellKnownPipeline) => void;
 
 export interface PipelineContextStore {
 	topics: Array<QueriedTopicForPipeline>;
@@ -28,6 +31,7 @@ export interface PipelineContextStore {
 	topicsLoadCompleted: boolean;
 
 	selectedTopic?: QueriedTopicForPipeline;
+	selectedPipeline?: WellKnownPipeline;
 }
 
 export interface PipelineContextUsable {
@@ -45,6 +49,10 @@ export interface PipelineContextUsable {
 	changeSelectedTopic: (topic?: QueriedTopicForPipeline) => void;
 	addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
 	removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
+
+	changeSelectedPipeline: (pipeline?: WellKnownPipeline) => void;
+	addPipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => void;
+	removePipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => void;
 }
 
 export interface PipelineContext extends PipelineContextUsable {
@@ -106,11 +114,25 @@ export const PipelineContextProvider = (props: {
 		removeMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.off(PipelineEvent.MENU_VISIBLE, listener),
 
 		changeSelectedTopic: (topic?: QueriedTopicForPipeline) => {
+			if (store.selectedTopic === topic) {
+				return;
+			}
 			store.selectedTopic = topic;
+			delete store.selectedPipeline;
 			emitter.emit(PipelineEvent.TOPIC_SELECTION_CHANGED, topic);
 		},
 		addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.on(PipelineEvent.TOPIC_SELECTION_CHANGED, listener),
-		removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.off(PipelineEvent.TOPIC_SELECTION_CHANGED, listener)
+		removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.off(PipelineEvent.TOPIC_SELECTION_CHANGED, listener),
+
+		changeSelectedPipeline: (pipeline?: WellKnownPipeline) => {
+			if (store.selectedPipeline === pipeline) {
+				return;
+			}
+			store.selectedPipeline = pipeline;
+			emitter.emit(PipelineEvent.PIPELINE_SELECTION_CHANGED, pipeline);
+		},
+		addPipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => emitter.on(PipelineEvent.PIPELINE_SELECTION_CHANGED, listener),
+		removePipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => emitter.off(PipelineEvent.PIPELINE_SELECTION_CHANGED, listener)
 	}}>{children}</Context.Provider>;
 };
 

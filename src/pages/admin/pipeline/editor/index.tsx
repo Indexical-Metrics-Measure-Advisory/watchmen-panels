@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
+import { usePipelineContext } from '../pipeline-context';
 import { PipelinesTopicNode } from '../types';
 import { PipelineEditor } from './pipeline-editor';
 
@@ -67,6 +68,16 @@ export const Editor = (props: {
 }) => {
 	const { topic, nodes } = props;
 
+	const {
+		store: { selectedPipeline },
+		changeSelectedPipeline, addPipelineSelectionChangedListener, removePipelineSelectionChangedListener
+	} = usePipelineContext();
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	useEffect(() => {
+		addPipelineSelectionChangedListener(forceUpdate);
+		return () => removePipelineSelectionChangedListener(forceUpdate);
+	});
+
 	if (!topic) {
 		return null;
 	}
@@ -75,7 +86,17 @@ export const Editor = (props: {
 	const inboundCount = node.toMe?.length || 0;
 	const outboundCount = node.fromMe?.length || 0;
 
-	const inDiagramOutboundPipeline = node.toNext;
+	let pipeline = selectedPipeline;
+	if (pipeline) {
+		// check the given selected pipeline is belongs to current topic or not
+		if (!node.toMe?.includes(pipeline) || !node.fromMe?.includes(pipeline) || node.toNext !== pipeline) {
+			pipeline = node.toNext;
+			changeSelectedPipeline(pipeline);
+		}
+	} else {
+		pipeline = node.toNext;
+		changeSelectedPipeline(pipeline);
+	}
 
 	return <EditorContainer>
 		<EditorTitle data-topic-type={topic.type}>
@@ -84,9 +105,9 @@ export const Editor = (props: {
 			<div data-topic-type={topic.type}>Outbound <span>{outboundCount}</span></div>
 		</EditorTitle>
 		<EditorBody>
-			{inDiagramOutboundPipeline ?
+			{pipeline ?
 				<PipelineEditor outbound={true} inDiagram={true} topic={topic}
-				                pipeline={inDiagramOutboundPipeline}/> : null}
+				                pipeline={pipeline}/> : null}
 		</EditorBody>
 	</EditorContainer>;
 };

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
+	FactorValueLikesType,
 	ReadTopicActionType,
 	SystemActionType,
 	UnitAction,
@@ -167,14 +168,17 @@ const ActionTypes = [
 
 interface ActionDefault {
 	keep: Array<string>,
-	default: { [key in string]: number | string | boolean }
+	default: { [key in string]: number | string | boolean | object }
 }
 
 const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType | SystemActionType]: ActionDefault } = {
 	[WriteTopicActionType.INSERT_ROW]: { keep: [ 'topicId' ], default: {} },
 	[WriteTopicActionType.MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
 	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
-	[WriteTopicActionType.WRITE_FACTOR]: { keep: [ 'topicId', 'factorId' ], default: {} },
+	[WriteTopicActionType.WRITE_FACTOR]: {
+		keep: [ 'topicId', 'factorId' ],
+		default: { value: { type: FactorValueLikesType.FACTOR } }
+	},
 	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: {} },
 	[ReadTopicActionType.FIND_ROW]: { keep: [ 'topicId' ], default: {} },
 	[SystemActionType.COPY_TO_MEMORY]: { keep: [], default: {} },

@@ -62,23 +62,17 @@ export interface FactorValueLikes {
 	type?: FactorValueLikesType;
 }
 
-export interface InMemoryValue extends FactorValueLikes {
+export interface SimpleFuncFactorValue extends FactorValueLikes {
+	arithmetic: SimpleFuncArithmetic
+}
+
+export interface InMemoryValue extends SimpleFuncFactorValue {
 	type: FactorValueLikesType.IN_MEMORY;
 	name: string;
 }
 
-export interface FactorValue extends FactorValueLikes {
+export interface FactorValue extends TopicHolder, FactorHolder, SimpleFuncFactorValue {
 	type: FactorValueLikesType.FACTOR;
-	topicId?: string;
-	factorId?: string;
-}
-
-export interface SimpleFuncFactorValue extends FactorValue {
-	arithmetic: SimpleFuncArithmetic
-}
-
-export interface ComputedDatePartFactorValue extends SimpleFuncFactorValue {
-	arithmetic: DatePartArithmetic;
 }
 
 export interface UnitActionWriteTopic extends TopicHolder, UnitAction {
