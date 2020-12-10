@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export enum ButtonType {
 	DEFAULT = 'default',
 	PRIMARY = 'primary',
-	DANGER = 'danger'
+	DANGER = 'danger',
+	WAIVE = 'waive'
 }
 
 interface ButtonProps {

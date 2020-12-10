@@ -82,6 +82,8 @@ const DefaultTheme = {
 	consoleHoverShadow: '0 0 11px 0 rgba(0, 0, 0, 0.2)',
 	consolePrimaryShadow: '0 0 11px 0 rgba(94,119,171, 0.6)',
 	consolePrimaryHoverShadow: '0 0 11px 0 rgba(94,119,171, 1)',
+	consoleDangerShadow: '0 0 11px 0 rgba(246,52,27, 0.6)',
+	consoleDangerHoverShadow: '0 0 11px 0 rgba(246,52,27, 1)',
 
 	// console menu
 	consoleMenuWidth: 51,
