@@ -32,7 +32,7 @@ export enum SystemActionType {
 }
 
 export enum ReadTopicActionType {
-	FIND_ROW = 'find-row',
+	READ_ROW = 'read-row',
 	EXISTS = 'exists'
 }
 
@@ -100,8 +100,8 @@ export interface UnitActionWriteFactor extends FactorHolder, FactorValueHolder, 
 	type: WriteTopicActionType.WRITE_FACTOR;
 }
 
-export interface UnitActionFindRow extends TopicHolder, UnitAction {
-	type: ReadTopicActionType.FIND_ROW;
+export interface UnitActionReadRow extends TopicHolder, UnitAction {
+	type: ReadTopicActionType.READ_ROW;
 }
 
 export interface UnitActionExists extends TopicHolder, UnitAction {

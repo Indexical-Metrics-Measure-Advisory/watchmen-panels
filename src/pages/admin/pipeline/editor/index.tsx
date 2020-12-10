@@ -10,7 +10,6 @@ const EditorContainer = styled.div`
 	grid-template-columns: 1fr;
 	grid-template-rows: auto 1fr;
 	position: relative;
-	flex-direction: column;
 	flex-grow: 1;
 	height: 100%;
 	padding: calc(var(--margin) / 2);

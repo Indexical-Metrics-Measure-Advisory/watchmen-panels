@@ -22,7 +22,7 @@ export const UnitActionNodes: { [key in UnitActionType]: UnitActionReactNode | u
 	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: WriteTopicMergeRow,
 	[WriteTopicActionType.WRITE_FACTOR]: WriteFactor,
 
-	[ReadTopicActionType.FIND_ROW]: ReadTopicFindRow,
+	[ReadTopicActionType.READ_ROW]: ReadTopicFindRow,
 	[ReadTopicActionType.EXISTS]: ReadTopicExists,
 
 	[SystemActionType.COPY_TO_MEMORY]: WriteToMemory,

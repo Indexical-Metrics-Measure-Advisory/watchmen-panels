@@ -26,6 +26,7 @@ const FinderContainer = styled.div`
 		flex-grow: 1;
 		height: 22px;
 		border: 0;
+		width: 0;
 		cursor: pointer;
 		text-overflow: ellipsis;
 		&:hover,

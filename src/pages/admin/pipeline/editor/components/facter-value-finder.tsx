@@ -19,8 +19,10 @@ const Container = styled.div`
 	align-items: center;
 	> div:first-child {
 		border-radius: var(--border-radius) 0 0 var(--border-radius);
-		&[data-expanded=true] > div:last-child {
-			padding-right: calc(var(--margin) / 3);
+		&[data-expanded=true] {
+			> div:last-child {
+				padding-right: calc(var(--margin) / 3);
+			}
 		}
 	}
 	> div:nth-child(2) {
@@ -77,6 +79,9 @@ export const FacterValueFinder = (props: { holder: FactorValueHolder }) => {
 	const { topicId: sourceTopicId } = selectedPipeline!;
 	// eslint-disable-next-line
 	const sourceTopic = topics.find(topic => topic.topicId == sourceTopicId);
+	if (isFactorValue(value) && !value.topicId) {
+		value.topicId = sourceTopicId;
+	}
 
 	const onValueTypeChanged = (valueType: SomeValueType) => {
 		value.type = valueType;

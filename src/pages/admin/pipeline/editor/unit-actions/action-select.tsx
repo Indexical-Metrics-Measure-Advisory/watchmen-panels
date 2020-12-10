@@ -180,7 +180,7 @@ const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType 
 		default: { value: { type: SomeValueType.FACTOR } }
 	},
 	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: {} },
-	[ReadTopicActionType.FIND_ROW]: { keep: [ 'topicId' ], default: {} },
+	[ReadTopicActionType.READ_ROW]: { keep: [ 'topicId' ], default: {} },
 	[SystemActionType.COPY_TO_MEMORY]: { keep: [], default: { value: { type: SomeValueType.FACTOR } } },
 	[SystemActionType.ALARM]: { keep: [ 'severity' ], default: { severity: UnitActionAlarmSeverity.MEDIUM } }
 };
