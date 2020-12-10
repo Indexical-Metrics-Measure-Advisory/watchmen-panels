@@ -26,29 +26,7 @@ export interface CompositeCondition extends Condition {
 	children: Array<Condition>;
 }
 
-export enum SystemActionType {
-	ALARM = 'alarm',
-	COPY_TO_MEMORY = 'copy-to-memory'
-}
-
-export enum ReadTopicActionType {
-	READ_ROW = 'read-row',
-	EXISTS = 'exists'
-}
-
-export enum WriteTopicActionType {
-	MERGE_ROW = 'merge-row',
-	INSERT_ROW = 'insert-row',
-	INSERT_OR_MERGE_ROW = 'insert-or-merge-row',
-	WRITE_FACTOR = 'write-factor'
-}
-
-export type UnitActionType = WriteTopicActionType | ReadTopicActionType | SystemActionType;
-
-export interface UnitAction {
-	type: UnitActionType;
-}
-
+// value used in unit actions
 export enum DatePartArithmetic {
 	YEAR_OF = 'year-of',
 	MONTH_OF = 'month-of',
@@ -79,6 +57,35 @@ export interface FactorValue extends TopicHolder, FactorHolder, SimpleFuncValue 
 	type: SomeValueType.FACTOR;
 }
 
+// unit actions
+export enum SystemActionType {
+	ALARM = 'alarm',
+	COPY_TO_MEMORY = 'copy-to-memory'
+}
+
+export enum ReadTopicActionType {
+	READ_ROW = 'read-row',
+	READ_FACTOR = 'read-factor',
+	EXISTS = 'exists'
+}
+
+export enum WriteTopicActionType {
+	MERGE_ROW = 'merge-row',
+	INSERT_ROW = 'insert-row',
+	INSERT_OR_MERGE_ROW = 'insert-or-merge-row',
+	WRITE_FACTOR = 'write-factor'
+}
+
+export type UnitActionType = WriteTopicActionType | ReadTopicActionType | SystemActionType;
+
+export interface UnitAction {
+	type: UnitActionType;
+}
+
+export interface MemoryWriter extends UnitAction {
+	targetName: string;
+}
+
 export interface UnitActionWriteTopic extends TopicHolder, UnitAction {
 	type: WriteTopicActionType;
 }
@@ -93,19 +100,26 @@ export interface UnitActionMergeRow extends UnitActionWriteTopic {
 	type: WriteTopicActionType.MERGE_ROW | WriteTopicActionType.INSERT_OR_MERGE_ROW;
 	// TODO
 	mapping: any;
-	unique: any;
+	by: any;
 }
 
 export interface UnitActionWriteFactor extends FactorHolder, FactorValueHolder, UnitActionWriteTopic {
 	type: WriteTopicActionType.WRITE_FACTOR;
 }
 
-export interface UnitActionReadRow extends TopicHolder, UnitAction {
+export interface UnitActionReadRow extends TopicHolder, MemoryWriter {
 	type: ReadTopicActionType.READ_ROW;
+	by: any;
 }
 
-export interface UnitActionExists extends TopicHolder, UnitAction {
+export interface UnitActionReadFactor extends TopicHolder, FactorHolder, MemoryWriter {
+	type: ReadTopicActionType.READ_FACTOR;
+	by: any;
+}
+
+export interface UnitActionExists extends TopicHolder, MemoryWriter {
 	type: ReadTopicActionType.EXISTS;
+	by: any;
 }
 
 export enum UnitActionAlarmSeverity {
@@ -121,9 +135,8 @@ export interface UnitActionAlarm extends UnitAction {
 	message?: string;
 }
 
-export interface UnitActionCopyToMemory extends FactorValueHolder, UnitAction {
+export interface UnitActionCopyToMemory extends FactorValueHolder, MemoryWriter {
 	type: SystemActionType.COPY_TO_MEMORY;
-	targetName: string;
 }
 
 export interface ProcessUnit {

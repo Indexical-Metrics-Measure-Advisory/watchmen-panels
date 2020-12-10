@@ -1,12 +1,12 @@
 import React, { useReducer } from 'react';
-import { UnitAction, UnitActionReadRow } from '../../../../../services/admin/pipeline-types';
+import { UnitAction, UnitActionReadFactor } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { TopicFinder } from '../components/topic-finder';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
-export const ReadTopicFindRow = (props: { action: UnitAction }) => {
+export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
 	const { action } = props;
-	const read = action as UnitActionReadRow;
+	const read = action as UnitActionReadFactor;
 
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const onTargetNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {

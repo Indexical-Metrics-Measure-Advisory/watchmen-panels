@@ -8,6 +8,7 @@ import {
 } from '../../../../services/admin/pipeline-types';
 import { Alarm } from './unit-actions/alarm';
 import { ReadTopicExists } from './unit-actions/read-topic-exists';
+import { ReadTopicFindFactor } from './unit-actions/read-topic-find-factor';
 import { ReadTopicFindRow } from './unit-actions/read-topic-find-row';
 import { WriteFactor } from './unit-actions/write-factor';
 import { WriteToMemory } from './unit-actions/write-to-memory';
@@ -23,6 +24,7 @@ export const UnitActionNodes: { [key in UnitActionType]: UnitActionReactNode | u
 	[WriteTopicActionType.WRITE_FACTOR]: WriteFactor,
 
 	[ReadTopicActionType.READ_ROW]: ReadTopicFindRow,
+	[ReadTopicActionType.READ_FACTOR]: ReadTopicFindFactor,
 	[ReadTopicActionType.EXISTS]: ReadTopicExists,
 
 	[SystemActionType.COPY_TO_MEMORY]: WriteToMemory,
