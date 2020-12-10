@@ -6,6 +6,10 @@ export interface FactorHolder extends TopicHolder {
 	factorId?: string;
 }
 
+export interface FactorValueHolder {
+	value: SomeValue;
+}
+
 export interface Condition {
 }
 
@@ -53,26 +57,26 @@ export enum DatePartArithmetic {
 
 export type SimpleFuncArithmetic = DatePartArithmetic;
 
-export enum FactorValueLikesType {
+export enum SomeValueType {
 	IN_MEMORY = 'in-memory',
 	FACTOR = 'factor'
 }
 
-export interface FactorValueLikes {
-	type?: FactorValueLikesType;
+export interface SomeValue {
+	type?: SomeValueType;
 }
 
-export interface SimpleFuncFactorValue extends FactorValueLikes {
+export interface SimpleFuncValue extends SomeValue {
 	arithmetic: SimpleFuncArithmetic
 }
 
-export interface InMemoryValue extends SimpleFuncFactorValue {
-	type: FactorValueLikesType.IN_MEMORY;
+export interface InMemoryValue extends SimpleFuncValue {
+	type: SomeValueType.IN_MEMORY;
 	name: string;
 }
 
-export interface FactorValue extends TopicHolder, FactorHolder, SimpleFuncFactorValue {
-	type: FactorValueLikesType.FACTOR;
+export interface FactorValue extends TopicHolder, FactorHolder, SimpleFuncValue {
+	type: SomeValueType.FACTOR;
 }
 
 export interface UnitActionWriteTopic extends TopicHolder, UnitAction {
@@ -92,9 +96,8 @@ export interface UnitActionMergeRow extends UnitActionWriteTopic {
 	unique: any;
 }
 
-export interface UnitActionWriteFactor extends FactorHolder, UnitActionWriteTopic {
+export interface UnitActionWriteFactor extends FactorHolder, FactorValueHolder, UnitActionWriteTopic {
 	type: WriteTopicActionType.WRITE_FACTOR;
-	value: FactorValueLikes;
 }
 
 export interface UnitActionFindRow extends TopicHolder, UnitAction {

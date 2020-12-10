@@ -23,7 +23,7 @@ const FinderContainer = styled.div`
 		box-shadow: var(--console-primary-hover-shadow);
 	}
 	> input {
-		width: 100%;
+		flex-grow: 1;
 		height: 22px;
 		border: 0;
 		cursor: pointer;

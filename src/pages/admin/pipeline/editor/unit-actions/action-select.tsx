@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
-	FactorValueLikesType,
 	ReadTopicActionType,
+	SomeValueType,
 	SystemActionType,
 	UnitAction,
 	UnitActionAlarmSeverity,
@@ -177,7 +177,7 @@ const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType 
 	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
 	[WriteTopicActionType.WRITE_FACTOR]: {
 		keep: [ 'topicId', 'factorId' ],
-		default: { value: { type: FactorValueLikesType.FACTOR } }
+		default: { value: { type: SomeValueType.FACTOR } }
 	},
 	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: {} },
 	[ReadTopicActionType.FIND_ROW]: { keep: [ 'topicId' ], default: {} },

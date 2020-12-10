@@ -1,8 +1,8 @@
 import {
 	DatePartArithmetic,
-	FactorValueLikesType,
 	PipelineFlow,
 	PipelineTriggerType,
+	SomeValueType,
 	WriteTopicActionType
 } from './pipeline-types';
 import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
@@ -203,7 +203,7 @@ const DemoPipelineOfPolicy = {
 									type: WriteTopicActionType.WRITE_FACTOR,
 									topicId: '2',
 									factorId: '201',
-									value: { type: FactorValueLikesType.FACTOR, topicId: '4', factorId: '401' }
+									value: { type: SomeValueType.FACTOR, topicId: '4', factorId: '401' }
 								}
 							]
 						}
@@ -222,7 +222,7 @@ const DemoPipelineOfPolicy = {
 									type: WriteTopicActionType.WRITE_FACTOR,
 									topicId: '2',
 									factorId: '201',
-									value: { type: FactorValueLikesType.FACTOR, topicId: '4', factorId: '401' }
+									value: { type: SomeValueType.FACTOR, topicId: '4', factorId: '401' }
 								}
 							]
 						}
@@ -242,7 +242,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '5', factorId: '501',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
 										arithmetic: DatePartArithmetic.YEAR_OF
@@ -251,7 +251,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '5', factorId: '502',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
 										arithmetic: DatePartArithmetic.WEEK_OF
@@ -260,7 +260,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '5', factorId: '503',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '2',
 										factorId: '207'
 									}
@@ -272,7 +272,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '6', factorId: '601',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
 										arithmetic: DatePartArithmetic.YEAR_OF
@@ -281,7 +281,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '6', factorId: '602',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '2',
 										factorId: '205',
 										arithmetic: DatePartArithmetic.MONTH_OF
@@ -290,7 +290,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '6', factorId: '603',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '2',
 										factorId: '207'
 									}
@@ -311,7 +311,7 @@ const DemoPipelineOfPolicy = {
 								{
 									type: WriteTopicActionType.WRITE_FACTOR, topicId: '8', factorId: '801',
 									value: {
-										type: FactorValueLikesType.FACTOR,
+										type: SomeValueType.FACTOR,
 										topicId: '5',
 										factorId: '501'
 									}

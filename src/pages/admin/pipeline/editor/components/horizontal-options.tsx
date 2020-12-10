@@ -8,20 +8,19 @@ import { v4 } from 'uuid';
 const Options = styled.div`
 	display: flex;
 	position: relative;
+	align-items: stretch;
 	justify-self: start;
-	border: var(--border);
 	border-color: var(--pipeline-bg-color);
 	background-color: var(--pipeline-bg-color);
-	height: 24px;
-	line-height: 22px;
+	height: 22px;
 	border-radius: 12px;
 	outline: none;
 	appearance: none;
 	overflow: hidden;
 	cursor: pointer;
+	box-shadow: 0 0 0 1px var(--border-color);
 	transition: all 300ms ease-in-out;
 	&:hover {
-		border-color: transparent;
 		box-shadow: var(--console-primary-hover-shadow);
 	}
 	&[data-expanded=true] {
@@ -64,11 +63,17 @@ const Options = styled.div`
 		}
 	}
 	> div:first-child {
+		display: flex;
+		align-items: center;
 		padding-left: calc(var(--margin) / 2);
 		border-top-left-radius: 12px;
 		border-bottom-left-radius: 12px;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 	> div:not(:first-child):not(:last-child) {
+		display: flex;
+		align-items: center;
 		position: relative;
 		text-align: center;
 		padding: 0;
@@ -78,6 +83,8 @@ const Options = styled.div`
 		transition: all 300ms ease-in-out;
 	}
 	> div:last-child {
+		display: flex;
+		align-items: center;
 		position: relative;
 		padding: 0 calc(var(--margin) / 3);
 	}
