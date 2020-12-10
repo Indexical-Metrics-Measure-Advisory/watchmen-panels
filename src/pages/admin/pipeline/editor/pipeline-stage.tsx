@@ -5,7 +5,6 @@ import React, { useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { Stage } from '../../../../services/admin/pipeline-types';
-import { BodyHeightExpand } from './components/animation';
 import { AutoSwitchInput } from './components/auto-switch-input';
 import { DangerObjectButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
 import { PipelineUnit } from './pipeline-unit';
@@ -65,9 +64,6 @@ const StageBody = styled.div.attrs({
 	flex-grow: 1;
 	&[data-expanded=false] {
 		display: none;
-	}
-	&[data-expanded=true] {
-		animation: ${BodyHeightExpand} 300ms ease-in-out forwards;
 	}
 `;
 const StageFooter = styled.div.attrs({

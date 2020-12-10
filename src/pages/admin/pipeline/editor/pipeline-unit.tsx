@@ -5,7 +5,6 @@ import React, { Fragment, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { ProcessUnit, UnitAction } from '../../../../services/admin/pipeline-types';
-import { BodyHeightExpand } from './components/animation';
 import { HorizontalOptions } from './components/horizontal-options';
 import { DangerObjectButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
 import { UnitActionNodes } from './pipeline-unit-actions';
@@ -79,9 +78,6 @@ const UnitActions = styled(UnitSection).attrs({
 })`
 	&[data-expanded=false] {
 		display: none;
-	}
-	&[data-expanded=true] {
-		animation: ${BodyHeightExpand} 300ms ease-in-out forwards;
 	}
 	> div:nth-child(2n):not(:last-child) {
 		display: grid;
