@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import Input from '../../../../component/input';
 
 export const ActionInput = styled(Input)`
-	height: 26px;
-	line-height: 24px;
+	height: 24px;
+	line-height: 22px;
 	padding-top: 0;
 	padding-bottom: 0;
 	font-size: 0.8em;

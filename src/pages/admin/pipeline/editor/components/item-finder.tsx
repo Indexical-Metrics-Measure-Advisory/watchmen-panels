@@ -14,10 +14,48 @@ interface DropdownRect {
 const FinderContainer = styled.div`
 	display: flex;
 	position: relative;
+	border-radius: var(--border-radius);
+	box-shadow: 0 0 0 1px var(--border-color);
+	transition: all 300ms ease-in-out;
+	align-items: center;
+	overflow: hidden;
+	&:hover {
+		box-shadow: var(--console-primary-hover-shadow);
+	}
 	> input {
 		width: 100%;
+		border: 0;
 		cursor: pointer;
 		text-overflow: ellipsis;
+		&:hover,
+		&:focus {
+			border-color: transparent;
+			box-shadow: none;
+		}
+	}
+`;
+const TypeChar = styled.div`
+	display: flex;
+	position: relative;
+	align-items: center;
+	align-self: stretch;
+	justify-content: center;
+	background-color: var(--pipeline-bg-color);
+	font-variant: petite-caps;
+	font-weight: var(--font-demi-bold);
+	border-right: var(--border);
+	padding: 0 calc(var(--margin) / 5);
+	z-index: 1;
+	cursor: pointer;
+	&[data-visible=false] {
+		display: none;
+	}
+	&[data-visible=true] {
+		+ input {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			border-left-color: transparent;
+		}
 	}
 `;
 const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atTop }) => {
@@ -35,7 +73,7 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atT
 	position: fixed;
 	flex-direction: column;
 	z-index: 1000;
-	max-height: 280px;
+	max-height: 200px;
 	transform: scaleY(0);
 	transition: transform 300ms ease-in-out;
 	pointer-events: none;
@@ -58,20 +96,11 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atT
 	&[data-expanded=true] {
 		transform: scaleY(1);
 		pointer-events: auto;
-		&:before {
-			content: '';
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			border-radius: var(--border-radius);
-			background-color: var(--pipeline-bg-color);
-			z-index: -1;
-		}
 	}
 	> input {
+		min-height: 28px;
+		position: sticky;
+		top: 0;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
 		background-color: var(--bg-color);
@@ -84,9 +113,11 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atT
 		}
 	}
 	> div {
+		min-height: 28px;
 		height: 28px;
 		line-height: 28px;
 		padding: 0 var(--input-indent);
+		background-color: var(--pipeline-bg-color);
 		&[data-visible=false] {
 			display: none;
 		}
@@ -125,12 +156,14 @@ const isInFinder = (element: EventTarget | null, container: HTMLDivElement): boo
 };
 
 export const ItemFinder = <I extends any>(props: {
+	// single character
+	typeChar?: string;
 	item?: I
 	asLabel: (item?: I) => string;
 	filterItems: (searchText: string) => Array<{ item: I, parts: Array<string> }>;
 	onSelect: (item: I) => void;
 }) => {
-	const { item, asLabel, filterItems, onSelect } = props;
+	const { typeChar, item, asLabel, filterItems, onSelect } = props;
 
 	const name = asLabel(item);
 
@@ -162,7 +195,7 @@ export const ItemFinder = <I extends any>(props: {
 
 	const expand = (count: number) => {
 		if (!expanded) {
-			const rect = inputRef.current!.getBoundingClientRect();
+			const rect = containerRef.current!.getBoundingClientRect();
 			const top = rect.top + rect.height + 2;
 			const bottom = top + 28 * (count + 1);
 			if (bottom > window.innerHeight) {
@@ -189,7 +222,7 @@ export const ItemFinder = <I extends any>(props: {
 			expand(filtered.length);
 		}, 200));
 	};
-	const onInputFocus = () => expand(filteredItems.length);
+	const onExpandClick = () => expand(filteredItems.length);
 	const onItemClicked = (item: I) => () => {
 		onSelect(item);
 		setExpanded(false);
@@ -199,8 +232,11 @@ export const ItemFinder = <I extends any>(props: {
 	};
 
 	return <FinderContainer ref={containerRef}>
+		<TypeChar data-visible={!!typeChar} onClick={onExpandClick}>
+			<span>{typeChar}</span>
+		</TypeChar>
 		<ActionInput value={name} onChange={onNameChanged}
-		             onFocus={onInputFocus} readOnly={true}
+		             onClick={onExpandClick} readOnly={true}
 		             ref={inputRef}/>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}
 		          data-count={filteredItems.length + 1}>

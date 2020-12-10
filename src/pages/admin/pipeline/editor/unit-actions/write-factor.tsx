@@ -11,12 +11,11 @@ import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
 import { FactorFinder } from '../components/factor-finder';
 import { HorizontalOptions } from '../components/horizontal-options';
-import { TopicFinder } from '../components/topic-finder';
+import { TopicFactorFinder } from '../components/topic-factor-finder';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
 const Container = styled(ActionBody2Columns)`
-	> div:nth-child(2),
-	> div:nth-child(4) {
+	> div:nth-child(2) {
 		display: flex;
 		align-items: center;
 		> div:not(:first-child) {
@@ -25,9 +24,6 @@ const Container = styled(ActionBody2Columns)`
 	}
 	> div:nth-child(2) > div:nth-child(2) {
 		flex-grow: 1;
-	}
-	> div:nth-child(4) > div {
-		width: calc(50% - var(--margin) / 4);
 	}
 `;
 
@@ -76,9 +72,6 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 			}
 		</div>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
-		<div>
-			<TopicFinder holder={write}/>
-			<FactorFinder holder={write}/>
-		</div>
+		<TopicFactorFinder holder={write}/>
 	</Container>;
 };
