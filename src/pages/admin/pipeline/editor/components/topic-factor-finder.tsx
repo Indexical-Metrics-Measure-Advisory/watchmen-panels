@@ -15,6 +15,9 @@ const Container = styled.div`
 		width: calc(50% + 1px);
 		border-bottom-right-radius: 0;
 		border-top-right-radius: 0;
+		> input {
+			border-radius: 0;
+		}
 	}
 	> div:last-child {
 		border-bottom-left-radius: 0;

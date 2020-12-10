@@ -27,7 +27,7 @@ const Handle = styled.div.attrs<HandleState>(({ top = 0, left, resizing, alignme
 	display: block;
 	position: fixed;
 	height: 100vh;
-	z-index: 5000;
+	z-index: 500;
 	background-color: transparent;
 	&:before {
 		content: '';

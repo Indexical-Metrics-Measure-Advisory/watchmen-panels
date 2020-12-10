@@ -10,6 +10,7 @@ import { Alarm } from './unit-actions/alarm';
 import { ReadTopicExists } from './unit-actions/read-topic-exists';
 import { ReadTopicFindRow } from './unit-actions/read-topic-find-row';
 import { WriteFactor } from './unit-actions/write-factor';
+import { WriteToMemory } from './unit-actions/write-to-memory';
 import { WriteTopicInsertRow } from './unit-actions/write-topic-insert-row';
 import { WriteTopicMergeRow } from './unit-actions/write-topic-merge-row';
 
@@ -24,6 +25,6 @@ export const UnitActionNodes: { [key in UnitActionType]: UnitActionReactNode | u
 	[ReadTopicActionType.FIND_ROW]: ReadTopicFindRow,
 	[ReadTopicActionType.EXISTS]: ReadTopicExists,
 
-	[SystemActionType.COPY_TO_MEMORY]: undefined,
+	[SystemActionType.COPY_TO_MEMORY]: WriteToMemory,
 	[SystemActionType.ALARM]: Alarm
 };

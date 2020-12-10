@@ -116,8 +116,14 @@ export enum UnitActionAlarmSeverity {
 }
 
 export interface UnitActionAlarm extends UnitAction {
+	type: SystemActionType.ALARM;
 	severity: UnitActionAlarmSeverity;
 	message?: string;
+}
+
+export interface UnitActionCopyToMemory extends FactorValueHolder, UnitAction {
+	type: SystemActionType.COPY_TO_MEMORY;
+	targetName: string;
 }
 
 export interface ProcessUnit {

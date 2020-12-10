@@ -9,6 +9,7 @@ import {
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
+import { ArithmeticSelect } from '../unit-actions/arithmetic-select';
 import { ActionInput } from './action-input';
 import { FactorFinder } from './factor-finder';
 import { HorizontalOptions } from './horizontal-options';
@@ -24,20 +25,28 @@ const Container = styled.div`
 	}
 	> div:nth-child(2) {
 		flex-grow: 1;
-		border-bottom-left-radius: 0;
-		border-top-left-radius: 0;
+		border-radius: 0;
 		box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
 		&:hover {
 			box-shadow: var(--console-primary-hover-shadow);
+		}
+		> input {
+			border-radius: 0;
 		}
 	}
 	> input {
 		flex-grow: 1;
 		height: 22px;
 		border: 0;
-		border-bottom-left-radius: 0;
-		border-top-left-radius: 0;
+		border-radius: 0;
 		box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
+	}
+	> div:last-child {
+		border-radius: 0 var(--border-radius) var(--border-radius) 0;
+		box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
+		&:hover {
+			box-shadow: var(--console-primary-hover-shadow);
+		}
 	}
 `;
 
@@ -97,7 +106,12 @@ export const FacterValueFinder = (props: { holder: FactorValueHolder }) => {
 		{
 			isInMemoryValue(value)
 				? <ActionInput value={value.name} onChange={onInMemoryVariableNameChanged}
-				               placeholder='Variable name here please.'/>
+				               placeholder='Variable name...'/>
+				: null
+		}
+		{
+			isFactorValue(value) || isInMemoryValue(value)
+				? <ArithmeticSelect value={value} right={true}/>
 				: null
 		}
 	</Container>;
