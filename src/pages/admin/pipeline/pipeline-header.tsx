@@ -98,13 +98,14 @@ export const PipelineHeader = () => {
 	} = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	useEffect(() => {
-		addFlowChangedListener(forceUpdate);
-		addTopicSelectionChangedListener(forceUpdate);
-		addPipelineSelectionChangedListener(forceUpdate);
+		const render = () => setTimeout(forceUpdate, 1);
+		addFlowChangedListener(render);
+		addTopicSelectionChangedListener(render);
+		addPipelineSelectionChangedListener(render);
 		return () => {
-			removeFlowChangedListener(forceUpdate);
-			removeTopicSelectionChangedListener(forceUpdate);
-			removePipelineSelectionChangedListener(forceUpdate);
+			removeFlowChangedListener(render);
+			removeTopicSelectionChangedListener(render);
+			removePipelineSelectionChangedListener(render);
 		};
 	});
 

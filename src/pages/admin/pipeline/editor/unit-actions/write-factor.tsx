@@ -33,7 +33,7 @@ const asDisplayValueType = (type: FactorValueLikesType, source?: QueriedTopicFor
 			return 'Memory Context';
 		case FactorValueLikesType.FACTOR:
 		default:
-			return source ? source.name : 'Source Topic';
+			return source ? `Topic: ${source.name}` : 'Source Topic';
 	}
 };
 

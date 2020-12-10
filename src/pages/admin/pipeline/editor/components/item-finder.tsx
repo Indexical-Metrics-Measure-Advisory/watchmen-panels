@@ -24,6 +24,7 @@ const FinderContainer = styled.div`
 	}
 	> input {
 		width: 100%;
+		height: 22px;
 		border: 0;
 		cursor: pointer;
 		text-overflow: ellipsis;
