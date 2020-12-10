@@ -4,6 +4,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
 	DatePartArithmetic,
+	NumericArithmetic,
 	SimpleFuncArithmetic,
 	SimpleFuncValue
 } from '../../../../../services/admin/pipeline-types';
@@ -15,6 +16,8 @@ interface DropdownRect {
 	width: number;
 	atTop: boolean;
 }
+
+const DropdownHeight = 120;
 
 const ArithmeticSelectContainer = styled.div`
 	display: flex;
@@ -62,7 +65,7 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 	position: fixed;
 	flex-direction: column;
 	z-index: 1000;
-	height: 60px;
+	height: ${DropdownHeight}px;
 	transform: scaleY(0);
 	transition: transform 300ms ease-in-out;
 	pointer-events: none;
@@ -132,18 +135,29 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 
 const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => {
 	switch (arithmetic) {
+		// date part
 		case DatePartArithmetic.YEAR_OF:
 			return 'Year';
 		case DatePartArithmetic.MONTH_OF:
 			return 'Month';
 		case DatePartArithmetic.WEEK_OF:
 			return 'Week of Year';
+		case DatePartArithmetic.WEEKDAY:
+			return 'Weekday';
+		// numeric
+		case NumericArithmetic.ABSOLUTE_VALUE:
+			return 'Abs';
+		case NumericArithmetic.LOGARITHM:
+			return 'Log';
+		case NumericArithmetic.PERCENTAGE:
+			return '%';
 	}
 	return 'No Func';
 };
 
 const ArithmeticTypes = [
-	{ label: 'Date Time', enum: DatePartArithmetic }
+	{ label: 'Date Time', enum: DatePartArithmetic },
+	{ label: 'Numeric', enum: NumericArithmetic }
 ];
 
 const ArithmeticButton = (props: {
@@ -179,10 +193,10 @@ export const ArithmeticSelect = (props: {
 		if (!expanded) {
 			const rect = containerRef.current!.getBoundingClientRect();
 			const top = rect.top + rect.height + 2;
-			const bottom = top + 60;
+			const bottom = top + DropdownHeight;
 			if (bottom > window.innerHeight) {
 				setDropdownRect({
-					top: rect.top - 60 - 2,
+					top: rect.top - DropdownHeight - 2,
 					left: right ? (void 0) : rect.left,
 					right: right ? rect.right : (void 0),
 					width: rect.width,

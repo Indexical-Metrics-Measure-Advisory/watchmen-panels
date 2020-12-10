@@ -30,10 +30,17 @@ export interface CompositeCondition extends Condition {
 export enum DatePartArithmetic {
 	YEAR_OF = 'year-of',
 	MONTH_OF = 'month-of',
-	WEEK_OF = 'week-of'
+	WEEK_OF = 'week-of',
+	WEEKDAY = 'weekday'
 }
 
-export type SimpleFuncArithmetic = DatePartArithmetic;
+export enum NumericArithmetic {
+	PERCENTAGE = 'percentage',
+	ABSOLUTE_VALUE = 'abs',
+	LOGARITHM = 'log',
+}
+
+export type SimpleFuncArithmetic = DatePartArithmetic | NumericArithmetic;
 
 export enum SomeValueType {
 	IN_MEMORY = 'in-memory',

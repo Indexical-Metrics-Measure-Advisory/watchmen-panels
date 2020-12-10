@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import { UnitAction, UnitActionReadFactor } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
-import { TopicFinder } from '../components/topic-finder';
+import { TopicFactorFinder } from '../components/topic-factor-finder';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
 export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
@@ -16,7 +16,7 @@ export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
-		<TopicFinder holder={read}/>
+		<TopicFactorFinder holder={read}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<ActionInput value={read.targetName || ''} onChange={onTargetNameChanged}
 		             placeholder='Variable name...'/>
