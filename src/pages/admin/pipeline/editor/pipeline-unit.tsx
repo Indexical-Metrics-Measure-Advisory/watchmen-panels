@@ -1,5 +1,5 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faCompressArrowsAlt, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCompressArrowsAlt, faExpandArrowsAlt, faPencilRuler } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer, useState } from 'react';
 import styled from 'styled-components';
@@ -68,7 +68,6 @@ const UnitCondition = styled(UnitSection).attrs({
 	> button {
 		align-self: center;
 		> svg {
-			font-size: 1em;
 			transition: all 300ms ease-in-out;
 		}
 	}
@@ -172,7 +171,7 @@ export const PipelineUnit = (props: { unit: ProcessUnit }) => {
 			<UnitButtons>
 				<div/>
 				<PrimaryObjectButton>
-					<FontAwesomeIcon icon={faTrashAlt}/>
+					<FontAwesomeIcon icon={faPencilRuler}/>
 					<span>Append Action</span>
 				</PrimaryObjectButton>
 				<DangerObjectButton>

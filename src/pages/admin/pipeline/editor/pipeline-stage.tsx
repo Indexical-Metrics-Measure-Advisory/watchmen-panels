@@ -53,7 +53,6 @@ const StageTitle = styled.div.attrs({
 	> button {
 		margin-right: calc(var(--margin) / 4);
 		> svg {
-			font-size: 1em;
 			transition: all 300ms ease-in-out;
 		}
 	}
@@ -74,6 +73,7 @@ const StageFooter = styled.div.attrs({
 	grid-column-gap: calc(var(--margin) / 4);
 	align-items: center;
 	padding: calc(var(--margin) / 4) calc(var(--margin) / 2);
+	font-size: 0.8em;
 `;
 
 export const StageEditor = (props: {
