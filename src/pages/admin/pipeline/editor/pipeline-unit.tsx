@@ -98,12 +98,15 @@ const UnitActions = styled(UnitSection).attrs({
 			opacity: 0;
 			pointer-events: none;
 		}
-		> div[data-role='action-not-impl'] {
-			grid-column: span 2;
+		div[data-role='action-part-not-impl'],
+		div[data-role='action-not-impl'] {
 			height: 32px;
 			line-height: 32px;
 			font-family: var(--console-title-font-family);
 			opacity: 0.5;
+		}
+		div[data-role='action-not-impl'] {
+			grid-column: span 2;
 		}
 	}
 `;

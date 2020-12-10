@@ -10,5 +10,9 @@ export const WriteTopicMergeRow = (props: { action: UnitAction }) => {
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<TopicFinder holder={write}/>
+		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
+		<div data-role='action-part-not-impl'>Not implemented yet</div>
+		<ActionBodyItemLabel>Use Mapping:</ActionBodyItemLabel>
+		<div data-role='action-part-not-impl'>Not implemented yet</div>
 	</ActionBody2Columns>;
 };

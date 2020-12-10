@@ -26,6 +26,16 @@ export interface CompositeCondition extends Condition {
 	children: Array<Condition>;
 }
 
+// find row by
+export interface FindBy {
+	by: any;
+}
+
+// mapping row to row
+export interface MappingRow {
+	mapping: any;
+}
+
 // value used in unit actions
 export enum DatePartArithmetic {
 	YEAR_OF = 'year-of',
@@ -97,36 +107,28 @@ export interface UnitActionWriteTopic extends TopicHolder, UnitAction {
 	type: WriteTopicActionType;
 }
 
-export interface UnitActionInsertRow extends UnitActionWriteTopic {
+export interface UnitActionInsertRow extends UnitActionWriteTopic, MappingRow {
 	type: WriteTopicActionType.INSERT_ROW;
-	// TODO
-	mapping: any;
 }
 
-export interface UnitActionMergeRow extends UnitActionWriteTopic {
+export interface UnitActionMergeRow extends UnitActionWriteTopic, MappingRow, FindBy {
 	type: WriteTopicActionType.MERGE_ROW | WriteTopicActionType.INSERT_OR_MERGE_ROW;
-	// TODO
-	mapping: any;
-	by: any;
 }
 
-export interface UnitActionWriteFactor extends FactorHolder, FactorValueHolder, UnitActionWriteTopic {
+export interface UnitActionWriteFactor extends FactorHolder, FactorValueHolder, UnitActionWriteTopic, FindBy {
 	type: WriteTopicActionType.WRITE_FACTOR;
 }
 
-export interface UnitActionReadRow extends TopicHolder, MemoryWriter {
+export interface UnitActionReadRow extends TopicHolder, MemoryWriter, FindBy {
 	type: ReadTopicActionType.READ_ROW;
-	by: any;
 }
 
-export interface UnitActionReadFactor extends TopicHolder, FactorHolder, MemoryWriter {
+export interface UnitActionReadFactor extends TopicHolder, FactorHolder, MemoryWriter, FindBy {
 	type: ReadTopicActionType.READ_FACTOR;
-	by: any;
 }
 
-export interface UnitActionExists extends TopicHolder, MemoryWriter {
+export interface UnitActionExists extends TopicHolder, MemoryWriter, FindBy {
 	type: ReadTopicActionType.EXISTS;
-	by: any;
 }
 
 export enum UnitActionAlarmSeverity {

@@ -13,5 +13,7 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 		<FacterValueFinder holder={write}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<TopicFactorFinder holder={write}/>
+		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
+		<div data-role='action-part-not-impl'>Not implemented yet</div>
 	</ActionBody2Columns>;
 };

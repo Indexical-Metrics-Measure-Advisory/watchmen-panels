@@ -17,6 +17,8 @@ export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
 		<TopicFactorFinder holder={read}/>
+		<ActionBodyItemLabel>By:</ActionBodyItemLabel>
+		<div data-role='action-part-not-impl'>Not implemented yet</div>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<ActionInput value={read.targetName || ''} onChange={onTargetNameChanged}
 		             placeholder='Variable name...'/>
