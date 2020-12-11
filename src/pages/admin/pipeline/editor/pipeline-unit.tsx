@@ -9,10 +9,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer, useState } from 'react';
 import styled from 'styled-components';
-import { UnitAction } from '../../../../services/admin/pipeline-types';
 import Button, { ButtonType } from '../../../component/button';
 import { DialogContext, useDialog } from '../../../context/dialog';
-import { ArrangedProcessUnit, ArrangedStage } from '../types';
+import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
 import { HorizontalOptions } from './components/horizontal-options';
 import { DangerObjectButton, DropdownButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
 import { UnitActionNodes } from './pipeline-unit-actions';
@@ -161,11 +160,43 @@ const UnitButtons = styled.div.attrs({
 	padding: calc(var(--margin) / 4) 0;
 `;
 
-const UnitActionNode = (props: { action: UnitAction }) => {
-	const { action } = props;
+const UnitActionNode = (props: {
+	unit: ArrangedProcessUnit;
+	action: ArrangedUnitAction;
+	deleteAction: (action: ArrangedUnitAction) => void;
+}) => {
+	const { unit, action, deleteAction } = props;
 	const { type } = action;
 
+	const dialog = useDialog();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+
+	const onActionDeleteConfirmClicked = () => {
+		deleteAction(action);
+		dialog.hide();
+	};
+	const onClearSettingsConfirmClicked = () => {
+		unit.do.length = 0;
+		unit.do.push(createAlarmAction());
+		dialog.hide();
+	};
+	const onDeleteActionClicked = () => {
+		if (unit.do.length !== 1) {
+			dialog.show(
+				<div data-widget='dialog-console-delete'>
+					<span>Are you sure to delete this action?</span>
+				</div>,
+				buildDialogButtons(dialog, onActionDeleteConfirmClicked)
+			);
+		} else {
+			dialog.show(
+				<div data-widget='dialog-console-delete'>
+					<span>This is the last one in process unit, are you sure to clear all settings?</span>
+				</div>,
+				buildDialogButtons(dialog, onClearSettingsConfirmClicked)
+			);
+		}
+	};
 
 	const UnitNode = UnitActionNodes[type];
 
@@ -173,7 +204,7 @@ const UnitActionNode = (props: { action: UnitAction }) => {
 		<ActionLead/>
 		<div data-widget='pipeline-unit-action'>
 			<ActionSelect action={action} onTypeChanged={forceUpdate}/>
-			<DangerObjectButton>
+			<DangerObjectButton onClick={onDeleteActionClicked}>
 				<FontAwesomeIcon icon={faTrashAlt}/>
 				<span>Delete This Action</span>
 			</DangerObjectButton>
@@ -212,6 +243,13 @@ export const PipelineUnit = (props: {
 	const toLabel = (withCondition: boolean) => withCondition ? 'Conditional' : 'Anyway';
 	const onTypeChanged = (withCondition: boolean) => setConditional(withCondition);
 	const onExpandClicked = () => setExpanded(!expanded);
+	const onDeleteAction = (action: ArrangedUnitAction) => {
+		const index = unit.do.findIndex(exists => exists === action);
+		if (index !== -1) {
+			unit.do.splice(index, 1);
+			forceUpdate();
+		}
+	};
 	const onAppendActionClicked = () => {
 		unit.do.push(createAlarmAction());
 		forceUpdate();
@@ -235,7 +273,7 @@ export const PipelineUnit = (props: {
 		} else {
 			dialog.show(
 				<div data-widget='dialog-console-delete'>
-					<span>This is the last one in pipeline, are you sure to clear all actions?</span>
+					<span>This is the last one in stage, are you sure to clear all actions?</span>
 				</div>,
 				buildDialogButtons(dialog, onClearActionsConfirmClicked)
 			);
@@ -264,7 +302,11 @@ export const PipelineUnit = (props: {
 			</WaiveObjectButton>
 		</UnitCondition>
 		<UnitActions data-expanded={expanded}>
-			{unit.do.map(action => <UnitActionNode action={action} key={action.uuid}/>)}
+			{unit.do.map(action => {
+				return <UnitActionNode unit={unit} action={action}
+				                       deleteAction={onDeleteAction}
+				                       key={action.uuid}/>;
+			})}
 			<UnitButtons>
 				<div/>
 				<PrimaryObjectButton onClick={onAppendActionClicked}>
