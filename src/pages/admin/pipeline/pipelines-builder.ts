@@ -1,12 +1,12 @@
 import { QueriedTopicForPipeline, TopicType } from '../../../services/admin/types';
-import { ArrangedPipelines, PipelinesTopicNode, WellKnownPipeline } from './types';
+import { ArrangedPipeline, ArrangedPipelines, PipelinesTopicNode } from './types';
 
 const computePipelines = (options: {
 	target: QueriedTopicForPipeline;
 	arranged: ArrangedPipelines;
 	allTopics: Map<string, QueriedTopicForPipeline>;
-	findPipelines: (topicId: string) => Array<WellKnownPipeline> | undefined;
-	getNextTopicId: (pipeline: WellKnownPipeline) => string;
+	findPipelines: (topicId: string) => Array<ArrangedPipeline> | undefined;
+	getNextTopicId: (pipeline: ArrangedPipeline) => string;
 }) => {
 	const { target: { topicId }, arranged: { starts, ends }, allTopics, findPipelines, getNextTopicId } = options;
 

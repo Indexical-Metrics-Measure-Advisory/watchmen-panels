@@ -1,12 +1,12 @@
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
-import { v4 } from 'uuid';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
-import { WellKnownPipeline } from '../types';
+import { ArrangedPipeline, ArrangedStage } from '../types';
 import { AutoSwitchInput } from './components/auto-switch-input';
 import { StageEditor } from './pipeline-stage';
 import { PipelineTrigger } from './pipeline-trigger';
+import { createStage } from './utils';
 
 const Container = styled.div`
 	display: flex;
@@ -50,7 +50,7 @@ export const PipelineEditor = (props: {
 	outbound: boolean;
 	inDiagram: boolean;
 	topic: QueriedTopicForPipeline;
-	pipeline: WellKnownPipeline;
+	pipeline: ArrangedPipeline;
 }) => {
 	const { outbound, inDiagram, pipeline } = props;
 
@@ -58,10 +58,22 @@ export const PipelineEditor = (props: {
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
 	const onNameChange = (value: string) => {
-		// TODO pipeline name changed, to notify or save?
+		// change both well known pipeline and original one
 		pipeline.name = value;
+		pipeline.origin.name = value;
 		changeSelectedPipeline(pipeline);
 		forceUpdate();
+	};
+	const onAppendStage = () => {
+		pipeline.stages.push(createStage());
+		forceUpdate();
+	};
+	const onDeleteStage = (stage: ArrangedStage) => {
+		const index = pipeline.stages.findIndex(exists => exists === stage);
+		if (index !== -1) {
+			pipeline.stages.splice(index, 1);
+			forceUpdate();
+		}
 	};
 
 	return <Container>
@@ -75,7 +87,10 @@ export const PipelineEditor = (props: {
 		<Body>
 			<PipelineTrigger pipeline={pipeline}/>
 			{pipeline.stages.map((stage, index) => {
-				return <StageEditor stage={stage} index={index + 1} key={v4()}/>;
+				return <StageEditor pipeline={pipeline} stage={stage}
+				                    appendStage={onAppendStage}
+				                    deleteStage={onDeleteStage}
+				                    index={index + 1} key={stage.uuid}/>;
 			})}
 		</Body>
 	</Container>;

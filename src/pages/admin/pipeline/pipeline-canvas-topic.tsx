@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { QueriedTopicForPipeline, TopicType } from '../../../services/admin/types';
 import { usePipelineContext } from './pipeline-context';
 import { buildPipelineCanvasTopicStyles } from './styles';
-import { WellKnownPipeline } from './types';
+import { ArrangedPipeline } from './types';
 
 const Topic = styled.div.attrs({
 	'data-widget': 'pipeline-topic'
@@ -145,11 +145,11 @@ const TopicTypeTooltip: { [key in TopicType]: string } = {
 	[TopicType.NOT_DEFINED]: 'Not Defined'
 };
 
-export const PipelineTopic = (props: {
+export const PipelineCanvasTopic = (props: {
 	topic: QueriedTopicForPipeline;
-	toMe?: Array<WellKnownPipeline>;
-	fromMe?: Array<WellKnownPipeline>;
-	toNext?: WellKnownPipeline;
+	toMe?: Array<ArrangedPipeline>;
+	fromMe?: Array<ArrangedPipeline>;
+	toNext?: ArrangedPipeline;
 	previous?: QueriedTopicForPipeline;
 	next?: QueriedTopicForPipeline;
 	current?: boolean;

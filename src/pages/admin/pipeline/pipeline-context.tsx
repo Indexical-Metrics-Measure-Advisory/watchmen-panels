@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { PipelineFlow } from '../../../services/admin/pipeline-types';
 import { listTopicsForPipeline } from '../../../services/admin/topic';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
-import { WellKnownPipeline } from './types';
+import { ArrangedPipeline } from './types';
 
 export enum PipelineEvent {
 	TOPICS_CHANGED = 'topics-changed',
@@ -19,7 +19,7 @@ export type TopicsChangeListener = () => void;
 export type FlowChangeListener = (topic: QueriedTopicForPipeline, flow: PipelineFlow) => void;
 export type MenuVisibilityListener = (visible: boolean) => void;
 export type TopicSelectionChangeListener = (topic?: QueriedTopicForPipeline) => void;
-export type PipelineSelectionChangeListener = (pipeline?: WellKnownPipeline) => void;
+export type PipelineSelectionChangeListener = (pipeline?: ArrangedPipeline) => void;
 
 export interface PipelineContextStore {
 	topics: Array<QueriedTopicForPipeline>;
@@ -31,7 +31,7 @@ export interface PipelineContextStore {
 	topicsLoadCompleted: boolean;
 
 	selectedTopic?: QueriedTopicForPipeline;
-	selectedPipeline?: WellKnownPipeline;
+	selectedPipeline?: ArrangedPipeline;
 }
 
 export interface PipelineContextUsable {
@@ -50,7 +50,7 @@ export interface PipelineContextUsable {
 	addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
 	removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
 
-	changeSelectedPipeline: (pipeline?: WellKnownPipeline) => void;
+	changeSelectedPipeline: (pipeline?: ArrangedPipeline) => void;
 	addPipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => void;
 	removePipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => void;
 }
@@ -121,7 +121,7 @@ export const PipelineContextProvider = (props: {
 		addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.on(PipelineEvent.TOPIC_SELECTION_CHANGED, listener),
 		removeTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => emitter.off(PipelineEvent.TOPIC_SELECTION_CHANGED, listener),
 
-		changeSelectedPipeline: (pipeline?: WellKnownPipeline) => {
+		changeSelectedPipeline: (pipeline?: ArrangedPipeline) => {
 			store.selectedPipeline = pipeline;
 			emitter.emit(PipelineEvent.PIPELINE_SELECTION_CHANGED, pipeline);
 		},

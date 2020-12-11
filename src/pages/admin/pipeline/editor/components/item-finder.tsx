@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
+import { notInMe } from '../../../../../common/utils';
 import { ActionInput } from './action-input';
 
 interface DropdownRect {
@@ -140,23 +141,6 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, bottom, left, width, atT
 	}
 `;
 
-const isInFinder = (element: EventTarget | null, container: HTMLDivElement): boolean => {
-	if (!element || element === window || element === document) {
-		return false;
-	}
-	if (element === container) {
-		return true;
-	}
-	let parent = (element as HTMLElement).parentElement;
-	while (parent && parent !== document.body) {
-		if (parent === container) {
-			return true;
-		}
-		parent = parent.parentElement;
-	}
-	return false;
-};
-
 export const ItemFinder = <I extends any>(props: {
 	// single character
 	typeChar?: string;
@@ -180,8 +164,7 @@ export const ItemFinder = <I extends any>(props: {
 	const [ filterTimeout, setFilterTimeout ] = useState<number | null>(null);
 	useEffect(() => {
 		const collapse = (event: Event) => {
-			const target = event.target;
-			if (!isInFinder(target, containerRef.current!)) {
+			if (notInMe(containerRef.current!, event.target)) {
 				setExpanded(false);
 			}
 		};

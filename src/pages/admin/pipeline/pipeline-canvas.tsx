@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { QueriedTopicForPipeline } from '../../../services/admin/types';
-import { PipelineTopic } from './pipeline-topic';
+import { PipelineCanvasTopic } from './pipeline-canvas-topic';
 import { PipelinesTopicNode } from './types';
 
 const PipelinesCanvasContainer = styled.div`
@@ -44,7 +44,7 @@ export const PipelineCanvas = (props: {
 
 	return <PipelinesCanvasContainer>
 		{nodes.map(node => {
-			return <PipelineTopic {...node} key={v4()}/>;
+			return <PipelineCanvasTopic {...node} key={v4()}/>;
 		})}
 	</PipelinesCanvasContainer>;
 };

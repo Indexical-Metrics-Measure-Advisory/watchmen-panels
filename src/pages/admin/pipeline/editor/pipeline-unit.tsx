@@ -1,18 +1,21 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faCompressArrowsAlt, faExpandArrowsAlt, faPencilRuler } from '@fortawesome/free-solid-svg-icons';
+import { faCompressArrowsAlt, faEraser, faExpandArrowsAlt, faPencilRuler } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer, useState } from 'react';
 import styled from 'styled-components';
-import { v4 } from 'uuid';
-import { ProcessUnit, UnitAction } from '../../../../services/admin/pipeline-types';
+import { UnitAction } from '../../../../services/admin/pipeline-types';
+import Button, { ButtonType } from '../../../component/button';
+import { DialogContext, useDialog } from '../../../context/dialog';
+import { ArrangedProcessUnit, ArrangedStage } from '../types';
 import { HorizontalOptions } from './components/horizontal-options';
-import { DangerObjectButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
+import { DangerObjectButton, DropdownButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
 import { UnitActionNodes } from './pipeline-unit-actions';
 import { ActionLead } from './unit-actions/action-lead';
 import { ActionSelect } from './unit-actions/action-select';
+import { createAlarmAction } from './utils';
 
 const UnitContainer = styled.div.attrs({
-	'data-widget': 'stage-units'
+	'data-widget': 'stage-unit'
 })`
 	display: flex;
 	position: relative;
@@ -138,23 +141,71 @@ const UnitActionNode = (props: { action: UnitAction }) => {
 				<span>Delete This Action</span>
 			</DangerObjectButton>
 			{
-				// @ts-ignore
-				UnitNode ? <UnitNode action={action} key={v4()}/> :
-					<div key={v4()} data-role='action-not-impl'>[{type}] Not implemented yet</div>
+				UnitNode
+					// @ts-ignore
+					? <UnitNode action={action}/>
+					: <div data-role='action-not-impl'>[{type}] Not implemented yet</div>
 			}
 		</div>
 	</Fragment>;
 };
 
-export const PipelineUnit = (props: { unit: ProcessUnit }) => {
-	const { unit } = props;
+const buildDialogButtons = (dialog: DialogContext, onConfirm: () => void) => {
+	return <Fragment>
+		<div style={{ flexGrow: 1 }}/>
+		<Button inkType={ButtonType.PRIMARY} onClick={onConfirm}>Yes</Button>
+		<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
+	</Fragment>;
+};
 
+export const PipelineUnit = (props: {
+	stage: ArrangedStage;
+	unit: ArrangedProcessUnit;
+	deleteUnit: (unit: ArrangedProcessUnit) => void;
+}) => {
+	const { stage, unit, deleteUnit } = props;
+
+	const dialog = useDialog();
 	const [ expanded, setExpanded ] = useState(true);
 	const [ conditional, setConditional ] = useState(!!unit.on);
 
 	const toLabel = (withCondition: boolean) => withCondition ? 'Conditional' : 'Anyway';
 	const onTypeChanged = (withCondition: boolean) => setConditional(withCondition);
 	const onExpandClicked = () => setExpanded(!expanded);
+	const onUnitDeleteConfirmClicked = () => {
+		deleteUnit(unit);
+		dialog.hide();
+	};
+	const onClearActionsConfirmClicked = () => {
+		console.log('clear');
+		unit.do = [ createAlarmAction() ];
+		dialog.hide();
+	};
+	const onUnitDeleteClicked = () => {
+		if (stage.units.length !== 1) {
+			dialog.show(
+				<div data-widget='dialog-console-delete'>
+					<span>Are you sure to delete this unit?</span>
+				</div>,
+				buildDialogButtons(dialog, onUnitDeleteConfirmClicked)
+			);
+		} else {
+			dialog.show(
+				<div data-widget='dialog-console-delete'>
+					<span>This is the last one in pipeline, are you sure to clear all actions?</span>
+				</div>,
+				buildDialogButtons(dialog, onClearActionsConfirmClicked)
+			);
+		}
+	};
+	const onClearActionsClicked = () => {
+		dialog.show(
+			<div data-widget='dialog-console-delete'>
+				<span>Are you sure to clear all actions?</span>
+			</div>,
+			buildDialogButtons(dialog, onClearActionsConfirmClicked)
+		);
+	};
 
 	const conditionLabel = toLabel(conditional);
 
@@ -166,21 +217,24 @@ export const PipelineUnit = (props: { unit: ProcessUnit }) => {
 			                   onSelect={onTypeChanged}/>
 			<WaiveObjectButton onClick={onExpandClicked}>
 				<FontAwesomeIcon icon={expanded ? faCompressArrowsAlt : faExpandArrowsAlt}/>
-				<span>{expanded ? 'Hide This Unit' : 'Show This Unit'}</span>
+				<span>{expanded ? 'Hide This Process Unit' : 'Show This Process Unit'}</span>
 			</WaiveObjectButton>
 		</UnitCondition>
 		<UnitActions data-expanded={expanded}>
-			{unit.do.map(action => <UnitActionNode action={action} key={v4()}/>)}
+			{unit.do.map(action => <UnitActionNode action={action} key={action.uuid}/>)}
 			<UnitButtons>
 				<div/>
 				<PrimaryObjectButton>
 					<FontAwesomeIcon icon={faPencilRuler}/>
 					<span>Append Action</span>
 				</PrimaryObjectButton>
-				<DangerObjectButton>
-					<FontAwesomeIcon icon={faTrashAlt}/>
-					<span>Delete This Unit</span>
-				</DangerObjectButton>
+				<DropdownButton icon={faTrashAlt} type={ButtonType.DANGER} label='Delete This Unit'
+				                onClick={onUnitDeleteClicked}
+				                menus={[ {
+					                icon: faEraser,
+					                label: 'Clear Actions',
+					                onClick: onClearActionsClicked
+				                } ]}/>
 			</UnitButtons>
 		</UnitActions>
 	</UnitContainer>;

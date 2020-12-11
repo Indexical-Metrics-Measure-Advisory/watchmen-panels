@@ -1,4 +1,4 @@
-import { faBezierCurve, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -114,7 +114,7 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 			<span>{topic.name}</span>
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Show Pipeline' right={true} offsetX={-8}
 			            onClick={onShowPipelineClicked}>
-				<FontAwesomeIcon icon={faBezierCurve}/>
+				<FontAwesomeIcon icon={faWaveSquare}/>
 			</LinkButton>
 		</TopicContent>
 		<NavigatorFactors topic={topic} visible={factorsVisible}/>

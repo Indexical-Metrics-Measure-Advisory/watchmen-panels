@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 import {
 	PipelineFlow,
 	UnitAction,
@@ -11,7 +12,7 @@ import { PipelineCanvas } from './pipeline-canvas';
 import { usePipelineContext } from './pipeline-context';
 import { PipelineEditor } from './pipeline-editor';
 import { buildPipelines } from './pipelines-builder';
-import { ArrangedPipelines, WellKnownPipeline } from './types';
+import { ArrangedPipeline, ArrangedPipelines } from './types';
 
 const Body = styled.div.attrs({
 	'data-widget': 'console-pipeline-body'
@@ -53,8 +54,8 @@ const getOrCreateFromMap = <T extends any>(key: string, map: Map<string, Array<T
 };
 const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 	// key is topic, value is pipeline array which triggered by this topic
-	const sourceMap = new Map<string, Array<WellKnownPipeline>>();
-	const targetMap = new Map<string, Array<WellKnownPipeline>>();
+	const sourceMap = new Map<string, Array<ArrangedPipeline>>();
+	const targetMap = new Map<string, Array<ArrangedPipeline>>();
 	[ flow.consume, flow.produce ].forEach(pipelines => pipelines.forEach(pipeline => {
 		const { topicId, stages } = pipeline;
 
@@ -71,22 +72,41 @@ const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 			}).flat();
 		}).flat() as Array<string>;
 
-		const wellKnown: WellKnownPipeline = {
+		const arrangedPipeline: ArrangedPipeline = {
 			...pipeline,
+			stages: pipeline.stages.map(stage => {
+				return {
+					uuid: v4(),
+					...stage,
+					units: stage.units.map(unit => {
+						return {
+							uuid: v4(),
+							...unit,
+							do: unit.do.map(action => {
+								return {
+									uuid: v4(),
+									...action
+								};
+							})
+						};
+					})
+				};
+			}),
 			targetTopicIds: [ ...new Set<string>(targetTopicIds) ],
-			origin: pipeline
+			origin: pipeline,
+			uuid: v4()
 		};
 
 		// take care of source from
 		const startsFrom = getOrCreateFromMap(topicId, sourceMap);
-		if (startsFrom.findIndex(pipeline => wellKnown.origin === pipeline.origin) === -1) {
-			startsFrom.push(wellKnown);
+		if (startsFrom.findIndex(pipeline => arrangedPipeline.origin === pipeline.origin) === -1) {
+			startsFrom.push(arrangedPipeline);
 		}
 		// take care of target to
-		wellKnown.targetTopicIds.forEach(targetTopicId => {
+		arrangedPipeline.targetTopicIds.forEach(targetTopicId => {
 			const endsTo = getOrCreateFromMap(targetTopicId, targetMap);
-			if (endsTo.findIndex(pipeline => wellKnown.origin === pipeline.origin) === -1) {
-				endsTo.push(wellKnown);
+			if (endsTo.findIndex(pipeline => arrangedPipeline.origin === pipeline.origin) === -1) {
+				endsTo.push(arrangedPipeline);
 			}
 		});
 	}));

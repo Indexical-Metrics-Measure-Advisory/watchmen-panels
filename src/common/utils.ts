@@ -1,3 +1,5 @@
+import { RefObject, useEffect } from 'react';
+
 export const emptySetter = () => void 0;
 export const emptyGetter = emptySetter;
 
@@ -38,4 +40,22 @@ export const notInMe = (me: HTMLOrSVGElement, target: EventTarget | null): boole
 		}
 		parent = parent?.parentElement;
 	}
+};
+
+export const useCollapseFixedThing = (containerRef: RefObject<HTMLOrSVGElement>, hide: () => void) => {
+	useEffect(() => {
+		const collapse = (event: Event) => {
+			if (notInMe(containerRef.current!, event.target)) {
+				hide();
+			}
+		};
+		window.addEventListener('scroll', collapse, true);
+		window.addEventListener('focus', collapse, true);
+		window.addEventListener('click', collapse, true);
+		return () => {
+			window.removeEventListener('scroll', collapse, true);
+			window.removeEventListener('focus', collapse, true);
+			window.removeEventListener('click', collapse, true);
+		};
+	});
 };
