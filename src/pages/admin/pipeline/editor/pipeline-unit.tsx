@@ -1,5 +1,11 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faCompressArrowsAlt, faEraser, faExpandArrowsAlt, faPencilRuler } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCompressArrowsAlt,
+	faEraser,
+	faExpandArrowsAlt,
+	faMicrochip,
+	faPencilRuler
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer, useState } from 'react';
 import styled from 'styled-components';
@@ -38,6 +44,36 @@ const UnitContainer = styled.div.attrs({
 		border-bottom: 1px dashed var(--border-color);
 		z-index: -1;
 	}
+	&:first-child:after {
+		top: 0;
+		height: 100%;
+	}
+	&:after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 8px;
+		left: 0;
+		width: var(--margin);
+		height: calc(100% - 8px);
+		background-color: var(--console-favorite-color);
+		border-top-right-radius: calc(var(--margin) / 4);
+		border-bottom-right-radius: var(--margin);
+		opacity: 0;
+		z-index: -1;
+		transition: all 300ms ease-in-out;
+	}
+	&:hover {
+		div[data-widget='stage-unit-label'] {
+			background-color: var(--bg-color);
+			border-radius: var(--border-radius);
+			margin-left: calc(var(--margin) / -4);
+			padding-left: calc(var(--margin) / 4);
+		}
+		:after {
+			opacity: 0.4;
+		}
+	}
 `;
 const UnitSection = styled.div`
 	display: grid;
@@ -50,8 +86,9 @@ const UnitSectionLabel = styled.div.attrs({
 	white-space: nowrap;
 	font-weight: var(--font-demi-bold);
 	font-variant: petite-caps;
-	height: 32px;
-	line-height: 32px;
+	height: 24px;
+	line-height: 24px;
+	margin-top: 4px;
 	align-self: start;
 `;
 const UnitCondition = styled(UnitSection).attrs({
@@ -118,7 +155,7 @@ const UnitButtons = styled.div.attrs({
 })`
 	grid-column: span 2;
 	display: grid;
-	grid-template-columns: 1fr auto auto;
+	grid-template-columns: 1fr auto auto auto;
 	grid-column-gap: calc(var(--margin) / 4);
 	align-items: center;
 	padding: calc(var(--margin) / 4) 0;
@@ -161,9 +198,11 @@ const buildDialogButtons = (dialog: DialogContext, onConfirm: () => void) => {
 export const PipelineUnit = (props: {
 	stage: ArrangedStage;
 	unit: ArrangedProcessUnit;
+	appendUnit: () => void;
+	prependUnit: (on: ArrangedProcessUnit) => void;
 	deleteUnit: (unit: ArrangedProcessUnit) => void;
 }) => {
-	const { stage, unit, deleteUnit } = props;
+	const { stage, unit, appendUnit, prependUnit, deleteUnit } = props;
 
 	const dialog = useDialog();
 	const [ expanded, setExpanded ] = useState(true);
@@ -182,7 +221,6 @@ export const PipelineUnit = (props: {
 		dialog.hide();
 	};
 	const onClearActionsConfirmClicked = () => {
-		console.log('clear');
 		unit.do = [ createAlarmAction() ];
 		dialog.hide();
 	};
@@ -233,6 +271,13 @@ export const PipelineUnit = (props: {
 					<FontAwesomeIcon icon={faPencilRuler}/>
 					<span>Append Action</span>
 				</PrimaryObjectButton>
+				<DropdownButton icon={faMicrochip} type={ButtonType.PRIMARY} label='Append Process Unit'
+				                onClick={appendUnit}
+				                menus={[ {
+					                icon: faMicrochip,
+					                label: 'Prepend Process Unit',
+					                onClick: () => prependUnit(unit)
+				                } ]}/>
 				<DropdownButton icon={faTrashAlt} type={ButtonType.DANGER} label='Delete This Unit'
 				                onClick={onUnitDeleteClicked}
 				                menus={[ {

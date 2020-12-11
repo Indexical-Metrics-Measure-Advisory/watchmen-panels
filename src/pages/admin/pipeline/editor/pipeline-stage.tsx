@@ -1,11 +1,5 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import {
-	faCompressArrowsAlt,
-	faEraser,
-	faExpandArrowsAlt,
-	faMicrochip,
-	faProjectDiagram
-} from '@fortawesome/free-solid-svg-icons';
+import { faCompressArrowsAlt, faEraser, faExpandArrowsAlt, faProjectDiagram } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -13,7 +7,7 @@ import Button, { ButtonType } from '../../../component/button';
 import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedPipeline, ArrangedProcessUnit, ArrangedStage } from '../types';
 import { AutoSwitchInput } from './components/auto-switch-input';
-import { DropdownButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
+import { DropdownButton, WaiveObjectButton } from './components/object-button';
 import { PipelineUnit } from './pipeline-unit';
 import { createAlarmUnit } from './utils';
 
@@ -95,7 +89,7 @@ const StageFooter = styled.div.attrs({
 	'data-widget': 'stage-footer'
 })`
 	display: grid;
-	grid-template-columns: 1fr auto auto auto;
+	grid-template-columns: 1fr auto auto;
 	grid-column-gap: calc(var(--margin) / 4);
 	align-items: center;
 	padding: calc(var(--margin) / 2) calc(var(--margin) / 2);
@@ -134,6 +128,15 @@ export const StageEditor = (props: {
 	const onExpandClicked = () => setExpanded(!expanded);
 	const onAppendUnit = () => {
 		stage.units.push(createAlarmUnit());
+		forceUpdate();
+	};
+	const onPrependUnit = (on: ArrangedProcessUnit) => {
+		const index = stage.units.findIndex(exists => exists === on);
+		if (index === -1) {
+			stage.units.unshift(createAlarmUnit());
+		} else {
+			stage.units.splice(index, 0, createAlarmUnit());
+		}
 		forceUpdate();
 	};
 	const onStageDeleteConfirmClicked = () => {
@@ -197,15 +200,11 @@ export const StageEditor = (props: {
 		<StageBody data-expanded={expanded} ref={bodyRef}>
 			{stage.units.map(unit => {
 				return <PipelineUnit stage={stage} unit={unit}
-				                     deleteUnit={onDeleteUnit}
+				                     appendUnit={onAppendUnit} prependUnit={onPrependUnit} deleteUnit={onDeleteUnit}
 				                     key={unit.uuid}/>;
 			})}
 			<StageFooter>
 				<div/>
-				<PrimaryObjectButton onClick={onAppendUnit}>
-					<FontAwesomeIcon icon={faMicrochip}/>
-					<span>Append Process Unit</span>
-				</PrimaryObjectButton>
 				<DropdownButton icon={faProjectDiagram} type={ButtonType.PRIMARY} label='Append Stage'
 				                onClick={appendStage}
 				                menus={[ {
