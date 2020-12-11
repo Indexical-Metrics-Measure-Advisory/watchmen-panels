@@ -55,9 +55,8 @@ const UnitContainer = styled.div.attrs({
 		left: 0;
 		width: var(--margin);
 		height: calc(100% - 8px);
-		background-color: var(--console-favorite-color);
-		border-top-right-radius: calc(var(--margin) / 4);
-		border-bottom-right-radius: var(--margin);
+		background-color: var(--console-primary-color);
+		border-radius: 0 calc(var(--margin) / 4) var(--margin) 0;
 		opacity: 0;
 		z-index: -1;
 		transition: all 300ms ease-in-out;
@@ -69,8 +68,8 @@ const UnitContainer = styled.div.attrs({
 			margin-left: calc(var(--margin) / -4);
 			padding-left: calc(var(--margin) / 4);
 		}
-		:after {
-			opacity: 0.4;
+		&:after {
+			opacity: 0.1;
 		}
 	}
 `;
@@ -93,7 +92,8 @@ const UnitSectionLabel = styled.div.attrs({
 const UnitCondition = styled(UnitSection).attrs({
 	'data-widget': 'stage-unit-condition'
 })`
-	grid-template-columns: 120px 1fr auto;
+	grid-template-columns: calc(120px - var(--margin) / 2) 1fr auto;
+	grid-column-gap: calc(var(--margin) / 2);
 	&[data-expanded=false] {
 		> button {
 			> svg {
@@ -114,39 +114,65 @@ const UnitCondition = styled(UnitSection).attrs({
 const UnitActions = styled(UnitSection).attrs({
 	'data-widget': 'stage-unit-actions'
 })`
+	display: flex;
+	flex-direction: column;
 	&[data-expanded=false] {
 		display: none;
 	}
-	> div:nth-child(2n):not(:last-child) {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		&:hover {
-			> button:nth-child(2) {
-				opacity: 1;
-				pointer-events: auto;
-			}
+`;
+const UnitActionContainer = styled.div.attrs({
+	'data-widget': 'stage-unit-action'
+})`
+	display: grid;
+	position: relative;
+	grid-template-columns: calc(120px - var(--margin) / 2) 1fr auto;
+	grid-column-gap: calc(var(--margin) / 2);
+	&:first-child {
+		margin: 4px 0;
+	}
+	&:before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		left: calc(var(--margin) / -2);
+		width: var(--margin);
+		height: 100%;
+		background-color: var(--console-waive-color);
+		border-radius: 0 calc(var(--margin) / 4) var(--margin) 0;
+		opacity: 0;
+		z-index: -1;
+		transition: all 300ms ease-in-out;
+	}
+	&:hover {
+		&:before {
+			opacity: 0.25;
 		}
-		> div:first-child {
-			margin: 4px 0;
+		> button:nth-child(3) {
+			opacity: 1;
+			pointer-events: auto;
 		}
-		> div:not(:first-child) {
-			grid-column: span 2;
-		}
-		> button:nth-child(2) {
-			align-self: center;
-			opacity: 0;
-			pointer-events: none;
-		}
-		div[data-role='action-part-not-impl'],
-		div[data-role='action-not-impl'] {
-			height: 32px;
-			line-height: 32px;
-			font-family: var(--console-title-font-family);
-			opacity: 0.5;
-		}
-		div[data-role='action-not-impl'] {
-			grid-column: span 2;
-		}
+	}
+	> div:nth-child(2) {
+		align-self: center;
+	}
+	> button:nth-child(3) {
+		align-self: center;
+		opacity: 0;
+		pointer-events: none;
+	}
+	> *:nth-child(4) {
+		grid-column: span 3;
+	}
+	div[data-role='action-part-not-impl'],
+	div[data-role='action-not-impl'] {
+		height: 32px;
+		line-height: 32px;
+		font-family: var(--console-title-font-family);
+		opacity: 0.5;
+	}
+	div[data-role='action-not-impl'] {
+		grid-column: span 2;
 	}
 `;
 const UnitButtons = styled.div.attrs({
@@ -200,22 +226,20 @@ const UnitActionNode = (props: {
 
 	const UnitNode = UnitActionNodes[type];
 
-	return <Fragment>
+	return <UnitActionContainer>
 		<ActionLead/>
-		<div data-widget='pipeline-unit-action'>
-			<ActionSelect action={action} onTypeChanged={forceUpdate}/>
-			<DangerObjectButton onClick={onDeleteActionClicked}>
-				<FontAwesomeIcon icon={faTrashAlt}/>
-				<span>Delete This Action</span>
-			</DangerObjectButton>
-			{
-				UnitNode
-					// @ts-ignore
-					? <UnitNode action={action}/>
-					: <div data-role='action-not-impl'>[{type}] Not implemented yet</div>
-			}
-		</div>
-	</Fragment>;
+		<ActionSelect action={action} onTypeChanged={forceUpdate}/>
+		<DangerObjectButton onClick={onDeleteActionClicked}>
+			<FontAwesomeIcon icon={faTrashAlt}/>
+			<span>Delete This Action</span>
+		</DangerObjectButton>
+		{
+			UnitNode
+				// @ts-ignore
+				? <UnitNode action={action}/>
+				: <div data-role='action-not-impl'>[{type}] Not implemented yet</div>
+		}
+	</UnitActionContainer>;
 };
 
 const buildDialogButtons = (dialog: DialogContext, onConfirm: () => void) => {
