@@ -14,6 +14,9 @@ export const ObjectButton = styled(Button)`
 	font-weight: var(--font-bold);
 	border: 0;
 	opacity: 1;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	&[data-ink-type=primary] {
 		background-color: var(--console-primary-color);
 	}
@@ -62,6 +65,11 @@ export const ObjectButton = styled(Button)`
 	> svg:first-child {
 		font-size: 0.8em;
 		margin-right: calc(var(--margin) / 5);
+	}
+	> span:nth-child(2) {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 	> span[data-role='more-buttons'] {
 		display: flex;
