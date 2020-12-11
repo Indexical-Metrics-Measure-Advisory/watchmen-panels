@@ -1,5 +1,6 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, useTheme } from 'styled-components';
+import { Theme } from '../../../theme/types';
 
 const Container = styled.div.attrs({
 	'data-widget': 'console-horizontal-loading'
@@ -67,7 +68,7 @@ const createRollingAnimation = (options: { distance: number, opacity: 0.2 | 0.6 
 			`;
 	}).join('')}`;
 };
-const Loading = styled.div<{ width: number, opacity: 0.2 | 0.6 | 1, distance: number }>`
+const HorizontalCircle = styled.div<{ width: number, opacity: 0.2 | 0.6 | 1, distance: number }>`
 	display: block;
 	position: absolute;
 	border-radius: 100%;
@@ -85,8 +86,72 @@ export const HorizontalLoading = (props: { className?: string, visible: boolean 
 	const { className, visible } = props;
 
 	return <Container className={className} data-visible={visible}>
-		<Loading width={12} opacity={1} distance={80}/>
-		<Loading width={16} opacity={0.6} distance={70}/>
-		<Loading width={20} opacity={0.2} distance={60}/>
+		<HorizontalCircle width={12} opacity={1} distance={80}/>
+		<HorizontalCircle width={16} opacity={0.6} distance={70}/>
+		<HorizontalCircle width={20} opacity={0.2} distance={60}/>
+	</Container>;
+};
+
+const BlendSmall = keyframes`
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(160px);
+	}
+`;
+const BlendMiddle = keyframes`
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(120px);
+	}
+`;
+const BlendLarge = keyframes`
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(80px);
+	}
+`;
+
+const BlendCircle = styled.div.attrs<{ left: number | string, size: number, color: string }>(({
+	                                                                                              left,
+	                                                                                              size,
+	                                                                                              color
+                                                                                              }) => {
+	return {
+		style: {
+			width: size,
+			height: size,
+			marginTop: 20 - size,
+			left,
+			backgroundColor: color
+		}
+	};
+})<{ left: number | string, size: number, color: string }>`
+	display: block;
+	position: absolute;
+	border-radius: 50%;
+	&[data-small] {
+		animation: ${BlendSmall} 5s infinite alternate;
+	}
+	&[data-middle] {
+		animation: ${BlendMiddle} 5s infinite alternate;
+	}
+	&[data-large] {
+		animation: ${BlendLarge} 5s infinite alternate;
+	}
+`;
+export const BlendLoading = (props: { className?: string, visible: boolean }) => {
+	const { className, visible } = props;
+	const theme = useTheme() as Theme;
+
+	return <Container className={className} data-visible={visible} style={{ filter: 'blur(2px) contrast(10)' }}>
+		<BlendCircle left='calc(50% - 40px)' size={20} color={theme.successColor} data-large/>
+		<BlendCircle left='calc(50% - 60px)' size={16} color={theme.dangerColor} data-middle/>
+		<BlendCircle left='calc(50% - 80px)' size={12} color={theme.primaryColor} data-small/>
 	</Container>;
 };
