@@ -73,7 +73,7 @@ const DefaultTheme = {
 	consoleFontColor: '#666666',
 	consoleHoverColor: 'rgb(102,132,195)',
 	consolePrimaryColor: 'rgb(94,119,171)',
-	consoleDangerColor: 'rgb(246,52,27)',
+	consoleDangerColor: 'rgb(205,42,51)',
 	consoleSuccessColor: 'rgb(33,157,79)',
 	consoleWarnColor: 'rgb(255,161,0)',
 	consoleInfoColor: 'rgb(138,53,193)',
@@ -83,7 +83,7 @@ const DefaultTheme = {
 	consolePrimaryShadow: '0 0 11px 0 rgba(94,119,171, 0.6)',
 	consolePrimaryHoverShadow: '0 0 11px 0 rgba(94,119,171, 1)',
 	consoleDangerShadow: '0 0 11px 0 rgba(246,52,27, 0.6)',
-	consoleDangerHoverShadow: '0 0 11px 0 rgba(246,52,27, 1)',
+	consoleDangerHoverShadow: '0 0 11px 0 rgba(205,42,51, 1)',
 
 	// console menu
 	consoleMenuWidth: 51,
