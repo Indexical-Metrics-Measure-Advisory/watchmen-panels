@@ -68,6 +68,15 @@ export const PipelineEditor = (props: {
 		pipeline.stages.push(createStage());
 		forceUpdate();
 	};
+	const onPrependStage = (on: ArrangedStage) => {
+		const index = pipeline.stages.findIndex(exists => exists === on);
+		if (index === -1) {
+			pipeline.stages.unshift(createStage());
+		} else {
+			pipeline.stages.splice(index, 0, createStage());
+		}
+		forceUpdate();
+	};
 	const onDeleteStage = (stage: ArrangedStage) => {
 		const index = pipeline.stages.findIndex(exists => exists === stage);
 		if (index !== -1) {
@@ -89,6 +98,7 @@ export const PipelineEditor = (props: {
 			{pipeline.stages.map((stage, index) => {
 				return <StageEditor pipeline={pipeline} stage={stage}
 				                    appendStage={onAppendStage}
+				                    prependStage={onPrependStage}
 				                    deleteStage={onDeleteStage}
 				                    index={index + 1} key={stage.uuid}/>;
 			})}

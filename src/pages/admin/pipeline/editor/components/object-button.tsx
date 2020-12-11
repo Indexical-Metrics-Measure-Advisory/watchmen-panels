@@ -118,11 +118,16 @@ const Dropdown = styled.div.attrs<DropdownState>(({ visible, top, left, minWidth
 	flex-direction: column;
 	position: fixed;
 	overflow-x: hidden;
-	box-shadow: var(--console-danger-hover-shadow);
 	border-radius: 0;
 	transition: opacity 300ms ease-in-out;
 	> button {
 		border-radius: 0;
+	}
+	&[data-ink-type=primary] {
+		box-shadow: var(--console-primary-hover-shadow);
+	}
+	&[data-ink-type=danger] {
+		box-shadow: var(--console-danger-hover-shadow);
 	}
 `;
 const DropdownMenu = styled.div`
@@ -141,6 +146,7 @@ const DropdownMenu = styled.div`
 	}
 	&[data-ink-type=primary] {
 		background-color: var(--console-primary-color);
+		box-shadow: var(--console-primary-hover-shadow);
 	}
 	&[data-ink-type=danger] {
 		background-color: var(--console-danger-color);
@@ -196,6 +202,7 @@ export const DropdownButton = (props: {
 	const onMenuClicked = (doOnClick: () => void) => (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
+		setExpanded({ ...expanded, visible: false });
 		doOnClick();
 	};
 
@@ -207,7 +214,7 @@ export const DropdownButton = (props: {
 		<span data-role='more-buttons' onClick={onExpandClicked}>
 			<FontAwesomeIcon icon={faCaretDown}/>
 		</span>
-		<Dropdown {...expanded}>
+		<Dropdown {...expanded} data-ink-type={type}>
 			{menus.map(({ icon, label, onClick }) => {
 				return <DropdownMenu data-ink-type={type} key={label} onClick={onMenuClicked(onClick)}>
 					<FontAwesomeIcon icon={icon}/>

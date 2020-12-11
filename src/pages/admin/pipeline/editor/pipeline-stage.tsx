@@ -117,9 +117,10 @@ export const StageEditor = (props: {
 	stage: ArrangedStage;
 	index: number;
 	appendStage: () => void;
+	prependStage: (on: ArrangedStage) => void;
 	deleteStage: (stage: ArrangedStage) => void;
 }) => {
-	const { pipeline, stage, index, appendStage, deleteStage } = props;
+	const { pipeline, stage, index, appendStage, prependStage, deleteStage } = props;
 
 	const dialog = useDialog();
 	const bodyRef = useRef<HTMLDivElement>(null);
@@ -205,10 +206,13 @@ export const StageEditor = (props: {
 					<FontAwesomeIcon icon={faMicrochip}/>
 					<span>Append Process Unit</span>
 				</PrimaryObjectButton>
-				<PrimaryObjectButton onClick={appendStage}>
-					<FontAwesomeIcon icon={faProjectDiagram}/>
-					<span>Append Stage</span>
-				</PrimaryObjectButton>
+				<DropdownButton icon={faProjectDiagram} type={ButtonType.PRIMARY} label='Append Stage'
+				                onClick={appendStage}
+				                menus={[ {
+					                icon: faProjectDiagram,
+					                label: 'Prepend Stage',
+					                onClick: () => prependStage(stage)
+				                } ]}/>
 				<DropdownButton icon={faTrashAlt} type={ButtonType.DANGER} label='Delete Above Stage'
 				                onClick={onStageDeleteClicked}
 				                menus={[ {

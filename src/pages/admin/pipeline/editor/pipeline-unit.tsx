@@ -168,10 +168,15 @@ export const PipelineUnit = (props: {
 	const dialog = useDialog();
 	const [ expanded, setExpanded ] = useState(true);
 	const [ conditional, setConditional ] = useState(!!unit.on);
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 
 	const toLabel = (withCondition: boolean) => withCondition ? 'Conditional' : 'Anyway';
 	const onTypeChanged = (withCondition: boolean) => setConditional(withCondition);
 	const onExpandClicked = () => setExpanded(!expanded);
+	const onAppendActionClicked = () => {
+		unit.do.push(createAlarmAction());
+		forceUpdate();
+	};
 	const onUnitDeleteConfirmClicked = () => {
 		deleteUnit(unit);
 		dialog.hide();
@@ -224,7 +229,7 @@ export const PipelineUnit = (props: {
 			{unit.do.map(action => <UnitActionNode action={action} key={action.uuid}/>)}
 			<UnitButtons>
 				<div/>
-				<PrimaryObjectButton>
+				<PrimaryObjectButton onClick={onAppendActionClicked}>
 					<FontAwesomeIcon icon={faPencilRuler}/>
 					<span>Append Action</span>
 				</PrimaryObjectButton>
