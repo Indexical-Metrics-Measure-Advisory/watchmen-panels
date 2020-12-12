@@ -89,6 +89,9 @@ export const Editor = (props: {
 		if (node.toNext) {
 			changeSelectedPipeline(node.toNext);
 			return node.toNext;
+		} else {
+			changeSelectedPipeline(node.toMe![0]);
+			return node.toMe![0];
 		}
 	};
 	let pipeline = selectedPipeline;
@@ -101,6 +104,8 @@ export const Editor = (props: {
 		pipeline = selectNextPipeline();
 	}
 
+	const isOutbound = pipeline.topicId == topic.topicId;
+
 	return <EditorContainer>
 		<EditorTitle data-topic-type={topic.type}>
 			<div>{topic.name}</div>
@@ -109,7 +114,7 @@ export const Editor = (props: {
 		</EditorTitle>
 		<EditorBody>
 			{pipeline ?
-				<PipelineEditor outbound={true} inDiagram={true} topic={topic}
+				<PipelineEditor outbound={isOutbound} inDiagram={true} topic={topic}
 				                pipeline={pipeline}/> : null}
 		</EditorBody>
 	</EditorContainer>;

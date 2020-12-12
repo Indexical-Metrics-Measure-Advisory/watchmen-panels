@@ -1,6 +1,6 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useReducer } from 'react';
+import React, { Fragment, useEffect, useReducer } from 'react';
 import styled from 'styled-components';
 import { LinkButton } from '../../component/console/link-button';
 import { usePipelineContext } from './pipeline-context';
@@ -53,6 +53,9 @@ const Slice = styled.div`
 		right: -9px;
 		border-left-color: var(--bg-color);
 	}
+	> span {
+		font-variant: petite-caps;
+	}
 `;
 const Placeholder = styled.div`
 	flex-grow: 1;
@@ -91,7 +94,7 @@ const MenuToggleButton = () => {
 
 export const PipelineHeader = () => {
 	const {
-		store: { topic, selectedTopic, selectedPipeline },
+		store: { topics, topic, selectedTopic, selectedPipeline },
 		addFlowChangedListener, removeFlowChangedListener,
 		addTopicSelectionChangedListener, removeTopicSelectionChangedListener,
 		addPipelineSelectionChangedListener, removePipelineSelectionChangedListener
@@ -133,7 +136,17 @@ export const PipelineHeader = () => {
 		} else if (selectedTopic === topic) {
 			return null;
 		} else {
-			return <Slice>{`${asDirection()} ${selectedTopic.name}`.trim()}</Slice>;
+			const direction = asDirection();
+			if (direction === 'To ') {
+				// eslint-disable-next-line
+				const fromTopic = topics.find(topic => topic.topicId == selectedPipeline?.topicId)!;
+				return <Fragment>
+					<Slice>From {`${fromTopic.name}`.trim()}</Slice>
+					<Slice>To {`${selectedTopic.name}`.trim()}</Slice>
+				</Fragment>;
+			} else {
+				return <Slice>From {`${selectedTopic.name}`.trim()}</Slice>;
+			}
 		}
 	};
 	const buildPipelineSlice = () => {
