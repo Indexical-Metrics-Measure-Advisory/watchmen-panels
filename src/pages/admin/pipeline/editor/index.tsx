@@ -291,7 +291,7 @@ export const Editor = (props: {
 			<PipelineButton label='Outbound' count={outboundCount} pipelines={node.fromMe} pipeline={pipeline}/>
 			<PrimaryObjectButton onClick={onCreatePipelineClicked}>
 				<FontAwesomeIcon icon={faWaveSquare}/>
-				<span>Create New Pipeline</span>
+				<span>Create New Outbound Pipeline</span>
 			</PrimaryObjectButton>
 		</EditorTitle>
 		<EditorBody>
