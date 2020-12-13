@@ -88,6 +88,12 @@ const PipelineSwitcher = styled.div`
 		opacity: 0;
 		transition: all 300ms ease-in-out;
 	}
+	&[data-can-expand=false] {
+		cursor: default;
+		&:hover {
+			box-shadow: none;
+		}
+	}
 	&[data-expanded=true] {
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
@@ -101,7 +107,7 @@ const PipelineSwitcher = styled.div`
 	> span:first-child {
 		margin-right: calc(var(--margin) / 3);
 	}
-	> span:last-child {
+	> span:nth-child(2) {
 		padding-left: calc(var(--margin) / 3);
 		&:before {
 			content: '';
@@ -178,6 +184,9 @@ const PipelineButton = (props: {
 	const onExpandClicked = (event: React.MouseEvent<HTMLSpanElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
+		if (count === 0) {
+			return;
+		}
 		const rect = containerRef.current!.getBoundingClientRect();
 		setExpanded({
 			visible: true,
@@ -196,6 +205,7 @@ const PipelineButton = (props: {
 	};
 
 	return <PipelineSwitcher onClick={onExpandClicked}
+	                         data-can-expand={count !== 0}
 	                         data-expanded={expanded.visible}
 	                         ref={containerRef}>
 		<span>{label}</span>
@@ -286,7 +296,7 @@ export const Editor = (props: {
 		</EditorTitle>
 		<EditorBody>
 			{pipeline ?
-				<PipelineEditor outbound={isOutbound} inDiagram={true} topic={topic}
+				<PipelineEditor outbound={isOutbound} topic={topic}
 				                pipeline={pipeline}/> : null}
 		</EditorBody>
 	</EditorContainer>;

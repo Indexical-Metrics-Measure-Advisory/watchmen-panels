@@ -29,15 +29,6 @@ const Title = styled.div`
 		flex-grow: 1;
 		margin-right: calc(var(--margin) / 4);
 	}
-	> div:nth-child(2) {
-		font-size: 0.8em;
-		line-height: 2em;
-		opacity: 0.7;
-		background-color: var(--console-primary-color);
-		color: var(--invert-color);
-		padding: 0 calc(var(--margin) / 4);
-		border-radius: 1em;
-	}
 `;
 const Body = styled.div`
 	display: flex;
@@ -48,11 +39,10 @@ const Body = styled.div`
 
 export const PipelineEditor = (props: {
 	outbound: boolean;
-	inDiagram: boolean;
 	topic: QueriedTopicForPipeline;
 	pipeline: ArrangedPipeline;
 }) => {
-	const { outbound, inDiagram, pipeline } = props;
+	const { outbound, pipeline } = props;
 
 	const { changeSelectedPipeline } = usePipelineContext();
 	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
@@ -91,7 +81,6 @@ export const PipelineEditor = (props: {
 			                 prefixLabel={`# ${outbound ? 'Outbound' : 'Inbound'}`} value={pipeline.name}
 			                 placeholder='Untitled Pipeline'
 			                 styles={{ backgroundColor: 'transparent' }}/>
-			{inDiagram ? <div>In Diagram</div> : null}
 		</Title>
 		<Body>
 			<PipelineTrigger pipeline={pipeline}/>
