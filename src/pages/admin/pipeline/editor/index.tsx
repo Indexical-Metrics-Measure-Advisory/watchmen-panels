@@ -1,9 +1,19 @@
-import React, { useEffect, useReducer } from 'react';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
+import { useCollapseFixedThing } from '../../../../common/utils';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
-import { PipelinesTopicNode } from '../types';
+import { ArrangedPipeline, PipelinesTopicNode } from '../types';
 import { PipelineEditor } from './pipeline-editor';
+
+interface DropdownState {
+	visible: boolean;
+	top: number;
+	right: number
+}
 
 const EditorContainer = styled.div`
 	display: grid;
@@ -40,26 +50,161 @@ const EditorTitle = styled.div`
 		flex-grow: 1;
 		font-size: 1.4em;
 	}
-	> div:nth-child(2),
-	> div:nth-child(3) {
-		font-size: 0.8em;
-		height: 1.8em;
-		line-height: 1.8em;
-		> span {
-			border-radius: 1em;
-			padding: 0 calc(var(--margin) / 3);
-			color: var(--invert-color);
-			background-color: var(--console-primary-color);
+`;
+const PipelineSwitcher = styled.div`
+	display: flex;
+	position: relative;
+	align-items: center;
+	font-size: 0.8em;
+	height: 22px;
+	border-radius: 11px;
+	color: var(--invert-color);
+	background-color: var(--console-primary-color);
+	padding: 0 calc(var(--margin) / 2);
+	margin-bottom: 4px;
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	&:last-child {
+		margin-left: calc(var(--margin) / 4);
+	}
+	&:hover {
+		box-shadow: var(--console-primary-hover-shadow);
+	}
+	&:before {
+		content: '';
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 1px;
+		background-color: var(--invert-color);
+		opacity: 0;
+		transition: all 300ms ease-in-out;
+	}
+	&[data-expanded=true] {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		&:before {
+			opacity: 0.5;
 		}
 	}
-	> div:nth-child(3) {
-		margin-left: calc(var(--margin) / 3);
+	> span {
+		position: relative;
+	}
+	> span:first-child {
+		margin-right: calc(var(--margin) / 3);
+	}
+	> span:last-child {
+		padding-left: calc(var(--margin) / 3);
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 20%;
+			left: 0;
+			width: 1px;
+			height: 60%;
+			background-color: var(--invert-color);
+			opacity: 0.5;
+		}
+	}
+`;
+const Dropdown = styled.div.attrs<DropdownState>(({ visible, top, right }) => {
+	return {
+		style: {
+			opacity: visible ? 1 : 0,
+			pointerEvents: visible ? 'auto' : 'none',
+			top,
+			right
+		}
+	};
+})<DropdownState>`
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	overflow-x: hidden;
+	color: var(--invert-color);
+	transition: opacity 300ms ease-in-out;
+	border-radius: var(--border-radius);
+	border-top-right-radius: 0;
+	min-width: 120px;
+	box-shadow: var(--console-primary-hover-shadow);
+	z-index: 1;
+	> div {
+		display: flex;
+		align-items: center;
+		height: 28px;
+		padding: 0 calc(var(--margin) / 2);
+		background-color: var(--console-primary-color);
+		&[data-current=true] {
+			cursor: default;
+		}
+		&:hover {
+			filter: brightness(140%);
+		}
+		> svg {
+			margin-right: calc(var(--margin) / 4);
+		}
+		> span:first-child {
+			margin-left: calc(var(--margin) / 4 + 14px * 0.8);
+		}
 	}
 `;
 const EditorBody = styled.div`
 	flex-grow: 1;
 	margin-bottom: var(--margin);
 `;
+
+const PipelineButton = (props: {
+	label: 'Inbound' | 'Outbound',
+	count: number;
+	pipelines?: Array<ArrangedPipeline>;
+	pipeline: ArrangedPipeline;
+}) => {
+	const { label, count, pipelines, pipeline: selectedPipeline } = props;
+
+	const { changeSelectedPipeline } = usePipelineContext();
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [ expanded, setExpanded ] = useState({ visible: false, right: 0, top: 0 });
+	useCollapseFixedThing(containerRef, () => setExpanded({ ...expanded, visible: false }));
+
+	const onExpandClicked = (event: React.MouseEvent<HTMLSpanElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		const rect = containerRef.current!.getBoundingClientRect();
+		setExpanded({
+			visible: true,
+			top: rect.top + rect.height,
+			right: window.innerWidth - rect.left - rect.width
+		});
+	};
+	const onMenuClicked = (pipeline: ArrangedPipeline) => (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (pipeline === selectedPipeline) {
+			return;
+		}
+		setExpanded({ ...expanded, visible: false });
+		changeSelectedPipeline(pipeline);
+	};
+
+	return <PipelineSwitcher onClick={onExpandClicked}
+	                         data-expanded={expanded.visible}
+	                         ref={containerRef}>
+		<span>{label}</span>
+		<span>{count}</span>
+		<Dropdown {...expanded}>
+			{pipelines?.map((pipeline, index) => {
+				return <div key={v4()} data-current={pipeline === selectedPipeline}
+				            onClick={onMenuClicked(pipeline)}>
+					{selectedPipeline === pipeline ? <FontAwesomeIcon icon={faCheck}/> : null}
+					<span>{pipeline.name || `Untitled Pipeline #${index + 1}`}</span>
+				</div>;
+			})}
+		</Dropdown>
+	</PipelineSwitcher>;
+};
 
 export const Editor = (props: {
 	topic?: QueriedTopicForPipeline;
@@ -104,13 +249,14 @@ export const Editor = (props: {
 		pipeline = selectNextPipeline();
 	}
 
+	// eslint-disable-next-line
 	const isOutbound = pipeline.topicId == topic.topicId;
 
 	return <EditorContainer>
 		<EditorTitle data-topic-type={topic.type}>
 			<div>{topic.name}</div>
-			<div data-topic-type={topic.type}>Inbound <span>{inboundCount}</span></div>
-			<div data-topic-type={topic.type}>Outbound <span>{outboundCount}</span></div>
+			<PipelineButton label='Inbound' count={inboundCount} pipelines={node.toMe} pipeline={pipeline}/>
+			<PipelineButton label='Outbound' count={outboundCount} pipelines={node.fromMe} pipeline={pipeline}/>
 		</EditorTitle>
 		<EditorBody>
 			{pipeline ?
