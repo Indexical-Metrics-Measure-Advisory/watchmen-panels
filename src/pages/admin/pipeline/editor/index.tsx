@@ -1,13 +1,16 @@
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { useCollapseFixedThing } from '../../../../common/utils';
+import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
 import { ArrangedPipeline, PipelinesTopicNode } from '../types';
+import { PrimaryObjectButton } from './components/object-button';
 import { PipelineEditor } from './pipeline-editor';
+import { createStage } from './utils';
 
 interface DropdownState {
 	visible: boolean;
@@ -50,6 +53,11 @@ const EditorTitle = styled.div`
 		flex-grow: 1;
 		font-size: 1.4em;
 	}
+	> button {
+		height: 22px;
+		margin-left: calc(var(--margin) / 4);
+		margin-bottom: 4px;
+	}
 `;
 const PipelineSwitcher = styled.div`
 	display: flex;
@@ -61,12 +69,10 @@ const PipelineSwitcher = styled.div`
 	color: var(--invert-color);
 	background-color: var(--console-primary-color);
 	padding: 0 calc(var(--margin) / 2);
+	margin-left: calc(var(--margin) / 4);
 	margin-bottom: 4px;
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
-	&:last-child {
-		margin-left: calc(var(--margin) / 4);
-	}
 	&:hover {
 		box-shadow: var(--console-primary-hover-shadow);
 	}
@@ -249,6 +255,22 @@ export const Editor = (props: {
 		pipeline = selectNextPipeline();
 	}
 
+	const onCreatePipelineClicked = () => {
+		const pipeline: Pipeline = {
+			topicId: topic.topicId,
+			type: PipelineTriggerType.INSERT_OR_MERGE,
+			stages: [ createStage() ]
+		};
+		const arrangedPipeline = {
+			...pipeline,
+			targetTopicIds: [] as Array<string>,
+			origin: pipeline,
+			uuid: v4()
+		} as ArrangedPipeline;
+		node.fromMe?.push(arrangedPipeline);
+		changeSelectedPipeline(arrangedPipeline);
+	};
+
 	// eslint-disable-next-line
 	const isOutbound = pipeline.topicId == topic.topicId;
 
@@ -257,6 +279,10 @@ export const Editor = (props: {
 			<div>{topic.name}</div>
 			<PipelineButton label='Inbound' count={inboundCount} pipelines={node.toMe} pipeline={pipeline}/>
 			<PipelineButton label='Outbound' count={outboundCount} pipelines={node.fromMe} pipeline={pipeline}/>
+			<PrimaryObjectButton onClick={onCreatePipelineClicked}>
+				<FontAwesomeIcon icon={faWaveSquare}/>
+				<span>Create New Pipeline</span>
+			</PrimaryObjectButton>
 		</EditorTitle>
 		<EditorBody>
 			{pipeline ?
