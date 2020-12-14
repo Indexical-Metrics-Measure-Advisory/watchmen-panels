@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import Path, { toConnectedSpace, toSpaceGroup, toSpaceSubject } from '../../../common/path';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
@@ -57,8 +57,6 @@ export const SpaceContextProvider = (props: {
 	const location = useLocation();
 	const history = useHistory();
 	const [ emitter ] = useState(new EventEmitter());
-	// eslint-disable-next-line
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
 	const [ activeGroups ] = useState<ActiveGroups>([]);
 	const [ activeSubjects ] = useState<ActiveSubjects>([]);
 	const [ store ] = useState<SpaceContextStore>({} as SpaceContextStore);

@@ -1,7 +1,8 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useEffect, useReducer } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../common/utils';
 import { LinkButton } from '../../component/console/link-button';
 import { usePipelineContext } from './pipeline-context';
 
@@ -75,7 +76,7 @@ const MenuToggleButton = () => {
 		store: { menuVisible },
 		changeMenuVisible, addMenuVisibilityListener, removeMenuVisibilityListener
 	} = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addMenuVisibilityListener(forceUpdate);
 		return () => {
@@ -99,7 +100,7 @@ export const PipelineHeader = () => {
 		addTopicSelectionChangedListener, removeTopicSelectionChangedListener,
 		addPipelineSelectionChangedListener, removePipelineSelectionChangedListener
 	} = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const render = () => setTimeout(forceUpdate, 1);
 		addFlowChangedListener(render);

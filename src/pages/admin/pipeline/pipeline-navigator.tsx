@@ -1,7 +1,8 @@
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
+import { useForceUpdate } from '../../../common/utils';
 import { Theme } from '../../../theme/types';
 import { ResizeHandle, ResizeHandleAlignment } from '../../component/console/menu/resize-handle';
 import { usePipelineContext } from './pipeline-context';
@@ -146,7 +147,7 @@ export const PipelineNavigator = () => {
 		addTopicsChangedListener, removeTopicsChangedListener
 	} = usePipelineContext();
 	const [ width, setWidth ] = useState(300 + ScrollWidth);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const onVisibleChanged = (visible: boolean) => {
 			if (visible) {

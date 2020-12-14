@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useReducer } from 'react';
 
 export const emptySetter = () => void 0;
 export const emptyGetter = emptySetter;
@@ -58,4 +58,9 @@ export const useCollapseFixedThing = (containerRef: RefObject<HTMLOrSVGElement>,
 			window.removeEventListener('click', collapse, true);
 		};
 	});
+};
+
+export const useForceUpdate = () => {
+	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	return forceUpdate;
 };

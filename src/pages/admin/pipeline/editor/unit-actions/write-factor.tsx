@@ -2,6 +2,7 @@ import React from 'react';
 import { UnitAction, UnitActionWriteFactor } from '../../../../../services/admin/pipeline-types';
 import { FacterValueFinder } from '../components/facter-value-finder';
 import { TopicFactorFinder } from '../components/topic-factor-finder';
+import { TopicFilter } from '../components/topic-filter';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
 export const WriteFactor = (props: { action: UnitAction }) => {
@@ -14,6 +15,6 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<TopicFactorFinder holder={write}/>
 		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
-		<div data-role='action-part-not-impl'>Not implemented yet</div>
+		<TopicFilter holder={write}/>
 	</ActionBody2Columns>;
 };

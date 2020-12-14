@@ -10,9 +10,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { createSubject } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { LinkButton } from '../../../component/console/link-button';
@@ -238,7 +239,7 @@ export const GroupView = (props: {
 	const { groupId } = useParams<{ groupId: string }>();
 	const dialog = useDialog();
 	const { closeGroupIfCan, groupRenamed, openSubjectIfCan, closeSubjectIfCan } = useSpaceContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ min, setMin ] = useState<boolean>(false);
 	const [ sort, setSort ] = useState<SortType>(SortType.BY_VISIT_ASC);
 

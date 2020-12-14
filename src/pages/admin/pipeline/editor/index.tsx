@@ -1,9 +1,9 @@
 import { faCheck, faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
-import { useCollapseFixedThing } from '../../../../common/utils';
+import { useCollapseFixedThing, useForceUpdate } from '../../../../common/utils';
 import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
@@ -232,7 +232,7 @@ export const Editor = (props: {
 		store: { selectedPipeline },
 		changeSelectedPipeline, addPipelineSelectionChangedListener, removePipelineSelectionChangedListener
 	} = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addPipelineSelectionChangedListener(forceUpdate);
 		return () => removePipelineSelectionChangedListener(forceUpdate);

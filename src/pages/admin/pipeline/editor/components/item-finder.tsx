@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
-import { notInMe } from '../../../../../common/utils';
+import { useCollapseFixedThing } from '../../../../../common/utils';
 import { ActionInput } from './action-input';
 
 interface DropdownRect {
@@ -162,21 +162,7 @@ export const ItemFinder = <I extends any>(props: {
 	const [ searchText, setSearchText ] = useState<string>(name);
 	const [ filteredItems, setFilteredItems ] = useState<Array<{ item: I, parts: Array<string> }>>(filterItems(name));
 	const [ filterTimeout, setFilterTimeout ] = useState<number | null>(null);
-	useEffect(() => {
-		const collapse = (event: Event) => {
-			if (notInMe(containerRef.current!, event.target)) {
-				setExpanded(false);
-			}
-		};
-		window.addEventListener('scroll', collapse, true);
-		window.addEventListener('focus', collapse, true);
-		window.addEventListener('click', collapse, true);
-		return () => {
-			window.removeEventListener('scroll', collapse, true);
-			window.removeEventListener('focus', collapse, true);
-			window.removeEventListener('click', collapse, true);
-		};
-	});
+	useCollapseFixedThing(containerRef, () => setExpanded(false));
 
 	const expand = (count: number) => {
 		if (!expanded) {

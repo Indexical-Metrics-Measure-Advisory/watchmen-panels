@@ -1,8 +1,9 @@
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConsoleSpaceSubjectDataSetFilterExpression,
 	ConsoleTopicFactor,
@@ -20,7 +21,7 @@ const PlainFactorFilterValue = (props: {
 	factorType?: ConsoleTopicFactorType;
 }) => {
 	const { filter, factorType } = props;
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (!factorType || [ ConsoleTopicFactorType.BOOLEAN, ConsoleTopicFactorType.ENUM, ConsoleTopicFactorType.DATETIME ].includes(factorType)) {
 		return null;
@@ -39,7 +40,7 @@ const BooleanFactorFilterValue = (props: {
 	factorType?: ConsoleTopicFactorType;
 }) => {
 	const { filter, factorType } = props;
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (factorType !== ConsoleTopicFactorType.BOOLEAN) {
 		return null;
@@ -80,7 +81,7 @@ const EnumFactorFilterValue = (props: {
 }) => {
 	const { filter, factor, options, accept } = props;
 	const { value } = filter;
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (!factor || !accept(factor, filter)) {
 		return null;
@@ -127,7 +128,7 @@ const DateTimeFactorFilterValue = (props: {
 	const { filter, factor } = props;
 	const { operator, value } = filter;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (!factor || factor.type !== ConsoleTopicFactorType.DATETIME || !needExactDateTime(operator)) {
 		return null;
@@ -147,7 +148,7 @@ const DateTimeYearOfFactorFilterValue = (props: {
 }) => {
 	const { filter, factorType } = props;
 	const { operator } = filter;
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (!factorType || factorType !== ConsoleTopicFactorType.DATETIME || operator !== ExpressionOperator.YEAR_OF) {
 		return null;
@@ -180,7 +181,7 @@ const DateTimeFactorFilterTillNowValue = (props: {
 }) => {
 	const { filter, factorType } = props;
 	const { operator } = filter;
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (factorType !== ConsoleTopicFactorType.DATETIME || operator !== ExpressionOperator.TILL_NOW) {
 		return null;

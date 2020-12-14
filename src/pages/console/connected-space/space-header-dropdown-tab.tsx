@@ -1,10 +1,11 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faCube, faEllipsisH, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { ForwardedRef, forwardRef, useEffect, useReducer, useRef, useState } from 'react';
+import React, { ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
+import { useForceUpdate } from '../../../common/utils';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
 import { LinkButton } from '../../component/console/link-button';
 import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
@@ -188,7 +189,7 @@ export const GroupTab = (props: { space: ConnectedConsoleSpace }) => {
 		addGroupClosedListener, removeGroupClosedListener,
 		addGroupRenamedListener, removeGroupRenamedListener
 	} = useSpaceContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		// group already be removed from active stack, force update is only option here
 		const groupListener = () => forceUpdate();
@@ -285,7 +286,7 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 		isSubjectOpened, openSubjectIfCan, closeSubjectIfCan,
 		addSubjectClosedListener, removeSubjectClosedListener
 	} = useSpaceContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		// subject already be removed from active stack, force update is only option here
 		const subjectClosedListener: SubjectClosedListener = () => forceUpdate();

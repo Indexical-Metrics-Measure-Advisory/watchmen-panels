@@ -1,5 +1,6 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
 import { ArrangedPipeline, ArrangedStage } from '../types';
@@ -45,7 +46,7 @@ export const PipelineEditor = (props: {
 	const { outbound, pipeline } = props;
 
 	const { changeSelectedPipeline } = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onNameChange = (value: string) => {
 		// change both well known pipeline and original one

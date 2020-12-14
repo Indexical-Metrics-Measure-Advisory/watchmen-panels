@@ -1,5 +1,6 @@
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { usePalette } from './palette-context';
 import { GraphicsRole, TopicCoordinate, TopicFrame, TopicGraphics, TopicName } from './types';
 import { findSvgRoot } from './utils';
@@ -30,7 +31,7 @@ export const TopicRect = (props: { topic: TopicGraphics }) => {
 	const { coordinate, frame: frameRect, name: namePos } = rect;
 
 	const palette = usePalette();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ dnd, setDnd ] = useState<boolean>(false);
 
 	const onMouseDown = (event: React.MouseEvent) => {

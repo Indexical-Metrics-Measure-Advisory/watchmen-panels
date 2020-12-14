@@ -1,10 +1,10 @@
 import { faCompactDisc, faGlobe, faSolarPanel, faThumbtack } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path, { isConnectedSpaceOpened, isDashboardOpened, toConnectedSpace, toDashboard } from '../../../common/path';
-import { notInMe } from '../../../common/utils';
+import { notInMe, useForceUpdate } from '../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleDashboard,
@@ -205,7 +205,7 @@ export const Favorite = () => {
 			};
 		}
 	}, [ pinned, hide ]);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addSpaceDeletedListener(forceUpdate);
 		addSpaceRenamedListener(forceUpdate);

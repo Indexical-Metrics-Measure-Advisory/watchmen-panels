@@ -2,10 +2,11 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { faCaretDown, faCompactDisc, faCube, faGlobe, faPenAlt, faPoll } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { Fragment, useReducer, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
+import { useForceUpdate } from '../../../common/utils';
 import { createGroup, createSubject, deleteSpace } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import Button, { ButtonType } from '../../component/button';
@@ -53,7 +54,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	const { spaces: { deleteSpace: deleteSpaceFromMemory, spaceRenamed } } = useConsoleContext();
 	const { openGroupIfCan, openSubjectIfCan } = useSpaceContext();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ menuShown, setMenuShown ] = useState<MenuState>({
 		left: 0,
 		right: 0,

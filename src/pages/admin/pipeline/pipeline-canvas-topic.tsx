@@ -1,7 +1,8 @@
 import { faCodeBranch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../common/utils';
 import { QueriedTopicForPipeline, TopicType } from '../../../services/admin/types';
 import { usePipelineContext } from './pipeline-context';
 import { buildPipelineCanvasTopicStyles } from './styles';
@@ -161,7 +162,7 @@ export const PipelineCanvasTopic = (props: {
 		changeSelectedTopic,
 		addTopicSelectionChangedListener, removeTopicSelectionChangedListener
 	} = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addTopicSelectionChangedListener(forceUpdate);
 		return () => removeTopicSelectionChangedListener(forceUpdate);

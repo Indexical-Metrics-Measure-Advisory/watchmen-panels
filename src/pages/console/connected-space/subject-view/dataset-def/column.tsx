@@ -1,7 +1,8 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../../common/utils';
 import { ConsoleSpaceSubjectDataSetColumn } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { ColumnFactor } from './column-factor';
@@ -63,7 +64,7 @@ export const Column = (props: {
 }) => {
 	const { column, removeColumn } = props;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onColumnRemoveClicked = () => removeColumn(column);
 

@@ -1,7 +1,8 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../../common/utils';
 import { ConsoleSpaceSubjectDataSetFilterExpression } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { FilterExpressionFactor } from './filter-expression-factor';
@@ -36,7 +37,7 @@ export const FilterExpression = (props: {
 }) => {
 	const { filter, removeFilter } = props;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onFilterRemoveClicked = () => removeFilter(filter);
 

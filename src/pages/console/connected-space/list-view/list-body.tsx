@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import { ListByGroup } from './list-by-group';
 import { ListByVisit } from './list-by-visit';
@@ -34,7 +35,7 @@ const FilterReminder = () => {
 	const listView = useListView();
 	const { store: { filter } } = listView;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const onFilterTextChanged = () => forceUpdate();
 		listView.addFilterTextChangedListener(onFilterTextChanged);

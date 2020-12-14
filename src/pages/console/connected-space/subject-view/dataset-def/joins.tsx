@@ -7,8 +7,9 @@ import {
 	faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useReducer } from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
@@ -75,7 +76,7 @@ export const JoinRow = (props: {
 	const { join, removeJoin } = props;
 
 	const { defs: { relations } } = useSubjectContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onRelationChanged = async ({ value }: DropdownOption) => {
 		join.relationId = value as string;
@@ -123,7 +124,7 @@ export const SubjectJoins = (props: {
 	const { joins = [] } = dataset;
 
 	const { defs: { relations } } = useSubjectContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onSortClicked = () => {
 		const asLabel = ({

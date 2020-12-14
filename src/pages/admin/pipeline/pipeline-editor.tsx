@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../common/utils';
 import { Editor } from './editor';
 import { usePipelineContext } from './pipeline-context';
 import { PipelinesTopicNode } from './types';
@@ -38,7 +39,7 @@ export const PipelineEditor = (props: {
 		store: { selectedTopic },
 		addTopicSelectionChangedListener, removeTopicSelectionChangedListener
 	} = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addTopicSelectionChangedListener(forceUpdate);
 		return () => removeTopicSelectionChangedListener(forceUpdate);

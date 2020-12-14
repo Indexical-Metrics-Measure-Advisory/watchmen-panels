@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
+import { useForceUpdate } from '../../../../common/utils';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { ViewType } from './types';
 
@@ -52,7 +53,7 @@ export const ListContextProvider = (props: {
 	const { children } = props;
 
 	const [ emitter ] = useState(new EventEmitter());
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ store ] = useState<ListContextStore>({ filter: '' });
 	const [ viewType, setViewType ] = useState<ViewType>(ViewType.BY_GROUP);
 	const [ functions ] = useState({

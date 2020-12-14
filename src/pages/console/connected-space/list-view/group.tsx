@@ -7,8 +7,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { createSubject } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { Theme } from '../../../../theme/types';
@@ -200,7 +201,7 @@ export const Group = (props: {
 	const dialog = useDialog();
 	const { openGroupIfCan, closeGroupIfCan, openSubjectIfCan } = useSpaceContext();
 	const listView = useListView();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ collapsed, setCollapsed ] = useState<boolean>(false);
 	useEffect(() => {
 		const onCollapsedChanged = (newCollapsed: boolean) => {

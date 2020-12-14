@@ -1,4 +1,5 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useForceUpdate } from '../../../common/utils';
 import { fetchFavorites } from '../../../services/console/favorites';
 import { ConsoleFavorite } from '../../../services/console/types';
 
@@ -23,7 +24,7 @@ export interface ConsoleFavoritesUsable {
 }
 
 export const useConsoleFavorites = () => {
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ state ] = useState<ConsoleFavoritesStorage>({
 		initialized: false,
 		items: [],

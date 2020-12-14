@@ -1,5 +1,6 @@
-import React, { Fragment, useEffect, useReducer, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { ConnectedConsoleSpace } from '../../../../services/console/types';
 import { PaletteContextProvider, usePalette } from './palette-context';
 import { TopicDetail } from './topic-detail';
@@ -107,7 +108,7 @@ const SvgPalette = (props: { space: ConnectedConsoleSpace }) => {
 
 	const palette = usePalette();
 	const svgRef = useRef<SVGSVGElement>(null);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ svgSize, setSvgSize ] = useState<GraphicsSize>({ width: 300, height: 300 });
 	const [ graphics ] = useState<Graphics>(createInitGraphics(space));
 	useEffect(() => {

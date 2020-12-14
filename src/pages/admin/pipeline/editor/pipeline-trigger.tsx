@@ -1,5 +1,6 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeline-types';
 import { HorizontalOptions } from './components/horizontal-options';
 
@@ -26,7 +27,7 @@ const TriggerTypeOptions: { [key in PipelineTriggerType]: string } = {
 export const PipelineTrigger = (props: { pipeline: Pipeline }) => {
 	const { pipeline } = props;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const onTypeChanged = (newType: PipelineTriggerType) => {
 		// TODO pipeline trigger type changed, notify & save?
 		pipeline.type = newType;

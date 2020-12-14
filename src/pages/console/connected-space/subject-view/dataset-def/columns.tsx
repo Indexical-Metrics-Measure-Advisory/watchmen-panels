@@ -1,6 +1,7 @@
 import { faCompressAlt, faExpandAlt, faPlus, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useReducer } from 'react';
+import React, { Fragment } from 'react';
+import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
@@ -26,7 +27,7 @@ export const SubjectColumns = (props: {
 	const { columns = [] } = dataset;
 
 	const { defs: { space: spaceDef } } = useSubjectContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onSortClicked = () => {
 		columns.sort((c1, c2) => {

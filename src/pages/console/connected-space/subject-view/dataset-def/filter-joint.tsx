@@ -1,5 +1,6 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConsoleSpaceSubjectDataSetFilter,
 	ConsoleSpaceSubjectDataSetFilterJoint,
@@ -103,7 +104,7 @@ export const FilterJoint = (props: {
 	const { joint, removeFilter, childrenFiltersChanged, level } = props;
 	const { filters = [] } = joint;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	if (filters.length === 0) {
 		return null;

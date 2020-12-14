@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
+import { useForceUpdate } from '../../../common/utils';
 import { ConsoleMessage } from '../../../services/console/types';
 
 export type MessageEvent = string;
@@ -52,7 +53,7 @@ export const useMessages = <M extends ConsoleMessage, E extends MessageEvent>(op
 	} = options;
 
 	const [ emitter ] = useState(new EventEmitter());
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ state ] = useState<ConsoleMessagesStorage<M>>({
 		initialized: false,
 		unread: [],

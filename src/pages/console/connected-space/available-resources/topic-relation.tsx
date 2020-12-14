@@ -1,9 +1,9 @@
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { usePalette } from './palette-context';
 import { Graphics, GraphicsRole, TopicGraphics, TopicRelationCurvePoints, TopicRelationGraphics } from './types';
 import { computeTopicRelationPoints } from './utils';
-
 
 const Curve = styled.path.attrs<{ lattice: TopicRelationCurvePoints }>(({ lattice: { drawn } }) => {
 	return { d: drawn };
@@ -22,7 +22,7 @@ export const TopicRelation = (props: {
 
 	const palette = usePalette();
 	const gRef = useRef<SVGGElement>(null);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const repaint = ({ topic }: TopicGraphics) => {
 			const { sourceTopicId, targetTopicId } = relation;

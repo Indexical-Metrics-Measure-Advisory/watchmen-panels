@@ -7,13 +7,15 @@ import {
 	faPencilRuler
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useReducer, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import Button, { ButtonType } from '../../../component/button';
 import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
 import { HorizontalOptions } from './components/horizontal-options';
 import { DangerObjectButton, DropdownButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
+import { PipelineUnitActionContextProvider } from './pipeline-unit-action-context';
 import { UnitActionNodes } from './pipeline-unit-actions';
 import { ActionLead } from './unit-actions/action-lead';
 import { ActionSelect } from './unit-actions/action-select';
@@ -195,7 +197,7 @@ const UnitActionNode = (props: {
 	const { type } = action;
 
 	const dialog = useDialog();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onActionDeleteConfirmClicked = () => {
 		deleteAction(action);
@@ -226,20 +228,22 @@ const UnitActionNode = (props: {
 
 	const UnitNode = UnitActionNodes[type];
 
-	return <UnitActionContainer>
-		<ActionLead/>
-		<ActionSelect action={action} onTypeChanged={forceUpdate}/>
-		<DangerObjectButton onClick={onDeleteActionClicked}>
-			<FontAwesomeIcon icon={faTrashAlt}/>
-			<span>Delete This Action</span>
-		</DangerObjectButton>
-		{
-			UnitNode
-				// @ts-ignore
-				? <UnitNode action={action}/>
-				: <div data-role='action-not-impl'>[{type}] Not implemented yet</div>
-		}
-	</UnitActionContainer>;
+	return <PipelineUnitActionContextProvider>
+		<UnitActionContainer>
+			<ActionLead/>
+			<ActionSelect action={action} onTypeChanged={forceUpdate}/>
+			<DangerObjectButton onClick={onDeleteActionClicked}>
+				<FontAwesomeIcon icon={faTrashAlt}/>
+				<span>Delete This Action</span>
+			</DangerObjectButton>
+			{
+				UnitNode
+					// @ts-ignore
+					? <UnitNode action={action}/>
+					: <div data-role='action-not-impl'>[{type}] Not implemented yet</div>
+			}
+		</UnitActionContainer>
+	</PipelineUnitActionContextProvider>;
 };
 
 const buildDialogButtons = (dialog: DialogContext, onConfirm: () => void) => {
@@ -262,7 +266,7 @@ export const PipelineUnit = (props: {
 	const dialog = useDialog();
 	const [ expanded, setExpanded ] = useState(true);
 	const [ conditional, setConditional ] = useState(!!unit.on);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const toLabel = (withCondition: boolean) => withCondition ? 'Conditional' : 'Anyway';
 	const onTypeChanged = (withCondition: boolean) => setConditional(withCondition);

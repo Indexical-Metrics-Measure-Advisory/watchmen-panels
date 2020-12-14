@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { usePalette } from './palette-context';
 import { Graphics, TopicRelationCurvePoints, TopicRelationGraphics, TopicSelectionGraphics } from './types';
 
@@ -39,7 +40,7 @@ export const TopicRelationAnimation = (props: {
 	const { relation } = relationGraphics;
 
 	const palette = usePalette();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ visible, setVisible ] = useState(false);
 	useEffect(() => {
 		const onSelectionChanged = ({ topicId, visible }: TopicSelectionGraphics) => {

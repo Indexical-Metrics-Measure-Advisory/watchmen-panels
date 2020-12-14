@@ -13,7 +13,7 @@ const Options = styled.div`
 	border-color: var(--pipeline-bg-color);
 	background-color: var(--pipeline-bg-color);
 	height: 22px;
-	border-radius: 12px;
+	border-radius: 11px;
 	outline: none;
 	appearance: none;
 	overflow: hidden;

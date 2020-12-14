@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import { usePalette } from './palette-context';
 import { Graphics, GraphicsPosition, GraphicsRole, GraphicsSize, TopicGraphics, TopicSelectionGraphics } from './types';
 import { computeTopicSelection } from './utils';
@@ -22,7 +23,7 @@ export const TopicSelection = (props: { graphics: Graphics, selection: TopicSele
 	const { graphics, selection } = props;
 
 	const palette = usePalette();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const onSelectionChanged = () => forceUpdate();
 		const onTopicMove = ({ topic: { topicId } }: TopicGraphics) => {

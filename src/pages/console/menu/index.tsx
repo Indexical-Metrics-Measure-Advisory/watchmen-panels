@@ -9,10 +9,11 @@ import {
 	faStar,
 	faTachometerAlt
 } from '@fortawesome/free-solid-svg-icons';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import Path, { isConnectedSpaceOpened, toConnectedSpace } from '../../../common/path';
+import { useForceUpdate } from '../../../common/utils';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import { Theme } from '../../../theme/types';
 import { MenuItem } from '../../component/console/menu/menu-item';
@@ -96,7 +97,7 @@ export const ConsoleMenu = () => {
 		}
 	} = useConsoleContext();
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addSpaceDeletedListener(forceUpdate);
 		addSpaceRenamedListener(forceUpdate);
@@ -104,7 +105,7 @@ export const ConsoleMenu = () => {
 			removeSpaceDeletedListener(forceUpdate);
 			removeSpaceRenamedListener(forceUpdate);
 		};
-	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener ]);
+	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener, forceUpdate ]);
 
 	const onResize = (newWidth: number) => {
 		setMenuWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));

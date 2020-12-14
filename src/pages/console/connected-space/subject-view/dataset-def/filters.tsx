@@ -1,6 +1,7 @@
 import { faCompressAlt, faExpandAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useReducer } from 'react';
+import React, { Fragment } from 'react';
+import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectDataSetFilter,
@@ -25,7 +26,7 @@ export const SubjectFilters = (props: {
 	const { filters = [] } = dataset;
 
 	// const { defs: { space: spaceDef } } = useSubjectContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onAddFilterClicked = () => {
 		const filter = {};

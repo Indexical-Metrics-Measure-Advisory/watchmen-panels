@@ -1,7 +1,9 @@
-import React, { useReducer } from 'react';
+import React from 'react';
+import { useForceUpdate } from '../../../../../common/utils';
 import { FactorHolder } from '../../../../../services/admin/pipeline-types';
 import { QueriedFactorForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ItemFinder } from './item-finder';
 import { filterFactor } from './utils';
 
@@ -10,7 +12,8 @@ export const FactorFinder = (props: { holder: FactorHolder }) => {
 	const { topicId: currentTopicId, factorId: currentFactorId } = holder;
 
 	const { store: { topics } } = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const { firePropertyChange } = usePipelineUnitActionContext();
+	const forceUpdate = useForceUpdate();
 
 	// eslint-disable-next-line
 	const topic = currentTopicId ? topics.find(topic => topic.topicId == currentTopicId) : (void 0);
@@ -21,6 +24,7 @@ export const FactorFinder = (props: { holder: FactorHolder }) => {
 	const filterItems = (searchText: string) => filterFactor(topic?.factors || [], searchText);
 	const onSelect = (factor: QueriedFactorForPipeline) => {
 		holder.factorId = factor.factorId;
+		firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
 		forceUpdate();
 	};
 

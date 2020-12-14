@@ -1,8 +1,9 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { faCompressArrowsAlt, faEraser, faExpandArrowsAlt, faProjectDiagram } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useReducer, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import Button, { ButtonType } from '../../../component/button';
 import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedPipeline, ArrangedProcessUnit, ArrangedStage } from '../types';
@@ -119,7 +120,7 @@ export const StageEditor = (props: {
 	const dialog = useDialog();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(true);
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const onNameChanged = (value: string) => {
 		stage.name = value;

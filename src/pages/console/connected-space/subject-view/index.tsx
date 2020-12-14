@@ -1,9 +1,10 @@
 import { faChartBar, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { faDatabase, faPenAlt, faTable } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceGroup,
@@ -99,7 +100,7 @@ export const SubjectViewContent = (props: {
 
 	const dialog = useDialog();
 	const { closeSubjectIfCan, subjectRenamed } = useSpaceContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const [ visible, setVisible ] = useState<Visible>({ dataset: false });
 
 	initDataSet(subject);

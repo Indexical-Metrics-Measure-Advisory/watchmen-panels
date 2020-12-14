@@ -1,4 +1,5 @@
-import React, { useReducer } from 'react';
+import React from 'react';
+import { useForceUpdate } from '../../../../../common/utils';
 import { UnitAction, UnitActionAlarm, UnitActionAlarmSeverity } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { HorizontalOptions } from '../components/horizontal-options';
@@ -19,7 +20,7 @@ export const Alarm = (props: { action: UnitAction }) => {
 	const alarm = action as UnitActionAlarm;
 	const { severity, message = '' } = alarm;
 
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 	const onSeverityChanged = (severity: UnitActionAlarmSeverity) => {
 		alarm.severity = severity;
 		forceUpdate();

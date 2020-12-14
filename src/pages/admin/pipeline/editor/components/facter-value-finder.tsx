@@ -1,5 +1,6 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useForceUpdate } from '../../../../../common/utils';
 import {
 	FactorValue,
 	FactorValueHolder,
@@ -74,7 +75,7 @@ export const FacterValueFinder = (props: { holder: FactorValueHolder }) => {
 	const { type: valueType = SomeValueType.FACTOR } = value;
 
 	const { store: { selectedPipeline, topics } } = usePipelineContext();
-	const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+	const forceUpdate = useForceUpdate();
 
 	const { topicId: sourceTopicId } = selectedPipeline!;
 	// eslint-disable-next-line
