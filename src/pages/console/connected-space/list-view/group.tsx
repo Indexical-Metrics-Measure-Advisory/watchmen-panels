@@ -217,7 +217,7 @@ export const Group = (props: {
 			listView.removeCollapsedChangedListener(onCollapsedChanged);
 			listView.removeFilterTextChangedListener(onFilterTextChanged);
 		};
-	}, [ listView, collapsed ]);
+	}, [ listView, collapsed, forceUpdate ]);
 
 	const onOpenGroupClicked = () => openGroupIfCan({ space, group });
 	const onToggleExpand = () => setCollapsed(!collapsed);

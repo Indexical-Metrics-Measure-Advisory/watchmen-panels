@@ -37,7 +37,7 @@ export const TopicRelation = (props: {
 		};
 		palette.addTopicMovedListener(repaint);
 		return () => palette.removeTopicMovedListener(repaint);
-	}, [ palette, relationGraphics, relation, graphics ]);
+	}, [ palette, relationGraphics, relation, graphics, forceUpdate ]);
 
 	return <g ref={gRef} data-topic-relation-id={relation.relationId} data-role={GraphicsRole.TOPIC_RELATION}>
 		<Curve lattice={relationGraphics.points} data-role={GraphicsRole.TOPIC_RELATION_LINK}/>

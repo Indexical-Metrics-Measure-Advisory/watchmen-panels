@@ -42,7 +42,7 @@ export const TopicSelection = (props: { graphics: Graphics, selection: TopicSele
 			palette.removeTopicSelectionChangedListener(onSelectionChanged);
 			palette.removeTopicMovedListener(onTopicMove);
 		};
-	}, [ palette, selection, graphics ]);
+	}, [ palette, selection, graphics, forceUpdate ]);
 
 	return <Container data-role={GraphicsRole.TOPIC_SELECTION} visible={selection.visible}>
 		<Rect rect={selection.rect} data-topic-id={selection.topicId}/>

@@ -213,7 +213,7 @@ export const Favorite = () => {
 			removeSpaceDeletedListener(forceUpdate);
 			removeSpaceRenamedListener(forceUpdate);
 		};
-	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener ]);
+	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener, forceUpdate ]);
 
 	const itemCount = items.length;
 	const displayItemCount = Math.min(itemCount, 5);

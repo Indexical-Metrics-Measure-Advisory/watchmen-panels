@@ -37,12 +37,11 @@ const FilterReminder = () => {
 
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
-		const onFilterTextChanged = () => forceUpdate();
-		listView.addFilterTextChangedListener(onFilterTextChanged);
+		listView.addFilterTextChangedListener(forceUpdate);
 		return () => {
-			listView.removeFilterTextChangedListener(onFilterTextChanged);
+			listView.removeFilterTextChangedListener(forceUpdate);
 		};
-	}, [ listView, filter ]);
+	}, [ listView, filter, forceUpdate ]);
 
 	const filtering = hasFilter(filter);
 	const groupFiltering = isGroupFilter(filter);

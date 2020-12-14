@@ -63,7 +63,7 @@ export const TopicRelationAnimation = (props: {
 			palette.removeTopicSelectionChangedListener(onSelectionChanged);
 			palette.removeTopicRelationTransformedListener(onTopicRelationTransformed);
 		};
-	}, [ palette, graphics, relation ]);
+	}, [ palette, graphics, relation, forceUpdate ]);
 
 	return <TopicRelationAnimationDot lattice={relationGraphics.points} visible={visible}/>;
 };

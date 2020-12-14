@@ -9,7 +9,7 @@ import { useForceUpdate } from '../../../common/utils';
 import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
 import { LinkButton } from '../../component/console/link-button';
 import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
-import { SubjectClosedListener, useSpaceContext } from './space-context';
+import { useSpaceContext } from './space-context';
 import { TabContainer } from './tabs';
 
 interface SubjectItem {
@@ -127,7 +127,13 @@ export const DropdownTabWithData = <T extends ConsoleSpaceGroup | SubjectItem>(p
 	const {
 		active,
 		tab: { icon, label, onClicked: onTabClicked, onCloseClicked: onTabCloseClicked },
-		dropdown: { items: dropdownItems, onClicked: onItemClicked, onCloseClicked: onItemCloseClicked, asKey: itemAsKey, asLabel: itemAsLabel }
+		dropdown: {
+			items: dropdownItems,
+			onClicked: onItemClicked,
+			onCloseClicked: onItemCloseClicked,
+			asKey: itemAsKey,
+			asLabel: itemAsLabel
+		}
 	} = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -192,14 +198,13 @@ export const GroupTab = (props: { space: ConnectedConsoleSpace }) => {
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		// group already be removed from active stack, force update is only option here
-		const groupListener = () => forceUpdate();
-		addGroupClosedListener(groupListener);
-		addGroupRenamedListener(groupListener);
+		addGroupClosedListener(forceUpdate);
+		addGroupRenamedListener(forceUpdate);
 		return () => {
-			removeGroupClosedListener(groupListener);
-			removeGroupRenamedListener(groupListener);
+			removeGroupClosedListener(forceUpdate);
+			removeGroupRenamedListener(forceUpdate);
 		};
-	}, [ addGroupClosedListener, removeGroupClosedListener, addGroupRenamedListener, removeGroupRenamedListener ]);
+	}, [ addGroupClosedListener, removeGroupClosedListener, addGroupRenamedListener, removeGroupRenamedListener, forceUpdate ]);
 
 	const { groups } = space;
 	let openedGroups = groups.filter(isGroupOpened).sort((g1, g2) => g1.name.toUpperCase().localeCompare(g2.name.toUpperCase()));
@@ -289,10 +294,9 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		// subject already be removed from active stack, force update is only option here
-		const subjectClosedListener: SubjectClosedListener = () => forceUpdate();
-		addSubjectClosedListener(subjectClosedListener);
-		return () => removeSubjectClosedListener(subjectClosedListener);
-	}, [ addSubjectClosedListener, removeSubjectClosedListener ]);
+		addSubjectClosedListener(forceUpdate);
+		return () => removeSubjectClosedListener(forceUpdate);
+	}, [ addSubjectClosedListener, removeSubjectClosedListener, forceUpdate ]);
 
 	// eslint-disable-next-line
 	const allSubjects = getAllSubjects(space, isSubjectOpened);
