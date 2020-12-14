@@ -1,7 +1,39 @@
 import React from 'react';
+import styled from 'styled-components';
 import { useForceUpdate } from '../../../../../common/utils';
 import { ConditionOperator, PlainCondition } from '../../../../../services/admin/pipeline-types';
 import { DropdownOption } from '../../../../component/dropdown';
+
+const Container = styled.div.attrs({
+	'data-widget': 'plain-condition'
+})`
+	display: flex;
+	position: relative;
+	height: 32px;
+	min-height: 32px;
+	&:before,
+	&:after {
+		content: '';
+		display: block;
+		position: absolute;
+		background-color: var(--border-color);
+	}
+	&:before {
+		top: 16px;
+		left: calc(var(--margin) / -2);
+		width: calc(var(--margin) / 2 - 4px);
+		height: 1px;
+	}
+	&:after {
+		top: 0;
+		left: calc(var(--margin) / -2);
+		width: 1px;
+		height: 16px;
+	}
+	&:not(:last-child):after {
+		height: 32px;
+	}
+`;
 
 const OperatorOptions = [
 	{ value: ConditionOperator.EQUALS, label: 'Equals' },
@@ -23,7 +55,7 @@ export const PlainConditionRow = (props: { condition: PlainCondition }) => {
 		forceUpdate();
 	};
 
-	return <div data-widget='plain-condition'>
-	</div>;
+	return <Container>
+	</Container>;
 };
 

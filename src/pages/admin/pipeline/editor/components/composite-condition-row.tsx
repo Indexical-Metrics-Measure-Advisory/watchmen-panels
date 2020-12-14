@@ -87,6 +87,39 @@ const NoChild = styled.div.attrs({
 		height: 16px;
 	}
 `;
+const ChildConditionsNode = styled.div.attrs<{ count: number, visible: boolean }>(
+	({ count, visible }) => {
+		return {
+			'data-widget': 'composite-condition-children',
+			style: {
+				height: visible ? count * 32 : 0
+			}
+		};
+	})<{ count: number, visible: boolean }>`
+	display: flex;
+	flex-direction: column;
+	padding-left: var(--margin);
+	overflow: hidden;
+	transition: all 300ms ease-in-out;
+`;
+
+const ChildConditions = (props: {
+	condition: CompositeCondition;
+	visible: boolean;
+}) => {
+	const { condition, visible } = props;
+
+	return <ChildConditionsNode visible={visible} count={condition.children.length}>
+		{condition.children.map((child, index) => {
+			if (isCompositeCondition(child)) {
+				return <CompositeConditionRow condition={child} removable={true} key={index}/>;
+			} else {
+				const plain = child as PlainCondition;
+				return <PlainConditionRow condition={plain} key={index}/>;
+			}
+		})}
+	</ChildConditionsNode>;
+};
 
 export const CompositeConditionRow = (props: {
 	condition: CompositeCondition;
@@ -104,8 +137,8 @@ export const CompositeConditionRow = (props: {
 		forceUpdate();
 	};
 	const onAddSubFilterClicked = () => {
-		condition.children.unshift({ operator: ConditionOperator.EQUALS });
-		forceUpdate();
+		condition.children.push({ operator: ConditionOperator.EQUALS });
+		expanded ? forceUpdate() : setExpanded(true);
 	};
 
 	return <Container data-expanded={expanded}>
@@ -130,13 +163,6 @@ export const CompositeConditionRow = (props: {
 		</Title>
 		{condition.children.length === 0
 			? <NoChild>No Child Defined.</NoChild>
-			: condition.children.map((child, index) => {
-				if (isCompositeCondition(child)) {
-					return <CompositeConditionRow condition={child} removable={true} key={index}/>;
-				} else {
-					const plain = child as PlainCondition;
-					return <PlainConditionRow condition={plain} key={index}/>;
-				}
-			})}
+			: <ChildConditions condition={condition} visible={expanded}/>}
 	</Container>;
 };
