@@ -10,7 +10,6 @@ const Options = styled.div`
 	position: relative;
 	align-items: stretch;
 	justify-self: start;
-	border-color: var(--pipeline-bg-color);
 	background-color: var(--pipeline-bg-color);
 	height: 22px;
 	border-radius: 11px;

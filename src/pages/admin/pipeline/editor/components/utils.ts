@@ -1,3 +1,4 @@
+import { CompositeCondition, Condition, PlainCondition } from '../../../../../services/admin/pipeline-types';
 import { QueriedFactorForPipeline, QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { FilteredFactor, FilteredTopic } from './types';
 
@@ -61,3 +62,6 @@ export const filterFactor = (factors: Array<QueriedFactorForPipeline>, text: str
 		return filterByText(factors, text.toUpperCase(), (factor: QueriedFactorForPipeline) => factor.label);
 	}
 };
+
+export const isCompositeCondition = (condition: Condition): condition is CompositeCondition => !!(condition as any).mode;
+export const isPlainCondition = (condition: Condition): condition is PlainCondition => !isCompositeCondition(condition);

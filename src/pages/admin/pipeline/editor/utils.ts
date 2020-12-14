@@ -1,6 +1,16 @@
 import { v4 } from 'uuid';
-import { SystemActionType, UnitActionAlarmSeverity } from '../../../../services/admin/pipeline-types';
+import { SystemActionType, UnitActionAlarmSeverity, UnitActionType } from '../../../../services/admin/pipeline-types';
 import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
+
+export const unitActionTypeAsDisplay = (type: UnitActionType): string => {
+	return type.split('-').map(word => {
+		if ([ 'or', 'and', 'to', 'from' ].includes(word)) {
+			return word;
+		} else {
+			return word.substr(0, 1).toUpperCase() + word.substr(1);
+		}
+	}).join(' ');
+};
 
 export const createStage = (): ArrangedStage => {
 	return {

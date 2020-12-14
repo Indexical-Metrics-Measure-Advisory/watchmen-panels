@@ -1,9 +1,11 @@
 import React from 'react';
 import { useForceUpdate } from '../../../../../common/utils';
 import { UnitAction, UnitActionReadFactor } from '../../../../../services/admin/pipeline-types';
+import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { ActionInput } from '../components/action-input';
 import { TopicFactorFinder } from '../components/topic-factor-finder';
-import { TopicFilter } from '../components/topic-filter';
+import { TopicRowMatcher } from '../components/topic-row-matcher';
+import { unitActionTypeAsDisplay } from '../utils';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
 export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
@@ -15,12 +17,13 @@ export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
 		read.targetName = event.target.value;
 		forceUpdate();
 	};
+	const asMatcherLabel = (topic: QueriedTopicForPipeline) => `${unitActionTypeAsDisplay(action.type)} from ${topic.name}`;
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
 		<TopicFactorFinder holder={read}/>
 		<ActionBodyItemLabel>By:</ActionBodyItemLabel>
-		<TopicFilter holder={read}/>
+		<TopicRowMatcher label={asMatcherLabel} holder={read}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<ActionInput value={read.targetName || ''} onChange={onTargetNameChanged}
 		             placeholder='Variable name...'/>

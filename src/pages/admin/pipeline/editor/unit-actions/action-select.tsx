@@ -1,8 +1,10 @@
 import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useCollapseFixedThing } from '../../../../../common/utils';
 import {
+	CompositeMode,
 	ReadTopicActionType,
 	SomeValueType,
 	SystemActionType,
@@ -11,6 +13,7 @@ import {
 	UnitActionType,
 	WriteTopicActionType
 } from '../../../../../services/admin/pipeline-types';
+import { unitActionTypeAsDisplay } from '../utils';
 
 interface DropdownRect {
 	top: number;
@@ -150,16 +153,6 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 	}
 `;
 
-const asDisplayType = (type: UnitActionType): string => {
-	return type.split('-').map(word => {
-		if ([ 'or', 'and', 'to', 'from' ].includes(word)) {
-			return word;
-		} else {
-			return word.substr(0, 1).toUpperCase() + word.substr(1);
-		}
-	}).join(' ');
-};
-
 const ActionTypes = [
 	{ label: 'Write to Topic', enum: WriteTopicActionType },
 	{ label: 'Read from Topic', enum: ReadTopicActionType },
@@ -172,16 +165,25 @@ interface ActionDefault {
 }
 
 const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType | SystemActionType]: ActionDefault } = {
-	[WriteTopicActionType.INSERT_ROW]: { keep: [ 'topicId' ], default: {} },
-	[WriteTopicActionType.MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
-	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: { keep: [ 'topicId' ], default: {} },
+	[WriteTopicActionType.INSERT_ROW]: { keep: [ 'topicId' ], default: { mapping: [] } },
+	[WriteTopicActionType.MERGE_ROW]: {
+		keep: [ 'topicId' ],
+		default: { by: { mode: CompositeMode.AND, children: [] }, mapping: [] }
+	},
+	[WriteTopicActionType.INSERT_OR_MERGE_ROW]: {
+		keep: [ 'topicId' ],
+		default: { by: { mode: CompositeMode.AND, children: [] }, mapping: [] }
+	},
 	[WriteTopicActionType.WRITE_FACTOR]: {
 		keep: [ 'topicId', 'factorId' ],
-		default: { value: { type: SomeValueType.FACTOR } }
+		default: { value: { type: SomeValueType.FACTOR }, by: { mode: CompositeMode.AND, children: [] } }
 	},
-	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: {} },
-	[ReadTopicActionType.READ_ROW]: { keep: [ 'topicId' ], default: {} },
-	[ReadTopicActionType.READ_FACTOR]: { keep: [ 'topicId', 'factorId' ], default: {} },
+	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: { by: { mode: CompositeMode.AND, children: [] } } },
+	[ReadTopicActionType.READ_ROW]: { keep: [ 'topicId' ], default: { by: { mode: CompositeMode.AND, children: [] } } },
+	[ReadTopicActionType.READ_FACTOR]: {
+		keep: [ 'topicId', 'factorId' ],
+		default: { by: { mode: CompositeMode.AND, children: [] } }
+	},
 
 	[SystemActionType.COPY_TO_MEMORY]: { keep: [], default: { value: { type: SomeValueType.FACTOR } } },
 	[SystemActionType.ALARM]: { keep: [ 'severity' ], default: { severity: UnitActionAlarmSeverity.MEDIUM } }
@@ -194,7 +196,7 @@ const ActionTypeButton = (props: {
 }) => {
 	const { type, current, onClick } = props;
 
-	return <div data-current={current === type} onClick={() => onClick(type)}>{asDisplayType(type)}</div>;
+	return <div data-current={current === type} onClick={() => onClick(type)}>{unitActionTypeAsDisplay(type)}</div>;
 };
 
 export const ActionSelect = (props: {
@@ -208,11 +210,12 @@ export const ActionSelect = (props: {
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
-	useEffect(() => {
-		const onScroll = () => setExpanded(false);
-		window.addEventListener('scroll', onScroll, true);
-		return () => window.removeEventListener('scroll', onScroll, true);
-	});
+	// useEffect(() => {
+	// 	const onScroll = () => setExpanded(false);
+	// 	window.addEventListener('scroll', onScroll, true);
+	// 	return () => window.removeEventListener('scroll', onScroll, true);
+	// });
+	useCollapseFixedThing(containerRef, () => setExpanded(false));
 
 	const collapse = () => setExpanded(false);
 	const onExpandClick = () => {
@@ -251,7 +254,7 @@ export const ActionSelect = (props: {
 
 	return <ActionSelectContainer data-expanded={expanded} tabIndex={0} ref={containerRef}
 	                              onClick={onExpandClick} onBlur={collapse}>
-		<div>{asDisplayType(type)}</div>
+		<div>{unitActionTypeAsDisplay(type)}</div>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
 			{ActionTypes.map(item => {
 				return <Fragment key={item.label}>

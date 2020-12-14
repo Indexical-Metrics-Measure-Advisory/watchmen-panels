@@ -13,7 +13,19 @@ export interface FactorValueHolder {
 export interface Condition {
 }
 
+export enum ConditionOperator {
+	EQUALS = 'equals',
+	NOT_EQUALS = 'not-equals',
+	LESS = 'less',
+	LESS_EQUALS = 'less-equals',
+	MORE = 'more',
+	MORE_EQUALS = 'more-equals',
+	IN = 'in',
+	NOT_IN = 'not-in',
+}
+
 export interface PlainCondition extends Condition {
+	operator: ConditionOperator;
 }
 
 export enum CompositeMode {
@@ -28,7 +40,7 @@ export interface CompositeCondition extends Condition {
 
 // find row by
 export interface FindBy {
-	by: any;
+	by: CompositeCondition;
 }
 
 // mapping row to row
