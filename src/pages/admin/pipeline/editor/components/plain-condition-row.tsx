@@ -296,6 +296,7 @@ export const PlainConditionRow = (props: {
 		}
 	}
 	if (!condition.right) {
+		// right part comes from memory or pipeline source target
 		condition.right = {
 			type: SomeValueType.FACTOR,
 			topicId: selectedTopic?.topicId,

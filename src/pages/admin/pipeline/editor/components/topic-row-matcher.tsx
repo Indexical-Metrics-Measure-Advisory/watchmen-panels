@@ -114,7 +114,11 @@ export const TopicRowMatcher = (props: {
 	// eslint-disable-next-line
 	const topic = topics.find(topic => topic.topicId == holder.topicId);
 
-	const onToggleFilterSettingsClicked = () => setExpanded(!expanded);
+	const onToggleFilterSettingsClicked = () => {
+		if (topic) {
+			setExpanded(!expanded);
+		}
+	};
 
 	if (!holder.by) {
 		holder.by = { mode: CompositeMode.AND, children: [] };
