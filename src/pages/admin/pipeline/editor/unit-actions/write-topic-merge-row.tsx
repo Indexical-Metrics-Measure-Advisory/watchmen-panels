@@ -1,8 +1,8 @@
 import React from 'react';
 import { UnitAction, UnitActionMergeRow } from '../../../../../services/admin/pipeline-types';
 import { TopicFinder } from '../components/topic-finder';
-import { TopicRowMatcher } from '../components/topic-row-matcher';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
+import { TopicRowMatcher } from './topic-row-matcher';
 
 export const WriteTopicMergeRow = (props: { action: UnitAction }) => {
 	const { action } = props;

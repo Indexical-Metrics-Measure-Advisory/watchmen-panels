@@ -6,9 +6,9 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { CompositeMode, FindBy, TopicHolder } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
+import { computeConditionCount, computeConditionLines } from '../components/utils';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { CompositeConditionRow } from './composite-condition-row';
-import { computeConditionCount, computeConditionLines } from './utils';
 
 const Container = styled.div`
 	display: flex;

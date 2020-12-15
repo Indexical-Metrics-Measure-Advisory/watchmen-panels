@@ -11,11 +11,11 @@ import {
 	PlainCondition
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
+import { HorizontalOptions } from '../components/horizontal-options';
+import { DangerObjectButton, PrimaryObjectButton } from '../components/object-button';
+import { isCompositeCondition } from '../components/utils';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
-import { HorizontalOptions } from './horizontal-options';
-import { DangerObjectButton, PrimaryObjectButton } from './object-button';
 import { PlainConditionRow } from './plain-condition-row';
-import { isCompositeCondition } from './utils';
 
 const Container = styled.div.attrs({
 	'data-widget': 'composite-condition'

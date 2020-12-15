@@ -3,8 +3,8 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { UnitAction, UnitActionReadFactor } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { TopicFactorFinder } from '../components/topic-factor-finder';
-import { TopicRowMatcher } from '../components/topic-row-matcher';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
+import { TopicRowMatcher } from './topic-row-matcher';
 
 export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
 	const { action } = props;

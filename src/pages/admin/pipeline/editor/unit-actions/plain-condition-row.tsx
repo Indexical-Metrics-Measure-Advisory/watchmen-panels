@@ -16,11 +16,11 @@ import {
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
+import { ConditionOperatorSelect } from '../components/condition-operator-select';
+import { FacterValueFinder } from '../components/facter-value-finder';
+import { FactorFinder } from '../components/factor-finder';
+import { isFactorValue, isMemoryValue } from '../components/utils';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
-import { ConditionOperatorSelect } from './condition-operator-select';
-import { FacterValueFinder } from './facter-value-finder';
-import { FactorFinder } from './factor-finder';
-import { isFactorValue, isMemoryValue } from './utils';
 
 interface DropdownRect {
 	top: number;

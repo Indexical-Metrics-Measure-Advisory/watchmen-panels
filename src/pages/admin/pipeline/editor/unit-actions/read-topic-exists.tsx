@@ -3,8 +3,8 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { UnitAction, UnitActionExists } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { TopicFinder } from '../components/topic-finder';
-import { TopicRowMatcher } from '../components/topic-row-matcher';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
+import { TopicRowMatcher } from './topic-row-matcher';
 
 export const ReadTopicExists = (props: { action: UnitAction }) => {
 	const { action } = props;
