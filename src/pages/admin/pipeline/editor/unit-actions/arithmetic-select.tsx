@@ -25,7 +25,6 @@ const ArithmeticSelectContainer = styled.div`
 	display: flex;
 	position: relative;
 	align-items: center;
-	align-self: flex-start;
 	justify-self: flex-start;
 	border-radius: var(--border-radius);
 	background-color: var(--pipeline-bg-color);

@@ -139,9 +139,6 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 		&:first-child {
 			margin-top: 2px;
 		}
-		&:last-child > div:last-child {
-			align-self: unset;
-		}
 	}
 `;
 const LeftAsFactorContainer = styled.div`

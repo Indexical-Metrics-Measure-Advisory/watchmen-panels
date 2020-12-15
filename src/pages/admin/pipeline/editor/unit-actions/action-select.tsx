@@ -28,7 +28,6 @@ const ActionSelectContainer = styled.div.attrs({
 })`
 	display: flex;
 	position: relative;
-	align-self: flex-start;
 	justify-self: flex-start;
 	border: var(--border);
 	border-color: transparent;
