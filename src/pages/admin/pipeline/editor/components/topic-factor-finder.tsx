@@ -31,8 +31,11 @@ const Container = styled.div`
 	}
 `;
 
-export const TopicFactorFinder = (props: { holder: TopicHolder & FactorHolder }) => {
-	const { holder } = props;
+export const TopicFactorFinder = (props: {
+	holder: TopicHolder & FactorHolder;
+	forFilter: boolean;
+}) => {
+	const { holder, forFilter } = props;
 
 	const { topicId: currentTopicId, factorId: currentFactorId } = holder;
 
@@ -53,9 +56,15 @@ export const TopicFactorFinder = (props: { holder: TopicHolder & FactorHolder })
 			return;
 		}
 		holder.topicId = topic.topicId;
-		firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
+		if (!forFilter) {
+			firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
+		}
 		delete holder.factorId;
-		firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
+		if (!forFilter) {
+			firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
+		} else {
+			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+		}
 		forceUpdate();
 	};
 
@@ -63,7 +72,11 @@ export const TopicFactorFinder = (props: { holder: TopicHolder & FactorHolder })
 	const filterFactors = (searchText: string) => filterFactor(topic?.factors || [], searchText);
 	const onFactorSelect = (factor: QueriedFactorForPipeline) => {
 		holder.factorId = factor.factorId;
-		firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
+		if (forFilter) {
+			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+		} else {
+			firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
+		}
 		forceUpdate();
 	};
 

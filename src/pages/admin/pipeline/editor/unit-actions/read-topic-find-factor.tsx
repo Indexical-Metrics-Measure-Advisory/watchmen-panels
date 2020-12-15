@@ -18,7 +18,7 @@ export const ReadTopicFindFactor = (props: { action: UnitAction }) => {
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
-		<TopicFactorFinder holder={read}/>
+		<TopicFactorFinder holder={read} forFilter={false}/>
 		<ActionBodyItemLabel>By:</ActionBodyItemLabel>
 		<TopicRowMatcher holder={read}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>

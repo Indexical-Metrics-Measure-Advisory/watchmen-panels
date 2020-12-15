@@ -18,7 +18,7 @@ export const ReadTopicExists = (props: { action: UnitAction }) => {
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>Exists In:</ActionBodyItemLabel>
-		<TopicFinder holder={read}/>
+		<TopicFinder holder={read} forFilter={false}/>
 		<ActionBodyItemLabel>By:</ActionBodyItemLabel>
 		<TopicRowMatcher holder={read}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>

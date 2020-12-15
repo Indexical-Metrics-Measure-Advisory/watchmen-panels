@@ -1,8 +1,8 @@
 import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useCollapseFixedThing } from '../../../../../common/utils';
+import { useCollapseFixedThing, useForceUpdate } from '../../../../../common/utils';
 import {
 	ConditionOperator,
 	DatePartArithmetic,
@@ -16,6 +16,7 @@ import {
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ConditionOperatorSelect } from './condition-operator-select';
 import { FacterValueFinder } from './facter-value-finder';
 import { FactorFinder } from './factor-finder';
@@ -182,11 +183,11 @@ const OperatorAndRightContainer = styled.div`
 
 const OperatorLabels: { [key in ConditionOperator]: string } = {
 	[ConditionOperator.EQUALS]: '=',
-	[ConditionOperator.NOT_EQUALS]: '<>',
+	[ConditionOperator.NOT_EQUALS]: '≠',
 	[ConditionOperator.LESS]: '<',
-	[ConditionOperator.LESS_EQUALS]: '<=',
+	[ConditionOperator.LESS_EQUALS]: '≤',
 	[ConditionOperator.MORE]: '>',
-	[ConditionOperator.MORE_EQUALS]: '>=',
+	[ConditionOperator.MORE_EQUALS]: '≥',
 	[ConditionOperator.IN]: 'In',
 	[ConditionOperator.NOT_IN]: 'Not In'
 };
@@ -195,13 +196,80 @@ const ArithmeticLabels: { [key in SimpleFuncArithmetic]: string } = {
 	[NoArithmetic.NO_FUNC]: '',
 	[DatePartArithmetic.YEAR_OF]: 'Year',
 	[DatePartArithmetic.MONTH_OF]: 'Month',
-	[DatePartArithmetic.WEEK_OF]: 'Week',
+	[DatePartArithmetic.WEEK_OF]: 'WeekOfYear',
 	[DatePartArithmetic.WEEKDAY]: 'Weekday',
 	[NumericArithmetic.PERCENTAGE]: 'Percentage',
 	[NumericArithmetic.ABSOLUTE_VALUE]: 'Abs',
 	[NumericArithmetic.LOGARITHM]: 'Log'
 };
 const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => ArithmeticLabels[arithmetic];
+const buildLabel = (options: {
+	topic?: QueriedTopicForPipeline;
+	condition: PlainCondition;
+	topics: Array<QueriedTopicForPipeline>;
+}) => {
+	const { topic, condition, topics } = options;
+
+	let label = '';
+	if (topic) {
+		const left = condition.left as FactorValue;
+		label += `${topic.name}.`;
+		if (left.factorId) {
+			// eslint-disable-next-line
+			const factor = topic.factors.find(factor => factor.factorId == left.factorId);
+			label += factor ? factor.label : '?';
+		} else {
+			label += '?';
+		}
+	}
+	label += ` ${asDisplayOperator(condition.operator)} `;
+
+	let right = '';
+	if (isFactorValue(condition.right)) {
+		const topicId = condition.right.topicId;
+		// eslint-disable-next-line
+		const topic = topicId ? topics.find(topic => topic.topicId == topicId) : null;
+		if (topic) {
+			right += `${topic.name}.`;
+			const factorId = condition.right.factorId;
+			// eslint-disable-next-line
+			const factor = factorId ? topic.factors.find(factor => factor.factorId == factorId) : null;
+			if (factor) {
+				right += factor.label;
+			} else {
+				right += '?';
+			}
+		} else {
+			right += '?.?';
+		}
+	} else if (isMemoryValue(condition.right)) {
+		right += condition.right.name || '?';
+	}
+
+	const arithmetic = asDisplayArithmetic(condition.right.arithmetic);
+	if (arithmetic) {
+		right = `${arithmetic}(${right})`;
+	}
+
+	return label + right;
+};
+
+const Statement = (props: {
+	topic?: QueriedTopicForPipeline;
+	condition: PlainCondition;
+}) => {
+	const { topic, condition } = props;
+
+	const { store: { topics } } = usePipelineContext();
+	const { addPropertyChangeListener, removePropertyChangeListener } = usePipelineUnitActionContext();
+	const forceUpdate = useForceUpdate();
+	useEffect(() => {
+		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_CHANGED, forceUpdate);
+		return () => removePropertyChangeListener(PipelineUnitActionEvent.FILTER_CHANGED, forceUpdate);
+	});
+
+	return <div>{buildLabel({ topic, condition, topics })}</div>;
+};
 
 export const PlainConditionRow = (props: {
 	left?: QueriedTopicForPipeline;
@@ -209,7 +277,8 @@ export const PlainConditionRow = (props: {
 }) => {
 	const { left: topic, condition } = props;
 
-	const { store: { topics } } = usePipelineContext();
+	const { store: { selectedTopic } } = usePipelineContext();
+
 	const topContainerRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -227,52 +296,12 @@ export const PlainConditionRow = (props: {
 		}
 	}
 	if (!condition.right) {
-		condition.right = { type: SomeValueType.FACTOR, arithmetic: NoArithmetic.NO_FUNC };
+		condition.right = {
+			type: SomeValueType.FACTOR,
+			topicId: selectedTopic?.topicId,
+			arithmetic: NoArithmetic.NO_FUNC
+		} as FactorValue;
 	}
-
-	const buildLabel = () => {
-		let label = '';
-		if (topic) {
-			const left = condition.left as FactorValue;
-			label += `${topic.name}.`;
-			if (left.factorId) {
-				// eslint-disable-next-line
-				label += topic.factors.find(factor => factor.factorId == left.factorId)!.label;
-			} else {
-				label += '?';
-			}
-		}
-		label += ` ${asDisplayOperator(condition.operator)} `;
-
-		let right = '';
-		if (isFactorValue(condition.right)) {
-			const topicId = condition.right.topicId;
-			// eslint-disable-next-line
-			const topic = topicId ? topics.find(topic => topic.topicId == topicId) : null;
-			if (topic) {
-				right += `${topic.name}.`;
-				const factorId = condition.right.factorId;
-				// eslint-disable-next-line
-				const factor = factorId ? topic.factors.find(factor => factor.factorId == factorId) : null;
-				if (factor) {
-					right += factor.label;
-				} else {
-					right += '?';
-				}
-			} else {
-				right += '?.?';
-			}
-		} else if (isMemoryValue(condition.right)) {
-			right += condition.right.name || '?';
-		}
-
-		const arithmetic = asDisplayArithmetic(condition.right.arithmetic);
-		if (arithmetic) {
-			right = `${arithmetic}(${right})`;
-		}
-
-		return label + right;
-	};
 
 	const onExpandClick = () => {
 		if (!expanded) {
@@ -291,20 +320,20 @@ export const PlainConditionRow = (props: {
 	return <Container ref={topContainerRef}>
 		<DisplayLabel ref={containerRef} tabIndex={0} data-expanded={expanded}
 		              onClick={onExpandClick}>
-			<div>{buildLabel()}</div>
+			<Statement topic={topic} condition={condition}/>
 			<div><FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/></div>
 		</DisplayLabel>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
 			{isFactorValue(condition.left)
 				? <LeftAsFactorContainer>
 					<div>Topic: {topic?.name}</div>
-					<FactorFinder holder={condition.left}/>
+					<FactorFinder holder={condition.left} forFilter={true}/>
 				</LeftAsFactorContainer>
 				: null}
 			<OperatorAndRightContainer>
-				<ConditionOperatorSelect condition={condition}/>
+				<ConditionOperatorSelect condition={condition} forFilter={true}/>
 			</OperatorAndRightContainer>
-			<FacterValueFinder holder={condition as unknown as FactorValueHolder} propName='right'/>
+			<FacterValueFinder holder={condition as unknown as FactorValueHolder} propName='right' forFilter={true}/>
 		</Dropdown>
 	</Container>;
 };

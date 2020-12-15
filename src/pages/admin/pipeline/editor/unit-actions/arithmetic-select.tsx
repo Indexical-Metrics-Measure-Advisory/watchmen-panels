@@ -9,6 +9,7 @@ import {
 	SimpleFuncArithmetic,
 	SimpleFuncValue
 } from '../../../../../services/admin/pipeline-types';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 
 interface DropdownRect {
 	top: number;
@@ -179,9 +180,11 @@ const ArithmeticButton = (props: {
 export const ArithmeticSelect = (props: {
 	value: SimpleFuncValue;
 	right?: boolean;
+	forFilter: boolean;
 }) => {
-	const { value, right = false } = props;
+	const { value, right = false, forFilter } = props;
 
+	const { firePropertyChange } = usePipelineUnitActionContext();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
@@ -223,6 +226,9 @@ export const ArithmeticSelect = (props: {
 			return;
 		}
 		value.arithmetic = arithmetic;
+		if (forFilter) {
+			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+		}
 		setExpanded(false);
 	};
 	const onCaretClicked = (event: React.MouseEvent<HTMLDivElement>) => {

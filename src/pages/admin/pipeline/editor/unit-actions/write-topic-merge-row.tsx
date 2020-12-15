@@ -10,7 +10,7 @@ export const WriteTopicMergeRow = (props: { action: UnitAction }) => {
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
-		<TopicFinder holder={write}/>
+		<TopicFinder holder={write} forFilter={false}/>
 		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
 		<TopicRowMatcher holder={write}/>
 		<ActionBodyItemLabel>Use Mapping:</ActionBodyItemLabel>

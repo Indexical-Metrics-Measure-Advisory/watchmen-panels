@@ -11,9 +11,9 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
-		<FacterValueFinder holder={write}/>
+		<FacterValueFinder holder={write} forFilter={false}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
-		<TopicFactorFinder holder={write}/>
+		<TopicFactorFinder holder={write} forFilter={false}/>
 		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
 		<TopicRowMatcher holder={write}/>
 	</ActionBody2Columns>;

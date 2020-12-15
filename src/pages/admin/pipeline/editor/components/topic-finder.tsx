@@ -8,9 +8,10 @@ import { ItemFinder } from './item-finder';
 import { filterTopic } from './utils';
 
 export const TopicFinder = (props: {
-	holder: TopicHolder
+	holder: TopicHolder;
+	forFilter: boolean;
 }) => {
-	const { holder } = props;
+	const { holder, forFilter } = props;
 	const { topicId: currentTopicId } = holder;
 
 	const { store: { topics } } = usePipelineContext();
@@ -24,7 +25,11 @@ export const TopicFinder = (props: {
 	const filterItems = (searchText: string) => filterTopic(topics, searchText);
 	const onSelect = (topic: QueriedTopicForPipeline) => {
 		holder.topicId = topic.topicId;
-		firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
+		if (forFilter) {
+			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+		} else {
+			firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
+		}
 		forceUpdate();
 	};
 

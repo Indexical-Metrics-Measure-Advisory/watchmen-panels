@@ -7,8 +7,8 @@ import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeli
 import { ItemFinder } from './item-finder';
 import { filterFactor } from './utils';
 
-export const FactorFinder = (props: { holder: FactorHolder }) => {
-	const { holder } = props;
+export const FactorFinder = (props: { holder: FactorHolder, forFilter: boolean }) => {
+	const { holder, forFilter } = props;
 	const { topicId: currentTopicId, factorId: currentFactorId } = holder;
 
 	const { store: { topics } } = usePipelineContext();
@@ -24,7 +24,11 @@ export const FactorFinder = (props: { holder: FactorHolder }) => {
 	const filterItems = (searchText: string) => filterFactor(topic?.factors || [], searchText);
 	const onSelect = (factor: QueriedFactorForPipeline) => {
 		holder.factorId = factor.factorId;
-		firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
+		if (forFilter) {
+			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+		} else {
+			firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
+		}
 		forceUpdate();
 	};
 

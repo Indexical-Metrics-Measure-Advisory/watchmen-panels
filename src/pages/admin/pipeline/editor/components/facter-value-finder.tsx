@@ -10,6 +10,7 @@ import {
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ArithmeticSelect } from '../unit-actions/arithmetic-select';
 import { ActionInput } from './action-input';
 import { FactorFinder } from './factor-finder';
@@ -74,13 +75,15 @@ const isInMemoryValue = (value: SomeValue): value is InMemoryValue => {
 
 export const FacterValueFinder = (props: {
 	holder: FactorValueHolder;
-	propName?: string
+	propName?: string;
+	forFilter: boolean;
 }) => {
-	const { holder, propName = 'value' } = props;
+	const { holder, propName = 'value', forFilter } = props;
 	const value = (holder as any)[propName] as SomeValue;
 	const { type: valueType = SomeValueType.FACTOR } = value;
 
 	const { store: { selectedPipeline, topics } } = usePipelineContext();
+	const { firePropertyChange } = usePipelineUnitActionContext();
 	const forceUpdate = useForceUpdate();
 
 	const { topicId: sourceTopicId } = selectedPipeline!;
@@ -94,6 +97,9 @@ export const FacterValueFinder = (props: {
 		value.type = valueType;
 		if (isFactorValue(value)) {
 			value.topicId = sourceTopicId;
+			if (forFilter) {
+				firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+			}
 		}
 		forceUpdate();
 	};
@@ -101,6 +107,9 @@ export const FacterValueFinder = (props: {
 		const name = event.target.value;
 		if (isInMemoryValue(value)) {
 			value.name = name;
+			if (forFilter) {
+				firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
+			}
 		}
 		forceUpdate();
 	};
@@ -112,7 +121,7 @@ export const FacterValueFinder = (props: {
 		                   onSelect={onValueTypeChanged}/>
 		{
 			isFactorValue(value)
-				? <FactorFinder holder={value}/>
+				? <FactorFinder holder={value} forFilter={forFilter}/>
 				: null
 		}
 		{
@@ -123,7 +132,7 @@ export const FacterValueFinder = (props: {
 		}
 		{
 			isFactorValue(value) || isInMemoryValue(value)
-				? <ArithmeticSelect value={value} right={true}/>
+				? <ArithmeticSelect value={value} right={true} forFilter={forFilter}/>
 				: null
 		}
 	</Container>;

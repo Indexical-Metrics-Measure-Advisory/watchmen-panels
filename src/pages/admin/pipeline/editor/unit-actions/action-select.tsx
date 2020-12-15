@@ -219,14 +219,8 @@ export const ActionSelect = (props: {
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
-	// useEffect(() => {
-	// 	const onScroll = () => setExpanded(false);
-	// 	window.addEventListener('scroll', onScroll, true);
-	// 	return () => window.removeEventListener('scroll', onScroll, true);
-	// });
 	useCollapseFixedThing(containerRef, () => setExpanded(false));
 
-	const collapse = () => setExpanded(false);
 	const onExpandClick = () => {
 		if (!expanded) {
 			const rect = containerRef.current!.getBoundingClientRect();
@@ -262,7 +256,7 @@ export const ActionSelect = (props: {
 	};
 
 	return <ActionSelectContainer data-expanded={expanded} tabIndex={0} ref={containerRef}
-	                              onClick={onExpandClick} onBlur={collapse}>
+	                              onClick={onExpandClick}>
 		<div>{unitActionTypeAsDisplay(type)}</div>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
 			{ActionTypes.map(item => {
