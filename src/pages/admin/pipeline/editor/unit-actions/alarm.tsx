@@ -1,10 +1,17 @@
 import React from 'react';
+import styled from 'styled-components';
 import { useForceUpdate } from '../../../../../common/utils';
 import { UnitAction, UnitActionAlarm, UnitActionAlarmSeverity } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { HorizontalOptions } from '../components/horizontal-options';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
+const AlarmContainer = styled(ActionBody2Columns)`
+	> div:nth-child(2) {
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
+	}
+`;
 const asDisplaySeverity = (severity: UnitActionAlarmSeverity): string => {
 	return severity.split('-').map(word => {
 		if ([ 'or', 'and', 'to', 'from' ].includes(word)) {
@@ -30,7 +37,7 @@ export const Alarm = (props: { action: UnitAction }) => {
 		forceUpdate();
 	};
 
-	return <ActionBody2Columns>
+	return <AlarmContainer>
 		<ActionBodyItemLabel>Severity:</ActionBodyItemLabel>
 		<HorizontalOptions label={asDisplaySeverity(severity)}
 		                   options={Object.values(UnitActionAlarmSeverity).filter(candidate => candidate !== severity)}
@@ -38,5 +45,5 @@ export const Alarm = (props: { action: UnitAction }) => {
 		                   onSelect={onSeverityChanged}/>
 		<ActionBodyItemLabel>Message:</ActionBodyItemLabel>
 		<ActionInput value={message} onChange={onMessageChanged}/>
-	</ActionBody2Columns>;
+	</AlarmContainer>;
 };

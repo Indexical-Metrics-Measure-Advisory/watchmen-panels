@@ -19,6 +19,8 @@ const Container = styled.div`
 	display: flex;
 	align-items: center;
 	> div:first-child {
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
 		border-radius: var(--border-radius) 0 0 var(--border-radius);
 		&[data-expanded=true] {
 			> div:last-child {

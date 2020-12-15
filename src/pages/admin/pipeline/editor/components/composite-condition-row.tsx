@@ -26,7 +26,6 @@ const Title = styled.div.attrs({
 })`
 	display: grid;
 	grid-template-columns: auto 1fr auto;
-	padding-right: calc(var(--margin) / 2);
 	height: 32px;
 	min-height: 32px;
 	align-items: center;
@@ -50,7 +49,9 @@ const Title = styled.div.attrs({
 		}
 	}
 	> div:nth-child(2) {
-		font-family: var(--console-title-font-family);
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
+		text-transform: capitalize;
 	}
 	> div:last-child {
 		margin-left: calc(var(--margin) / 3);
@@ -130,7 +131,7 @@ export const CompositeConditionRow = (props: {
 	const [ expanded, setExpanded ] = useState(true);
 	const forceUpdate = useForceUpdate();
 
-	const label = condition.mode.toUpperCase();
+	const label = condition.mode;
 	const onToggleExpandedClicked = () => setExpanded(!expanded);
 	const onSelect = (mode: CompositeMode) => {
 		condition.mode = mode;
@@ -146,7 +147,7 @@ export const CompositeConditionRow = (props: {
 			<div onClick={onToggleExpandedClicked}><FontAwesomeIcon icon={faChevronDown}/></div>
 			<HorizontalOptions label={label}
 			                   options={[ CompositeMode.AND, CompositeMode.OR ].filter(x => x !== condition.mode)}
-			                   toLabel={(mode: CompositeMode) => mode.toUpperCase()}
+			                   toLabel={(mode: CompositeMode) => mode}
 			                   onSelect={onSelect}/>
 			<div>
 				<PrimaryObjectButton onClick={onAddSubFilterClicked}>

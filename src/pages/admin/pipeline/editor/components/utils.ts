@@ -65,3 +65,30 @@ export const filterFactor = (factors: Array<QueriedFactorForPipeline>, text: str
 
 export const isCompositeCondition = (condition: Condition): condition is CompositeCondition => !!(condition as any).mode;
 export const isPlainCondition = (condition: Condition): condition is PlainCondition => !isCompositeCondition(condition);
+export const computeConditionLines = (condition: CompositeCondition): number => {
+	if (condition.children.length === 0) {
+		// me and no child line
+		return 2;
+	}
+	return condition.children.reduce((count: number, child) => {
+		if (isPlainCondition(child)) {
+			count += 1;
+		} else if (isCompositeCondition(child)) {
+			count += computeConditionLines(child);
+		}
+		return count;
+	}, 1);
+};
+/**
+ * only plain conditions are counted
+ */
+export const computeConditionCount = (condition: CompositeCondition): number => {
+	return condition.children.reduce((count: number, child) => {
+		if (isPlainCondition(child)) {
+			count += 1;
+		} else if (isCompositeCondition(child)) {
+			count += computeConditionLines(child);
+		}
+		return count;
+	}, 0);
+};

@@ -8,11 +8,11 @@ import {
 	ReadTopicActionType,
 	SomeValueType,
 	SystemActionType,
-	UnitAction,
 	UnitActionAlarmSeverity,
 	UnitActionType,
 	WriteTopicActionType
 } from '../../../../../services/admin/pipeline-types';
+import { ArrangedUnitAction } from '../../types';
 import { unitActionTypeAsDisplay } from '../utils';
 
 interface DropdownRect {
@@ -22,7 +22,9 @@ interface DropdownRect {
 	atTop: boolean;
 }
 
-const ActionSelectContainer = styled.div`
+const ActionSelectContainer = styled.div.attrs({
+	'data-widget': 'stage-unit-action-select'
+})`
 	display: flex;
 	position: relative;
 	align-self: flex-start;
@@ -200,7 +202,7 @@ const ActionTypeButton = (props: {
 };
 
 export const ActionSelect = (props: {
-	action: UnitAction;
+	action: ArrangedUnitAction;
 	onTypeChanged: () => void;
 }) => {
 	const { action, onTypeChanged } = props;
@@ -239,7 +241,7 @@ export const ActionSelect = (props: {
 		const actionDefault = OnActionTypeChanged[type];
 		// remove irrelevant properties
 		Object.keys(action)
-			.filter(key => key !== 'type' && !actionDefault.keep.includes(key))
+			.filter(key => ![ 'type', 'uuid' ].includes(key) && !actionDefault.keep.includes(key))
 			.forEach(key => delete (action as any)[key]);
 		// set default values
 		Object.keys(actionDefault.default).forEach(key => (action as any)[key] = actionDefault.default[key]);

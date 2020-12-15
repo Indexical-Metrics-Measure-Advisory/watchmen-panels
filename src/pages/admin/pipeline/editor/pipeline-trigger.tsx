@@ -15,6 +15,10 @@ const Trigger = styled.div`
 		white-space: nowrap;
 		font-weight: var(--font-demi-bold);
 	}
+	> div:nth-child(2) {
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
+	}
 `;
 
 const TriggerTypeOptions: { [key in PipelineTriggerType]: string } = {

@@ -105,6 +105,8 @@ const UnitCondition = styled(UnitSection).attrs({
 	}
 	> div:nth-child(2) {
 		align-self: center;
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
 	}
 	> button {
 		align-self: center;

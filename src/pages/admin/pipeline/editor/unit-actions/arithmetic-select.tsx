@@ -42,6 +42,7 @@ const ArithmeticSelectContainer = styled.div`
 		position: relative;
 		padding-left: calc(var(--margin) / 2);
 		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
 		border-top-left-radius: 12px;
 		border-bottom-left-radius: 12px;
 	}

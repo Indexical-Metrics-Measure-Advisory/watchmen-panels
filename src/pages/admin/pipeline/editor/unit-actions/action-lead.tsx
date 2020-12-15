@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const AL = styled.div.attrs({
-	'data-widget': 'pipeline-unit-action-lead'
+	'data-widget': 'stage-unit-action-lead'
 })`
 	white-space: nowrap;
 	font-weight: var(--font-demi-bold);
