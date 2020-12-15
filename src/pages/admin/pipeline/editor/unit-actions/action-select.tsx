@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useCollapseFixedThing } from '../../../../../common/utils';
 import {
 	CompositeMode,
+	NoArithmetic,
 	ReadTopicActionType,
 	SomeValueType,
 	SystemActionType,
@@ -178,7 +179,10 @@ const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType 
 	},
 	[WriteTopicActionType.WRITE_FACTOR]: {
 		keep: [ 'topicId', 'factorId' ],
-		default: { value: { type: SomeValueType.FACTOR }, by: { mode: CompositeMode.AND, children: [] } }
+		default: {
+			value: { type: SomeValueType.FACTOR, arithmetic: NoArithmetic.NO_FUNC },
+			by: { mode: CompositeMode.AND, children: [] }
+		}
 	},
 	[ReadTopicActionType.EXISTS]: { keep: [ 'topicId' ], default: { by: { mode: CompositeMode.AND, children: [] } } },
 	[ReadTopicActionType.READ_ROW]: { keep: [ 'topicId' ], default: { by: { mode: CompositeMode.AND, children: [] } } },
@@ -187,7 +191,10 @@ const OnActionTypeChanged: { [key in WriteTopicActionType | ReadTopicActionType 
 		default: { by: { mode: CompositeMode.AND, children: [] } }
 	},
 
-	[SystemActionType.COPY_TO_MEMORY]: { keep: [], default: { value: { type: SomeValueType.FACTOR } } },
+	[SystemActionType.COPY_TO_MEMORY]: {
+		keep: [],
+		default: { value: { type: SomeValueType.FACTOR, arithmetic: NoArithmetic.NO_FUNC } }
+	},
 	[SystemActionType.ALARM]: { keep: [ 'severity' ], default: { severity: UnitActionAlarmSeverity.MEDIUM } }
 };
 

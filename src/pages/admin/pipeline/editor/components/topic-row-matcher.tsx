@@ -46,14 +46,15 @@ const ToggleButton = styled.div`
 		transition: all 300ms ease-in-out;
 	}
 `;
-const FilterContent = styled.div.attrs<{ lines: number, expanded: boolean }>(({ lines, expanded }) => {
-	return {
-		style: {
-			maxHeight: expanded ? lines * 32 : 0,
-			transform: expanded ? 'none' : 'rotateX(90deg)'
-		}
-	};
-})<{ lines: number, expanded: boolean }>`
+const FilterContent = styled.div.attrs<{ lines: number, count: number, expanded: boolean }>(
+	({ lines, expanded }) => {
+		return {
+			style: {
+				maxHeight: expanded ? lines * 32 : 0,
+				transform: expanded ? 'none' : 'rotateX(90deg)'
+			}
+		};
+	})<{ lines: number, expanded: boolean }>`
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
@@ -101,7 +102,13 @@ export const TopicRowMatcher = (props: {
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addPropertyChangeListener(PipelineUnitActionEvent.TOPIC_CHANGED, forceUpdate);
-		return () => removePropertyChangeListener(PipelineUnitActionEvent.TOPIC_CHANGED, forceUpdate);
+		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_ADDED, forceUpdate);
+		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_REMOVED, forceUpdate);
+		return () => {
+			removePropertyChangeListener(PipelineUnitActionEvent.TOPIC_CHANGED, forceUpdate);
+			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_ADDED, forceUpdate);
+			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_REMOVED, forceUpdate);
+		};
 	});
 
 	// eslint-disable-next-line
@@ -113,8 +120,8 @@ export const TopicRowMatcher = (props: {
 		holder.by = { mode: CompositeMode.AND, children: [] };
 	}
 
-	const filtersCount = computeConditionCount(holder.by);
 	const linesCount = computeConditionLines(holder.by);
+	const filtersCount = computeConditionCount(holder.by);
 
 	return <Container>
 		<ToggleLine>
@@ -125,7 +132,7 @@ export const TopicRowMatcher = (props: {
 		</ToggleLine>
 		{topic
 			? <FilterContent lines={linesCount} expanded={expanded}>
-				<CompositeConditionRow condition={holder.by} removable={false}/>
+				<CompositeConditionRow left={topic} condition={holder.by} removable={false}/>
 			</FilterContent>
 			: null}
 	</Container>;

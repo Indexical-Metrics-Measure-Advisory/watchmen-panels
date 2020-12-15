@@ -10,6 +10,8 @@ import {
 	ConditionOperator,
 	PlainCondition
 } from '../../../../../services/admin/pipeline-types';
+import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { HorizontalOptions } from './horizontal-options';
 import { DangerObjectButton, PrimaryObjectButton } from './object-button';
 import { PlainConditionRow } from './plain-condition-row';
@@ -45,6 +47,7 @@ const Title = styled.div.attrs({
 		justify-content: center;
 		cursor: pointer;
 		> svg {
+			opacity: 0.7;
 			transition: all 300ms ease-in-out;
 		}
 	}
@@ -93,41 +96,45 @@ const ChildConditionsNode = styled.div.attrs<{ count: number, visible: boolean }
 		return {
 			'data-widget': 'composite-condition-children',
 			style: {
-				height: visible ? count * 32 : 0
+				height: visible ? count * 32 : 0,
+				transform: visible ? 'none' : 'rotateX(90deg)'
 			}
 		};
 	})<{ count: number, visible: boolean }>`
 	display: flex;
 	flex-direction: column;
 	padding-left: var(--margin);
-	overflow: hidden;
+	transform-origin: top;
 	transition: all 300ms ease-in-out;
 `;
 
 const ChildConditions = (props: {
+	left?: QueriedTopicForPipeline;
 	condition: CompositeCondition;
 	visible: boolean;
 }) => {
-	const { condition, visible } = props;
+	const { left: topic, condition, visible } = props;
 
 	return <ChildConditionsNode visible={visible} count={condition.children.length}>
 		{condition.children.map((child, index) => {
 			if (isCompositeCondition(child)) {
-				return <CompositeConditionRow condition={child} removable={true} key={index}/>;
+				return <CompositeConditionRow left={topic} condition={child} removable={true} key={index}/>;
 			} else {
 				const plain = child as PlainCondition;
-				return <PlainConditionRow condition={plain} key={index}/>;
+				return <PlainConditionRow left={topic} condition={plain} key={index}/>;
 			}
 		})}
 	</ChildConditionsNode>;
 };
 
 export const CompositeConditionRow = (props: {
+	left?: QueriedTopicForPipeline;
 	condition: CompositeCondition;
 	removable: boolean;
 }) => {
-	const { condition, removable } = props;
+	const { left: topic, condition, removable } = props;
 
+	const { firePropertyChange } = usePipelineUnitActionContext();
 	const [ expanded, setExpanded ] = useState(true);
 	const forceUpdate = useForceUpdate();
 
@@ -140,6 +147,7 @@ export const CompositeConditionRow = (props: {
 	const onAddSubFilterClicked = () => {
 		condition.children.push({ operator: ConditionOperator.EQUALS });
 		expanded ? forceUpdate() : setExpanded(true);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_ADDED);
 	};
 
 	return <Container data-expanded={expanded}>
@@ -164,6 +172,6 @@ export const CompositeConditionRow = (props: {
 		</Title>
 		{condition.children.length === 0
 			? <NoChild>No Child Defined.</NoChild>
-			: <ChildConditions condition={condition} visible={expanded}/>}
+			: <ChildConditions left={topic} condition={condition} visible={expanded}/>}
 	</Container>;
 };

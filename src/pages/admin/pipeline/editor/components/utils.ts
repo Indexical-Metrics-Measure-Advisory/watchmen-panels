@@ -1,4 +1,12 @@
-import { CompositeCondition, Condition, PlainCondition } from '../../../../../services/admin/pipeline-types';
+import {
+	CompositeCondition,
+	Condition,
+	FactorValue,
+	InMemoryValue,
+	PlainCondition,
+	SomeValue,
+	SomeValueType
+} from '../../../../../services/admin/pipeline-types';
 import { QueriedFactorForPipeline, QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { FilteredFactor, FilteredTopic } from './types';
 
@@ -92,3 +100,6 @@ export const computeConditionCount = (condition: CompositeCondition): number => 
 		return count;
 	}, 0);
 };
+
+export const isFactorValue = (value: SomeValue): value is FactorValue => value.type === SomeValueType.FACTOR;
+export const isMemoryValue = (value: SomeValue): value is InMemoryValue => value.type === SomeValueType.IN_MEMORY;

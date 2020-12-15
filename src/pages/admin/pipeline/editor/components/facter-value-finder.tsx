@@ -72,8 +72,12 @@ const isInMemoryValue = (value: SomeValue): value is InMemoryValue => {
 	return value.type === SomeValueType.IN_MEMORY;
 };
 
-export const FacterValueFinder = (props: { holder: FactorValueHolder }) => {
-	const { holder: { value } } = props;
+export const FacterValueFinder = (props: {
+	holder: FactorValueHolder;
+	propName?: string
+}) => {
+	const { holder, propName = 'value' } = props;
+	const value = (holder as any)[propName] as SomeValue;
 	const { type: valueType = SomeValueType.FACTOR } = value;
 
 	const { store: { selectedPipeline, topics } } = usePipelineContext();

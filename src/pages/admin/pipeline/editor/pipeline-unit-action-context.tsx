@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 
 export enum PipelineUnitActionEvent {
 	TOPIC_CHANGED = 'topic-changed',
-	FACTOR_CHANGED = 'factor-changed'
+	FACTOR_CHANGED = 'factor-changed',
+	FILTER_ADDED = 'filter-added',
+	FILTER_REMOVED = 'filter-removed'
 }
 
 export type PropertyChangeListener = () => void;

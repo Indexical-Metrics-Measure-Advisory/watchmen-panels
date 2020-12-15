@@ -1,14 +1,8 @@
 import { faEdit } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import {
-	DatePartArithmetic,
-	NoArithmetic,
-	NumericArithmetic,
-	SimpleFuncArithmetic,
-	SimpleFuncValue
-} from '../../../../../services/admin/pipeline-types';
+import { ConditionOperator, PlainCondition } from '../../../../../services/admin/pipeline-types';
 
 interface DropdownRect {
 	top: number;
@@ -18,13 +12,12 @@ interface DropdownRect {
 	atTop: boolean;
 }
 
-const DropdownHeight = 120;
+const DropdownHeight = 116;
 
-const ArithmeticSelectContainer = styled.div`
+const ConditionOperatorSelectContainer = styled.div`
 	display: flex;
 	position: relative;
 	align-items: center;
-	align-self: flex-start;
 	justify-self: flex-start;
 	border-radius: var(--border-radius);
 	background-color: var(--pipeline-bg-color);
@@ -94,23 +87,24 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 		min-height: 28px;
 		padding: 0 calc(var(--margin) / 2);
 	}
-	> div[data-role='action-category'] {
-		display: flex;
-		align-items: center;
-		font-weight: var(--font-bold);
-		cursor: default;
-	}
-	> div[data-role='actions'] {
+	> div[data-role='operators'] {
 		display: flex;
 		flex-wrap: wrap;
 		grid-column-gap: calc(var(--margin) / 4);
 		grid-row-gap: calc(var(--margin) / 8);
 		background-color: var(--bg-color);
-		padding: calc(var(--margin) / 8) calc(var(--margin) / 2);
+		padding: 0 calc(var(--margin) / 2);
 		cursor: default;
+		&:first-child {
+			border-top-left-radius: 12px;
+			border-top-right-radius: 12px;
+			padding-top: calc(var(--margin) / 8);
+			padding-bottom: calc(var(--margin) / 8);
+		}
 		&:last-child {
 			border-bottom-left-radius: 12px;
 			border-bottom-right-radius: 12px;
+			padding-bottom: calc(var(--margin) / 8);
 		}
 		> div {
 			display: flex;
@@ -119,7 +113,7 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 			line-height: 22px;
 			border-radius: 12px;
 			border: var(--border);
-			padding: 0 calc(var(--margin) / 4);
+			padding: 0 calc(var(--margin) / 2);
 			transition: all 300ms ease-in-out;
 			cursor: pointer;
 			&:hover,
@@ -135,52 +129,45 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 	}
 `;
 
-const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => {
-	switch (arithmetic) {
+const asDisplayOperator = (operator: ConditionOperator): string => {
+	switch (operator) {
 		// date part
-		case DatePartArithmetic.YEAR_OF:
-			return 'Year';
-		case DatePartArithmetic.MONTH_OF:
-			return 'Month';
-		case DatePartArithmetic.WEEK_OF:
-			return 'Week of Year';
-		case DatePartArithmetic.WEEKDAY:
-			return 'Weekday';
-		// numeric
-		case NumericArithmetic.ABSOLUTE_VALUE:
-			return 'Abs';
-		case NumericArithmetic.LOGARITHM:
-			return 'Log';
-		case NumericArithmetic.PERCENTAGE:
-			return '%';
-		// no func
-		case NoArithmetic.NO_FUNC:
-			return 'No Func';
+		case ConditionOperator.EQUALS:
+			return 'Equals';
+		case ConditionOperator.NOT_EQUALS:
+			return 'Not Equals';
+		case ConditionOperator.LESS:
+			return 'Less Than';
+		case ConditionOperator.LESS_EQUALS:
+			return 'Less Than or Equals';
+		case ConditionOperator.MORE:
+			return 'Greater Than';
+		case ConditionOperator.MORE_EQUALS:
+			return 'Greater Than or Equals';
+		case ConditionOperator.IN:
+			return 'In';
+		case ConditionOperator.NOT_IN:
+			return 'Not In';
 	}
 };
 
-const ArithmeticTypes = [
-	{ label: 'Date Time', enum: DatePartArithmetic },
-	{ label: 'Numeric', enum: NumericArithmetic }
-];
-
-const ArithmeticButton = (props: {
-	arithmetic: SimpleFuncArithmetic;
-	current: SimpleFuncArithmetic;
-	onClick: (type: SimpleFuncArithmetic) => void;
+const OperatorButton = (props: {
+	operator: ConditionOperator;
+	current: ConditionOperator;
+	onClick: (type: ConditionOperator) => void;
 }) => {
-	const { arithmetic, current, onClick } = props;
+	const { operator, current, onClick } = props;
 
-	return <div data-current={current === arithmetic} onClick={() => onClick(arithmetic)}>
-		{asDisplayArithmetic(arithmetic)}
+	return <div data-current={current === operator} onClick={() => onClick(operator)}>
+		{asDisplayOperator(operator)}
 	</div>;
 };
 
-export const ArithmeticSelect = (props: {
-	value: SimpleFuncValue;
+export const ConditionOperatorSelect = (props: {
+	condition: PlainCondition;
 	right?: boolean;
 }) => {
-	const { value, right = false } = props;
+	const { condition, right = false } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -218,11 +205,11 @@ export const ArithmeticSelect = (props: {
 			setExpanded(true);
 		}
 	};
-	const onArithmeticClicked = (arithmetic: SimpleFuncArithmetic) => {
-		if (arithmetic === value.arithmetic) {
+	const onOperatorClicked = (operator: ConditionOperator) => {
+		if (operator === condition.operator) {
 			return;
 		}
-		value.arithmetic = arithmetic;
+		condition.operator = operator;
 		setExpanded(false);
 	};
 	const onCaretClicked = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -231,23 +218,35 @@ export const ArithmeticSelect = (props: {
 		setExpanded(!expanded);
 	};
 
-	return <ArithmeticSelectContainer data-expanded={expanded} tabIndex={0} ref={containerRef}
-	                                  onClick={onExpandClick} onBlur={collapse}>
-		<div>{asDisplayArithmetic(value.arithmetic)}</div>
+	return <ConditionOperatorSelectContainer data-expanded={expanded} tabIndex={0} ref={containerRef}
+	                                         onClick={onExpandClick} onBlur={collapse}>
+		<div>{asDisplayOperator(condition.operator)}</div>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
-			{ArithmeticTypes.map(item => {
-				return <Fragment key={item.label}>
-					<div data-role='action-category'>{item.label}</div>
-					<div data-role='actions'>
-						{Object.values(item.enum).map(candidateType => {
-							return <ArithmeticButton current={value.arithmetic} arithmetic={candidateType}
-							                         key={candidateType}
-							                         onClick={onArithmeticClicked}/>;
-						})}
-					</div>
-				</Fragment>;
-			})}
+			<div data-role='operators'>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.EQUALS}
+				                onClick={onOperatorClicked}/>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.NOT_EQUALS}
+				                onClick={onOperatorClicked}/>
+			</div>
+			<div data-role='operators'>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.LESS}
+				                onClick={onOperatorClicked}/>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.LESS_EQUALS}
+				                onClick={onOperatorClicked}/>
+			</div>
+			<div data-role='operators'>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.MORE}
+				                onClick={onOperatorClicked}/>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.MORE_EQUALS}
+				                onClick={onOperatorClicked}/>
+			</div>
+			<div data-role='operators'>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.IN}
+				                onClick={onOperatorClicked}/>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.NOT_IN}
+				                onClick={onOperatorClicked}/>
+			</div>
 		</Dropdown>
 		<div onClick={onCaretClicked}><FontAwesomeIcon icon={faEdit}/></div>
-	</ArithmeticSelectContainer>;
+	</ConditionOperatorSelectContainer>;
 };

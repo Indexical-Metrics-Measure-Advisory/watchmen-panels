@@ -6,49 +6,11 @@ export interface FactorHolder extends TopicHolder {
 	factorId?: string;
 }
 
-export interface FactorValueHolder {
-	value: SomeValue;
-}
-
-export interface Condition {
-}
-
-export enum ConditionOperator {
-	EQUALS = 'equals',
-	NOT_EQUALS = 'not-equals',
-	LESS = 'less',
-	LESS_EQUALS = 'less-equals',
-	MORE = 'more',
-	MORE_EQUALS = 'more-equals',
-	IN = 'in',
-	NOT_IN = 'not-in',
-}
-
-export interface PlainCondition extends Condition {
-	operator: ConditionOperator;
-}
-
-export enum CompositeMode {
-	AND = 'and',
-	OR = 'or'
-}
-
-export interface CompositeCondition extends Condition {
-	mode: CompositeMode;
-	children: Array<Condition>;
-}
-
-// find row by
-export interface FindBy {
-	by: CompositeCondition;
-}
-
-// mapping row to row
-export interface MappingRow {
-	mapping: any;
-}
-
 // value used in unit actions
+export enum NoArithmetic {
+	NO_FUNC = 'no-func'
+}
+
 export enum DatePartArithmetic {
 	YEAR_OF = 'year-of',
 	MONTH_OF = 'month-of',
@@ -62,7 +24,7 @@ export enum NumericArithmetic {
 	LOGARITHM = 'log',
 }
 
-export type SimpleFuncArithmetic = DatePartArithmetic | NumericArithmetic;
+export type SimpleFuncArithmetic = NoArithmetic | DatePartArithmetic | NumericArithmetic;
 
 export enum SomeValueType {
 	IN_MEMORY = 'in-memory',
@@ -84,6 +46,50 @@ export interface InMemoryValue extends SimpleFuncValue {
 
 export interface FactorValue extends TopicHolder, FactorHolder, SimpleFuncValue {
 	type: SomeValueType.FACTOR;
+}
+
+export interface FactorValueHolder {
+	value: SomeValue;
+}
+
+export interface Condition {
+}
+
+export enum ConditionOperator {
+	EQUALS = 'equals',
+	NOT_EQUALS = 'not-equals',
+	LESS = 'less',
+	LESS_EQUALS = 'less-equals',
+	MORE = 'more',
+	MORE_EQUALS = 'more-equals',
+	IN = 'in',
+	NOT_IN = 'not-in',
+}
+
+export interface PlainCondition extends Condition {
+	left: SimpleFuncValue;
+	operator: ConditionOperator;
+	right: SimpleFuncValue;
+}
+
+export enum CompositeMode {
+	AND = 'and',
+	OR = 'or'
+}
+
+export interface CompositeCondition extends Condition {
+	mode: CompositeMode;
+	children: Array<Condition>;
+}
+
+// find row by
+export interface FindBy {
+	by: CompositeCondition;
+}
+
+// mapping row to row
+export interface MappingRow {
+	mapping: any;
 }
 
 // unit actions
