@@ -3,6 +3,7 @@ import { UnitAction, UnitActionMergeRow } from '../../../../../services/admin/pi
 import { TopicFinder } from '../components/topic-finder';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
+import { TopicMapper } from './topic-mapper';
 import { TopicRowMatcher } from './topic-row-matcher';
 
 export const WriteTopicMergeRow = (props: { action: UnitAction }) => {
@@ -16,7 +17,7 @@ export const WriteTopicMergeRow = (props: { action: UnitAction }) => {
 		<TopicFinder holder={write} onChange={() => firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED)}/>
 		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
 		<TopicRowMatcher holder={write}/>
-		<ActionBodyItemLabel>Use Mapping:</ActionBodyItemLabel>
-		<div data-role='action-part-not-impl'>Not implemented yet</div>
+		<ActionBodyItemLabel>Use:</ActionBodyItemLabel>
+		<TopicMapper holder={write}/>
 	</ActionBody2Columns>;
 };

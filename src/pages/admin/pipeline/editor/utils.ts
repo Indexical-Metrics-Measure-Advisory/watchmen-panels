@@ -1,5 +1,14 @@
 import { v4 } from 'uuid';
-import { SystemActionType, UnitActionAlarmSeverity, UnitActionType } from '../../../../services/admin/pipeline-types';
+import {
+	ConditionOperator,
+	DatePartArithmetic,
+	NoArithmetic,
+	NumericArithmetic,
+	SimpleFuncArithmetic,
+	SystemActionType,
+	UnitActionAlarmSeverity,
+	UnitActionType
+} from '../../../../services/admin/pipeline-types';
 import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
 
 export const unitActionTypeAsDisplay = (type: UnitActionType): string => {
@@ -34,3 +43,26 @@ export const createAlarmAction = (): ArrangedUnitAction => {
 		severity: UnitActionAlarmSeverity.MEDIUM
 	} as ArrangedUnitAction;
 };
+
+const OperatorLabels: { [key in ConditionOperator]: string } = {
+	[ConditionOperator.EQUALS]: '=',
+	[ConditionOperator.NOT_EQUALS]: '≠',
+	[ConditionOperator.LESS]: '<',
+	[ConditionOperator.LESS_EQUALS]: '≤',
+	[ConditionOperator.MORE]: '>',
+	[ConditionOperator.MORE_EQUALS]: '≥',
+	[ConditionOperator.IN]: 'In',
+	[ConditionOperator.NOT_IN]: 'Not In'
+};
+export const asDisplayOperator = (operator: ConditionOperator): string => OperatorLabels[operator];
+const ArithmeticLabels: { [key in SimpleFuncArithmetic]: string } = {
+	[NoArithmetic.NO_FUNC]: '',
+	[DatePartArithmetic.YEAR_OF]: 'Year',
+	[DatePartArithmetic.MONTH_OF]: 'Month',
+	[DatePartArithmetic.WEEK_OF]: 'WeekOfYear',
+	[DatePartArithmetic.WEEKDAY]: 'Weekday',
+	[NumericArithmetic.PERCENTAGE]: 'Percentage',
+	[NumericArithmetic.ABSOLUTE_VALUE]: 'Abs',
+	[NumericArithmetic.LOGARITHM]: 'Log'
+};
+export const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => ArithmeticLabels[arithmetic];

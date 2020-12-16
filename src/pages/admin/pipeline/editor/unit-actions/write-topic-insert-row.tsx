@@ -3,6 +3,7 @@ import { UnitAction, UnitActionInsertRow } from '../../../../../services/admin/p
 import { TopicFinder } from '../components/topic-finder';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
+import { TopicMapper } from './topic-mapper';
 
 export const WriteTopicInsertRow = (props: { action: UnitAction }) => {
 	const { action } = props;
@@ -13,7 +14,7 @@ export const WriteTopicInsertRow = (props: { action: UnitAction }) => {
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<TopicFinder holder={write} onChange={() => firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED)}/>
-		<ActionBodyItemLabel>Use Mapping:</ActionBodyItemLabel>
-		<div data-role='action-part-not-impl'>Not implemented yet</div>
+		<ActionBodyItemLabel>Use:</ActionBodyItemLabel>
+		<TopicMapper holder={write}/>
 	</ActionBody2Columns>;
 };

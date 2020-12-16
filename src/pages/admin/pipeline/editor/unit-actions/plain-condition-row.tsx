@@ -7,13 +7,9 @@ import { useCollapseFixedThing, useForceUpdate } from '../../../../../common/uti
 import {
 	CompositeCondition,
 	CompositeMode,
-	ConditionOperator,
-	DatePartArithmetic,
 	FactorValue,
 	NoArithmetic,
-	NumericArithmetic,
 	PlainCondition,
-	SimpleFuncArithmetic,
 	SomeValueType
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
@@ -23,6 +19,7 @@ import { FacterValueFinder } from '../components/facter-value-finder';
 import { FactorFinder } from '../components/factor-finder';
 import { isFactorValue, isMemoryValue } from '../components/utils';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
+import { asDisplayArithmetic, asDisplayOperator } from '../utils';
 
 interface DropdownRect {
 	top: number;
@@ -65,11 +62,9 @@ const DisplayLabel = styled.div`
 	display: flex;
 	position: relative;
 	justify-self: flex-start;
-	border: var(--border);
-	border-color: transparent;
 	border-radius: 12px;
 	background-color: transparent;
-	height: 24px;
+	height: 22px;
 	line-height: 22px;
 	outline: none;
 	appearance: none;
@@ -80,7 +75,6 @@ const DisplayLabel = styled.div`
 	transition: all 300ms ease-in-out;
 	&[data-expanded=true],
 	&:hover {
-		border-color: transparent;
 		background-color: var(--pipeline-bg-color);
 		box-shadow: var(--console-primary-hover-shadow);
 		> div:first-child {
@@ -206,28 +200,6 @@ const OperatorAndRightContainer = styled.div`
 	align-items: center;
 `;
 
-const OperatorLabels: { [key in ConditionOperator]: string } = {
-	[ConditionOperator.EQUALS]: '=',
-	[ConditionOperator.NOT_EQUALS]: '≠',
-	[ConditionOperator.LESS]: '<',
-	[ConditionOperator.LESS_EQUALS]: '≤',
-	[ConditionOperator.MORE]: '>',
-	[ConditionOperator.MORE_EQUALS]: '≥',
-	[ConditionOperator.IN]: 'In',
-	[ConditionOperator.NOT_IN]: 'Not In'
-};
-const asDisplayOperator = (operator: ConditionOperator): string => OperatorLabels[operator];
-const ArithmeticLabels: { [key in SimpleFuncArithmetic]: string } = {
-	[NoArithmetic.NO_FUNC]: '',
-	[DatePartArithmetic.YEAR_OF]: 'Year',
-	[DatePartArithmetic.MONTH_OF]: 'Month',
-	[DatePartArithmetic.WEEK_OF]: 'WeekOfYear',
-	[DatePartArithmetic.WEEKDAY]: 'Weekday',
-	[NumericArithmetic.PERCENTAGE]: 'Percentage',
-	[NumericArithmetic.ABSOLUTE_VALUE]: 'Abs',
-	[NumericArithmetic.LOGARITHM]: 'Log'
-};
-const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => ArithmeticLabels[arithmetic];
 const buildLabel = (options: {
 	topic?: QueriedTopicForPipeline;
 	condition: PlainCondition;

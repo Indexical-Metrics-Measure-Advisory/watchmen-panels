@@ -87,9 +87,14 @@ export interface FindBy {
 	by: CompositeCondition;
 }
 
+export interface MappingFactor {
+	from: SimpleFuncValue;
+	to: SimpleFuncValue;
+}
+
 // mapping row to row
 export interface MappingRow {
-	mapping: any;
+	mapping: Array<MappingFactor>;
 }
 
 // unit actions
