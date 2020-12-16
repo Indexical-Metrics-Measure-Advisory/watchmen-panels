@@ -310,7 +310,7 @@ const RuleNode = (props: {
 }) => {
 	const { rule } = props;
 
-	const [ expanded, setExpanded ] = useState(false);
+	const [ expanded ] = useState(false);
 	const onRemoveMappingRuleClicked = () => {
 		// TODO
 	};
