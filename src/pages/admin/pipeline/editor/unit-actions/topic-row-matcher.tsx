@@ -40,7 +40,7 @@ const ToggleButton = styled.div`
 		font-variant: petite-caps;
 		font-weight: var(--font-demi-bold);
 	}
-	> svg {
+	> svg:nth-child(2) {
 		font-size: 0.9em;
 		margin: 0 calc(var(--margin) / 3);
 		transition: all 300ms ease-in-out;
@@ -139,7 +139,7 @@ export const TopicRowMatcher = (props: {
 		</ToggleLine>
 		{topic
 			? <FilterContent lines={linesCount} expanded={expanded}>
-				<CompositeConditionRow left={topic} condition={holder.by} removable={false}/>
+				<CompositeConditionRow left={topic} condition={holder.by} removable={false} level={1}/>
 			</FilterContent>
 			: null}
 	</Container>;

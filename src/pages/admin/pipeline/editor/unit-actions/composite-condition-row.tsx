@@ -51,17 +51,17 @@ const Title = styled.div.attrs({
 	'data-widget': 'composite-condition-title'
 })`
 	display: grid;
-	grid-template-columns: auto auto 1fr;
+	grid-template-columns: auto auto auto 1fr;
 	height: 32px;
 	min-height: 32px;
 	align-items: center;
 	transition: all 300ms ease-in-out;
 	&:hover {
-		> div:nth-child(2) {
+		> div:nth-child(3) {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
-		> div:nth-child(3) {
+		> div:nth-child(4) {
 			opacity: 1;
 			pointer-events: auto;
 		}
@@ -86,11 +86,25 @@ const Title = styled.div.attrs({
 		}
 	}
 	> div:nth-child(2) {
+		display: flex;
+		align-items: center;
+		height: 22px;
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
+		border-top-left-radius: 11px;
+		border-bottom-left-radius: 11px;
+		padding: 0 calc(var(--margin) / 3);
+		background-color: var(--pipeline-bg-color);
+		box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), -1px 0 0 0 var(--border-color);
+	}
+	> div:nth-child(3) {
 		font-variant: petite-caps;
 		font-weight: var(--font-demi-bold);
 		text-transform: capitalize;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
 	}
-	> div:last-child {
+	> div:nth-child(4) {
 		display: flex;
 		justify-self: start;
 		cursor: pointer;
@@ -106,8 +120,9 @@ const Title = styled.div.attrs({
 			justify-content: center;
 			height: 22px;
 			box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
-			padding: calc(var(--margin) / 3);
+			padding: 0 calc(var(--margin) / 3);
 			font-size: 0.8em;
+			transition: all 300ms ease-in-out;
 			&:hover {
 				box-shadow: var(--console-primary-hover-shadow);
 				pointer-events: auto;
@@ -172,8 +187,9 @@ const ChildConditions = (props: {
 	parent?: CompositeCondition;
 	condition: CompositeCondition;
 	visible: boolean;
+	level: number;
 }) => {
-	const { left: topic, parent: parentCondition, condition, visible } = props;
+	const { left: topic, parent: parentCondition, condition, visible, level } = props;
 
 	const lines = computeConditionLines(condition) - 1;
 
@@ -182,7 +198,7 @@ const ChildConditions = (props: {
 			if (isCompositeCondition(child)) {
 				return <CompositeConditionRow left={topic}
 				                              grandParent={parentCondition} parent={condition} condition={child}
-				                              removable={true}
+				                              removable={true} level={level}
 				                              key={index}/>;
 			} else {
 				const plain = child as PlainCondition;
@@ -200,8 +216,16 @@ export const CompositeConditionRow = (props: {
 	parent?: CompositeCondition;
 	condition: CompositeCondition;
 	removable: boolean;
+	level: number;
 }) => {
-	const { left: topic, grandParent: grandParentCondition, parent: parentCondition, condition, removable } = props;
+	const {
+		left: topic,
+		grandParent: grandParentCondition,
+		parent: parentCondition,
+		condition,
+		removable,
+		level
+	} = props;
 
 	const { firePropertyChange } = usePipelineUnitActionContext();
 	const [ expanded, setExpanded ] = useState(true);
@@ -218,7 +242,7 @@ export const CompositeConditionRow = (props: {
 		expanded ? forceUpdate() : setExpanded(true);
 		firePropertyChange(PipelineUnitActionEvent.FILTER_ADDED);
 	};
-	const onOutdentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+	const onOutdentClicked = () => {
 		if (!grandParentCondition || !parentCondition) {
 			return;
 		}
@@ -255,6 +279,7 @@ export const CompositeConditionRow = (props: {
 	return <Container data-expanded={expanded} data-removable={removable}>
 		<Title data-expanded={expanded}>
 			<div onClick={onToggleExpandedClicked}><FontAwesomeIcon icon={faChevronDown}/></div>
+			<div>Lv{level}</div>
 			<HorizontalOptions label={label}
 			                   options={[ CompositeMode.AND, CompositeMode.OR ].filter(x => x !== condition.mode)}
 			                   toLabel={(mode: CompositeMode) => mode}
@@ -282,6 +307,7 @@ export const CompositeConditionRow = (props: {
 		</Title>
 		{condition.children.length === 0
 			? <NoChild>No Child Defined.</NoChild>
-			: <ChildConditions left={topic} parent={parentCondition} condition={condition} visible={expanded}/>}
+			: <ChildConditions left={topic} parent={parentCondition} condition={condition} visible={expanded}
+			                   level={level + 1}/>}
 	</Container>;
 };
