@@ -115,11 +115,17 @@ const MappingRuleContent = styled.div`
 		}
 	}
 `;
+const MappingRuleContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-self: stretch;
+	height: 32px;
+`;
 const MappingRule = styled.div`
 	display: flex;
 	position: relative;
 	align-self: center;
-	justify-self: stretch;
+	justify-self: start;
 	border-radius: 12px;
 	background-color: transparent;
 	height: 22px;
@@ -147,7 +153,6 @@ const MappingRule = styled.div`
 		transform: rotateZ(180deg);
 	}
 	> div:first-child {
-		flex-grow: 1;
 		position: relative;
 		font-weight: var(--font-bold);
 		font-variant: petite-caps;
@@ -300,6 +305,25 @@ const Statement = (props: {
 	return <div>{buildLabel({ mapping, topics })}</div>;
 };
 
+const RuleNode = (props: {
+	rule: MappingFactor
+}) => {
+	const { rule } = props;
+
+	const [ expanded, setExpanded ] = useState(false);
+	const onRemoveMappingRuleClicked = () => {
+		// TODO
+	};
+
+	return <MappingRuleContainer>
+		<MappingRule>
+			<Statement mapping={rule}/>
+			<div><FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/></div>
+			<div onClick={onRemoveMappingRuleClicked}><FontAwesomeIcon icon={faTrashAlt}/></div>
+		</MappingRule>
+	</MappingRuleContainer>;
+};
+
 export const TopicMapper = (props: {
 	holder: TopicHolder & MappingRow
 }) => {
@@ -338,8 +362,6 @@ export const TopicMapper = (props: {
 		});
 		forceUpdate();
 	};
-	const onRemoveMappingRuleClicked = () => {
-	};
 
 	if (!holder.mapping) {
 		holder.mapping = [];
@@ -360,11 +382,7 @@ export const TopicMapper = (props: {
 					{(holder.mapping || []).map((rule, index) => {
 						return <Fragment key={index}>
 							<div/>
-							<MappingRule>
-								<Statement mapping={rule}/>
-								<div><FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/></div>
-								<div onClick={onRemoveMappingRuleClicked}><FontAwesomeIcon icon={faTrashAlt}/></div>
-							</MappingRule>
+							<RuleNode rule={rule}/>
 						</Fragment>;
 					})}
 				</MappingRuleContent>
