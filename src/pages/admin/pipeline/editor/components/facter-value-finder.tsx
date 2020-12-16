@@ -1,16 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../../common/utils';
-import {
-	FactorValue,
-	FactorValueHolder,
-	InMemoryValue,
-	SomeValue,
-	SomeValueType
-} from '../../../../../services/admin/pipeline-types';
+import { FactorValue, InMemoryValue, SomeValue, SomeValueType } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
-import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ArithmeticSelect } from '../unit-actions/arithmetic-select';
 import { ActionInput } from './action-input';
 import { FactorFinder } from './factor-finder';
@@ -74,16 +67,16 @@ const isInMemoryValue = (value: SomeValue): value is InMemoryValue => {
 };
 
 export const FacterValueFinder = (props: {
-	holder: FactorValueHolder;
-	propName?: string;
-	forFilter: boolean;
+	holder: SomeValue;
+	onTopicChange: () => void;
+	onFactorChange: () => void;
+	onVariableChange: () => void;
+	onArithmeticChange: () => void;
 }) => {
-	const { holder, propName = 'value', forFilter } = props;
-	const value = (holder as any)[propName] as SomeValue;
+	const { holder: value, onTopicChange, onFactorChange, onVariableChange, onArithmeticChange } = props;
 	const { type: valueType = SomeValueType.FACTOR } = value;
 
 	const { store: { selectedPipeline, topics } } = usePipelineContext();
-	const { firePropertyChange } = usePipelineUnitActionContext();
 	const forceUpdate = useForceUpdate();
 
 	const { topicId: sourceTopicId } = selectedPipeline!;
@@ -97,9 +90,7 @@ export const FacterValueFinder = (props: {
 		value.type = valueType;
 		if (isFactorValue(value)) {
 			value.topicId = sourceTopicId;
-			if (forFilter) {
-				firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
-			}
+			onTopicChange();
 		}
 		forceUpdate();
 	};
@@ -107,9 +98,7 @@ export const FacterValueFinder = (props: {
 		const name = event.target.value;
 		if (isInMemoryValue(value)) {
 			value.name = name;
-			if (forFilter) {
-				firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
-			}
+			onVariableChange();
 		}
 		forceUpdate();
 	};
@@ -121,7 +110,7 @@ export const FacterValueFinder = (props: {
 		                   onSelect={onValueTypeChanged}/>
 		{
 			isFactorValue(value)
-				? <FactorFinder holder={value} forFilter={forFilter}/>
+				? <FactorFinder holder={value} onChange={onFactorChange}/>
 				: null
 		}
 		{
@@ -132,7 +121,7 @@ export const FacterValueFinder = (props: {
 		}
 		{
 			isFactorValue(value) || isInMemoryValue(value)
-				? <ArithmeticSelect value={value} right={true} forFilter={forFilter}/>
+				? <ArithmeticSelect value={value} right={true} onChange={onArithmeticChange}/>
 				: null
 		}
 	</Container>;

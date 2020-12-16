@@ -12,9 +12,9 @@ const Container = styled.div`
 	flex-direction: column;
 	grid-column: 2 / span 3;
 `;
-const FilterContent = styled.div.attrs<{ lines: number }>(({ lines }) => {
-	return { style: { maxHeight: lines * 32 } };
-})<{ lines: number }>`
+const FilterContent = styled.div.attrs<{ lines: number, expanded: boolean }>(({ lines, expanded }) => {
+	return { style: { maxHeight: expanded ? lines * 32 : 0, transform: expanded ? 'unset' : 'scaleY(0)' } };
+})<{ lines: number, expanded: boolean }>`
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
@@ -36,8 +36,9 @@ const FilterContent = styled.div.attrs<{ lines: number }>(({ lines }) => {
 
 export const ConditionMatcher = (props: {
 	unit: ArrangedProcessUnit;
+	expanded: boolean;
 }) => {
-	const { unit } = props;
+	const { unit, expanded } = props;
 
 	const { store: { topics, selectedPipeline } } = usePipelineContext();
 	const { addPropertyChangeListener, removePropertyChangeListener } = usePipelineUnitConditionContext();
@@ -61,7 +62,7 @@ export const ConditionMatcher = (props: {
 	const linesCount = computeConditionLines(unit.on!);
 	return <Container>
 		{topic
-			? <FilterContent lines={linesCount}>
+			? <FilterContent lines={linesCount} expanded={expanded}>
 				<CompositeConditionRow left={topic} condition={unit.on!} removable={false} level={1}/>
 			</FilterContent>
 			: null}

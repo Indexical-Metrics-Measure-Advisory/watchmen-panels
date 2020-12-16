@@ -10,7 +10,7 @@ import {
 	ConditionOperator,
 	DatePartArithmetic,
 	FactorValue,
-	FactorValueHolder,
+	InMemoryValue,
 	NoArithmetic,
 	NumericArithmetic,
 	PlainCondition,
@@ -300,9 +300,8 @@ const Statement = (props: {
 const fillCondition = (options: {
 	condition: PlainCondition;
 	topic?: QueriedTopicForPipeline,
-	selectedTopic?: QueriedTopicForPipeline
 }) => {
-	const { condition, topic, selectedTopic } = options;
+	const { condition, topic } = options;
 
 	if (!condition.left) {
 		condition.left = { arithmetic: NoArithmetic.NO_FUNC };
@@ -316,10 +315,9 @@ const fillCondition = (options: {
 	if (!condition.right) {
 		// right part comes from memory or pipeline source target
 		condition.right = {
-			type: SomeValueType.FACTOR,
-			topicId: selectedTopic?.topicId,
+			type: SomeValueType.IN_MEMORY,
 			arithmetic: NoArithmetic.NO_FUNC
-		} as FactorValue;
+		} as InMemoryValue;
 	}
 };
 
@@ -331,7 +329,6 @@ export const PlainConditionRow = (props: {
 }) => {
 	const { left: topic, grandParent: grandParentCondition, parent: parentCondition, condition } = props;
 
-	const { store: { selectedTopic } } = usePipelineContext();
 	const { firePropertyChange } = usePipelineUnitConditionContext();
 
 	const topContainerRef = useRef<HTMLDivElement>(null);
@@ -341,7 +338,7 @@ export const PlainConditionRow = (props: {
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
 	useCollapseFixedThing(topContainerRef, () => setExpanded(false));
 
-	fillCondition({ condition, topic, selectedTopic });
+	fillCondition({ condition, topic });
 
 	const onExpandClick = () => {
 		if (!expanded) {
@@ -397,6 +394,7 @@ export const PlainConditionRow = (props: {
 		parentCondition.children.splice(index, 1);
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_REMOVED);
 	};
+	const onFilterChange = () => firePropertyChange(PipelineUnitConditionEvent.FILTER_CHANGED);
 
 	return <Container ref={topContainerRef}>
 		<DisplayLabel ref={containerRef} tabIndex={0} data-expanded={expanded}
@@ -413,14 +411,16 @@ export const PlainConditionRow = (props: {
 			{isFactorValue(condition.left)
 				? <LeftAsFactorContainer>
 					<div>Topic: {topic?.name}</div>
-					<FactorFinder holder={condition.left} forFilter={true}/>
+					<FactorFinder holder={condition.left} onChange={onFilterChange}/>
 				</LeftAsFactorContainer>
 				: null}
 			<OperatorAndRightContainer>
-				<ConditionOperatorSelect condition={condition} forFilter={true}/>
+				<ConditionOperatorSelect condition={condition} onChange={onFilterChange}/>
 			</OperatorAndRightContainer>
-			<FacterValueFinder holder={condition as unknown as FactorValueHolder} propName='right' forFilter={true}/>
+			<FacterValueFinder holder={condition.right}
+			                   onTopicChange={onFilterChange} onFactorChange={onFilterChange}
+			                   onVariableChange={onFilterChange}
+			                   onArithmeticChange={onFilterChange}/>
 		</Dropdown>
 	</Container>;
 };
-

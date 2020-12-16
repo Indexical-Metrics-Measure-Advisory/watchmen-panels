@@ -121,9 +121,10 @@ const FilterLabel = (props: { unit: ArrangedProcessUnit; visible: boolean }) => 
 
 export const PipelineUnitCondition = (props: {
 	unit: ArrangedProcessUnit;
+	expanded: boolean;
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
 }) => {
-	const { unit, children } = props;
+	const { unit, expanded, children } = props;
 
 	const [ conditional, setConditional ] = useState(!!unit.on);
 	const [ conditionExpanded, setConditionExpanded ] = useState(false);
@@ -144,7 +145,6 @@ export const PipelineUnitCondition = (props: {
 		if (!unit.on) {
 			unit.on = { mode: CompositeMode.AND, children: [] };
 		}
-
 	}
 
 	return <PipelineUnitConditionContextProvider>
@@ -159,7 +159,7 @@ export const PipelineUnitCondition = (props: {
 				<FontAwesomeIcon icon={conditionExpanded ? faCompressArrowsAlt : faExpandArrowsAlt}/>
 			</div>
 			{children}
-			{conditional ? <ConditionMatcher unit={unit}/> : null}
+			{conditional && expanded ? <ConditionMatcher unit={unit} expanded={conditionExpanded}/> : null}
 		</UnitCondition>
 	</PipelineUnitConditionContextProvider>;
 };

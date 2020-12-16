@@ -4,7 +4,6 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { FactorHolder, TopicHolder } from '../../../../../services/admin/pipeline-types';
 import { QueriedFactorForPipeline, QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
-import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ItemFinder } from './item-finder';
 import { filterFactor, filterTopic } from './utils';
 
@@ -33,14 +32,14 @@ const Container = styled.div`
 
 export const TopicFactorFinder = (props: {
 	holder: TopicHolder & FactorHolder;
-	forFilter: boolean;
+	onTopicChange: () => void;
+	onFactorChange: () => void;
 }) => {
-	const { holder, forFilter } = props;
+	const { holder, onTopicChange, onFactorChange } = props;
 
 	const { topicId: currentTopicId, factorId: currentFactorId } = holder;
 
 	const { store: { topics } } = usePipelineContext();
-	const { firePropertyChange } = usePipelineUnitActionContext();
 	const forceUpdate = useForceUpdate();
 
 	// eslint-disable-next-line
@@ -56,15 +55,9 @@ export const TopicFactorFinder = (props: {
 			return;
 		}
 		holder.topicId = topic.topicId;
-		if (!forFilter) {
-			firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
-		}
+		onTopicChange();
 		delete holder.factorId;
-		if (!forFilter) {
-			firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
-		} else {
-			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
-		}
+		onFactorChange();
 		forceUpdate();
 	};
 
@@ -72,11 +65,7 @@ export const TopicFactorFinder = (props: {
 	const filterFactors = (searchText: string) => filterFactor(topic?.factors || [], searchText);
 	const onFactorSelect = (factor: QueriedFactorForPipeline) => {
 		holder.factorId = factor.factorId;
-		if (forFilter) {
-			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
-		} else {
-			firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
-		}
+		onFactorChange();
 		forceUpdate();
 	};
 

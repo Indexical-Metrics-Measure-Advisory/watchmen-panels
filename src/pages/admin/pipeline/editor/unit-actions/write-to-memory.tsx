@@ -14,10 +14,14 @@ export const WriteToMemory = (props: { action: UnitAction }) => {
 		write.targetName = event.target.value;
 		forceUpdate();
 	};
+	const onChangeIgnored = () => {
+	};
 
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
-		<FacterValueFinder holder={write} forFilter={false}/>
+		<FacterValueFinder holder={write.value}
+		                   onTopicChange={onChangeIgnored} onFactorChange={onChangeIgnored}
+		                   onVariableChange={onChangeIgnored} onArithmeticChange={onChangeIgnored}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<ActionInput value={write.targetName || ''} onChange={onTargetNameChanged}
 		             placeholder='Variable name...'/>

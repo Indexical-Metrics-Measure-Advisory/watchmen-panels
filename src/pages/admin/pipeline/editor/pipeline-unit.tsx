@@ -283,9 +283,9 @@ export const PipelineUnit = (props: {
 		);
 	};
 
-	return <UnitContainer data-expanded={expanded}>
-		<PipelineUnitCondition unit={unit}>
-			<ToggleExpandButton onClick={onExpandClicked}>
+	return <UnitContainer>
+		<PipelineUnitCondition unit={unit} expanded={expanded}>
+			<ToggleExpandButton onClick={onExpandClicked} data-expanded={expanded}>
 				<FontAwesomeIcon icon={expanded ? faCompressArrowsAlt : faExpandArrowsAlt}/>
 				<span>{expanded ? 'Hide This Process Unit' : 'Show This Process Unit'}</span>
 			</ToggleExpandButton>

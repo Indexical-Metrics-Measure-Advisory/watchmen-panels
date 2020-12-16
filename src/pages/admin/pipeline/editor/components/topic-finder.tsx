@@ -3,19 +3,17 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { TopicHolder } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
-import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ItemFinder } from './item-finder';
 import { filterTopic } from './utils';
 
 export const TopicFinder = (props: {
 	holder: TopicHolder;
-	forFilter: boolean;
+	onChange: () => void;
 }) => {
-	const { holder, forFilter } = props;
+	const { holder, onChange } = props;
 	const { topicId: currentTopicId } = holder;
 
 	const { store: { topics } } = usePipelineContext();
-	const { firePropertyChange } = usePipelineUnitActionContext();
 	const forceUpdate = useForceUpdate();
 
 	// eslint-disable-next-line
@@ -25,11 +23,7 @@ export const TopicFinder = (props: {
 	const filterItems = (searchText: string) => filterTopic(topics, searchText);
 	const onSelect = (topic: QueriedTopicForPipeline) => {
 		holder.topicId = topic.topicId;
-		if (forFilter) {
-			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
-		} else {
-			firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
-		}
+		onChange();
 		forceUpdate();
 	};
 

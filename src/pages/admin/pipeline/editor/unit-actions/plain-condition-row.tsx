@@ -10,7 +10,6 @@ import {
 	ConditionOperator,
 	DatePartArithmetic,
 	FactorValue,
-	FactorValueHolder,
 	NoArithmetic,
 	NumericArithmetic,
 	PlainCondition,
@@ -397,6 +396,7 @@ export const PlainConditionRow = (props: {
 		parentCondition.children.splice(index, 1);
 		firePropertyChange(PipelineUnitActionEvent.FILTER_REMOVED);
 	};
+	const onFilterChange = () => firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
 
 	return <Container ref={topContainerRef}>
 		<DisplayLabel ref={containerRef} tabIndex={0} data-expanded={expanded}
@@ -413,13 +413,16 @@ export const PlainConditionRow = (props: {
 			{isFactorValue(condition.left)
 				? <LeftAsFactorContainer>
 					<div>Topic: {topic?.name}</div>
-					<FactorFinder holder={condition.left} forFilter={true}/>
+					<FactorFinder holder={condition.left} onChange={onFilterChange}/>
 				</LeftAsFactorContainer>
 				: null}
 			<OperatorAndRightContainer>
-				<ConditionOperatorSelect condition={condition} forFilter={true}/>
+				<ConditionOperatorSelect condition={condition} onChange={onFilterChange}/>
 			</OperatorAndRightContainer>
-			<FacterValueFinder holder={condition as unknown as FactorValueHolder} propName='right' forFilter={true}/>
+			<FacterValueFinder holder={condition.right}
+			                   onTopicChange={onFilterChange} onFactorChange={onFilterChange}
+			                   onVariableChange={onFilterChange}
+			                   onArithmeticChange={onFilterChange}/>
 		</Dropdown>
 	</Container>;
 };

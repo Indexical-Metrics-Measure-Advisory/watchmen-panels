@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ConditionOperator, PlainCondition } from '../../../../../services/admin/pipeline-types';
-import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 
 interface DropdownRect {
 	top: number;
@@ -167,11 +166,10 @@ const OperatorButton = (props: {
 export const ConditionOperatorSelect = (props: {
 	condition: PlainCondition;
 	right?: boolean;
-	forFilter: boolean;
+	onChange: () => void;
 }) => {
-	const { condition, right = false, forFilter } = props;
+	const { condition, right = false, onChange } = props;
 
-	const { firePropertyChange } = usePipelineUnitActionContext();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
@@ -213,9 +211,7 @@ export const ConditionOperatorSelect = (props: {
 			return;
 		}
 		condition.operator = operator;
-		if (forFilter) {
-			firePropertyChange(PipelineUnitActionEvent.FILTER_CHANGED);
-		}
+		onChange();
 		setExpanded(false);
 	};
 	const onCaretClicked = (event: React.MouseEvent<HTMLDivElement>) => {
