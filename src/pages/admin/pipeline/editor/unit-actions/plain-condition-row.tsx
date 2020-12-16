@@ -1,4 +1,5 @@
-import { faCompressAlt, faExpandAlt, faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faCompressAlt, faExpandAlt, faLongArrowAltLeft, faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -74,6 +75,8 @@ const DisplayLabel = styled.div`
 	outline: none;
 	appearance: none;
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
 	&[data-expanded=true],
@@ -93,12 +96,16 @@ const DisplayLabel = styled.div`
 		transform: rotateZ(180deg);
 	}
 	> div:first-child {
+		flex-grow: 1;
 		position: relative;
 		font-weight: var(--font-bold);
 		font-variant: petite-caps;
 		border-top-left-radius: 12px;
 		border-bottom-left-radius: 12px;
 		transition: all 300ms ease-in-out;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	> div:not(:first-child) {
 		position: relative;
@@ -107,6 +114,7 @@ const DisplayLabel = styled.div`
 		pointer-events: none;
 		transition: all 300ms ease-in-out;
 		> svg {
+			font-size: 0.8em;
 			transition: all 300ms ease-in-out;
 		}
 		&:not(:nth-child(2)):before {
@@ -306,11 +314,11 @@ const fillCondition = (options: {
 
 export const PlainConditionRow = (props: {
 	left?: QueriedTopicForPipeline;
+	grandParent?: CompositeCondition;
 	parent: CompositeCondition;
 	condition: PlainCondition;
-	outdent: boolean;
 }) => {
-	const { left: topic, parent: parentCondition, condition, outdent } = props;
+	const { left: topic, grandParent: grandParentCondition, parent: parentCondition, condition } = props;
 
 	const { store: { selectedTopic } } = usePipelineContext();
 	const { firePropertyChange } = usePipelineUnitActionContext();
@@ -342,6 +350,20 @@ export const PlainConditionRow = (props: {
 			setExpanded(true);
 		}
 	};
+	const onOutdentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (!grandParentCondition || !parentCondition) {
+			return;
+		}
+		const indexInParent = parentCondition.children.findIndex(child => child === condition);
+		const indexInGrand = grandParentCondition.children.findIndex(child => child === parentCondition);
+		// remove from parent
+		parentCondition.children.splice(indexInParent, 1);
+		// add into grand, after parent
+		grandParentCondition.children.splice(indexInGrand + 1, 0, condition);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_OUTDENT);
+	};
 	const onIndentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -354,13 +376,26 @@ export const PlainConditionRow = (props: {
 		parentCondition.children.splice(index, 1, newParent);
 		firePropertyChange(PipelineUnitActionEvent.FILTER_INDENT);
 	};
+	const onRemoveClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (!parentCondition) {
+			return;
+		}
+		const index = parentCondition.children.findIndex(child => child === condition);
+		parentCondition.children.splice(index, 1);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_REMOVED);
+	};
 
 	return <Container ref={topContainerRef}>
 		<DisplayLabel ref={containerRef} tabIndex={0} data-expanded={expanded}
 		              onClick={onExpandClick}>
 			<Statement topic={topic} condition={condition}/>
 			<div><FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/></div>
+			{!!grandParentCondition ?
+				<div onClick={onOutdentClicked}><FontAwesomeIcon icon={faLongArrowAltLeft}/></div> : null}
 			<div onClick={onIndentClicked}><FontAwesomeIcon icon={faLongArrowAltRight}/></div>
+			<div onClick={onRemoveClicked}><FontAwesomeIcon icon={faTrashAlt}/></div>
 		</DisplayLabel>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
 			{isFactorValue(condition.left)

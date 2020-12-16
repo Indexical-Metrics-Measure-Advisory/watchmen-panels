@@ -1,5 +1,5 @@
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faLongArrowAltLeft, faLongArrowAltRight, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -169,22 +169,25 @@ const ChildConditionsNode = styled.div.attrs<{ count: number, visible: boolean }
 
 const ChildConditions = (props: {
 	left?: QueriedTopicForPipeline;
+	parent?: CompositeCondition;
 	condition: CompositeCondition;
 	visible: boolean;
-	outdent: boolean;
 }) => {
-	const { left: topic, condition, visible, outdent } = props;
+	const { left: topic, parent: parentCondition, condition, visible } = props;
 
 	const lines = computeConditionLines(condition) - 1;
 
 	return <ChildConditionsNode visible={visible} count={lines}>
 		{condition.children.map((child, index) => {
 			if (isCompositeCondition(child)) {
-				return <CompositeConditionRow left={topic} condition={child} removable={true} key={index}/>;
+				return <CompositeConditionRow left={topic}
+				                              grandParent={parentCondition} parent={condition} condition={child}
+				                              removable={true}
+				                              key={index}/>;
 			} else {
 				const plain = child as PlainCondition;
-				return <PlainConditionRow left={topic} parent={condition} condition={plain}
-				                          outdent={outdent}
+				return <PlainConditionRow left={topic}
+				                          grandParent={parentCondition} parent={condition} condition={plain}
 				                          key={index}/>;
 			}
 		})}
@@ -193,10 +196,12 @@ const ChildConditions = (props: {
 
 export const CompositeConditionRow = (props: {
 	left?: QueriedTopicForPipeline;
+	grandParent?: CompositeCondition;
+	parent?: CompositeCondition;
 	condition: CompositeCondition;
 	removable: boolean;
 }) => {
-	const { left: topic, condition, removable } = props;
+	const { left: topic, grandParent: grandParentCondition, parent: parentCondition, condition, removable } = props;
 
 	const { firePropertyChange } = usePipelineUnitActionContext();
 	const [ expanded, setExpanded ] = useState(true);
@@ -213,8 +218,38 @@ export const CompositeConditionRow = (props: {
 		expanded ? forceUpdate() : setExpanded(true);
 		firePropertyChange(PipelineUnitActionEvent.FILTER_ADDED);
 	};
+	const onOutdentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (!grandParentCondition || !parentCondition) {
+			return;
+		}
+		const indexInParent = parentCondition.children.findIndex(child => child === condition);
+		const indexInGrand = grandParentCondition.children.findIndex(child => child === parentCondition);
+		// remove from parent
+		parentCondition.children.splice(indexInParent, 1);
+		// add into grand, after parent
+		grandParentCondition.children.splice(indexInGrand + 1, 0, condition);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_OUTDENT);
+	};
+	const onIndentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (!parentCondition) {
+			return;
+		}
+		const newParent: CompositeCondition = { mode: CompositeMode.AND, children: [ condition ] };
+		const mode = parentCondition.mode;
+		if (mode === CompositeMode.AND) {
+			newParent.mode = CompositeMode.OR;
+		}
+		const index = parentCondition.children.findIndex(child => child === condition);
+		parentCondition.children.splice(index, 1, newParent);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_INDENT);
+	};
 	const onRemoveClicked = () => {
-		// TODO
+		if (!parentCondition) {
+			return;
+		}
+		const index = parentCondition.children.findIndex(child => child === condition);
+		parentCondition.children.splice(index, 1);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_REMOVED);
 	};
 
 	return <Container data-expanded={expanded} data-removable={removable}>
@@ -228,6 +263,16 @@ export const CompositeConditionRow = (props: {
 				<div onClick={onAddSubFilterClicked}>
 					<FontAwesomeIcon icon={faPlus}/>
 				</div>
+				{!!grandParentCondition
+					? <div onClick={onOutdentClicked}>
+						<FontAwesomeIcon icon={faLongArrowAltLeft}/>
+					</div>
+					: null}
+				{removable
+					? <div onClick={onIndentClicked}>
+						<FontAwesomeIcon icon={faLongArrowAltRight}/>
+					</div>
+					: null}
 				{removable
 					? <div onClick={onRemoveClicked}>
 						<FontAwesomeIcon icon={faTrashAlt}/>
@@ -237,6 +282,6 @@ export const CompositeConditionRow = (props: {
 		</Title>
 		{condition.children.length === 0
 			? <NoChild>No Child Defined.</NoChild>
-			: <ChildConditions left={topic} condition={condition} visible={expanded} outdent={!removable}/>}
+			: <ChildConditions left={topic} parent={parentCondition} condition={condition} visible={expanded}/>}
 	</Container>;
 };

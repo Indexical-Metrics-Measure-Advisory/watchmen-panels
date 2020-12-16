@@ -104,11 +104,13 @@ export const TopicRowMatcher = (props: {
 		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_ADDED, forceUpdate);
 		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_REMOVED, forceUpdate);
 		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_INDENT, forceUpdate);
+		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_OUTDENT, forceUpdate);
 		return () => {
 			removePropertyChangeListener(PipelineUnitActionEvent.TOPIC_CHANGED, forceUpdate);
 			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_ADDED, forceUpdate);
 			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_REMOVED, forceUpdate);
 			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_INDENT, forceUpdate);
+			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_OUTDENT, forceUpdate);
 		};
 	});
 
