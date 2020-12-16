@@ -11,6 +11,7 @@ export enum PipelineEvent {
 	FLOW_CHANGED = 'flow-changed',
 
 	MENU_VISIBLE = 'menu-visible',
+	CANVAS_VISIBLE = 'canvas-visible',
 	TOPIC_SELECTION_CHANGED = 'topic-selection-changed',
 	PIPELINE_SELECTION_CHANGED = 'pipeline-selection-changed'
 }
@@ -18,6 +19,7 @@ export enum PipelineEvent {
 export type TopicsChangeListener = () => void;
 export type FlowChangeListener = (topic: QueriedTopicForPipeline, flow: PipelineFlow) => void;
 export type MenuVisibilityListener = (visible: boolean) => void;
+export type CanvasVisibilityListener = (visible: boolean) => void;
 export type TopicSelectionChangeListener = (topic?: QueriedTopicForPipeline) => void;
 export type PipelineSelectionChangeListener = (pipeline?: ArrangedPipeline) => void;
 
@@ -28,6 +30,7 @@ export interface PipelineContextStore {
 	topic?: QueriedTopicForPipeline;
 
 	menuVisible: boolean;
+	canvasVisible: boolean;
 	topicsLoadCompleted: boolean;
 
 	selectedTopic?: QueriedTopicForPipeline;
@@ -45,6 +48,10 @@ export interface PipelineContextUsable {
 	changeMenuVisible: (visible: boolean) => void;
 	addMenuVisibilityListener: (listener: MenuVisibilityListener) => void;
 	removeMenuVisibilityListener: (listener: MenuVisibilityListener) => void;
+
+	changeCanvasVisible: (visible: boolean) => void;
+	addCanvasVisibilityListener: (listener: CanvasVisibilityListener) => void;
+	removeCanvasVisibilityListener: (listener: CanvasVisibilityListener) => void;
 
 	changeSelectedTopic: (topic?: QueriedTopicForPipeline) => void;
 	addTopicSelectionChangedListener: (listener: TopicSelectionChangeListener) => void;
@@ -75,6 +82,7 @@ export const PipelineContextProvider = (props: {
 	const [ store ] = useState<PipelineContextStore>({
 		topics: [],
 		menuVisible: true,
+		canvasVisible: true,
 		topicsLoadCompleted: false
 	});
 
@@ -112,6 +120,10 @@ export const PipelineContextProvider = (props: {
 		changeMenuVisible: (visible: boolean) => emitter.emit(PipelineEvent.MENU_VISIBLE, store.menuVisible = visible),
 		addMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.on(PipelineEvent.MENU_VISIBLE, listener),
 		removeMenuVisibilityListener: (listener: MenuVisibilityListener) => emitter.off(PipelineEvent.MENU_VISIBLE, listener),
+
+		changeCanvasVisible: (visible: boolean) => emitter.emit(PipelineEvent.CANVAS_VISIBLE, store.canvasVisible = visible),
+		addCanvasVisibilityListener: (listener: CanvasVisibilityListener) => emitter.on(PipelineEvent.CANVAS_VISIBLE, listener),
+		removeCanvasVisibilityListener: (listener: CanvasVisibilityListener) => emitter.off(PipelineEvent.CANVAS_VISIBLE, listener),
 
 		changeSelectedTopic: (topic?: QueriedTopicForPipeline) => {
 			store.selectedTopic = topic;

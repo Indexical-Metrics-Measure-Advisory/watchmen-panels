@@ -1,4 +1,5 @@
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { faBars, faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect } from 'react';
 import styled from 'styled-components';
@@ -65,11 +66,59 @@ const Buttons = styled.div`
 	display: flex;
 	align-items: center;
 	padding-right: calc(var(--margin) / 2);
+`;
+const Button = styled.div`
+	width: 44px;
+	height: 36px;
+	border-radius: calc(var(--border-radius) * 2);
+	overflow: hidden;
+	&:not(:first-child) {
+		margin-left: calc(var(--margin) / 3);
+	}
+	&[data-pressed=true] {
+		color: var(--invert-color);
+		background-color: var(--console-primary-color);
+	}
 	> button {
+		width: 44px;
+		height: 36px;
 		font-size: 1.4em;
 		padding: 8px;
+		border-radius: calc(var(--border-radius) * 2);
 	}
 `;
+
+const ToggleButton = (props: {
+	onClick: () => void;
+	icon: IconProp;
+	pressed: boolean;
+}) => {
+	const { onClick, icon, pressed } = props;
+
+	return <Button data-pressed={pressed}>
+		<LinkButton ignoreHorizontalPadding={true} onClick={onClick}>
+			<FontAwesomeIcon icon={icon}/>
+		</LinkButton>
+	</Button>;
+};
+
+const CanvasToggleButton = () => {
+	const {
+		store: { canvasVisible },
+		changeCanvasVisible,
+		addCanvasVisibilityListener,
+		removeCanvasVisibilityListener
+	} = usePipelineContext();
+
+	const forceUpdate = useForceUpdate();
+	useEffect(() => {
+		addCanvasVisibilityListener(forceUpdate);
+		return () => removeCanvasVisibilityListener(forceUpdate);
+	});
+	const onMenuClicked = () => changeCanvasVisible(!canvasVisible);
+
+	return <ToggleButton icon={faWaveSquare} onClick={onMenuClicked} pressed={canvasVisible}/>;
+};
 
 const MenuToggleButton = () => {
 	const {
@@ -79,18 +128,12 @@ const MenuToggleButton = () => {
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		addMenuVisibilityListener(forceUpdate);
-		return () => {
-			removeMenuVisibilityListener(forceUpdate);
-		};
+		return () => removeMenuVisibilityListener(forceUpdate);
 	});
 
-	const onMenuClicked = () => {
-		changeMenuVisible(!menuVisible);
-	};
+	const onMenuClicked = () => changeMenuVisible(!menuVisible);
 
-	return <LinkButton ignoreHorizontalPadding={true} onClick={onMenuClicked}>
-		<FontAwesomeIcon icon={faBars}/>
-	</LinkButton>;
+	return <ToggleButton icon={faBars} onClick={onMenuClicked} pressed={menuVisible}/>;
 };
 
 export const PipelineHeader = () => {
@@ -165,6 +208,7 @@ export const PipelineHeader = () => {
 		{buildPipelineSlice()}
 		<Placeholder/>
 		<Buttons>
+			<CanvasToggleButton/>
 			<MenuToggleButton/>
 		</Buttons>
 	</Header>;
