@@ -129,7 +129,7 @@ const DisplayLabel = styled.div`
 		}
 	}
 `;
-const DropdownHeight = 84;
+const DropdownHeight = 120;
 const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) => {
 	return {
 		style: {
@@ -143,6 +143,7 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 	flex-direction: column;
 	z-index: 1000;
 	height: ${DropdownHeight}px;
+	padding: 0 calc(var(--margin) / 2);
 	transform: scaleY(0);
 	transition: transform 300ms ease-in-out;
 	pointer-events: none;
@@ -155,8 +156,18 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 	}
 	> div {
 		height: 28px;
-		min-height: 28px;
-		padding: 0 calc(var(--margin) / 2);
+		&:first-child {
+			display: flex;
+			align-items: center;
+			height: 32px;
+			background-color: var(--pipeline-bg-color);
+			margin: 0 calc(var(--margin) / -2) 2px;
+			padding: 0 calc(var(--margin) / 2);
+			font-weight: var(--font-bold);
+		}
+		&:last-child {
+			margin-bottom: 2px;
+		}
 	}
 `;
 const LeftAsFactorContainer = styled.div`
@@ -398,6 +409,7 @@ export const PlainConditionRow = (props: {
 			<div onClick={onRemoveClicked}><FontAwesomeIcon icon={faTrashAlt}/></div>
 		</DisplayLabel>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
+			<div>Expression Settings</div>
 			{isFactorValue(condition.left)
 				? <LeftAsFactorContainer>
 					<div>Topic: {topic?.name}</div>
