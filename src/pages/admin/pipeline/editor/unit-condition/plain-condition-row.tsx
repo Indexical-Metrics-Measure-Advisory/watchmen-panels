@@ -267,6 +267,7 @@ const buildLabel = (options: {
 	let label = '';
 	if (topic) {
 		const left = condition.left as FactorValue;
+		// topic never changed
 		label += `${topic.name}.`;
 		if (left.factorId) {
 			// eslint-disable-next-line
