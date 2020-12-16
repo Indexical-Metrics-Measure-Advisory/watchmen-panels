@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../../common/utils';
-import { FactorValue, InMemoryValue, SomeValue, SomeValueType } from '../../../../../services/admin/pipeline-types';
+import { SomeValue, SomeValueType } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { usePipelineContext } from '../../pipeline-context';
 import { ArithmeticSelect } from '../unit-actions/arithmetic-select';
 import { ActionInput } from './action-input';
 import { FactorFinder } from './factor-finder';
 import { HorizontalOptions } from './horizontal-options';
+import { isFactorValue, isMemoryValue } from './utils';
 
 const Container = styled.div`
 	display: flex;
@@ -59,13 +60,6 @@ const asDisplayValueType = (type: SomeValueType, source?: QueriedTopicForPipelin
 	}
 };
 
-const isFactorValue = (value: SomeValue): value is FactorValue => {
-	return value.type === SomeValueType.FACTOR;
-};
-const isInMemoryValue = (value: SomeValue): value is InMemoryValue => {
-	return value.type === SomeValueType.IN_MEMORY;
-};
-
 export const FacterValueFinder = (props: {
 	holder: SomeValue;
 	onTopicChange: () => void;
@@ -96,7 +90,7 @@ export const FacterValueFinder = (props: {
 	};
 	const onInMemoryVariableNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const name = event.target.value;
-		if (isInMemoryValue(value)) {
+		if (isMemoryValue(value)) {
 			value.name = name;
 			onVariableChange();
 		}
@@ -114,13 +108,13 @@ export const FacterValueFinder = (props: {
 				: null
 		}
 		{
-			isInMemoryValue(value)
+			isMemoryValue(value)
 				? <ActionInput value={value.name} onChange={onInMemoryVariableNameChanged}
 				               placeholder='Variable name...'/>
 				: null
 		}
 		{
-			isFactorValue(value) || isInMemoryValue(value)
+			isFactorValue(value) || isMemoryValue(value)
 				? <ArithmeticSelect value={value} right={true} onChange={onArithmeticChange}/>
 				: null
 		}

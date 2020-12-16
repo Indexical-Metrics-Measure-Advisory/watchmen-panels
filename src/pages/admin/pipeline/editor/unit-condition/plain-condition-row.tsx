@@ -18,12 +18,12 @@ import {
 	SomeValueType
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
-import { usePipelineContext } from '../../pipeline-context';
+import { ActionInput } from '../components/action-input';
 import { ConditionOperatorSelect } from '../components/condition-operator-select';
-import { FacterValueFinder } from '../components/facter-value-finder';
 import { FactorFinder } from '../components/factor-finder';
 import { isFactorValue, isMemoryValue } from '../components/utils';
 import { PipelineUnitConditionEvent, usePipelineUnitConditionContext } from '../pipeline-unit-condition-context';
+import { ArithmeticSelect } from '../unit-actions/arithmetic-select';
 
 interface DropdownRect {
 	top: number;
@@ -206,6 +206,35 @@ const OperatorAndRightContainer = styled.div`
 	display: flex;
 	align-items: center;
 `;
+const RightAsInMemoryContainer = styled.div`
+	display: flex;
+	align-items: center;
+	> div:first-child {
+		display: flex;
+		align-items: center;
+		height: 22px;
+		border-top-left-radius: var(--border-radius);
+		border-bottom-left-radius: var(--border-radius);
+		box-shadow: 0 0 0 1px var(--border-color);
+		font-variant: petite-caps;
+		font-weight: var(--font-demi-bold);
+		padding: 0 calc(var(--margin) / 2);
+		background-color: var(--pipeline-bg-color);
+	}
+	> input {
+		flex-grow: 1;
+		border-radius: 0;
+		box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
+	}
+	> div:last-child {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
+		&:hover {
+			box-shadow: var(--console-primary-hover-shadow);
+		}
+	}
+`;
 
 const OperatorLabels: { [key in ConditionOperator]: string } = {
 	[ConditionOperator.EQUALS]: '=',
@@ -232,9 +261,8 @@ const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => Arithm
 const buildLabel = (options: {
 	topic?: QueriedTopicForPipeline;
 	condition: PlainCondition;
-	topics: Array<QueriedTopicForPipeline>;
 }) => {
-	const { topic, condition, topics } = options;
+	const { topic, condition } = options;
 
 	let label = '';
 	if (topic) {
@@ -251,24 +279,25 @@ const buildLabel = (options: {
 	label += ` ${asDisplayOperator(condition.operator)} `;
 
 	let right = '';
-	if (isFactorValue(condition.right)) {
-		const topicId = condition.right.topicId;
-		// eslint-disable-next-line
-		const topic = topicId ? topics.find(topic => topic.topicId == topicId) : null;
-		if (topic) {
-			right += `${topic.name}.`;
-			const factorId = condition.right.factorId;
-			// eslint-disable-next-line
-			const factor = factorId ? topic.factors.find(factor => factor.factorId == factorId) : null;
-			if (factor) {
-				right += factor.label;
-			} else {
-				right += '?';
-			}
-		} else {
-			right += '?.?';
-		}
-	} else if (isMemoryValue(condition.right)) {
+	// if (isFactorValue(condition.right)) {
+	// 	const topicId = condition.right.topicId;
+	// 	// eslint-disable-next-line
+	// 	const topic = topicId ? topics.find(topic => topic.topicId == topicId) : null;
+	// 	if (topic) {
+	// 		right += `${topic.name}.`;
+	// 		const factorId = condition.right.factorId;
+	// 		// eslint-disable-next-line
+	// 		const factor = factorId ? topic.factors.find(factor => factor.factorId == factorId) : null;
+	// 		if (factor) {
+	// 			right += factor.label;
+	// 		} else {
+	// 			right += '?';
+	// 		}
+	// 	} else {
+	// 		right += '?.?';
+	// 	}
+	// } else
+	if (isMemoryValue(condition.right)) {
 		right += `Memory Context.${condition.right.name || '?'}`;
 	}
 
@@ -286,7 +315,6 @@ const Statement = (props: {
 }) => {
 	const { topic, condition } = props;
 
-	const { store: { topics } } = usePipelineContext();
 	const { addPropertyChangeListener, removePropertyChangeListener } = usePipelineUnitConditionContext();
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
@@ -294,7 +322,7 @@ const Statement = (props: {
 		return () => removePropertyChangeListener(PipelineUnitConditionEvent.FILTER_CHANGED, forceUpdate);
 	});
 
-	return <div>{buildLabel({ topic, condition, topics })}</div>;
+	return <div>{buildLabel({ topic, condition })}</div>;
 };
 
 const fillCondition = (options: {
@@ -336,6 +364,7 @@ export const PlainConditionRow = (props: {
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
+	const forceUpdate = useForceUpdate();
 	useCollapseFixedThing(topContainerRef, () => setExpanded(false));
 
 	fillCondition({ condition, topic });
@@ -395,6 +424,14 @@ export const PlainConditionRow = (props: {
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_REMOVED);
 	};
 	const onFilterChange = () => firePropertyChange(PipelineUnitConditionEvent.FILTER_CHANGED);
+	const onInMemoryVariableNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const name = event.target.value;
+		if (isMemoryValue(condition.right)) {
+			condition.right.name = name;
+			onFilterChange();
+		}
+		forceUpdate();
+	};
 
 	return <Container ref={topContainerRef}>
 		<DisplayLabel ref={containerRef} tabIndex={0} data-expanded={expanded}
@@ -417,10 +454,14 @@ export const PlainConditionRow = (props: {
 			<OperatorAndRightContainer>
 				<ConditionOperatorSelect condition={condition} onChange={onFilterChange}/>
 			</OperatorAndRightContainer>
-			<FacterValueFinder holder={condition.right}
-			                   onTopicChange={onFilterChange} onFactorChange={onFilterChange}
-			                   onVariableChange={onFilterChange}
-			                   onArithmeticChange={onFilterChange}/>
+			{isMemoryValue(condition.right)
+				? <RightAsInMemoryContainer>
+					<div>Memory Context</div>
+					<ActionInput value={condition.right.name} onChange={onInMemoryVariableNameChanged}
+					             placeholder='Variable name...'/>
+					<ArithmeticSelect value={condition.right} right={true} onChange={onFilterChange}/>
+				</RightAsInMemoryContainer>
+				: null}
 		</Dropdown>
 	</Container>;
 };
