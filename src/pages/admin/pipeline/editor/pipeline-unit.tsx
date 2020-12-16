@@ -13,10 +13,10 @@ import { useForceUpdate } from '../../../../common/utils';
 import Button, { ButtonType } from '../../../component/button';
 import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
-import { HorizontalOptions } from './components/horizontal-options';
 import { DangerObjectButton, DropdownButton, PrimaryObjectButton, WaiveObjectButton } from './components/object-button';
 import { PipelineUnitActionContextProvider } from './pipeline-unit-action-context';
 import { UnitActionNodes } from './pipeline-unit-actions';
+import { PipelineUnitCondition } from './pipeline-unit-condition';
 import { ActionLead } from './unit-actions/action-lead';
 import { ActionSelect } from './unit-actions/action-select';
 import { createAlarmAction } from './utils';
@@ -75,51 +75,19 @@ const UnitContainer = styled.div.attrs({
 		}
 	}
 `;
-const UnitSection = styled.div`
-	display: grid;
-	grid-template-columns: 120px 1fr;
-	padding: 0 calc(var(--margin) / 2);
-`;
-const UnitSectionLabel = styled.div.attrs({
-	'data-widget': 'stage-unit-label'
-})`
-	white-space: nowrap;
-	font-weight: var(--font-demi-bold);
-	font-variant: petite-caps;
-	height: 24px;
-	line-height: 24px;
-	margin-top: 4px;
-	align-self: start;
-`;
-const UnitCondition = styled(UnitSection).attrs({
-	'data-widget': 'stage-unit-condition'
-})`
-	grid-template-columns: calc(120px - var(--margin) / 2) 1fr auto;
-	grid-column-gap: calc(var(--margin) / 2);
+const ToggleExpandButton = styled(WaiveObjectButton)`
 	&[data-expanded=false] {
-		> button {
-			> svg {
-				transform: rotateZ(180deg);
-			}
-		}
-	}
-	> div:nth-child(2) {
-		align-self: center;
-		font-variant: petite-caps;
-		font-weight: var(--font-demi-bold);
-	}
-	> button {
-		align-self: center;
 		> svg {
-			transition: all 300ms ease-in-out;
+			transform: rotateZ(180deg);
 		}
 	}
 `;
-const UnitActions = styled(UnitSection).attrs({
+const UnitActions = styled.div.attrs({
 	'data-widget': 'stage-unit-actions'
 })`
 	display: flex;
 	flex-direction: column;
+	padding: 0 calc(var(--margin) / 2);
 	&[data-expanded=false] {
 		display: none;
 	}
@@ -267,11 +235,8 @@ export const PipelineUnit = (props: {
 
 	const dialog = useDialog();
 	const [ expanded, setExpanded ] = useState(true);
-	const [ conditional, setConditional ] = useState(!!unit.on);
 	const forceUpdate = useForceUpdate();
 
-	const toLabel = (withCondition: boolean) => withCondition ? 'Conditional' : 'Anyway';
-	const onTypeChanged = (withCondition: boolean) => setConditional(withCondition);
 	const onExpandClicked = () => setExpanded(!expanded);
 	const onDeleteAction = (action: ArrangedUnitAction) => {
 		const index = unit.do.findIndex(exists => exists === action);
@@ -318,19 +283,13 @@ export const PipelineUnit = (props: {
 		);
 	};
 
-	const conditionLabel = toLabel(conditional);
-
 	return <UnitContainer data-expanded={expanded}>
-		<UnitCondition data-expanded={expanded}>
-			<UnitSectionLabel>When:</UnitSectionLabel>
-			<HorizontalOptions label={conditionLabel}
-			                   options={[ !conditional ]} toLabel={toLabel}
-			                   onSelect={onTypeChanged}/>
-			<WaiveObjectButton onClick={onExpandClicked}>
+		<PipelineUnitCondition unit={unit}>
+			<ToggleExpandButton onClick={onExpandClicked}>
 				<FontAwesomeIcon icon={expanded ? faCompressArrowsAlt : faExpandArrowsAlt}/>
 				<span>{expanded ? 'Hide This Process Unit' : 'Show This Process Unit'}</span>
-			</WaiveObjectButton>
-		</UnitCondition>
+			</ToggleExpandButton>
+		</PipelineUnitCondition>
 		<UnitActions data-expanded={expanded}>
 			{unit.do.map(action => {
 				return <UnitActionNode unit={unit} action={action}

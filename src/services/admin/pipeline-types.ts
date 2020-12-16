@@ -167,7 +167,7 @@ export interface UnitActionCopyToMemory extends FactorValueHolder, MemoryWriter 
 }
 
 export interface ProcessUnit {
-	on?: Condition;
+	on?: CompositeCondition;
 	do: Array<UnitAction>;
 }
 

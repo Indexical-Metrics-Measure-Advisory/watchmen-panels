@@ -46,7 +46,7 @@ const ToggleButton = styled.div`
 		transition: all 300ms ease-in-out;
 	}
 `;
-const FilterContent = styled.div.attrs<{ lines: number, count: number, expanded: boolean }>(
+const FilterContent = styled.div.attrs<{ lines: number, expanded: boolean }>(
 	({ lines, expanded }) => {
 		return {
 			style: {
