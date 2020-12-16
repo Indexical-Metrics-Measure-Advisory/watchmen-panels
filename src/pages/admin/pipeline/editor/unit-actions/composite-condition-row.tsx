@@ -12,8 +12,7 @@ import {
 } from '../../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { HorizontalOptions } from '../components/horizontal-options';
-import { DangerObjectButton, PrimaryObjectButton } from '../components/object-button';
-import { isCompositeCondition } from '../components/utils';
+import { computeConditionLines, isCompositeCondition } from '../components/utils';
 import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { PlainConditionRow } from './plain-condition-row';
 
@@ -21,17 +20,52 @@ const Container = styled.div.attrs({
 	'data-widget': 'composite-condition'
 })`
 	display: flex;
+	position: relative;
 	flex-direction: column;
+	&[data-removable=true] {
+		&:before,
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			background-color: var(--border-color);
+		}
+		&:before {
+			top: 16px;
+			left: calc(var(--margin) / -2);
+			width: calc(var(--margin) / 2 - 4px);
+			height: 1px;
+		}
+		&:after {
+			top: 0;
+			left: calc(var(--margin) / -2);
+			width: 1px;
+			height: 16px;
+		}
+		&:not(:last-child):after {
+			height: 100%;
+		}
+	}
 `;
 const Title = styled.div.attrs({
 	'data-widget': 'composite-condition-title'
 })`
 	display: grid;
-	grid-template-columns: auto 1fr auto;
+	grid-template-columns: auto auto 1fr;
 	height: 32px;
 	min-height: 32px;
 	align-items: center;
 	transition: all 300ms ease-in-out;
+	&:hover {
+		> div:nth-child(2) {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+		> div:nth-child(3) {
+			opacity: 1;
+			pointer-events: auto;
+		}
+	}
 	&[data-expanded=false] {
 		> div:first-child > svg {
 			transform: rotateZ(-90deg);
@@ -57,7 +91,32 @@ const Title = styled.div.attrs({
 		text-transform: capitalize;
 	}
 	> div:last-child {
-		margin-left: calc(var(--margin) / 3);
+		display: flex;
+		justify-self: start;
+		cursor: pointer;
+		border-top-right-radius: 11px;
+		border-bottom-right-radius: 11px;
+		background-color: var(--pipeline-bg-color);
+		opacity: 0;
+		pointer-events: none;
+		transition: all 300ms ease-in-out;
+		> div {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 22px;
+			box-shadow: 0 1px 0 0 var(--border-color), 0 -1px 0 0 var(--border-color), 1px 0 0 0 var(--border-color);
+			padding: calc(var(--margin) / 3);
+			font-size: 0.8em;
+			&:hover {
+				box-shadow: var(--console-primary-hover-shadow);
+				pointer-events: auto;
+			}
+			&:last-child {
+				border-top-right-radius: 11px;
+				border-bottom-right-radius: 11px;
+			}
+		}
 	}
 `;
 const NoChild = styled.div.attrs({
@@ -96,7 +155,7 @@ const ChildConditionsNode = styled.div.attrs<{ count: number, visible: boolean }
 		return {
 			'data-widget': 'composite-condition-children',
 			style: {
-				height: visible ? count * 32 : 0,
+				maxHeight: visible ? count * 32 : 0,
 				transform: visible ? 'none' : 'rotateX(90deg)'
 			}
 		};
@@ -112,16 +171,21 @@ const ChildConditions = (props: {
 	left?: QueriedTopicForPipeline;
 	condition: CompositeCondition;
 	visible: boolean;
+	outdent: boolean;
 }) => {
-	const { left: topic, condition, visible } = props;
+	const { left: topic, condition, visible, outdent } = props;
 
-	return <ChildConditionsNode visible={visible} count={condition.children.length}>
+	const lines = computeConditionLines(condition) - 1;
+
+	return <ChildConditionsNode visible={visible} count={lines}>
 		{condition.children.map((child, index) => {
 			if (isCompositeCondition(child)) {
 				return <CompositeConditionRow left={topic} condition={child} removable={true} key={index}/>;
 			} else {
 				const plain = child as PlainCondition;
-				return <PlainConditionRow left={topic} condition={plain} key={index}/>;
+				return <PlainConditionRow left={topic} parent={condition} condition={plain}
+				                          outdent={outdent}
+				                          key={index}/>;
 			}
 		})}
 	</ChildConditionsNode>;
@@ -149,8 +213,11 @@ export const CompositeConditionRow = (props: {
 		expanded ? forceUpdate() : setExpanded(true);
 		firePropertyChange(PipelineUnitActionEvent.FILTER_ADDED);
 	};
+	const onRemoveClicked = () => {
+		// TODO
+	};
 
-	return <Container data-expanded={expanded}>
+	return <Container data-expanded={expanded} data-removable={removable}>
 		<Title data-expanded={expanded}>
 			<div onClick={onToggleExpandedClicked}><FontAwesomeIcon icon={faChevronDown}/></div>
 			<HorizontalOptions label={label}
@@ -158,20 +225,18 @@ export const CompositeConditionRow = (props: {
 			                   toLabel={(mode: CompositeMode) => mode}
 			                   onSelect={onSelect}/>
 			<div>
-				<PrimaryObjectButton onClick={onAddSubFilterClicked}>
+				<div onClick={onAddSubFilterClicked}>
 					<FontAwesomeIcon icon={faPlus}/>
-					<span>Add Sub Filter</span>
-				</PrimaryObjectButton>
+				</div>
 				{removable
-					? <DangerObjectButton>
+					? <div onClick={onRemoveClicked}>
 						<FontAwesomeIcon icon={faTrashAlt}/>
-						<span>Remove This Filter</span>
-					</DangerObjectButton>
+					</div>
 					: null}
 			</div>
 		</Title>
 		{condition.children.length === 0
 			? <NoChild>No Child Defined.</NoChild>
-			: <ChildConditions left={topic} condition={condition} visible={expanded}/>}
+			: <ChildConditions left={topic} condition={condition} visible={expanded} outdent={!removable}/>}
 	</Container>;
 };

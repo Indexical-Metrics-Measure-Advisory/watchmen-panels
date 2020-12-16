@@ -60,7 +60,6 @@ const FilterContent = styled.div.attrs<{ lines: number, count: number, expanded:
 	flex-grow: 1;
 	transform-origin: top;
 	transition: all 300ms ease-in-out;
-	margin-left: -10px;
 	&::-webkit-scrollbar {
 		background-color: transparent;
 		width: 4px;
@@ -104,10 +103,12 @@ export const TopicRowMatcher = (props: {
 		addPropertyChangeListener(PipelineUnitActionEvent.TOPIC_CHANGED, forceUpdate);
 		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_ADDED, forceUpdate);
 		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_REMOVED, forceUpdate);
+		addPropertyChangeListener(PipelineUnitActionEvent.FILTER_INDENT, forceUpdate);
 		return () => {
 			removePropertyChangeListener(PipelineUnitActionEvent.TOPIC_CHANGED, forceUpdate);
 			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_ADDED, forceUpdate);
 			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_REMOVED, forceUpdate);
+			removePropertyChangeListener(PipelineUnitActionEvent.FILTER_INDENT, forceUpdate);
 		};
 	});
 

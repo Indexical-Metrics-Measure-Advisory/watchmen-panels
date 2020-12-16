@@ -95,7 +95,7 @@ export const computeConditionCount = (condition: CompositeCondition): number => 
 		if (isPlainCondition(child)) {
 			count += 1;
 		} else if (isCompositeCondition(child)) {
-			count += computeConditionLines(child);
+			count += computeConditionCount(child);
 		}
 		return count;
 	}, 0);

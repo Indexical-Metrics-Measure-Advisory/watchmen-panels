@@ -1,9 +1,11 @@
-import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt, faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useCollapseFixedThing, useForceUpdate } from '../../../../../common/utils';
 import {
+	CompositeCondition,
+	CompositeMode,
 	ConditionOperator,
 	DatePartArithmetic,
 	FactorValue,
@@ -82,12 +84,12 @@ const DisplayLabel = styled.div`
 		> div:first-child {
 			padding-left: calc(var(--margin) / 2);
 		}
-		> div:last-child {
+		> div:not(:first-child) {
 			opacity: 1;
 			pointer-events: auto;
 		}
 	}
-	&[data-expanded=true] > div:last-child > svg {
+	&[data-expanded=true] > div:nth-child(2) > svg {
 		transform: rotateZ(180deg);
 	}
 	> div:first-child {
@@ -98,7 +100,7 @@ const DisplayLabel = styled.div`
 		border-bottom-left-radius: 12px;
 		transition: all 300ms ease-in-out;
 	}
-	> div:last-child {
+	> div:not(:first-child) {
 		position: relative;
 		padding: 0 calc(var(--margin) / 3);
 		opacity: 0;
@@ -107,8 +109,19 @@ const DisplayLabel = styled.div`
 		> svg {
 			transition: all 300ms ease-in-out;
 		}
+		&:not(:nth-child(2)):before {
+			content: '';
+			display: block;
+			position: absolute;
+			left: 0;
+			top: 20%;
+			width: 1px;
+			height: 60%;
+			background-color: var(--border-color);
+		}
 	}
 `;
+const DropdownHeight = 84;
 const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) => {
 	return {
 		style: {
@@ -121,12 +134,12 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 	position: fixed;
 	flex-direction: column;
 	z-index: 1000;
-	height: 88px;
+	height: ${DropdownHeight}px;
 	transform: scaleY(0);
 	transition: transform 300ms ease-in-out;
 	pointer-events: none;
 	background-color: var(--bg-color);
-	border-radius: 12px;
+	border-radius: calc(var(--border-radius) * 3);
 	box-shadow: var(--console-primary-hover-shadow);
 	&[data-expanded=true] {
 		transform: none;
@@ -136,9 +149,6 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, width, atTop }) =>
 		height: 28px;
 		min-height: 28px;
 		padding: 0 calc(var(--margin) / 2);
-		&:first-child {
-			margin-top: 2px;
-		}
 	}
 `;
 const LeftAsFactorContainer = styled.div`
@@ -240,7 +250,7 @@ const buildLabel = (options: {
 			right += '?.?';
 		}
 	} else if (isMemoryValue(condition.right)) {
-		right += condition.right.name || '?';
+		right += `Memory Context.${condition.right.name || '?'}`;
 	}
 
 	const arithmetic = asDisplayArithmetic(condition.right.arithmetic);
@@ -268,20 +278,12 @@ const Statement = (props: {
 	return <div>{buildLabel({ topic, condition, topics })}</div>;
 };
 
-export const PlainConditionRow = (props: {
-	left?: QueriedTopicForPipeline;
+const fillCondition = (options: {
 	condition: PlainCondition;
+	topic?: QueriedTopicForPipeline,
+	selectedTopic?: QueriedTopicForPipeline
 }) => {
-	const { left: topic, condition } = props;
-
-	const { store: { selectedTopic } } = usePipelineContext();
-
-	const topContainerRef = useRef<HTMLDivElement>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const dropdownRef = useRef<HTMLDivElement>(null);
-	const [ expanded, setExpanded ] = useState(false);
-	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
-	useCollapseFixedThing(topContainerRef, () => setExpanded(false));
+	const { condition, topic, selectedTopic } = options;
 
 	if (!condition.left) {
 		condition.left = { arithmetic: NoArithmetic.NO_FUNC };
@@ -300,19 +302,57 @@ export const PlainConditionRow = (props: {
 			arithmetic: NoArithmetic.NO_FUNC
 		} as FactorValue;
 	}
+};
+
+export const PlainConditionRow = (props: {
+	left?: QueriedTopicForPipeline;
+	parent: CompositeCondition;
+	condition: PlainCondition;
+	outdent: boolean;
+}) => {
+	const { left: topic, parent: parentCondition, condition, outdent } = props;
+
+	const { store: { selectedTopic } } = usePipelineContext();
+	const { firePropertyChange } = usePipelineUnitActionContext();
+
+	const topContainerRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	const [ expanded, setExpanded ] = useState(false);
+	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
+	useCollapseFixedThing(topContainerRef, () => setExpanded(false));
+
+	fillCondition({ condition, topic, selectedTopic });
 
 	const onExpandClick = () => {
 		if (!expanded) {
 			const rect = containerRef.current!.getBoundingClientRect();
 			const top = rect.top + rect.height + 2;
-			const bottom = top + 88;
+			const bottom = top + DropdownHeight;
 			if (bottom > window.innerHeight) {
-				setDropdownRect({ top: rect.top - 88 - 2, left: rect.left, width: rect.width, atTop: true });
+				setDropdownRect({
+					top: rect.top - DropdownHeight - 2,
+					left: rect.left,
+					width: rect.width,
+					atTop: true
+				});
 			} else {
 				setDropdownRect({ top, left: rect.left, width: rect.width, atTop: false });
 			}
 			setExpanded(true);
 		}
+	};
+	const onIndentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		const newParent: CompositeCondition = { mode: CompositeMode.AND, children: [ condition ] };
+		const mode = parentCondition.mode;
+		if (mode === CompositeMode.AND) {
+			newParent.mode = CompositeMode.OR;
+		}
+		const index = parentCondition.children.findIndex(child => child === condition);
+		parentCondition.children.splice(index, 1, newParent);
+		firePropertyChange(PipelineUnitActionEvent.FILTER_INDENT);
 	};
 
 	return <Container ref={topContainerRef}>
@@ -320,6 +360,7 @@ export const PlainConditionRow = (props: {
 		              onClick={onExpandClick}>
 			<Statement topic={topic} condition={condition}/>
 			<div><FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/></div>
+			<div onClick={onIndentClicked}><FontAwesomeIcon icon={faLongArrowAltRight}/></div>
 		</DisplayLabel>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
 			{isFactorValue(condition.left)

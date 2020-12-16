@@ -6,7 +6,8 @@ export enum PipelineUnitActionEvent {
 	FACTOR_CHANGED = 'factor-changed',
 	FILTER_ADDED = 'filter-added',
 	FILTER_REMOVED = 'filter-removed',
-	FILTER_CHANGED = 'filter-changed'
+	FILTER_CHANGED = 'filter-changed',
+	FILTER_INDENT = 'filter-indent'
 }
 
 export type PropertyChangeListener = () => void;
