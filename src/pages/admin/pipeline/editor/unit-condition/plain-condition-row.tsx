@@ -417,7 +417,7 @@ export const PlainConditionRow = (props: {
 			<div onClick={onRemoveClicked}><FontAwesomeIcon icon={faTrashAlt}/></div>
 		</DisplayLabel>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
-			<div>Expression Settings</div>
+			<div>Expression Setting</div>
 			{isFactorValue(condition.left)
 				? <LeftAsFactorContainer>
 					<div>Topic: {topic?.name}</div>

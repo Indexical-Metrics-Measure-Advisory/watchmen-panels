@@ -11,19 +11,19 @@ export enum PipelineUnitConditionEvent {
 	FILTER_OUTDENT = 'filter-outdent'
 }
 
-export type PropertyChangeConditionListener = () => void;
+export type PropertyChangeListener = () => void;
 
 export interface PipelineUnitConditionContextUsable {
 	firePropertyChange: (event: PipelineUnitConditionEvent) => void;
-	addPropertyChangeListener: (event: PipelineUnitConditionEvent, listener: PropertyChangeConditionListener) => void;
-	removePropertyChangeListener: (event: PipelineUnitConditionEvent, listener: PropertyChangeConditionListener) => void;
+	addPropertyChangeListener: (event: PipelineUnitConditionEvent, listener: PropertyChangeListener) => void;
+	removePropertyChangeListener: (event: PipelineUnitConditionEvent, listener: PropertyChangeListener) => void;
 }
 
 export interface PipelineUnitConditionContext extends PipelineUnitConditionContextUsable {
 }
 
 const Context = React.createContext<PipelineUnitConditionContext>({} as PipelineUnitConditionContext);
-Context.displayName = 'PipelineUnitContext';
+Context.displayName = 'PipelineUnitConditionContext';
 
 export const PipelineUnitConditionContextProvider = (props: {
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
