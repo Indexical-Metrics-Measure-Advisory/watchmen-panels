@@ -90,3 +90,15 @@ export interface QueriedTopicForPipeline {
 	factors: Array<QueriedFactorForPipeline>;
 }
 
+export interface User {
+	userId?: string;
+	name?: string;
+	nickName?: string;
+	groupIds?: Array<string>
+}
+
+export interface QueriedUserGroupForUser {
+	userGroupId: string;
+	name: string;
+	description?: string;
+}

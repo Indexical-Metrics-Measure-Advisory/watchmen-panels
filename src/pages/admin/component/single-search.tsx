@@ -19,23 +19,58 @@ const Main = styled.div`
 	position: relative;
 	flex-direction: column;
 	margin-top: 30px;
+	&[data-visible=false] {
+		> div:nth-child(2), > div:nth-child(3) {
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+	> div:nth-child(2), > div:nth-child(3) {
+		opacity: 1;
+		pointer-events: auto;
+	}
 `;
 const Operators = styled.div`
 	display: grid;
 	grid-template-columns: auto 1fr;
 	margin-bottom: calc(var(--margin) / 2);
+	&[data-can-create=false] {
+		> button {
+			display: none;
+		}
+		> div {
+			grid-column: span 2;
+			&[data-on-before-search=false] {
+				> button {
+					border-bottom-color: transparent;
+				}
+			}
+			> button {
+				border-radius: 0;
+				background-color: transparent;
+				border-bottom: 2px solid var(--border-color);
+				&:before {
+					border-radius: calc(var(--border-radius) * 2);
+				}
+			}
+			> input {
+				border-top: 0;
+				border-right: 0;
+				border-radius: 0;
+				padding-left: 0;
+			}
+		}
+	}
 	> button {
 		font-variant: petite-caps;
 		font-weight: var(--font-bold);
 		font-size: 1.2em;
 		background-color: var(--border-color);
-		//color: var(--invert-color);
 		border-top-left-radius: calc(var(--border-radius) * 2);
 		border-bottom-left-radius: calc(var(--border-radius) * 2);
 		padding: 0 var(--margin);
 		&:before {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
+			border-radius: calc(var(--border-radius) * 2) 0 0 calc(var(--border-radius) * 2);
 		}
 		&:after {
 			content: '';
@@ -59,8 +94,10 @@ const SearchOperator = styled.div`
 	align-items: center;
 	&[data-on-before-search=true] {
 		> button {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
+			border-radius: 0;
+			&:before {
+				border-radius: 0;
+			}
 		}
 		> input {
 			padding: 0 calc(var(--margin) / 2);
@@ -82,8 +119,7 @@ const SearchOperator = styled.div`
 		border-bottom-right-radius: calc(var(--border-radius) * 2);
 		cursor: pointer;
 		&:before {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
+			border-radius: 0 calc(var(--border-radius) * 2) calc(var(--border-radius) * 2) 0;
 		}
 		> svg {
 			font-size: 0.7em;
@@ -206,11 +242,25 @@ export const SingleSearchItemCard = styled.div`
 
 export const SingleSearch = <T extends any>(props: {
 	searchPlaceholder?: string;
+	createButtonLabel?: string;
+	onCreate?: () => void;
+	onSearched?: () => void;
 	listData: (options: { search: string; pageNumber: number; pageSize: number }) => Promise<DataPage<T>>;
 	renderItem: (item: T) => React.ReactNode;
 	getKeyOfItem: (item: T) => string;
+	visible?: boolean;
 }) => {
-	const { searchPlaceholder, listData, renderItem, getKeyOfItem } = props;
+	const {
+		searchPlaceholder,
+		createButtonLabel = 'Create One',
+		onCreate,
+		onSearched = () => {
+		},
+		listData,
+		renderItem,
+		getKeyOfItem,
+		visible = true
+	} = props;
 
 	const searchRef = useRef<HTMLInputElement>(null);
 	const [ beforeSearch, setBeforeSearch ] = useState<boolean>(true);
@@ -241,6 +291,7 @@ export const SingleSearch = <T extends any>(props: {
 				setBeforeSearch(false);
 			}
 			setLoading(false);
+			onSearched();
 		} catch (e) {
 			console.groupCollapsed(`%cError on fetch data.`, 'color:rgb(251,71,71)');
 			console.error(e);
@@ -257,11 +308,11 @@ export const SingleSearch = <T extends any>(props: {
 	const onPreviousPageClicked = () => searchPage(state.searched!, state.pageNumber - 1);
 	const onNextPageClicked = () => searchPage(state.searched!, state.pageNumber + 1);
 
-	return <Main>
-		<Operators>
-			<LinkButton>
+	return <Main data-visible={visible}>
+		<Operators data-can-create={!!onCreate}>
+			<LinkButton onClick={onCreate}>
 				<FontAwesomeIcon icon={faPlus}/>
-				<span>Create One</span>
+				<span>{createButtonLabel}</span>
 			</LinkButton>
 			<SearchOperator data-on-before-search={beforeSearch}>
 				<LinkButton ignoreHorizontalPadding={true} onClick={onBeforeSearchClicked}>
