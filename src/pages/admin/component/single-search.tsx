@@ -1,4 +1,4 @@
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -16,50 +16,96 @@ interface State<T> extends DataPage<T> {
 
 const Main = styled.div`
 	display: flex;
-	flex-direction: column;
 	position: relative;
+	flex-direction: column;
 	margin-top: 30px;
-	&[data-on-before-search=false] {
-		> button:first-child {
-			left: calc(100% - 44px);
-			font-size: 2em;
-			width: 44px;
-			margin-top: -0.4em;
+`;
+const Operators = styled.div`
+	display: grid;
+	grid-template-columns: auto 1fr;
+	margin-bottom: calc(var(--margin) / 2);
+	> button {
+		font-variant: petite-caps;
+		font-weight: var(--font-bold);
+		font-size: 1.2em;
+		background-color: var(--border-color);
+		//color: var(--invert-color);
+		border-top-left-radius: calc(var(--border-radius) * 2);
+		border-bottom-left-radius: calc(var(--border-radius) * 2);
+		padding: 0 var(--margin);
+		&:before {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
 		}
-		> input:nth-child(2) {
-			margin-left: 100%;
-			width: 0;
-			padding-left: 0;
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 30%;
+			right: 0;
+			width: 1px;
+			height: 40%;
+			background-color: var(--invert-color);
+			opacity: 0.7;
+		}
+		> svg {
+			font-size: 0.7em;
+			margin-right: calc(var(--margin) / 2);
 		}
 	}
-	> button:first-child {
+`;
+const SearchOperator = styled.div`
+	display: flex;
+	align-items: center;
+	&[data-on-before-search=true] {
+		> button {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+		> input {
+			padding: 0 calc(var(--margin) / 2);
+			border-style: solid;
+			border-right-width: 2px;
+			border-top-right-radius: calc(var(--border-radius) * 2);
+			border-bottom-right-radius: calc(var(--border-radius) * 2);
+			width: 100%;
+		}
+	}
+	> button {
 		display: block;
-		position: absolute;
+		align-self: stretch;
 		font-size: 1.2em;
-		width: 32px;
-		top: calc(1em + 6px);
-		left: 0;
-		transform: translateY(-50%);
+		width: 44px;
+		background-color: var(--border-color);
+		//color: var(--invert-color);
+		border-top-right-radius: calc(var(--border-radius) * 2);
+		border-bottom-right-radius: calc(var(--border-radius) * 2);
 		cursor: pointer;
-		transition: all 300ms ease-in-out;
+		&:before {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+		> svg {
+			font-size: 0.7em;
+		}
 	}
 `;
 const Search = styled(Input)`
 	border-radius: 0;
-	border-top: 0;
+	border-width: 2px;
+	border-color: var(--border-color);
 	border-left: 0;
-	border-right: 0;
-	padding-left: 36px;
-	padding-right: 0;
-	margin-bottom: calc(var(--margin) / 2);
+	border-right-width: 0;
+	padding: 0;
 	font-size: 1.4em;
 	line-height: 1.6em;
 	height: calc(1.6em + 12px);
-	width: 100%;
+	width: 0;
 	color: var(--console-font-color);
 	transition: all 300ms ease-in-out;
 `;
 const List = styled.div`
+	grid-column: span 2;
 	display: none;
 	grid-template-columns: repeat(3, 1fr);
 	grid-column-gap: calc(var(--margin) / 2);
@@ -83,6 +129,7 @@ const NoData = styled.div`
 	}
 `;
 const Bottom = styled.div`
+	grid-column: span 2;
 	display: flex;
 	margin-top: calc(var(--margin) / 2);
 	margin-bottom: 50px;
@@ -210,14 +257,22 @@ export const SingleSearch = <T extends any>(props: {
 	const onPreviousPageClicked = () => searchPage(state.searched!, state.pageNumber - 1);
 	const onNextPageClicked = () => searchPage(state.searched!, state.pageNumber + 1);
 
-	return <Main data-on-before-search={beforeSearch}>
-		<LinkButton ignoreHorizontalPadding={true} onClick={onBeforeSearchClicked}>
-			<FontAwesomeIcon icon={faSearch}/>
-		</LinkButton>
-		<Search placeholder={searchPlaceholder}
-		        value={searchText} onChange={onSearchChanged}
-		        onKeyPress={onSearchKeyPressed}
-		        ref={searchRef}/>
+	return <Main>
+		<Operators>
+			<LinkButton>
+				<FontAwesomeIcon icon={faPlus}/>
+				<span>Create One</span>
+			</LinkButton>
+			<SearchOperator data-on-before-search={beforeSearch}>
+				<LinkButton ignoreHorizontalPadding={true} onClick={onBeforeSearchClicked}>
+					<FontAwesomeIcon icon={faSearch}/>
+				</LinkButton>
+				<Search placeholder={searchPlaceholder}
+				        value={searchText} onChange={onSearchChanged}
+				        onKeyPress={onSearchKeyPressed}
+				        ref={searchRef}/>
+			</SearchOperator>
+		</Operators>
 		<List data-visible={state.queried}>
 			<NoData data-visible={state.data.length === 0}>No matched data.</NoData>
 			{state.data.map(item => {
