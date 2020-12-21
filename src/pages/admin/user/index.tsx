@@ -1,7 +1,7 @@
 import { faChartBar } from '@fortawesome/free-regular-svg-icons';
 import { faCheck, faGlobe, faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { keyframes } from 'styled-components';
 import UserBackground from '../../../assets/user-background.png';
 import { useForceUpdate } from '../../../common/utils';
@@ -163,6 +163,11 @@ const UserPanel = (props: {
 	const [ dataSaving, setDataSaving ] = useState(false);
 	const [ dataSaved, setDataSaved ] = useState(false);
 	const forceUpdate = useForceUpdate();
+	useEffect(() => {
+		setDataSaved(false);
+		setDataSaving(false);
+		setDataChanged(false);
+	}, [ user ]);
 
 	const onDataChanged = () => {
 		if (dataSaved) {
