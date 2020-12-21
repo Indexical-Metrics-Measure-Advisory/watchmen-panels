@@ -2,7 +2,7 @@ import { faChartBar } from '@fortawesome/free-regular-svg-icons';
 import { faCheck, faGlobe, faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from "react";
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import UserBackground from '../../../assets/user-background.png';
 import { useForceUpdate } from '../../../common/utils';
 import { QueriedUser, QueriedUserGroupForUser, User } from '../../../services/admin/types';
@@ -108,6 +108,48 @@ const CandidateGroup = styled.div`
 		opacity: 0.7;
 	}
 `;
+const Saved = keyframes`
+	0% {
+		transform: scale(1);
+	}
+	5% {
+		transform: scale(1.5);
+	}
+	20%, 80% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 0;
+	}
+`;
+const InformMessage = styled.div`
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	font-size: 0.8em;
+	font-variant: petite-caps;
+	font-weight: var(--font-bold);
+	opacity: 0.5;
+	transition: all 300ms ease-in-out;
+	&[data-change-kind=changed] {
+		color: var(--console-success-color);
+	}
+	&[data-change-kind=saving] {
+		color: var(--console-danger-color);
+	}
+	&[data-change-kind=saved] {
+		color: var(--console-danger-color);
+		> span {
+			animation: ${Saved} 6000ms ease-in-out forwards;
+			transform-origin: left;
+		}
+	}
+	&:empty {
+		opacity: 0;
+	}
+`;
 
 const UserPanel = (props: {
 	user?: User
@@ -117,11 +159,28 @@ const UserPanel = (props: {
 	const { user: originUser, groups, onClosed } = props;
 	const { user = { groupIds: [] } } = props;
 
+	const [ dataChanged, setDataChanged ] = useState(false);
+	const [ dataSaving, setDataSaving ] = useState(false);
+	const [ dataSaved, setDataSaved ] = useState(false);
 	const forceUpdate = useForceUpdate();
 
-	const onPropChange = (prop: 'name' | 'nickName') => (event: React.ChangeEvent<HTMLInputElement>) => {
-		user[prop] = event.target.value;
+	const onDataChanged = () => {
+		if (dataSaved) {
+			setDataSaved(false);
+		}
+		setDataChanged(true);
 		forceUpdate();
+	};
+	const onDataSaved = () => {
+		setDataSaving(false);
+		setDataSaved(true);
+		forceUpdate();
+	};
+	const onPropChange = (prop: 'name' | 'nickName') => (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (user[prop] !== event.target.value.trim()) {
+			user[prop] = event.target.value;
+			onDataChanged();
+		}
 	};
 	const onGroupRemove = (group: QueriedUserGroupForUser) => {
 		if (!user.groupIds) {
@@ -134,7 +193,7 @@ const UserPanel = (props: {
 		if (index !== -1) {
 			groups.splice(index, 1);
 		}
-		forceUpdate();
+		onDataChanged();
 	};
 	const renderSelectedGroup = (group: QueriedUserGroupForUser) => {
 		return <SelectedGroup>
@@ -152,8 +211,7 @@ const UserPanel = (props: {
 		if (!exists) {
 			groups.push(group);
 		}
-		console.log(groups);
-		forceUpdate();
+		onDataChanged();
 	};
 	const renderCandidateGroup = (group: QueriedUserGroupForUser) => {
 		// eslint-disable-next-line
@@ -181,14 +239,18 @@ const UserPanel = (props: {
 		return groups;
 	};
 	const onConfirmClicked = async () => {
+		setDataSaving(true);
+		setDataChanged(false);
 		await saveUser(user);
-		forceUpdate();
+		onDataSaved();
 	};
 	const onCloseClicked = () => onClosed();
 
 	const visible = !!originUser;
 	const onEditing = !!user.userId;
 	sortGroup(groups);
+	const kind = dataSaved ? 'saved' : (dataSaving ? 'saving' : (dataChanged ? 'changed' : ''));
+	const message = dataSaved ? 'Data Saved.' : (dataSaving ? 'Data Saving...' : (dataChanged ? 'Data Changed.' : ''));
 
 	return <EditPanel title={onEditing ? 'An Exists User' : 'A New User'} background={UserBackground} visible={visible}>
 		<PropLabel>User Name:</PropLabel>
@@ -203,6 +265,7 @@ const UserPanel = (props: {
 		                 getKeyOfItem={getKeyOfGroup}
 		                 fetchItems={fetchItems}/>
 		<EditPanelButtons>
+			<InformMessage data-change-kind={kind}><span>{message}</span></InformMessage>
 			<PrimaryObjectButton onClick={onConfirmClicked}>
 				<span>Confirm</span>
 			</PrimaryObjectButton>

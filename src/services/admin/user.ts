@@ -150,6 +150,6 @@ export const fetchUser = async (userId: string): Promise<{ user: User, groups: A
 export const saveUser = async (user: User) => {
 	return new Promise(resolve => {
 		user.userId = '10000';
-		resolve();
+		setTimeout(() => resolve(), 500);
 	});
 };
