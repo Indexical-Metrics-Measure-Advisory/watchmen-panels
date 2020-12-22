@@ -5,6 +5,7 @@ import React, { Fragment, useState } from "react";
 import SpaceBackground from '../../../assets/space-background.png';
 import { fetchSpace, listSpaces, saveSpace } from '../../../services/admin/space';
 import {
+	QueriedReportForSpace,
 	QueriedSpace,
 	QueriedTopicForSpace,
 	QueriedUserGroupForGroupsHolder,
@@ -16,6 +17,7 @@ import { GroupPicker } from '../component/group-picker';
 import { PropInput } from '../component/prop-input';
 import { PropInputLines } from '../component/prop-input-lines';
 import { PropLabel } from '../component/prop-label';
+import { ReportPicker } from '../component/report-picker';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
 import { TopicPicker } from '../component/topic-picker';
@@ -23,20 +25,21 @@ import { TopicPicker } from '../component/topic-picker';
 export const Spaces = () => {
 	const createCodes = () => ({
 		groups: [] as Array<QueriedUserGroupForGroupsHolder>,
-		topics: [] as Array<QueriedTopicForSpace>
+		topics: [] as Array<QueriedTopicForSpace>,
+		reports: [] as Array<QueriedReportForSpace>
 	});
 
 	const [ codes, setCodes ] = useState(createCodes());
 
 	const createEntity = (fake: boolean) => {
 		if (!fake) {
-			setCodes({ groups: [], topics: [] });
+			setCodes({ groups: [], topics: [], reports: [] });
 		}
-		return { groupIds: [] } as Space;
+		return { groupIds: [], topicIds: [], reportIds: [] } as Space;
 	};
 	const fetchEntityAndCodes = async (queriedSpace: QueriedSpace) => {
-		const { space, groups, topics } = await fetchSpace(queriedSpace.spaceId);
-		setCodes({ groups, topics });
+		const { space, groups, topics, reports } = await fetchSpace(queriedSpace.spaceId);
+		setCodes({ groups, topics, reports });
 		return { entity: space };
 	};
 	const fetchEntityList = listSpaces;
@@ -82,7 +85,9 @@ export const Spaces = () => {
 			<PropInputLines value={space.description || ''}
 			                onChange={onPropChange(space, 'description', onDataChanged)}/>
 			<PropLabel>Topics:</PropLabel>
-			<TopicPicker label='Include Topic' space={space} codes={codes} onDataChanged={onDataChanged}/>
+			<TopicPicker label='Assign Topic' space={space} codes={codes} onDataChanged={onDataChanged}/>
+			<PropLabel>Reports:</PropLabel>
+			<ReportPicker label='Assign Report' space={space} codes={codes} onDataChanged={onDataChanged}/>
 			<PropLabel>Groups:</PropLabel>
 			<GroupPicker label='Grant to Group' holder={space} codes={codes}
 			             listGroups={listUserGroupsForSpace} onDataChanged={onDataChanged}/>

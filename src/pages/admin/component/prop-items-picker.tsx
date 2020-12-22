@@ -25,6 +25,9 @@ const Items = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	margin-left: calc(var(--margin) / -3);
+	&:empty {
+		padding: 0;
+	}
 	> div {
 		margin: 2px 0 2px calc(var(--margin) / 3);
 	}
@@ -368,6 +371,7 @@ export const PropItemPicker = <Entity extends object, Item extends any>(props: {
 		sortItem(items);
 		return items;
 	};
+	sortItem(codes);
 
 	return <ItemPicker label={label}
 	                   selectedItems={codes}
