@@ -207,3 +207,18 @@ export const listUsersForUserGroup = async (search: string): Promise<Array<Queri
 		}, 500);
 	});
 };
+
+export const listUserGroupsForSpace = async (search: string): Promise<Array<QueriedUserGroupForGroupsHolder>> => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve([
+				{ userGroupId: '1', name: 'Oklahoma', description: 'South-center market analysis squad.' },
+				{ userGroupId: '2', name: 'Delaware' },
+				{ userGroupId: '3', name: 'Hawaii' },
+				{ userGroupId: '4', name: 'Alaska' },
+				{ userGroupId: '5', name: 'Missouri' },
+				{ userGroupId: '6', name: 'Arkansas' }
+			].filter(x => x.name.toUpperCase().includes(search.toUpperCase())));
+		}, 500);
+	});
+};

@@ -1,4 +1,11 @@
-import { DataPage, QueriedSpace, QueriedSpaceForUserGroup, QueriedUserGroupForGroupsHolder, Space } from './types';
+import {
+	DataPage,
+	QueriedSpace,
+	QueriedSpaceForUserGroup,
+	QueriedTopicForSpace,
+	QueriedUserGroupForGroupsHolder,
+	Space
+} from './types';
 
 export const listSpaces = async (options: {
 	search: string;
@@ -40,7 +47,7 @@ export const listSpacesForUserGroup = async (search: string): Promise<Array<Quer
 	});
 };
 
-export const fetchSpace = async (spaceId: string): Promise<{ space: Space, groups: Array<QueriedUserGroupForGroupsHolder> }> => {
+export const fetchSpace = async (spaceId: string): Promise<{ space: Space, groups: Array<QueriedUserGroupForGroupsHolder>, topics: Array<QueriedTopicForSpace> }> => {
 	let space: Space;
 	switch (spaceId) {
 		case '1':
@@ -56,7 +63,12 @@ export const fetchSpace = async (spaceId: string): Promise<{ space: Space, group
 	}
 	return {
 		space,
-		groups: [ { userGroupId: '1', name: 'Oklahoma', description: 'Northwest market analysis squad.' } ]
+		groups: [ { userGroupId: '1', name: 'Oklahoma', description: 'Northwest market analysis squad.' } ],
+		topics: [
+			{ topicId: '1', name: 'Quotation' },
+			{ topicId: '2', name: 'Policy' },
+			{ topicId: '3', name: 'Participant' }
+		]
 	};
 };
 

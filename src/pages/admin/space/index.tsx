@@ -4,7 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from "react";
 import SpaceBackground from '../../../assets/space-background.png';
 import { fetchSpace, listSpaces, saveSpace } from '../../../services/admin/space';
-import { QueriedSpace, QueriedUserGroupForGroupsHolder, Space } from '../../../services/admin/types';
+import {
+	QueriedSpace,
+	QueriedTopicForSpace,
+	QueriedUserGroupForGroupsHolder,
+	Space
+} from '../../../services/admin/types';
+import { listUserGroupsForSpace } from '../../../services/admin/user';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { GroupPicker } from '../component/group-picker';
 import { PropInput } from '../component/prop-input';
@@ -12,21 +18,25 @@ import { PropInputLines } from '../component/prop-input-lines';
 import { PropLabel } from '../component/prop-label';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
+import { TopicPicker } from '../component/topic-picker';
 
 export const Spaces = () => {
-	const createCodes = () => ({ groups: [] as Array<QueriedUserGroupForGroupsHolder> });
+	const createCodes = () => ({
+		groups: [] as Array<QueriedUserGroupForGroupsHolder>,
+		topics: [] as Array<QueriedTopicForSpace>
+	});
 
 	const [ codes, setCodes ] = useState(createCodes());
 
 	const createEntity = (fake: boolean) => {
 		if (!fake) {
-			setCodes({ groups: [] });
+			setCodes({ groups: [], topics: [] });
 		}
 		return { groupIds: [] } as Space;
 	};
 	const fetchEntityAndCodes = async (queriedSpace: QueriedSpace) => {
-		const { space, groups } = await fetchSpace(queriedSpace.spaceId);
-		setCodes({ groups });
+		const { space, groups, topics } = await fetchSpace(queriedSpace.spaceId);
+		setCodes({ groups, topics });
 		return { entity: space };
 	};
 	const fetchEntityList = listSpaces;
@@ -71,8 +81,11 @@ export const Spaces = () => {
 			<PropLabel>Description:</PropLabel>
 			<PropInputLines value={space.description || ''}
 			                onChange={onPropChange(space, 'description', onDataChanged)}/>
+			<PropLabel>Topics:</PropLabel>
+			<TopicPicker label='Include Topic' space={space} codes={codes} onDataChanged={onDataChanged}/>
 			<PropLabel>Groups:</PropLabel>
-			<GroupPicker label='Grant to Group' holder={space} codes={codes} onDataChanged={onDataChanged}/>
+			<GroupPicker label='Grant to Group' holder={space} codes={codes}
+			             listGroups={listUserGroupsForSpace} onDataChanged={onDataChanged}/>
 		</Fragment>;
 	};
 

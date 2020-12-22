@@ -5,7 +5,7 @@ import {
 	SomeValueType,
 	WriteTopicActionType
 } from './pipeline-types';
-import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, TopicType } from './types';
+import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, QueriedTopicForSpace, TopicType } from './types';
 
 const DemoTopics = [
 	{
@@ -334,5 +334,17 @@ export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {
 				resolve({ topicId, consume: [], produce: [] });
 			}
 		}, 1000);
+	});
+};
+
+export const listTopicsForSpace = async (search: string): Promise<Array<QueriedTopicForSpace>> => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve([
+				{ topicId: '1', name: 'Quotation' },
+				{ topicId: '2', name: 'Policy' },
+				{ topicId: '3', name: 'Participant' }
+			].filter(x => x.name.toUpperCase().includes(search.toUpperCase())));
+		}, 500);
 	});
 };

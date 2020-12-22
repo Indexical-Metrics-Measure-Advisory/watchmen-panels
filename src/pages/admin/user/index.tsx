@@ -5,7 +5,7 @@ import React, { Fragment, useState } from "react";
 import styled from 'styled-components';
 import UserBackground from '../../../assets/user-background.png';
 import { QueriedUser, QueriedUserGroupForGroupsHolder, User } from '../../../services/admin/types';
-import { fetchUser, listUsers, saveUser } from '../../../services/admin/user';
+import { fetchUser, listUserGroupsForUser, listUsers, saveUser } from '../../../services/admin/user';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { UserAvatar } from '../../component/console/user-avatar';
 import { GroupPicker } from '../component/group-picker';
@@ -85,7 +85,8 @@ export const Users = () => {
 			<PropLabel>Nick Name:</PropLabel>
 			<PropInput value={user.nickName || ''} onChange={onPropChange(user, 'nickName', onDataChanged)}/>
 			<PropLabel>Groups:</PropLabel>
-			<GroupPicker label='Join Group' holder={user} codes={codes} onDataChanged={onDataChanged}/>
+			<GroupPicker label='Join Group' holder={user} codes={codes}
+			             listGroups={listUserGroupsForUser} onDataChanged={onDataChanged}/>
 		</Fragment>;
 	};
 

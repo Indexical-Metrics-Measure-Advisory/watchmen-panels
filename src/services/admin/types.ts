@@ -130,4 +130,11 @@ export interface Space extends GroupsHolder {
 	spaceId?: string;
 	name?: string;
 	description?: string;
+	topicIds?: Array<string>;
+}
+
+export interface QueriedTopicForSpace {
+	topicId: string;
+	name: string;
+	description?: string;
 }

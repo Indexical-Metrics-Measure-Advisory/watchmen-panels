@@ -1,12 +1,11 @@
 import React from 'react';
 import { GroupsHolder, QueriedUserGroupForGroupsHolder } from '../../../services/admin/types';
-import { listUserGroupsForUser } from '../../../services/admin/user';
 import { PropItemPicker } from './prop-items-picker';
 
 const initGroupArray = (holder: GroupsHolder) => holder.groupIds = holder.groupIds || [];
-const addGroupToUser = (holder: GroupsHolder, group: QueriedUserGroupForGroupsHolder) => holder.groupIds!.push(group.userGroupId);
+const addGroupToHolder = (holder: GroupsHolder, group: QueriedUserGroupForGroupsHolder) => holder.groupIds!.push(group.userGroupId);
 // eslint-disable-next-line
-const removeGroupFromUser = (holder: GroupsHolder, group: QueriedUserGroupForGroupsHolder) => holder.groupIds = (holder.groupIds || []).filter(groupId => groupId != group.userGroupId);
+const removeGroupFromHolder = (holder: GroupsHolder, group: QueriedUserGroupForGroupsHolder) => holder.groupIds = (holder.groupIds || []).filter(groupId => groupId != group.userGroupId);
 // eslint-disable-next-line
 const isGroupSelected = (holder: GroupsHolder, group: QueriedUserGroupForGroupsHolder) => !!holder.groupIds && holder.groupIds.findIndex(groupId => groupId == group.userGroupId) !== -1;
 const addGroupToCodes = (codes: Array<QueriedUserGroupForGroupsHolder>, group: QueriedUserGroupForGroupsHolder) => {
@@ -31,22 +30,23 @@ export const GroupPicker = (props: {
 	label: string;
 	holder: GroupsHolder;
 	codes: { groups: Array<QueriedUserGroupForGroupsHolder> };
+	listGroups: (searchText: string) => Promise<Array<QueriedUserGroupForGroupsHolder>>;
 	onDataChanged: () => void;
 }) => {
-	const { label, holder, codes, onDataChanged } = props;
+	const { label, holder, codes, listGroups, onDataChanged } = props;
 
 	return <PropItemPicker label={label}
 	                       entity={holder}
 	                       codes={codes.groups}
 	                       initPropArray={initGroupArray}
-	                       addItemToProp={addGroupToUser}
-	                       removeItemFromProp={removeGroupFromUser}
+	                       addItemToProp={addGroupToHolder}
+	                       removeItemFromProp={removeGroupFromHolder}
 	                       isItemPicked={isGroupSelected}
 	                       addItemToCodes={addGroupToCodes}
 	                       removeItemFromCodes={removeGroupFromCodes}
 	                       getKeyOfItem={getGroupId}
 	                       getNameOfItem={getGroupName}
 	                       getMinorNameOfItem={getGroupDescription}
-	                       listItems={listUserGroupsForUser}
+	                       listItems={listGroups}
 	                       onDataChanged={onDataChanged}/>;
 };
