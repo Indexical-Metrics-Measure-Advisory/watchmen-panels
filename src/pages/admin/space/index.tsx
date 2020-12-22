@@ -17,7 +17,6 @@ import { GroupPicker } from '../component/group-picker';
 import { PropInput } from '../component/prop-input';
 import { PropInputLines } from '../component/prop-input-lines';
 import { PropLabel } from '../component/prop-label';
-import { ReportPicker } from '../component/report-picker';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
 import { TopicPicker } from '../component/topic-picker';
@@ -86,8 +85,6 @@ export const Spaces = () => {
 			                onChange={onPropChange(space, 'description', onDataChanged)}/>
 			<PropLabel>Topics:</PropLabel>
 			<TopicPicker label='Assign Topic' space={space} codes={codes} onDataChanged={onDataChanged}/>
-			<PropLabel>Reports:</PropLabel>
-			<ReportPicker label='Assign Report' space={space} codes={codes} onDataChanged={onDataChanged}/>
 			<PropLabel>Groups:</PropLabel>
 			<GroupPicker label='Grant to Group' holder={space} codes={codes}
 			             listGroups={listUserGroupsForSpace} onDataChanged={onDataChanged}/>

@@ -85,18 +85,15 @@ export const Reports = () => {
 			<Explanation>Guide to Create Predefined Report:</Explanation>
 			<ol>
 				<li>Create an user group, include yourself into this group,</li>
-				<li>Create a new space,</li>
+				<li>Create a new space or pick an existed one,</li>
 				<li>Grant space to user group in step (1),</li>
 				<li>Open client console and sign-in,</li>
 				<li>Find space in step (3), and connect,</li>
 				<li>Create reports in connected space, and set as predefined.</li>
 			</ol>
 			<ul>
-				<li>Unlike user-defined reports, predefined reports can be assigned to other spaces.</li>
+				<li>Unlike user-defined reports, predefined reports are shared following space assignment.</li>
 				<li>Only administrators are empowered to create predefined reports.</li>
-				<li>
-					Space contains predefined reports can be assigned to end users, they are working as same as others.
-				</li>
 			</ul>
 		</Fragment>;
 	};
