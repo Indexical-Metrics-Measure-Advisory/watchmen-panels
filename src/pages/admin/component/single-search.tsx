@@ -20,12 +20,14 @@ const Main = styled.div`
 	flex-direction: column;
 	margin-top: 30px;
 	&[data-visible=false] {
-		> div:nth-child(2), > div:nth-child(3) {
+		> div:nth-child(2),
+		> div:nth-child(3) > *:not(:nth-child(2)) {
 			opacity: 0;
 			pointer-events: none;
 		}
 	}
-	> div:nth-child(2), > div:nth-child(3) {
+	> div:nth-child(2),
+	> div:nth-child(3) > *:not(:nth-child(2)) {
 		opacity: 1;
 		pointer-events: auto;
 	}

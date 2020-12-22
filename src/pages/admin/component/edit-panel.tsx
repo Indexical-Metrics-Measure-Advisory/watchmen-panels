@@ -13,7 +13,7 @@ const EditContainer = styled.div`
 	z-index: 1;
 	transition: all 300ms ease-in-out;
 	position: absolute;
-	top: 200px;
+	top: 230px;
 	width: 100%;
 	&[data-visible=false] {
 		opacity: 0;

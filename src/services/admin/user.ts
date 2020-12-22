@@ -147,7 +147,7 @@ export const fetchUser = async (userId: string): Promise<{ user: User, groups: A
 	};
 };
 
-export const saveUser = async (user: User) => {
+export const saveUser = async (user: User): Promise<void> => {
 	return new Promise(resolve => {
 		user.userId = '10000';
 		setTimeout(() => resolve(), 500);

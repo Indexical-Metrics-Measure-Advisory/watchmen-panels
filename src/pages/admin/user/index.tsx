@@ -1,28 +1,17 @@
 import { faChartBar } from '@fortawesome/free-regular-svg-icons';
 import { faCheck, faGlobe, faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from "react";
-import styled, { keyframes } from 'styled-components';
-import UserBackground from '../../../assets/user-background.png';
-import { useForceUpdate } from '../../../common/utils';
+import React, { Fragment, useState } from "react";
+import styled from 'styled-components';
 import { QueriedUser, QueriedUserGroupForUser, User } from '../../../services/admin/types';
 import { fetchUser, listUserGroupsForUser, listUsers, saveUser } from '../../../services/admin/user';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
-import { NarrowPageTitle } from '../../component/console/narrow-page-title';
-import { PlainNarrowContainer } from '../../component/console/page-container';
 import { UserAvatar } from '../../component/console/user-avatar';
-import { EditPanel } from '../component/edit-panel';
-import { EditPanelButtons } from '../component/edit-panel-buttons';
 import { PropInput } from '../component/prop-input';
 import { PropItemsPicker } from '../component/prop-items-picker';
 import { PropLabel } from '../component/prop-label';
-import { SingleSearch, SingleSearchItemCard } from '../component/single-search';
-import { DangerObjectButton, PrimaryObjectButton } from '../pipeline/editor/components/object-button';
-
-interface EditUser {
-	user?: User;
-	groups: Array<QueriedUserGroupForUser>;
-}
+import { SearchAndEditPanel } from '../component/search-and-edit-panel';
+import { SingleSearchItemCard } from '../component/single-search';
 
 const ItemCard = styled(SingleSearchItemCard)`
 	> div:nth-child(2) {
@@ -108,124 +97,93 @@ const CandidateGroup = styled.div`
 		opacity: 0.7;
 	}
 `;
-const Saved = keyframes`
-	0% {
-		transform: scale(1);
-	}
-	5% {
-		transform: scale(1.5);
-	}
-	20%, 80% {
-		transform: scale(1);
-		opacity: 1;
-	}
-	100% {
-		transform: scale(1);
-		opacity: 0;
-	}
-`;
-const InformMessage = styled.div`
-	flex-grow: 1;
-	display: flex;
-	align-items: center;
-	font-size: 0.8em;
-	font-variant: petite-caps;
-	font-weight: var(--font-bold);
-	opacity: 0.5;
-	transition: all 300ms ease-in-out;
-	&[data-change-kind=changed] {
-		color: var(--console-success-color);
-	}
-	&[data-change-kind=saving] {
-		color: var(--console-danger-color);
-	}
-	&[data-change-kind=saved] {
-		color: var(--console-danger-color);
-		> span {
-			animation: ${Saved} 6000ms ease-in-out forwards;
-			transform-origin: left;
+
+export const Users = () => {
+	const createCodes = () => ({ groups: [] as Array<QueriedUserGroupForUser> });
+
+	const [ codes, setCodes ] = useState(createCodes());
+
+	const createEntity = (fake: boolean) => {
+		if (!fake) {
+			setCodes({ groups: [] });
 		}
-	}
-	&:empty {
-		opacity: 0;
-	}
-`;
-
-const UserPanel = (props: {
-	user?: User
-	groups: Array<QueriedUserGroupForUser>;
-	onClosed: () => void;
-}) => {
-	const { user: originUser, groups, onClosed } = props;
-	const { user = { groupIds: [] } } = props;
-
-	const [ dataChanged, setDataChanged ] = useState(false);
-	const [ dataSaving, setDataSaving ] = useState(false);
-	const [ dataSaved, setDataSaved ] = useState(false);
-	const forceUpdate = useForceUpdate();
-	useEffect(() => {
-		setDataSaved(false);
-		setDataSaving(false);
-		setDataChanged(false);
-	}, [ user ]);
-
-	const onDataChanged = () => {
-		if (dataSaved) {
-			setDataSaved(false);
-		}
-		setDataChanged(true);
-		forceUpdate();
+		return { groupIds: [] } as User;
 	};
-	const onDataSaved = () => {
-		setDataSaving(false);
-		setDataSaved(true);
-		forceUpdate();
+	const fetchEntityAndCodes = async (queriedUser: QueriedUser) => {
+		const { user, groups } = await fetchUser(queriedUser.userId);
+		setCodes({ groups });
+		return { entity: user };
 	};
-	const onPropChange = (prop: 'name' | 'nickName') => (event: React.ChangeEvent<HTMLInputElement>) => {
+	const fetchEntityList = listUsers;
+	const saveEntity = saveUser;
+	const isEntityOnCreate = (user: User) => !user.userId;
+	const renderItemInList = (entity: QueriedUser, onEdit: (entity: QueriedUser) => (() => void)) => {
+		return <ItemCard key={entity.userId} onClick={onEdit(entity)}>
+			<div>{entity.name}</div>
+			<UserAvatar name={entity.name}/>
+			<div>
+				<TooltipCarvedButton tooltip='Spaces Assigned' center={true}>
+					<FontAwesomeIcon icon={faGlobe}/>
+					<span>{entity.spaceCount}</span>
+				</TooltipCarvedButton>
+				<TooltipCarvedButton tooltip='Topics Available' center={true}>
+					<FontAwesomeIcon icon={faTags}/>
+					<span>{entity.topicCount}</span>
+				</TooltipCarvedButton>
+				<TooltipCarvedButton tooltip='Reports Created' center={true}>
+					<FontAwesomeIcon icon={faChartBar}/>
+					<span>{entity.reportCount}</span>
+				</TooltipCarvedButton>
+			</div>
+		</ItemCard>;
+	};
+	const getKeyOfEntity = (item: QueriedUser) => item.userId;
+
+	const onPropChange = (user: User, prop: 'name' | 'nickName', onDataChanged: () => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (user[prop] !== event.target.value.trim()) {
 			user[prop] = event.target.value;
 			onDataChanged();
 		}
 	};
-	const onGroupRemove = (group: QueriedUserGroupForUser) => {
+	const onGroupAdd = (user: User, group: QueriedUserGroupForUser, onDataChanged: () => void) => {
+		if (!user.groupIds) {
+			user.groupIds = [];
+		}
+		user.groupIds.push(group.userGroupId);
+		// eslint-disable-next-line
+		const exists = codes.groups.findIndex(exists => exists.userGroupId == group.userGroupId) !== -1;
+		if (!exists) {
+			codes.groups.push(group);
+		}
+		onDataChanged();
+	};
+	const onGroupRemove = (user: User, group: QueriedUserGroupForUser, onDataChanged: () => void) => {
 		if (!user.groupIds) {
 			return;
 		}
 		// eslint-disable-next-line
 		user.groupIds = user.groupIds.filter(groupId => groupId != group.userGroupId);
 		// eslint-disable-next-line
-		const index = groups.findIndex(exists => exists.userGroupId == group.userGroupId);
+		const index = codes.groups.findIndex(exists => exists.userGroupId == group.userGroupId);
 		if (index !== -1) {
-			groups.splice(index, 1);
+			codes.groups.splice(index, 1);
 		}
 		onDataChanged();
 	};
-	const renderSelectedGroup = (group: QueriedUserGroupForUser) => {
+	const renderSelectedGroup = (user: User, onDataChanged: () => void) => (group: QueriedUserGroupForUser) => {
 		return <SelectedGroup>
 			<span>{group.name}</span>
-			<div onClick={() => onGroupRemove(group)}><FontAwesomeIcon icon={faTimes}/></div>
+			<div onClick={() => onGroupRemove(user, group, onDataChanged)}><FontAwesomeIcon icon={faTimes}/></div>
 		</SelectedGroup>;
 	};
-	const onGroupAdd = (group: QueriedUserGroupForUser) => {
-		if (!user.groupIds) {
-			user.groupIds = [];
-		}
-		user.groupIds.push(group.userGroupId);
+	const renderCandidateGroup = (user: User, onDataChanged: () => void) => (group: QueriedUserGroupForUser) => {
 		// eslint-disable-next-line
-		const exists = groups.findIndex(exists => exists.userGroupId == group.userGroupId) !== -1;
-		if (!exists) {
-			groups.push(group);
-		}
-		onDataChanged();
-	};
-	const renderCandidateGroup = (group: QueriedUserGroupForUser) => {
-		// eslint-disable-next-line
-		const checked = groups.findIndex(exists => exists.userGroupId == group.userGroupId) !== -1;
+		const checked = codes.groups.findIndex(exists => exists.userGroupId == group.userGroupId) !== -1;
 		const onClicked = () => {
 			if (checked) {
-				onGroupRemove(group);
+				onGroupRemove(user, group, onDataChanged);
 			} else {
-				onGroupAdd(group);
+				onGroupAdd(user, group, onDataChanged);
 			}
 		};
 		return <CandidateGroup onClick={onClicked}>
@@ -234,95 +192,41 @@ const UserPanel = (props: {
 			<span>{group.description}</span>
 		</CandidateGroup>;
 	};
-	const getKeyOfGroup = (group: QueriedUserGroupForUser) => group.userGroupId;
 	const sortGroup = (groups: Array<QueriedUserGroupForUser>) => {
 		groups.sort((g1, g2) => g1.name.toUpperCase().localeCompare(g2.name.toUpperCase()));
 	};
-	const fetchItems = async (searchText: string): Promise<Array<QueriedUserGroupForUser>> => {
+	const fetchGroupsBySearch = async (searchText: string): Promise<Array<QueriedUserGroupForUser>> => {
 		const groups = await listUserGroupsForUser(searchText);
 		sortGroup(groups);
 		return groups;
 	};
-	const onConfirmClicked = async () => {
-		setDataSaving(true);
-		setDataChanged(false);
-		await saveUser(user);
-		onDataSaved();
+	const getKeyOfGroup = (group: QueriedUserGroupForUser) => group.userGroupId;
+	const renderEditContent = (user: User, onDataChanged: () => void) => {
+		return <Fragment>
+			<PropLabel>User Name:</PropLabel>
+			<PropInput value={user.name || ''} onChange={onPropChange(user, 'name', onDataChanged)}/>
+			<PropLabel>Nick Name:</PropLabel>
+			<PropInput value={user.nickName || ''} onChange={onPropChange(user, 'nickName', onDataChanged)}/>
+			<PropLabel>Group:</PropLabel>
+			<PropItemsPicker label='Add Group'
+			                 selectedItems={codes.groups}
+			                 renderSelectedItem={renderSelectedGroup(user, onDataChanged)}
+			                 renderCandidateItem={renderCandidateGroup(user, onDataChanged)}
+			                 getKeyOfItem={getKeyOfGroup}
+			                 fetchItems={fetchGroupsBySearch}/>
+		</Fragment>;
 	};
-	const onCloseClicked = () => onClosed();
 
-	const visible = !!originUser;
-	const onEditing = !!user.userId;
-	sortGroup(groups);
-	const kind = dataSaved ? 'saved' : (dataSaving ? 'saving' : (dataChanged ? 'changed' : ''));
-	const message = dataSaved ? 'Data Saved.' : (dataSaving ? 'Data Saving...' : (dataChanged ? 'Data Changed.' : ''));
-
-	return <EditPanel title={onEditing ? 'An Exists User' : 'A New User'} background={UserBackground} visible={visible}>
-		<PropLabel>User Name:</PropLabel>
-		<PropInput value={user.name || ''} onChange={onPropChange('name')}/>
-		<PropLabel>Nick Name:</PropLabel>
-		<PropInput value={user.nickName || ''} onChange={onPropChange('nickName')}/>
-		<PropLabel>Group:</PropLabel>
-		<PropItemsPicker label='Add Group'
-		                 selectedItems={groups}
-		                 renderSelectedItem={renderSelectedGroup}
-		                 renderCandidateItem={renderCandidateGroup}
-		                 getKeyOfItem={getKeyOfGroup}
-		                 fetchItems={fetchItems}/>
-		<EditPanelButtons>
-			<InformMessage data-change-kind={kind}><span>{message}</span></InformMessage>
-			<PrimaryObjectButton onClick={onConfirmClicked}>
-				<span>Confirm</span>
-			</PrimaryObjectButton>
-			<DangerObjectButton onClick={onCloseClicked}>
-				<span>Close</span>
-			</DangerObjectButton>
-		</EditPanelButtons>
-	</EditPanel>;
-};
-
-export const Users = () => {
-	const [ editUser, setEditUser ] = useState<EditUser>({ groups: [] });
-
-	const onSearched = () => setEditUser({ groups: [] });
-	const onCreate = () => setEditUser({ user: {}, groups: [] });
-	const onEdit = (queriedUser: QueriedUser) => async () => {
-		const { user, groups } = await fetchUser(queriedUser.userId);
-		setEditUser({ user, groups });
-	};
-	const onCreateOrEditDiscarded = () => setEditUser({ groups: [] });
-
-	const renderItem = (item: QueriedUser) => {
-		return <ItemCard key={item.userId} onClick={onEdit(item)}>
-			<div>{item.name}</div>
-			<UserAvatar name={item.name}/>
-			<div>
-				<TooltipCarvedButton tooltip='Spaces Assigned' center={true}>
-					<FontAwesomeIcon icon={faGlobe}/>
-					<span>{item.spaceCount}</span>
-				</TooltipCarvedButton>
-				<TooltipCarvedButton tooltip='Topics Available' center={true}>
-					<FontAwesomeIcon icon={faTags}/>
-					<span>{item.topicCount}</span>
-				</TooltipCarvedButton>
-				<TooltipCarvedButton tooltip='Reports Created' center={true}>
-					<FontAwesomeIcon icon={faChartBar}/>
-					<span>{item.reportCount}</span>
-				</TooltipCarvedButton>
-			</div>
-		</ItemCard>;
-	};
-	const getKeyOfItem = (item: QueriedUser) => item.userId;
-
-	return <PlainNarrowContainer>
-		<NarrowPageTitle title='Users'/>
-		<SingleSearch searchPlaceholder='Search by user name, group name, etc.'
-		              createButtonLabel='Create User'
-		              onCreate={onCreate}
-		              onSearched={onSearched}
-		              listData={listUsers}
-		              renderItem={renderItem} getKeyOfItem={getKeyOfItem}
-		              visible={!editUser.user}/>
-		<UserPanel {...editUser} onClosed={onCreateOrEditDiscarded}/>
-	</PlainNarrowContainer>;
+	return <SearchAndEditPanel title='Users'
+	                           searchPlaceholder='Search by user name, group name, etc.'
+	                           createButtonLabel='Create User'
+	                           entityLabel='User'
+	                           createEntity={createEntity}
+	                           fetchEntityAndCodes={fetchEntityAndCodes}
+	                           fetchEntityList={fetchEntityList}
+	                           saveEntity={saveEntity}
+	                           isEntityOnCreate={isEntityOnCreate}
+	                           renderEntityInList={renderItemInList}
+	                           getKeyOfEntity={getKeyOfEntity}
+	                           renderEditContent={renderEditContent}/>;
 };
