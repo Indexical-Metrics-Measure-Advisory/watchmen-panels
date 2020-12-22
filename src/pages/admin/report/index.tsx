@@ -1,40 +1,116 @@
 import { faGlobe, faTags, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from "react";
+import React, { Fragment, useState } from "react";
+import styled from 'styled-components';
+import ReportBackground from '../../../assets/report-background.png';
 import { listReports } from '../../../services/admin/report';
-import { QueriedReport } from '../../../services/admin/types';
+import { QueriedReport, Report } from '../../../services/admin/types';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
-import { NarrowPageTitle } from '../../component/console/narrow-page-title';
-import { PlainNarrowContainer } from '../../component/console/page-container';
-import { SingleSearch, SingleSearchItemCard } from '../component/single-search';
+import { SearchAndEditPanel } from '../component/search-and-edit-panel';
+import { SingleSearchItemCard } from '../component/single-search';
+
+const Explanation = styled.div`
+	grid-column: span 2;
+	font-variant: petite-caps;
+	font-weight: var(--font-demi-bold);
+	font-size: 1.2em;
+	+ ol {
+		grid-column: span 2;
+		counter-reset: item;
+		> li {
+			list-style: none;
+			line-height: 2em;
+			font-size: 0.9em;
+			&:before {
+				display: inline-block;
+				content: counters(item, ".") ". ";
+				counter-increment: item;
+				width: 20px;
+			}
+		}
+	}
+	+ ol + ul {
+		grid-column: span 2;
+		font-size: 0.9em;
+		line-height: 1.6em;
+		margin-top: 10px;
+		> li {
+			list-style: none;
+			font-weight: var(--font-demi-bold);
+		}
+	}
+`;
 
 export const Reports = () => {
-	const renderItem = (item: QueriedReport) => {
-		return <SingleSearchItemCard key={item.reportId}>
-			<div>{item.name}</div>
-			<div>{item.description}</div>
+	const createCodes = () => ({});
+
+	const [ , setCodes ] = useState(createCodes());
+
+	const createEntity = (fake: boolean) => {
+		if (!fake) {
+			setCodes({});
+		}
+		return {} as Report;
+	};
+	const fetchEntityAndCodes = async () => {
+		// no report created here, report should be create in connected space
+		return { entity: {} as Report };
+	};
+	const fetchEntityList = listReports;
+	const isEntityOnCreate = (report: Report) => !report.reportId;
+	const renderItemInList = (report: QueriedReport, onEdit: (report: QueriedReport) => (() => void)) => {
+		return <SingleSearchItemCard key={report.reportId} onClick={onEdit(report)}>
+			<div>{report.name}</div>
+			<div>{report.description}</div>
 			<div>
 				<TooltipCarvedButton tooltip='Topics Count' center={true}>
 					<FontAwesomeIcon icon={faTags}/>
-					<span>{item.topicCount}</span>
+					<span>{report.topicCount}</span>
 				</TooltipCarvedButton>
 				<TooltipCarvedButton tooltip='In User Groups' center={true}>
 					<FontAwesomeIcon icon={faUsers}/>
-					<span>{item.groupCount}</span>
+					<span>{report.groupCount}</span>
 				</TooltipCarvedButton>
 				<TooltipCarvedButton tooltip='In Spaces' center={true}>
 					<FontAwesomeIcon icon={faGlobe}/>
-					<span>{item.spaceCount}</span>
+					<span>{report.spaceCount}</span>
 				</TooltipCarvedButton>
 			</div>
 		</SingleSearchItemCard>;
 	};
-	const getKeyOfItem = (item: QueriedReport) => item.reportId;
+	const getKeyOfEntity = (item: QueriedReport) => item.reportId;
 
-	return <PlainNarrowContainer>
-		<NarrowPageTitle title='Reports'/>
-		<SingleSearch searchPlaceholder='Search by report name, topic name, description, etc.'
-		              listData={listReports}
-		              renderItem={renderItem} getKeyOfItem={getKeyOfItem}/>
-	</PlainNarrowContainer>;
+	const renderEditContent = () => {
+		return <Fragment>
+			<Explanation>Guide to Create Predefined Report:</Explanation>
+			<ol>
+				<li>Create an user group, include yourself into this group,</li>
+				<li>Create a new space,</li>
+				<li>Grant space to user group in step (1),</li>
+				<li>Open client console and sign-in,</li>
+				<li>Find space in step (3), and connect,</li>
+				<li>Create reports in connected space, and set as predefined.</li>
+			</ol>
+			<ul>
+				<li>Unlike user-defined reports, predefined reports can be assigned to other spaces.</li>
+				<li>Only administrators are empowered to create predefined reports.</li>
+				<li>
+					Space contains predefined reports can be assigned to end users, they are working as same as others.
+				</li>
+			</ul>
+		</Fragment>;
+	};
+
+	return <SearchAndEditPanel title='Reports'
+	                           searchPlaceholder='Search by report name, topic name, description, etc.'
+	                           createButtonLabel='Create Report'
+	                           entityLabel='Report'
+	                           entityImage={ReportBackground}
+	                           createEntity={createEntity}
+	                           fetchEntityAndCodes={fetchEntityAndCodes}
+	                           fetchEntityList={fetchEntityList}
+	                           isEntityOnCreate={isEntityOnCreate}
+	                           renderEntityInList={renderItemInList}
+	                           getKeyOfEntity={getKeyOfEntity}
+	                           renderEditContent={renderEditContent}/>;
 };

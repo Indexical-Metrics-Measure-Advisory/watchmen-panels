@@ -58,7 +58,7 @@ const Editor = <Entity extends object>(props: {
 	entityImage: string;
 	entity?: Entity
 	createEntity: (fake: boolean) => Entity;
-	saveEntity: (entity: Entity) => Promise<void>;
+	saveEntity?: (entity: Entity) => Promise<void>;
 	isEntityOnCreate: (entity: Entity) => boolean;
 	renderEditContent: (entity: Entity, onDataChanged: () => void) => React.ReactNode;
 	onClosed: () => void;
@@ -99,6 +99,10 @@ const Editor = <Entity extends object>(props: {
 		forceUpdate();
 	};
 	const onConfirmClicked = async () => {
+		if (!saveEntity) {
+			return;
+		}
+
 		setDataSaving(true);
 		setDataChanged(false);
 		await saveEntity(entity);
@@ -116,9 +120,9 @@ const Editor = <Entity extends object>(props: {
 		{renderEditContent(entity, onDataChanged)}
 		<EditPanelButtons>
 			<InformMessage data-change-kind={kind}><span>{message}</span></InformMessage>
-			<PrimaryObjectButton onClick={onConfirmClicked}>
+			{saveEntity ? <PrimaryObjectButton onClick={onConfirmClicked}>
 				<span>Confirm</span>
-			</PrimaryObjectButton>
+			</PrimaryObjectButton> : null}
 			<DangerObjectButton onClick={onCloseClicked}>
 				<span>Close</span>
 			</DangerObjectButton>
@@ -135,7 +139,7 @@ export const SearchAndEditPanel = <Entity extends object, QueriedEntity extends 
 	createEntity: (fake: boolean) => Entity;
 	fetchEntityAndCodes: (queriedEntity: QueriedEntity) => Promise<{ entity: Entity }>;
 	fetchEntityList: (options: { search: string; pageNumber?: number; pageSize?: number }) => Promise<DataPage<QueriedEntity>>;
-	saveEntity: (entity: Entity) => Promise<void>;
+	saveEntity?: (entity: Entity) => Promise<void>;
 	isEntityOnCreate: (entity: Entity) => boolean;
 	renderEntityInList: (entity: QueriedEntity, onEdit: (entity: QueriedEntity) => (() => void)) => React.ReactNode;
 	getKeyOfEntity: (entity: QueriedEntity) => string;

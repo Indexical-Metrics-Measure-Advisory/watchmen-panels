@@ -7,7 +7,6 @@ import {
 	QueriedSpaceForUserGroup,
 	QueriedUserForUserGroup,
 	QueriedUserGroup,
-	User,
 	UserGroup
 } from '../../../services/admin/types';
 import { fetchUserGroup, listUserGroups, saveUserGroup } from '../../../services/admin/user';
@@ -34,7 +33,7 @@ export const UserGroups = () => {
 		if (!fake) {
 			setCodes({ users: [], spaces: [] });
 		}
-		return { groupIds: [] } as User;
+		return { userIds: [], spaceIds: [] } as UserGroup;
 	};
 	const fetchEntityAndCodes = async (queriedGroup: QueriedUserGroup) => {
 		const { group, users, spaces } = await fetchUserGroup(queriedGroup.userGroupId);

@@ -145,3 +145,9 @@ export interface QueriedReportForSpace {
 	name: string;
 	description?: string;
 }
+
+export interface Report {
+	reportId: string;
+	name: string;
+	description?: string;
+}
