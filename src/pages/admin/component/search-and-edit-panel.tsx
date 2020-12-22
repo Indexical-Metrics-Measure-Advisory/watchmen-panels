@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import UserBackground from '../../../assets/user-background.png';
+
 import { useForceUpdate } from '../../../common/utils';
 import { DataPage } from '../../../services/admin/types';
 import { NarrowPageTitle } from '../../component/console/narrow-page-title';
@@ -55,6 +55,7 @@ const InformMessage = styled.div`
 
 const Editor = <Entity extends object>(props: {
 	entityLabel: string;
+	entityImage: string;
 	entity?: Entity
 	createEntity: (fake: boolean) => Entity;
 	saveEntity: (entity: Entity) => Promise<void>;
@@ -63,7 +64,7 @@ const Editor = <Entity extends object>(props: {
 	onClosed: () => void;
 }) => {
 	const {
-		entityLabel,
+		entityLabel, entityImage,
 		entity: originEntity,
 		createEntity, saveEntity, isEntityOnCreate,
 		onClosed,
@@ -111,7 +112,7 @@ const Editor = <Entity extends object>(props: {
 	const kind = dataSaved ? 'saved' : (dataSaving ? 'saving' : (dataChanged ? 'changed' : ''));
 	const message = dataSaved ? 'Data Saved.' : (dataSaving ? 'Data Saving...' : (dataChanged ? 'Data Changed.' : ''));
 
-	return <EditPanel title={title} background={UserBackground} visible={visible}>
+	return <EditPanel title={title} background={entityImage} visible={visible}>
 		{renderEditContent(entity, onDataChanged)}
 		<EditPanelButtons>
 			<InformMessage data-change-kind={kind}><span>{message}</span></InformMessage>
@@ -130,6 +131,7 @@ export const SearchAndEditPanel = <Entity extends object, QueriedEntity extends 
 	searchPlaceholder?: string;
 	createButtonLabel?: string;
 	entityLabel: string;
+	entityImage: string;
 	createEntity: (fake: boolean) => Entity;
 	fetchEntityAndCodes: (queriedEntity: QueriedEntity) => Promise<{ entity: Entity }>;
 	fetchEntityList: (options: { search: string; pageNumber?: number; pageSize?: number }) => Promise<DataPage<QueriedEntity>>;
@@ -140,7 +142,7 @@ export const SearchAndEditPanel = <Entity extends object, QueriedEntity extends 
 	renderEditContent: (entity: Entity, onDataChanged: () => void) => React.ReactNode;
 }) => {
 	const {
-		title, searchPlaceholder, createButtonLabel, entityLabel,
+		title, searchPlaceholder, createButtonLabel, entityLabel, entityImage,
 		createEntity,
 		fetchEntityAndCodes, fetchEntityList,
 		saveEntity, isEntityOnCreate,
@@ -170,6 +172,7 @@ export const SearchAndEditPanel = <Entity extends object, QueriedEntity extends 
 		              renderItem={renderItem} getKeyOfItem={getKeyOfEntity}
 		              visible={!editEntity.entity}/>
 		<Editor entityLabel={entityLabel}
+		        entityImage={entityImage}
 		        entity={editEntity.entity}
 		        createEntity={createEntity}
 		        saveEntity={saveEntity}

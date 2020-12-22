@@ -1,4 +1,4 @@
-import { faBan, faPlus, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faCheck, faPlus, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useRef, useState } from "react";
 import styled, { keyframes } from 'styled-components';
@@ -29,6 +29,48 @@ const Items = styled.div`
 		margin: 2px 0 2px calc(var(--margin) / 3);
 	}
 `;
+export const SelectedItemInItemPicker = styled.div`
+	display: flex;
+	align-items: center;
+	height: 24px;
+	padding-left: calc(var(--margin) / 2);
+	color: var(--invert-color);
+	font-size: 0.8em;
+	background-color: var(--console-primary-color);
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 300ms ease-in-out;
+	&:hover {
+		box-shadow: var(--console-primary-hover-shadow);
+	}
+	> span {
+		position: relative;
+		padding-right: calc(var(--margin) / 4);
+		cursor: default;
+	}
+	> div {
+		display: flex;
+		position: relative;
+		align-items: center;
+		height: 24px;
+		padding: 0 calc(var(--margin) / 3) 0 calc(var(--margin) / 4);
+		border-top-right-radius: 12px;
+		border-bottom-right-radius: 12px;
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 25%;
+			left: 0;
+			width: 1px;
+			height: 50%;
+			background-color: var(--invert-color);
+			opacity: 0.7;
+		}
+		> svg {
+		}
+	}
+`;
 const ItemFinder = styled.div`
 	display: flex;
 	position: relative;
@@ -41,6 +83,7 @@ const ItemFinder = styled.div`
 		}
 		> button {
 			margin-right: 4px;
+			width: 80px;
 			right: 0;
 			border-radius: var(--border-radius);
 		}
@@ -55,8 +98,8 @@ const ItemFinder = styled.div`
 		position: absolute;
 		margin: 8px 0;
 		align-self: start;
-		min-width: 80px;
-		right: calc(100% - 110px);
+		width: 120px;
+		right: calc(100% - 120px);
 		border-radius: 12px;
 	}
 `;
@@ -116,8 +159,34 @@ const Dropdown = styled.div.attrs<DropdownState>(({ visible, top, bottom, left, 
 		}
 	}
 `;
+export const CandidateItemInItemPicker = styled.div`
+	display: flex;
+	align-items: center;
+	min-height: 32px;
+	height: 32px;
+	cursor: pointer;
+	&:hover {
+		color: var(--invert-color);
+		background-color: var(--console-primary-color);
+	}
+	> div:first-child {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		&[data-visible=false] {
+			opacity: 0;
+		}
+	}
+	> span:nth-child(3) {
+		margin-left: calc(var(--margin) / 4);
+		transform: scale(0.8);
+		transform-origin: left bottom;
+		opacity: 0.7;
+	}
+`;
 
-export const PropItemsPicker = <T extends any>(props: {
+const ItemPicker = <T extends any>(props: {
 	label: string;
 	selectedItems: Array<T>;
 	renderSelectedItem: (item: T) => React.ReactNode;
@@ -228,4 +297,81 @@ export const PropItemsPicker = <T extends any>(props: {
 			})}
 		</Items>
 	</PropItemsPickerContainer>;
+};
+
+export const PropItemPicker = <Entity extends object, Item extends any>(props: {
+	label: string;
+	entity: Entity;
+	codes: Array<Item>;
+	initPropArray: (entity: Entity) => void;
+	addItemToProp: (entity: Entity, item: Item) => void;
+	removeItemFromProp: (entity: Entity, item: Item) => void;
+	isItemPicked: (entity: Entity, item: Item) => boolean;
+	addItemToCodes: (codes: Array<Item>, item: Item) => void;
+	removeItemFromCodes: (codes: Array<Item>, item: Item) => void;
+	getKeyOfItem: (item: Item) => string;
+	getNameOfItem: (item: Item) => string;
+	getMinorNameOfItem: (item: Item) => string | undefined | null;
+	listItems: (searchText: string) => Promise<Array<Item>>;
+	onDataChanged: () => void;
+}) => {
+	const {
+		label,
+		entity, codes,
+		initPropArray,
+		addItemToProp, removeItemFromProp, isItemPicked, addItemToCodes, removeItemFromCodes,
+		getKeyOfItem, getNameOfItem, getMinorNameOfItem, listItems,
+		onDataChanged
+	} = props;
+
+	const onSpaceAdd = (entity: Entity, item: Item, onDataChanged: () => void) => {
+		initPropArray(entity);
+		addItemToProp(entity, item);
+		addItemToCodes(codes, item);
+		onDataChanged();
+	};
+	const onSpaceRemove = (entity: Entity, item: Item, onDataChanged: () => void) => {
+		removeItemFromProp(entity, item);
+		removeItemFromCodes(codes, item);
+		onDataChanged();
+	};
+	const renderSelectedItem = (entity: Entity, onDataChanged: () => void) => (item: Item) => {
+		return <SelectedItemInItemPicker>
+			<span>{getNameOfItem(item)}</span>
+			<div onClick={() => onSpaceRemove(entity, item, onDataChanged)}>
+				<FontAwesomeIcon icon={faTimes}/>
+			</div>
+		</SelectedItemInItemPicker>;
+	};
+	const renderCandidateItem = (entity: Entity, onDataChanged: () => void) => (item: Item) => {
+		// eslint-disable-next-line
+		const checked = isItemPicked(entity, item);
+		const onClicked = () => {
+			if (checked) {
+				onSpaceRemove(entity, item, onDataChanged);
+			} else {
+				onSpaceAdd(entity, item, onDataChanged);
+			}
+		};
+		return <CandidateItemInItemPicker onClick={onClicked}>
+			<div data-visible={checked}><FontAwesomeIcon icon={faCheck}/></div>
+			<span>{getNameOfItem(item)}</span>
+			<span>{getMinorNameOfItem(item)}</span>
+		</CandidateItemInItemPicker>;
+	};
+	const sortItem = (items: Array<Item>) => {
+		items.sort((g1, g2) => getNameOfItem(g1).toUpperCase().localeCompare(getNameOfItem(g2).toUpperCase()));
+	};
+	const fetchSpacesBySearch = async (searchText: string): Promise<Array<Item>> => {
+		const items = await listItems(searchText);
+		sortItem(items);
+		return items;
+	};
+
+	return <ItemPicker label={label}
+	                   selectedItems={codes}
+	                   renderSelectedItem={renderSelectedItem(entity, onDataChanged)}
+	                   renderCandidateItem={renderCandidateItem(entity, onDataChanged)}
+	                   getKeyOfItem={getKeyOfItem}
+	                   fetchItems={fetchSpacesBySearch}/>;
 };

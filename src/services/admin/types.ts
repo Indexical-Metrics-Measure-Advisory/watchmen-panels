@@ -102,3 +102,23 @@ export interface QueriedUserGroupForUser {
 	name: string;
 	description?: string;
 }
+
+export interface UserGroup {
+	userGroupId?: string;
+	name?: string;
+	description?: string;
+	userIds?: Array<string>;
+	spaceIds?: Array<string>;
+}
+
+export interface QueriedUserForUserGroup {
+	userId: string;
+	name: string;
+	nickName?: string;
+}
+
+export interface QueriedSpaceForUserGroup {
+	spaceId: string;
+	name: string;
+	description?: string;
+}

@@ -1,4 +1,4 @@
-import { DataPage, QueriedSpace } from './types';
+import { DataPage, QueriedSpace, QueriedSpaceForUserGroup } from './types';
 
 export const listSpaces = async (options: {
 	search: string;
@@ -27,5 +27,15 @@ export const listSpaces = async (options: {
 				pageCount: 1
 			});
 		}, 1000);
+	});
+};
+
+export const listSpacesForUserGroup = async (search: string): Promise<Array<QueriedSpaceForUserGroup>> => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve([
+				{ spaceId: '1', name: 'Quotation & Policy', description: 'All Sales Data' }
+			].filter(x => x.name.toUpperCase().includes(search.toUpperCase())));
+		}, 500);
 	});
 };
