@@ -18,7 +18,7 @@ interface DropdownState {
 const PropItemsPickerContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	min-height: 80px;
+	min-height: 40px;
 `;
 const Items = styled.div`
 	padding: 6px 0;

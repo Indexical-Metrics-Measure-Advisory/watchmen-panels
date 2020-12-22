@@ -71,7 +71,7 @@ export const Spaces = () => {
 			<PropLabel>Description:</PropLabel>
 			<PropInputLines value={space.description || ''}
 			                onChange={onPropChange(space, 'description', onDataChanged)}/>
-			<PropLabel>Group:</PropLabel>
+			<PropLabel>Groups:</PropLabel>
 			<GroupPicker label='Grant to Group' holder={space} codes={codes} onDataChanged={onDataChanged}/>
 		</Fragment>;
 	};

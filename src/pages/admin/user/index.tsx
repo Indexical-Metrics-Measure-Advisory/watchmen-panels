@@ -84,7 +84,7 @@ export const Users = () => {
 			<PropInput value={user.name || ''} onChange={onPropChange(user, 'name', onDataChanged)}/>
 			<PropLabel>Nick Name:</PropLabel>
 			<PropInput value={user.nickName || ''} onChange={onPropChange(user, 'nickName', onDataChanged)}/>
-			<PropLabel>Group:</PropLabel>
+			<PropLabel>Groups:</PropLabel>
 			<GroupPicker label='Join Group' holder={user} codes={codes} onDataChanged={onDataChanged}/>
 		</Fragment>;
 	};
