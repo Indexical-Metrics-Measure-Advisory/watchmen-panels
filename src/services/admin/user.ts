@@ -4,7 +4,7 @@ import {
 	QueriedUser,
 	QueriedUserForUserGroup,
 	QueriedUserGroup,
-	QueriedUserGroupForUser,
+	QueriedUserGroupForGroupsHolder,
 	User,
 	UserGroup
 } from './types';
@@ -95,7 +95,7 @@ export const listUsers = async (options: {
 	});
 };
 
-export const listUserGroupsForUser = async (search: string): Promise<Array<QueriedUserGroupForUser>> => {
+export const listUserGroupsForUser = async (search: string): Promise<Array<QueriedUserGroupForGroupsHolder>> => {
 	return new Promise(resolve => {
 		setTimeout(() => {
 			resolve([
@@ -110,7 +110,7 @@ export const listUserGroupsForUser = async (search: string): Promise<Array<Queri
 	});
 };
 
-export const fetchUser = async (userId: string): Promise<{ user: User, groups: Array<QueriedUserGroupForUser> }> => {
+export const fetchUser = async (userId: string): Promise<{ user: User, groups: Array<QueriedUserGroupForGroupsHolder> }> => {
 	let user;
 	switch (userId) {
 		case '1':

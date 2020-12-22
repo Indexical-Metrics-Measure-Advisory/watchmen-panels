@@ -77,7 +77,7 @@ export const SpacePicker = (props: {
 }) => {
 	const { group, codes, onDataChanged } = props;
 
-	return <PropItemPicker label='Add Space'
+	return <PropItemPicker label='Assign Space'
 	                       entity={group}
 	                       codes={codes.spaces}
 	                       initPropArray={initSpaceArray}
@@ -100,7 +100,7 @@ export const UserPicker = (props: {
 }) => {
 	const { group, codes, onDataChanged } = props;
 
-	return <PropItemPicker label='Add User'
+	return <PropItemPicker label='Include User'
 	                       entity={group}
 	                       codes={codes.users}
 	                       initPropArray={initUserArray}

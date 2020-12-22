@@ -90,14 +90,17 @@ export interface QueriedTopicForPipeline {
 	factors: Array<QueriedFactorForPipeline>;
 }
 
-export interface User {
-	userId?: string;
-	name?: string;
-	nickName?: string;
+export interface GroupsHolder {
 	groupIds?: Array<string>
 }
 
-export interface QueriedUserGroupForUser {
+export interface User extends GroupsHolder {
+	userId?: string;
+	name?: string;
+	nickName?: string;
+}
+
+export interface QueriedUserGroupForGroupsHolder {
 	userGroupId: string;
 	name: string;
 	description?: string;
@@ -120,5 +123,11 @@ export interface QueriedUserForUserGroup {
 export interface QueriedSpaceForUserGroup {
 	spaceId: string;
 	name: string;
+	description?: string;
+}
+
+export interface Space extends GroupsHolder {
+	spaceId?: string;
+	name?: string;
 	description?: string;
 }

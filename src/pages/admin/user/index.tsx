@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from "react";
 import styled from 'styled-components';
 import UserBackground from '../../../assets/user-background.png';
-import { QueriedUser, QueriedUserGroupForUser, User } from '../../../services/admin/types';
-import { fetchUser, listUserGroupsForUser, listUsers, saveUser } from '../../../services/admin/user';
+import { QueriedUser, QueriedUserGroupForGroupsHolder, User } from '../../../services/admin/types';
+import { fetchUser, listUsers, saveUser } from '../../../services/admin/user';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { UserAvatar } from '../../component/console/user-avatar';
+import { GroupPicker } from '../component/group-picker';
 import { PropInput } from '../component/prop-input';
-import { PropItemPicker } from '../component/prop-items-picker';
 import { PropLabel } from '../component/prop-label';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
@@ -31,56 +31,8 @@ const ItemCard = styled(SingleSearchItemCard)`
 	}
 `;
 
-// group related
-const initGroupArray = (user: User) => user.groupIds = user.groupIds || [];
-const addGroupToUser = (user: User, group: QueriedUserGroupForUser) => user.groupIds!.push(group.userGroupId);
-// eslint-disable-next-line
-const removeGroupFromUser = (user: User, group: QueriedUserGroupForUser) => user.groupIds = (user.groupIds || []).filter(groupId => groupId != group.userGroupId);
-// eslint-disable-next-line
-const isGroupSelected = (user: User, group: QueriedUserGroupForUser) => !!user.groupIds && user.groupIds.findIndex(groupId => groupId == group.userGroupId) !== -1;
-const addGroupToCodes = (codes: Array<QueriedUserGroupForUser>, group: QueriedUserGroupForUser) => {
-	// eslint-disable-next-line
-	const exists = codes.findIndex(exists => exists.userGroupId == group.userGroupId) !== -1;
-	if (!exists) {
-		codes.push(group);
-	}
-};
-const removeGroupFromCodes = (codes: Array<QueriedUserGroupForUser>, group: QueriedUserGroupForUser) => {
-	// eslint-disable-next-line
-	const index = codes.findIndex(exists => exists.userGroupId == group.userGroupId);
-	if (index !== -1) {
-		codes.splice(index, 1);
-	}
-};
-const getGroupId = (group: QueriedUserGroupForUser) => group.userGroupId;
-const getGroupName = (group: QueriedUserGroupForUser) => group.name;
-const getGroupDescription = (group: QueriedUserGroupForUser) => group.description;
-
-const GroupPicker = (props: {
-	user: User;
-	codes: { groups: Array<QueriedUserGroupForUser> };
-	onDataChanged: () => void;
-}) => {
-	const { user, codes, onDataChanged } = props;
-
-	return <PropItemPicker label='Add Space'
-	                       entity={user}
-	                       codes={codes.groups}
-	                       initPropArray={initGroupArray}
-	                       addItemToProp={addGroupToUser}
-	                       removeItemFromProp={removeGroupFromUser}
-	                       isItemPicked={isGroupSelected}
-	                       addItemToCodes={addGroupToCodes}
-	                       removeItemFromCodes={removeGroupFromCodes}
-	                       getKeyOfItem={getGroupId}
-	                       getNameOfItem={getGroupName}
-	                       getMinorNameOfItem={getGroupDescription}
-	                       listItems={listUserGroupsForUser}
-	                       onDataChanged={onDataChanged}/>;
-};
-
 export const Users = () => {
-	const createCodes = () => ({ groups: [] as Array<QueriedUserGroupForUser> });
+	const createCodes = () => ({ groups: [] as Array<QueriedUserGroupForGroupsHolder> });
 
 	const [ codes, setCodes ] = useState(createCodes());
 
@@ -133,7 +85,7 @@ export const Users = () => {
 			<PropLabel>Nick Name:</PropLabel>
 			<PropInput value={user.nickName || ''} onChange={onPropChange(user, 'nickName', onDataChanged)}/>
 			<PropLabel>Group:</PropLabel>
-			<GroupPicker user={user} codes={codes} onDataChanged={onDataChanged}/>
+			<GroupPicker label='Join Group' holder={user} codes={codes} onDataChanged={onDataChanged}/>
 		</Fragment>;
 	};
 

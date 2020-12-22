@@ -75,31 +75,33 @@ const ItemFinder = styled.div`
 	display: flex;
 	position: relative;
 	align-items: center;
-	height: 40px;
+	height: 32px;
+	margin: 4px 0;
+	border: var(--border);
+	border-color: transparent;
+	border-radius: var(--border-radius);
 	&[data-in-search=true] {
+		border-color: var(--border-color);
 		> input {
-			width: 100%;
-			border-color: var(--border-color);
+			flex-grow: 1;
+			padding-left: var(--input-indent);
+			margin-right: var(--input-indent);
 		}
 		> button {
+			margin-left: 0;
 			margin-right: 4px;
-			width: 80px;
-			right: 0;
 			border-radius: var(--border-radius);
 		}
 	}
 	> input {
 		width: 0;
-		border-color: transparent;
-		padding-right: calc(80px + var(--input-indent));
+		border: 0;
+		padding: 5px 0;
 		font-size: 0.8em;
+		height: 30px;
 	}
 	> button {
-		position: absolute;
-		margin: 8px 0;
-		align-self: start;
-		width: 120px;
-		right: calc(100% - 120px);
+		margin-left: -1px;
 		border-radius: 12px;
 	}
 `;
@@ -215,8 +217,7 @@ const ItemPicker = <T extends any>(props: {
 	const onSearchClicked = () => {
 		if (!inSearch) {
 			setInSearch(true);
-			// dropdown width is according to input width, therefore waiting 350ms for fully expand input horizontally
-			setTimeout(() => inputRef.current!.focus(), 350);
+			inputRef.current!.focus();
 		} else {
 			setInSearch(false);
 		}
@@ -245,7 +246,7 @@ const ItemPicker = <T extends any>(props: {
 		setSearchText(value);
 	};
 	const onSearchFocus = () => {
-		const rect = inputRef.current!.getBoundingClientRect();
+		const rect = containerRef.current!.getBoundingClientRect();
 		// always on top
 		setExpanded({
 			visible: true,
