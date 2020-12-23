@@ -94,6 +94,7 @@ const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>
 const FactorTableHeader = styled.div`
 	display: grid;
 	grid-template-columns: 150px 150px 120px 1fr;
+	transition: all 300ms ease-in-out;
 	&[data-max=true] {
 		grid-template-columns: 220px 220px 120px 1fr;
 	}
@@ -115,6 +116,7 @@ const FactorTableBody = styled.div`
 	max-height: ${FactorTableBodyMaxHeight}px;
 	overflow-x: visible;
 	overflow-y: auto;
+	transition: all 300ms ease-in-out;
 	&[data-max=true] {
 		grid-template-columns: 220px 220px 120px 1fr;
 		> div:nth-child(4n) > div {
@@ -254,6 +256,7 @@ const FactorTableFooter = styled.div`
 	justify-content: flex-end;
 	height: 32px;
 	border-top: var(--border);
+	transition: all 300ms ease-in-out;
 	> button:not(:first-child) {
 		margin-left: calc(var(--margin) / 3);
 	}
