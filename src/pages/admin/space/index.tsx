@@ -5,7 +5,6 @@ import React, { Fragment, useState } from "react";
 import SpaceBackground from '../../../assets/space-background.png';
 import { fetchSpace, listSpaces, saveSpace } from '../../../services/admin/space';
 import {
-	QueriedReportForSpace,
 	QueriedSpace,
 	QueriedTopicForSpace,
 	QueriedUserGroupForGroupsHolder,
@@ -24,21 +23,20 @@ import { TopicPicker } from '../component/topic-picker';
 export const Spaces = () => {
 	const createCodes = () => ({
 		groups: [] as Array<QueriedUserGroupForGroupsHolder>,
-		topics: [] as Array<QueriedTopicForSpace>,
-		reports: [] as Array<QueriedReportForSpace>
+		topics: [] as Array<QueriedTopicForSpace>
 	});
 
 	const [ codes, setCodes ] = useState(createCodes());
 
 	const createEntity = (fake: boolean) => {
 		if (!fake) {
-			setCodes({ groups: [], topics: [], reports: [] });
+			setCodes({ groups: [], topics: [] });
 		}
-		return { groupIds: [], topicIds: [], reportIds: [] } as Space;
+		return { groupIds: [], topicIds: [] } as Space;
 	};
 	const fetchEntityAndCodes = async (queriedSpace: QueriedSpace) => {
-		const { space, groups, topics, reports } = await fetchSpace(queriedSpace.spaceId);
-		setCodes({ groups, topics, reports });
+		const { space, groups, topics } = await fetchSpace(queriedSpace.spaceId);
+		setCodes({ groups, topics });
 		return { entity: space };
 	};
 	const fetchEntityList = listSpaces;

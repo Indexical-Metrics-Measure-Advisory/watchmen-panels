@@ -5,7 +5,15 @@ import {
 	SomeValueType,
 	WriteTopicActionType
 } from './pipeline-types';
-import { DataPage, FactorType, QueriedTopic, QueriedTopicForPipeline, QueriedTopicForSpace, TopicType } from './types';
+import {
+	DataPage,
+	FactorType,
+	QueriedTopic,
+	QueriedTopicForPipeline,
+	QueriedTopicForSpace,
+	Topic,
+	TopicType
+} from './types';
 
 const DemoTopics = [
 	{
@@ -346,5 +354,60 @@ export const listTopicsForSpace = async (search: string): Promise<Array<QueriedT
 				{ topicId: '3', name: 'Participant' }
 			].filter(x => x.name.toUpperCase().includes(search.toUpperCase())));
 		}, 500);
+	});
+};
+
+export const fetchTopic = async (spaceId: string): Promise<{ topic: Topic }> => {
+	let topic: Topic;
+	switch (spaceId) {
+		case '1':
+			topic = { topicId: '1', code: 'quotation', name: 'Quotation', type: TopicType.DISTINCT };
+			break;
+		case '2':
+			topic = { topicId: '2', code: 'policy', name: 'Policy', type: TopicType.DISTINCT };
+			break;
+		case '3':
+			topic = { topicId: '3', code: 'participant', name: 'Participant', type: TopicType.DISTINCT };
+			break;
+		case '4':
+			topic = { topicId: '4', code: 'raw-quotation', name: 'Raw Quotation', type: TopicType.RAW };
+			break;
+		case '5':
+			topic = {
+				topicId: '5',
+				code: 'weekly-policy-premium',
+				name: 'Weekly Policy Premium',
+				type: TopicType.TIME
+			};
+			break;
+		case '6':
+			topic = {
+				topicId: '6',
+				code: 'monthly-policy-premium',
+				name: 'Monthly Policy Premium',
+				type: TopicType.TIME
+			};
+			break;
+		case '7':
+			topic = { topicId: '7', code: 'raw-endorsement', name: 'Raw Endorsement', type: TopicType.RAW };
+			break;
+		case '8':
+			topic = {
+				topicId: '8',
+				code: 'weekly-policy-premium-increment',
+				name: 'Weekly Policy Premium Increment',
+				type: TopicType.RATIO
+			};
+			break;
+		default:
+			topic = { type: TopicType.DISTINCT };
+	}
+	return { topic };
+};
+
+export const saveTopic = async (topic: Topic): Promise<void> => {
+	return new Promise(resolve => {
+		topic.topicId = '10000';
+		setTimeout(() => resolve(), 500);
 	});
 };

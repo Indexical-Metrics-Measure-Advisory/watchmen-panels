@@ -1,4 +1,4 @@
-import { DataPage, QueriedReport, QueriedReportForSpace } from './types';
+import { DataPage, QueriedReport } from './types';
 
 export const listReports = async (options: {
 	search: string;
@@ -27,13 +27,5 @@ export const listReports = async (options: {
 				pageCount: 1
 			});
 		}, 1000);
-	});
-};
-
-export const listReportsForSpace = async (search: string): Promise<Array<QueriedReportForSpace>> => {
-	return new Promise(resolve => {
-		setTimeout(() => {
-			resolve(([] as Array<QueriedReportForSpace>).filter(x => x.name.toUpperCase().includes(search.toUpperCase())));
-		}, 500);
 	});
 };

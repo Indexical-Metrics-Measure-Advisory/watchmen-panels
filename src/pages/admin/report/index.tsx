@@ -1,6 +1,6 @@
 import { faGlobe, faTags, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import styled from 'styled-components';
 import ReportBackground from '../../../assets/report-background.png';
 import { listReports } from '../../../services/admin/report';
@@ -42,14 +42,7 @@ const Explanation = styled.div`
 `;
 
 export const Reports = () => {
-	const createCodes = () => ({});
-
-	const [ , setCodes ] = useState(createCodes());
-
-	const createEntity = (fake: boolean) => {
-		if (!fake) {
-			setCodes({});
-		}
+	const createEntity = () => {
 		return {} as Report;
 	};
 	const fetchEntityAndCodes = async () => {

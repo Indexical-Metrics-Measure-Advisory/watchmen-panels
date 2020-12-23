@@ -131,7 +131,6 @@ export interface Space extends GroupsHolder {
 	name?: string;
 	description?: string;
 	topicIds?: Array<string>;
-	reportIds?: Array<string>;
 }
 
 export interface QueriedTopicForSpace {
@@ -140,14 +139,16 @@ export interface QueriedTopicForSpace {
 	description?: string;
 }
 
-export interface QueriedReportForSpace {
+export interface Report {
 	reportId: string;
 	name: string;
 	description?: string;
 }
 
-export interface Report {
-	reportId: string;
-	name: string;
+export interface Topic {
+	topicId?: string;
+	code?: string;
+	name?: string;
 	description?: string;
+	type: TopicType;
 }

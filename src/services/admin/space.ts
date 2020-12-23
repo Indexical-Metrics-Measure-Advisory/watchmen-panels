@@ -1,6 +1,5 @@
 import {
 	DataPage,
-	QueriedReportForSpace,
 	QueriedSpace,
 	QueriedSpaceForUserGroup,
 	QueriedTopicForSpace,
@@ -48,7 +47,7 @@ export const listSpacesForUserGroup = async (search: string): Promise<Array<Quer
 	});
 };
 
-export const fetchSpace = async (spaceId: string): Promise<{ space: Space, groups: Array<QueriedUserGroupForGroupsHolder>, topics: Array<QueriedTopicForSpace>, reports: Array<QueriedReportForSpace> }> => {
+export const fetchSpace = async (spaceId: string): Promise<{ space: Space, groups: Array<QueriedUserGroupForGroupsHolder>, topics: Array<QueriedTopicForSpace> }> => {
 	let space: Space;
 	switch (spaceId) {
 		case '1':
@@ -69,8 +68,7 @@ export const fetchSpace = async (spaceId: string): Promise<{ space: Space, group
 			{ topicId: '1', name: 'Quotation' },
 			{ topicId: '2', name: 'Policy' },
 			{ topicId: '3', name: 'Participant' }
-		],
-		reports: []
+		]
 	};
 };
 
