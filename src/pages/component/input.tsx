@@ -12,5 +12,8 @@ export default styled.input`
 	line-height: var(--line-height);
 	color: var(--font-color);
 	background-color: transparent;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	transition: all 300ms ease-in-out;
 `;
