@@ -95,7 +95,7 @@ export const EditImage = (props: { background: string }) => {
 	useEffect(() => {
 		addBackgroundPositionChangeListener(setBackgroundPosition);
 		return () => removeBackgroundPositionChangeListener(setBackgroundPosition);
-	});
+	}, [ addBackgroundPositionChangeListener, removeBackgroundPositionChangeListener ]);
 
 	return <Image background={background} position={backgroundPosition}/>;
 };
