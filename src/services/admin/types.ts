@@ -146,9 +146,9 @@ export interface Report {
 }
 
 export interface Factor {
-	factorId: string;
-	name: string;
-	label: string;
+	factorId?: string;
+	name?: string;
+	label?: string;
 	description?: string;
 	type: FactorType;
 }

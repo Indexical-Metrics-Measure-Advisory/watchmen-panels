@@ -1,5 +1,13 @@
 import { faChartBar } from '@fortawesome/free-regular-svg-icons';
-import { faCompressAlt, faExpandAlt, faGlobe, faList, faUsers } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCompressAlt,
+	faExpandAlt,
+	faGlobe,
+	faList,
+	faPlus,
+	faTimes,
+	faUsers
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from "react";
 import styled from 'styled-components';
@@ -8,6 +16,7 @@ import TopicBackground from '../../../assets/topic-background.png';
 import { fetchTopic, listTopics, saveTopic } from '../../../services/admin/topic';
 import { Factor, FactorType, QueriedTopic, Topic, TopicType } from '../../../services/admin/types';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
+import { LinkButton } from '../../component/console/link-button';
 import { DropdownOption } from '../../component/dropdown';
 import { PropDropdown } from '../component/prop-dropdown';
 import { PropInput } from '../component/prop-input';
@@ -15,6 +24,7 @@ import { PropInputLines } from '../component/prop-input-lines';
 import { PropLabel } from '../component/prop-label';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
+import { PrimaryObjectButton } from '../pipeline/editor/components/object-button';
 
 const FactorsButton = styled.div`
 	display: flex;
@@ -60,7 +70,7 @@ const FactorsButton = styled.div`
 const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>(({ expanded, factorCount }) => {
 	return {
 		style: {
-			height: expanded ? (Math.min(688, factorCount * 32 + 28)) : 0
+			height: expanded ? (Math.min(688, factorCount * 32 + 32 + 16 + 28)) : 0
 		}
 	};
 })<{ expanded: boolean, factorCount: number }>`
@@ -68,7 +78,7 @@ const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8em;
-	margin: 0 calc(var(--margin) / -2) 40px;
+	margin: 0 calc(var(--margin) / -2) 24px;
 	padding: 0 calc(var(--margin) / 2);
 	overflow: hidden;
 	transition: all 300ms ease-in-out;
@@ -90,7 +100,7 @@ const FactorTableBody = styled.div`
 	display: grid;
 	grid-template-columns: 150px 150px 120px 1fr;
 	margin: 0 calc(var(--margin) / -2);
-	padding: 0 calc(var(--margin) / 2);
+	padding: 0 calc(var(--margin) / 2) 32px;
 	overflow: hidden;
 	> div {
 		display: flex;
@@ -101,14 +111,62 @@ const FactorTableBody = styled.div`
 			padding-right: calc(var(--margin) / 2);
 			border-top-right-radius: var(--border-radius);
 			border-bottom-right-radius: var(--border-radius);
+			&:hover {
+				> div {
+					opacity: 1;
+					pointer-events: auto;
+				}
+			}
 			> input {
 				margin-right: calc(var(--margin) / -2);
 				width: calc(100% + var(--input-indent) * 2);
+			}
+			> div {
+				display: block;
+				position: absolute;
+				opacity: 0;
+				pointer-events: none;
+				padding: 4px 8px 4px calc(var(--margin) / 4);
+				left: 100%;
+				height: 32px;
+				button {
+					width: 24px;
+					height: 24px;
+					font-size: 1em;
+					color: var(--invert-color);
+					background-color: var(--console-danger-color);
+					border-radius: 12px;
+					&:before {
+						border-radius: 12px;
+					}
+				}
 			}
 		}
 		&:nth-child(4n + 1) {
 			border-top-left-radius: var(--border-radius);
 			border-bottom-left-radius: var(--border-radius);
+			&:hover + div + div + div {
+				> div {
+					opacity: 1;
+					pointer-events: auto;
+				}
+			}
+		}
+		&:nth-child(4n + 2) {
+			&:hover + div + div {
+				> div {
+					opacity: 1;
+					pointer-events: auto;
+				}
+			}
+		}
+		&:nth-child(4n + 3) {
+			&:hover + div {
+				> div {
+					opacity: 1;
+					pointer-events: auto;
+				}
+			}
 		}
 		&:nth-child(8n + 5), &:nth-child(8n + 6), &:nth-child(8n + 7), &:nth-child(8n) {
 			background-color: var(--pipeline-bg-color);
@@ -121,6 +179,7 @@ const FactorTableBody = styled.div`
 			color: var(--console-font-color);
 			&:hover {
 				border-color: var(--border-color);
+				box-shadow: var(--console-hover-shadow);
 			}
 			&:focus {
 				border-color: var(--console-primary-color);
@@ -138,6 +197,7 @@ const FactorTableBody = styled.div`
 			color: var(--console-font-color);
 			&:hover {
 				border-color: var(--border-color);
+				box-shadow: var(--console-hover-shadow);
 			}
 			&:focus {
 				border-color: var(--console-primary-color);
@@ -153,6 +213,15 @@ const FactorTableBody = styled.div`
 			}
 		}
 	}
+`;
+const FactorTableFooter = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	height: 32px;
+	border-top: var(--border);
+	margin-top: -32px;
+	margin-bottom: -32px;
 `;
 
 const TopicTypeOptions = [
@@ -189,6 +258,14 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 		factor.type = option.value as FactorType;
 		onDataChanged();
 	};
+	const onFactorDeleteClicked = (factor: Factor) => () => {
+		topic.factors = topic.factors.filter(exists => exists !== factor);
+		onDataChanged();
+	};
+	const onFactorAddClicked = () => {
+		topic.factors.push({ type: FactorType.TEXT });
+		onDataChanged();
+	};
 
 	const factorCount = topic.factors.length;
 	const buttonLabel = factorCount === 0 ? 'No Factor Defined' : (factorCount === 1 ? '1 Factor' : `${factorCount} Factors`);
@@ -216,10 +293,22 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 						</div>
 						<div>
 							<PropInput value={factor.description} onChange={onFactorPropChange(factor, 'description')}/>
+							<div>
+								<LinkButton ignoreHorizontalPadding={true} tooltip='Delete Factor' center={true}
+								            onClick={onFactorDeleteClicked(factor)}>
+									<FontAwesomeIcon icon={faTimes}/>
+								</LinkButton>
+							</div>
 						</div>
 					</Fragment>;
 				})}
 			</FactorTableBody>
+			<FactorTableFooter>
+				<PrimaryObjectButton onClick={onFactorAddClicked}>
+					<FontAwesomeIcon icon={faPlus}/>
+					<span>Add Factor</span>
+				</PrimaryObjectButton>
+			</FactorTableFooter>
 		</FactorTable>
 	</Fragment>;
 };
