@@ -94,6 +94,9 @@ const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>
 const FactorTableHeader = styled.div`
 	display: grid;
 	grid-template-columns: 150px 150px 120px 1fr;
+	&[data-max=true] {
+		grid-template-columns: 220px 220px 120px 1fr;
+	}
 	> div {
 		display: flex;
 		align-items: center;
@@ -112,6 +115,12 @@ const FactorTableBody = styled.div`
 	max-height: ${FactorTableBodyMaxHeight}px;
 	overflow-x: visible;
 	overflow-y: auto;
+	&[data-max=true] {
+		grid-template-columns: 220px 220px 120px 1fr;
+		> div:nth-child(4n) > div {
+			left: calc((220px + 220px + 120px + 40px) * -1);
+		}
+	}
 	&::-webkit-scrollbar {
 		background-color: transparent;
 		height: 4px;
@@ -131,6 +140,7 @@ const FactorTableBody = styled.div`
 		align-items: center;
 		height: 32px;
 		padding-left: calc(var(--margin) / 2);
+		transition: all 300ms ease-in-out;
 		&:nth-child(4n) {
 			padding-right: calc(var(--margin) / 2);
 			border-top-right-radius: var(--border-radius);
@@ -151,7 +161,7 @@ const FactorTableBody = styled.div`
 				opacity: 0;
 				pointer-events: none;
 				padding: 4px 8px 4px calc(var(--margin) / 4);
-				left: -460px;
+				left: calc((150px + 150px + 120px + 40px) * -1);
 				height: 32px;
 				button {
 					width: 24px;
@@ -322,13 +332,13 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 			<FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/>
 		</FactorsButton>
 		<FactorTable expanded={expanded} factorCount={factorCount} data-max={max}>
-			<FactorTableHeader>
+			<FactorTableHeader data-max={max}>
 				<div>Name</div>
 				<div>Label</div>
 				<div>Type</div>
 				<div>Description</div>
 			</FactorTableHeader>
-			<FactorTableBody>
+			<FactorTableBody data-max={max}>
 				{topic.factors.map(factor => {
 					return <Fragment key={factor.factorId || v4()}>
 						<div><PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/></div>
