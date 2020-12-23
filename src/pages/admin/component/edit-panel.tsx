@@ -8,6 +8,7 @@ const EditContainer = styled.div`
 	min-height: 300px;
 	margin-top: -50px;
 	margin-bottom: 50px;
+	padding-bottom: 50px;
 	opacity: 1;
 	pointer-events: auto;
 	z-index: 1;

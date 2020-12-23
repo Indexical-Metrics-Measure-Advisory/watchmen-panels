@@ -1,11 +1,12 @@
 import { faChartBar } from '@fortawesome/free-regular-svg-icons';
-import { faGlobe, faList, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt, faGlobe, faList, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 import TopicBackground from '../../../assets/topic-background.png';
 import { fetchTopic, listTopics, saveTopic } from '../../../services/admin/topic';
-import { QueriedTopic, Topic, TopicType } from '../../../services/admin/types';
+import { Factor, FactorType, QueriedTopic, Topic, TopicType } from '../../../services/admin/types';
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { DropdownOption } from '../../component/dropdown';
 import { PropDropdown } from '../component/prop-dropdown';
@@ -16,9 +17,145 @@ import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
 
 const FactorsButton = styled.div`
+	display: flex;
+	align-items: center;
+	justify-self: start;
+	font-size: 0.8em;
+	font-variant: petite-caps;
+	font-weight: var(--font-bold);
+	height: 24px;
+	border-radius: 12px;
+	color: var(--invert-color);
+	background-color: var(--console-primary-color);
+	padding: 0 calc(var(--margin) / 3) 0 calc(var(--margin) / 2);
+	cursor: pointer;
+	&:hover {
+		box-shadow: var(--console-primary-hover-shadow);
+	}
+	&[data-expanded=true] {
+		> svg {
+			transform: rotateZ(360deg);
+		}
+	}
+	> span {
+		position: relative;;
+		padding-right: calc(var(--margin) / 3);
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 10%;
+			right: 0;
+			width: 1px;
+			height: 80%;
+			background-color: var(--invert-color);
+			opacity: 0.7;
+		}
+	}
+	> svg {
+		margin-left: calc(var(--margin) / 3);
+		transition: all 300ms ease-in-out;
+	}
+`;
+const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>(({ expanded, factorCount }) => {
+	return {
+		style: {
+			height: expanded ? (Math.min(688, factorCount * 32 + 28)) : 0
+		}
+	};
+})<{ expanded: boolean, factorCount: number }>`
+	grid-column: span 2;
+	display: flex;
+	flex-direction: column;
+	font-size: 0.8em;
+	margin: 0 calc(var(--margin) / -2) 40px;
+	padding: 0 calc(var(--margin) / 2);
+	overflow: hidden;
+	transition: all 300ms ease-in-out;
+`;
+const FactorTableHeader = styled.div`
+	display: grid;
+	grid-template-columns: 150px 150px 120px 1fr;
+	> div {
+		display: flex;
+		align-items: center;
+		height: 28px;
+		border-bottom: var(--border);
+		padding-left: calc(var(--margin) / 2);
+		font-variant: petite-caps;
+		font-weight: var(--font-bold);
+	}
+`;
+const FactorTableBody = styled.div`
+	display: grid;
+	grid-template-columns: 150px 150px 120px 1fr;
+	margin: 0 calc(var(--margin) / -2);
+	padding: 0 calc(var(--margin) / 2);
+	overflow: hidden;
+	> div {
+		display: flex;
+		align-items: center;
+		height: 32px;
+		padding-left: calc(var(--margin) / 2);
+		&:nth-child(4n) {
+			padding-right: calc(var(--margin) / 2);
+			border-top-right-radius: var(--border-radius);
+			border-bottom-right-radius: var(--border-radius);
+			> input {
+				margin-right: calc(var(--margin) / -2);
+				width: calc(100% + var(--input-indent) * 2);
+			}
+		}
+		&:nth-child(4n + 1) {
+			border-top-left-radius: var(--border-radius);
+			border-bottom-left-radius: var(--border-radius);
+		}
+		&:nth-child(8n + 5), &:nth-child(8n + 6), &:nth-child(8n + 7), &:nth-child(8n) {
+			background-color: var(--pipeline-bg-color);
+		}
+		> input {
+			height: 26px;
+			width: calc(100% + var(--input-indent));
+			border-color: transparent;
+			margin-left: calc(var(--input-indent) * -1);
+			color: var(--console-font-color);
+			&:hover {
+				border-color: var(--border-color);
+			}
+			&:focus {
+				border-color: var(--console-primary-color);
+				color: var(--font-color);
+				background-color: var(--bg-color);
+				box-shadow: var(--console-primary-hover-shadow);
+				z-index: 1;
+			}
+		}
+		> div[data-widget=dropdown] {
+			height: 26px;
+			width: calc(100% + var(--input-indent));
+			border-color: transparent;
+			margin-left: calc(var(--input-indent) * -1);
+			color: var(--console-font-color);
+			&:hover {
+				border-color: var(--border-color);
+			}
+			&:focus {
+				border-color: var(--console-primary-color);
+				color: var(--font-color);
+				background-color: var(--bg-color);
+				box-shadow: var(--console-primary-hover-shadow);
+				z-index: 1;
+			}
+			&[data-options-visible=true] {
+				> div {
+					border-color: var(--console-primary-color);
+				}
+			}
+		}
+	}
 `;
 
-const TypeOptions = [
+const TopicTypeOptions = [
 	{ value: TopicType.RAW, label: 'Raw' },
 	{ value: TopicType.DISTINCT, label: 'Distinct' },
 	{ value: TopicType.AGGREGATE, label: 'Aggregate' },
@@ -26,6 +163,93 @@ const TypeOptions = [
 	{ value: TopicType.RATIO, label: 'Ratio' },
 	{ value: TopicType.NOT_DEFINED, label: 'Not Defined' }
 ];
+const FactorTypeOptions = [
+	{ value: FactorType.TEXT, label: 'Text' },
+	{ value: FactorType.NUMBER, label: 'Number' },
+	{ value: FactorType.BOOLEAN, label: 'Boolean' },
+	{ value: FactorType.DATETIME, label: 'DateTime' },
+	{ value: FactorType.ENUM, label: 'Enumeration' },
+	{ value: FactorType.SEQUENCE, label: 'Sequence' }
+];
+
+const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
+	const { topic, onDataChanged } = props;
+
+	const [ expanded, setExpanded ] = useState(false);
+
+	const onExpandToggleClicked = () => setExpanded(!expanded);
+	const onFactorPropChange = (factor: Factor, prop: 'name' | 'label' | 'description') => (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.value === factor[prop]) {
+			return;
+		}
+		factor[prop] = event.target.value;
+		onDataChanged();
+	};
+	const onFactorTypeChange = (factor: Factor) => async (option: DropdownOption) => {
+		factor.type = option.value as FactorType;
+		onDataChanged();
+	};
+
+	const factorCount = topic.factors.length;
+	const buttonLabel = factorCount === 0 ? 'No Factor Defined' : (factorCount === 1 ? '1 Factor' : `${factorCount} Factors`);
+
+	return <Fragment>
+		<FactorsButton onClick={onExpandToggleClicked} data-expanded={expanded}>
+			<span>{buttonLabel}</span>
+			<FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/>
+		</FactorsButton>
+		<FactorTable expanded={expanded} factorCount={factorCount}>
+			<FactorTableHeader>
+				<div>Name</div>
+				<div>Label</div>
+				<div>Type</div>
+				<div>Description</div>
+			</FactorTableHeader>
+			<FactorTableBody>
+				{topic.factors.map(factor => {
+					return <Fragment key={factor.factorId || v4()}>
+						<div><PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/></div>
+						<div><PropInput value={factor.label} onChange={onFactorPropChange(factor, 'label')}/></div>
+						<div>
+							<PropDropdown value={factor.type} options={FactorTypeOptions}
+							              onChange={onFactorTypeChange(factor)}/>
+						</div>
+						<div>
+							<PropInput value={factor.description} onChange={onFactorPropChange(factor, 'description')}/>
+						</div>
+					</Fragment>;
+				})}
+			</FactorTableBody>
+		</FactorTable>
+	</Fragment>;
+};
+
+const renderEditContent = (topic: Topic, onDataChanged: () => void) => {
+
+	const onPropChange = (prop: 'code' | 'name' | 'description') => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		if (topic[prop] !== event.target.value) {
+			topic[prop] = event.target.value;
+			onDataChanged();
+		}
+	};
+	const onTypeChange = async (option: DropdownOption) => {
+		topic.type = option.value as TopicType;
+		onDataChanged();
+	};
+
+	return <Fragment>
+		<PropLabel>Topic Code:</PropLabel>
+		<PropInput value={topic.code || ''} onChange={onPropChange('code')}/>
+		<PropLabel>Topic Name:</PropLabel>
+		<PropInput value={topic.name || ''} onChange={onPropChange('name')}/>
+		<PropLabel>Topic Type:</PropLabel>
+		<PropDropdown value={topic.type} options={TopicTypeOptions} onChange={onTypeChange}/>
+		<PropLabel>Description:</PropLabel>
+		<PropInputLines value={topic.description || ''} onChange={onPropChange('description')}/>
+		<PropLabel>Factors:</PropLabel>
+		<Factors topic={topic} onDataChanged={onDataChanged}/>
+	</Fragment>;
+};
 
 export const Topics = () => {
 	const createEntity = () => {
@@ -63,31 +287,6 @@ export const Topics = () => {
 		</SingleSearchItemCard>;
 	};
 	const getKeyOfEntity = (item: QueriedTopic) => item.topicId;
-
-	const onPropChange = (topic: Topic, prop: 'code' | 'name' | 'description', onDataChanged: () => void) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		if (topic[prop] !== event.target.value) {
-			topic[prop] = event.target.value;
-			onDataChanged();
-		}
-	};
-	const onTypeChange = (topic: Topic, onDataChanged: () => void) => async (option: DropdownOption) => {
-		topic.type = option.value as TopicType;
-		onDataChanged();
-	};
-	const renderEditContent = (topic: Topic, onDataChanged: () => void) => {
-		return <Fragment>
-			<PropLabel>Topic Code:</PropLabel>
-			<PropInput value={topic.code || ''} onChange={onPropChange(topic, 'code', onDataChanged)}/>
-			<PropLabel>Topic Name:</PropLabel>
-			<PropInput value={topic.name || ''} onChange={onPropChange(topic, 'name', onDataChanged)}/>
-			<PropLabel>Topic Type:</PropLabel>
-			<PropDropdown value={topic.type} options={TypeOptions} onChange={onTypeChange(topic, onDataChanged)}/>
-			<PropLabel>Description:</PropLabel>
-			<PropInputLines value={topic.description || ''}
-			                onChange={onPropChange(topic, 'description', onDataChanged)}/>
-			<PropLabel>Factors:</PropLabel>
-		</Fragment>;
-	};
 
 	return <SearchAndEditPanel title='Topics'
 	                           searchPlaceholder='Search by topic name, factor name, description, etc.'
