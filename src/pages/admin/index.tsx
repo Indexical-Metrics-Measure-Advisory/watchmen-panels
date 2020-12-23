@@ -42,7 +42,7 @@ const AdminIndex = () => {
 					<Route path={Path.ADMIN_USER_GROUPS}><UserGroups/></Route>
 					<Route path={Path.ADMIN_USERS}><Users/></Route>
 					<Route path={Path.ADMIN_TASKS}><Tasks/></Route>
-					<Route path='*'><Redirect to={Path.ADMIN_TASKS}/></Route>
+					<Route path='*'><Redirect to={Path.ADMIN_TOPICS}/></Route>
 				</Switch>
 			</main>
 		</Container>

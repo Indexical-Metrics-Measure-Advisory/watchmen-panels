@@ -34,6 +34,10 @@ const MenuContainer = styled.div.attrs({
 	border-right: var(--border);
 	background-color: var(--invert-color);
 	overflow: hidden;
+	// TODO hide tasks button
+	> div:nth-child(10) {
+		display: none;
+	}
 `;
 const Placeholder = styled.div`
 	flex-grow: 1;

@@ -357,50 +357,22 @@ export const listTopicsForSpace = async (search: string): Promise<Array<QueriedT
 	});
 };
 
-export const fetchTopic = async (spaceId: string): Promise<{ topic: Topic }> => {
+export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => {
 	let topic: Topic;
-	switch (spaceId) {
-		case '1':
-			topic = { topicId: '1', code: 'quotation', name: 'Quotation', type: TopicType.DISTINCT };
-			break;
-		case '2':
-			topic = { topicId: '2', code: 'policy', name: 'Policy', type: TopicType.DISTINCT };
-			break;
-		case '3':
-			topic = { topicId: '3', code: 'participant', name: 'Participant', type: TopicType.DISTINCT };
-			break;
-		case '4':
-			topic = { topicId: '4', code: 'raw-quotation', name: 'Raw Quotation', type: TopicType.RAW };
-			break;
-		case '5':
-			topic = {
-				topicId: '5',
-				code: 'weekly-policy-premium',
-				name: 'Weekly Policy Premium',
-				type: TopicType.TIME
-			};
-			break;
-		case '6':
-			topic = {
-				topicId: '6',
-				code: 'monthly-policy-premium',
-				name: 'Monthly Policy Premium',
-				type: TopicType.TIME
-			};
-			break;
-		case '7':
-			topic = { topicId: '7', code: 'raw-endorsement', name: 'Raw Endorsement', type: TopicType.RAW };
-			break;
-		case '8':
-			topic = {
-				topicId: '8',
-				code: 'weekly-policy-premium-increment',
-				name: 'Weekly Policy Premium Increment',
-				type: TopicType.RATIO
-			};
+	switch (true) {
+		case [ '1', '2', '3', '4', '5', '6', '7', '8' ].includes(`${topicId}`):
+			const {
+				topicId: id,
+				code,
+				name,
+				type,
+				description,
+				factors
+			} = DemoTopics.find(topic => topic.topicId === topicId)!;
+			topic = { topicId: id, code, name, type, description, factors };
 			break;
 		default:
-			topic = { type: TopicType.DISTINCT };
+			topic = { type: TopicType.DISTINCT, factors: [] };
 	}
 	return { topic };
 };

@@ -145,10 +145,19 @@ export interface Report {
 	description?: string;
 }
 
+export interface Factor {
+	factorId: string;
+	name: string;
+	label: string;
+	description?: string;
+	type: FactorType;
+}
+
 export interface Topic {
 	topicId?: string;
 	code?: string;
 	name?: string;
 	description?: string;
 	type: TopicType;
+	factors: Array<Factor>;
 }
