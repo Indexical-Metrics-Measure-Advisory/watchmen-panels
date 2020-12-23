@@ -18,6 +18,7 @@ import { Factor, FactorType, QueriedTopic, Topic, TopicType } from '../../../ser
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { LinkButton } from '../../component/console/link-button';
 import { DropdownOption } from '../../component/dropdown';
+import { useEditPanelContext } from '../component/edit-panel';
 import { PropDropdown } from '../component/prop-dropdown';
 import { PropInput } from '../component/prop-input';
 import { PropInputLines } from '../component/prop-input-lines';
@@ -67,10 +68,12 @@ const FactorsButton = styled.div`
 		transition: all 300ms ease-in-out;
 	}
 `;
+const FactorTableBodyMaxHeight = 480;
 const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>(({ expanded, factorCount }) => {
+	const offset = 32 + 16 + 28;
 	return {
 		style: {
-			height: expanded ? (Math.min(688, factorCount * 32 + 32 + 16 + 28)) : 0
+			height: expanded ? (Math.min(FactorTableBodyMaxHeight + offset, factorCount * 32 + offset)) : 0
 		}
 	};
 })<{ expanded: boolean, factorCount: number }>`
@@ -78,10 +81,15 @@ const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8em;
-	margin: 0 calc(var(--margin) / -2) 24px;
-	padding: 0 calc(var(--margin) / 2);
-	overflow: hidden;
+	margin: 0 -40px 24px;
+	padding: 0 40px;
+	overflow-x: visible;
+	overflow-y: hidden;
 	transition: all 300ms ease-in-out;
+	&[data-max=true] {
+		margin-left: calc((100% + 32px) / 0.7 * 0.3 * -1 - 32px - 40px);
+		z-index: 1;
+	}
 `;
 const FactorTableHeader = styled.div`
 	display: grid;
@@ -99,11 +107,27 @@ const FactorTableHeader = styled.div`
 const FactorTableBody = styled.div`
 	display: grid;
 	grid-template-columns: 150px 150px 120px 1fr;
-	margin: 0 calc(var(--margin) / -2);
-	padding: 0 calc(var(--margin) / 2) 32px;
-	overflow: hidden;
+	margin: 0 -4px 0 -40px;
+	padding: 0 4px 0 40px;
+	max-height: ${FactorTableBodyMaxHeight}px;
+	overflow-x: visible;
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		background-color: transparent;
+		height: 4px;
+		width: 4px;
+	}
+	&::-webkit-scrollbar-track {
+		background-color: var(--scrollbar-background-color);
+		border-radius: 2px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--console-favorite-color);
+		border-radius: 2px;
+	}
 	> div {
 		display: flex;
+		position: relative;
 		align-items: center;
 		height: 32px;
 		padding-left: calc(var(--margin) / 2);
@@ -127,7 +151,7 @@ const FactorTableBody = styled.div`
 				opacity: 0;
 				pointer-events: none;
 				padding: 4px 8px 4px calc(var(--margin) / 4);
-				left: 100%;
+				left: -460px;
 				height: 32px;
 				button {
 					width: 24px;
@@ -220,8 +244,20 @@ const FactorTableFooter = styled.div`
 	justify-content: flex-end;
 	height: 32px;
 	border-top: var(--border);
-	margin-top: -32px;
-	margin-bottom: -32px;
+	> button:not(:first-child) {
+		margin-left: calc(var(--margin) / 3);
+	}
+	> button:last-child {
+		&[data-max=true] > svg {
+			transform: rotateZ(225deg);
+		}
+		> svg {
+			transform: rotateZ(45deg);
+			transition: all 300ms ease-in-out;
+			margin-top: 2px;
+			margin-right: calc(var(--margin) / 3);
+		}
+	}
 `;
 
 const TopicTypeOptions = [
@@ -244,7 +280,9 @@ const FactorTypeOptions = [
 const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 	const { topic, onDataChanged } = props;
 
+	const { changeBackgroundPosition } = useEditPanelContext();
 	const [ expanded, setExpanded ] = useState(false);
+	const [ max, setMax ] = useState(false);
 
 	const onExpandToggleClicked = () => setExpanded(!expanded);
 	const onFactorPropChange = (factor: Factor, prop: 'name' | 'label' | 'description') => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -266,6 +304,14 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 		topic.factors.push({ type: FactorType.TEXT });
 		onDataChanged();
 	};
+	const onFactorExpandToggleClicked = () => {
+		setMax(!max);
+		if (max) {
+			changeBackgroundPosition('left');
+		} else {
+			changeBackgroundPosition('top 50px left');
+		}
+	};
 
 	const factorCount = topic.factors.length;
 	const buttonLabel = factorCount === 0 ? 'No Factor Defined' : (factorCount === 1 ? '1 Factor' : `${factorCount} Factors`);
@@ -275,7 +321,7 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 			<span>{buttonLabel}</span>
 			<FontAwesomeIcon icon={expanded ? faCompressAlt : faExpandAlt}/>
 		</FactorsButton>
-		<FactorTable expanded={expanded} factorCount={factorCount}>
+		<FactorTable expanded={expanded} factorCount={factorCount} data-max={max}>
 			<FactorTableHeader>
 				<div>Name</div>
 				<div>Label</div>
@@ -307,6 +353,10 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 				<PrimaryObjectButton onClick={onFactorAddClicked}>
 					<FontAwesomeIcon icon={faPlus}/>
 					<span>Add Factor</span>
+				</PrimaryObjectButton>
+				<PrimaryObjectButton onClick={onFactorExpandToggleClicked} data-max={max}>
+					<FontAwesomeIcon icon={max ? faCompressAlt : faExpandAlt}/>
+					<span>{max ? 'Shrink Table' : 'Expand Table'}</span>
 				</PrimaryObjectButton>
 			</FactorTableFooter>
 		</FactorTable>

@@ -1,4 +1,5 @@
-import React from "react";
+import { EventEmitter } from 'events';
+import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
 
 const EditContainer = styled.div`
@@ -40,14 +41,80 @@ const EditorTitle = styled.div`
 	height: 44px;
 	margin-bottom: calc(var(--margin) / 2);
 `;
-const Image = styled.div.attrs<{ background: string }>(({ background }) => {
-	return { style: { backgroundImage: `url(${background})` } };
-})<{ background: string }>`
-	background-position: left;
+const Image = styled.div.attrs<{ background: string, position: string }>(({ background, position }) => {
+	return { style: { backgroundImage: `url(${background})`, backgroundPosition: position } };
+})<{ background: string, position: string }>`
 	background-repeat: no-repeat;
 	background-size: 80%;
 	filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7)) grayscale(0.9);
+	transition: all 300ms ease-in-out;
 `;
+
+export enum EditPanelEvent {
+	BACKGROUND_POSITION_CHANGED = 'background-position-changed',
+}
+
+export type BackgroundPositionChangeListener = (position: string) => void;
+
+export interface EditPanelContext {
+	changeBackgroundPosition: (position: string) => void;
+	addBackgroundPositionChangeListener: (listener: BackgroundPositionChangeListener) => void;
+	removeBackgroundPositionChangeListener: (listener: BackgroundPositionChangeListener) => void;
+}
+
+const Context = React.createContext<EditPanelContext>({} as EditPanelContext);
+Context.displayName = 'EditPanelContext';
+
+export const EditPanelContextProvider = (props: {
+	children?: ((props: any) => React.ReactNode) | React.ReactNode;
+}) => {
+	const { children } = props;
+
+	const [ emitter ] = useState<EventEmitter>(() => {
+		const emitter = new EventEmitter();
+		emitter.setMaxListeners(1000);
+		return emitter;
+	});
+
+	return <Context.Provider value={{
+		changeBackgroundPosition: (position: string) => emitter.emit(EditPanelEvent.BACKGROUND_POSITION_CHANGED, position),
+		addBackgroundPositionChangeListener: (listener: BackgroundPositionChangeListener) => emitter.on(EditPanelEvent.BACKGROUND_POSITION_CHANGED, listener),
+		removeBackgroundPositionChangeListener: (listener: BackgroundPositionChangeListener) => emitter.off(EditPanelEvent.BACKGROUND_POSITION_CHANGED, listener)
+	}}>{children}</Context.Provider>;
+};
+export const useEditPanelContext = () => {
+	return React.useContext(Context);
+};
+
+export const EditImage = (props: { background: string }) => {
+	const { background } = props;
+
+	const { addBackgroundPositionChangeListener, removeBackgroundPositionChangeListener } = useEditPanelContext();
+	const [ backgroundPosition, setBackgroundPosition ] = useState('left');
+
+	useEffect(() => {
+		addBackgroundPositionChangeListener(setBackgroundPosition);
+		return () => removeBackgroundPositionChangeListener(setBackgroundPosition);
+	});
+
+	return <Image background={background} position={backgroundPosition}/>;
+};
+export const EditArea = (props: {
+	title: string;
+	background: string;
+	visible: boolean;
+	children?: ((props: any) => React.ReactNode) | React.ReactNode;
+}) => {
+	const { title, background, visible, children } = props;
+
+	return <EditContainer data-visible={visible}>
+		<EditImage background={background}/>
+		<Editor>
+			<EditorTitle>{title}</EditorTitle>
+			{children}
+		</Editor>
+	</EditContainer>;
+};
 
 export const EditPanel = (props: {
 	title: string;
@@ -57,11 +124,9 @@ export const EditPanel = (props: {
 }) => {
 	const { title, background, visible, children } = props;
 
-	return <EditContainer data-visible={visible}>
-		<Image background={background}/>
-		<Editor>
-			<EditorTitle>{title}</EditorTitle>
+	return <EditPanelContextProvider>
+		<EditArea title={title} background={background} visible={visible}>
 			{children}
-		</Editor>
-	</EditContainer>;
+		</EditArea>
+	</EditPanelContextProvider>;
 };
