@@ -340,6 +340,6 @@ export const fetchSubjectData = async (subjectId: string): Promise<DataPage<Arra
 					return [ `Q${index}`, quoteDate.format('YYYY/MM/DD'), true, `P${index}`, issueDate.format('YYYY/MM/DD'), 10000, 'John Doe', '1985/02/13', 'M', 'AU' ];
 				})
 			});
-		}, 5000);
+		}, 1000);
 	});
 };

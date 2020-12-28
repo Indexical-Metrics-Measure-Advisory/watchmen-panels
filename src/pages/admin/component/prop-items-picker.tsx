@@ -1,7 +1,7 @@
 import { faBan, faCheck, faPlus, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useRef, useState } from "react";
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { useCollapseFixedThing } from '../../../common/utils';
 import Input from '../../component/input';
 import { PrimaryObjectButton } from '../pipeline/editor/components/object-button';
@@ -108,14 +108,6 @@ const ItemFinder = styled.div`
 		border-radius: 12px;
 	}
 `;
-const Rotate = keyframes`
-	from {
-		transform: rotateZ(0deg);
-	}
-	to {
-		transform: rotateZ(360deg);
-	}
-`;
 const Dropdown = styled.div.attrs<DropdownState>(({ visible, top, bottom, left, minWidth, atTop }) => {
 	return {
 		'data-at-top': atTop,
@@ -159,7 +151,6 @@ const Dropdown = styled.div.attrs<DropdownState>(({ visible, top, bottom, left, 
 		align-items: center;
 		padding: 0 calc(var(--margin) / 2);
 		> svg {
-			animation: ${Rotate} infinite 1000ms linear;
 			margin-right: calc(var(--margin) / 3);
 		}
 	}
@@ -266,7 +257,7 @@ const ItemPicker = <T extends any>(props: {
 	} else if (!!searchHandle) {
 		// in searching
 		dropdownContent = <div data-widget='no-data'>
-			<FontAwesomeIcon icon={faSpinner}/>
+			<FontAwesomeIcon icon={faSpinner} spin={true}/>
 			<span>Searching...</span>
 		</div>;
 	} else if (searchItems.length === 0) {
