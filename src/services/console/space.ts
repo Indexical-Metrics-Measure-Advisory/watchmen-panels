@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import { DataPage } from '../admin/types';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpace,
@@ -152,10 +154,24 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 			{
 				subjectId: '1',
 				name: 'Premium Summary',
-				topicCount: 1,
+				topicCount: 3,
 				graphicsCount: 2,
 				lastVisitTime: '2020/11/12 20:20:01',
-				createdAt: '2020/11/12 19:20:02'
+				createdAt: '2020/11/12 19:20:02',
+				dataset: {
+					columns: [
+						{ topicId: '1', factorId: '102' },
+						{ topicId: '1', factorId: '103' },
+						{ topicId: '1', factorId: '106' },
+						{ topicId: '2', factorId: '204' },
+						{ topicId: '2', factorId: '205' },
+						{ topicId: '2', factorId: '207' },
+						{ topicId: '3', factorId: '304' },
+						{ topicId: '3', factorId: '305' },
+						{ topicId: '3', factorId: '306' },
+						{ topicId: '3', factorId: '307' }
+					]
+				}
 			},
 			{
 				subjectId: '2',
@@ -307,4 +323,23 @@ export const createSubject = async (data: { space: ConnectedConsoleSpace, group?
 	data.subject.subjectId = `${newSubjectId++}`;
 };
 export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
+};
+
+export const fetchSubjectData = async (subjectId: string): Promise<DataPage<Array<any>>> => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve({
+				itemCount: 1,
+				pageNumber: 1,
+				pageSize: 1,
+				pageCount: 1,
+				data: new Array(100).fill(1).map((row, rowIndex) => {
+					const index = `${rowIndex}`.padStart(5, '0');
+					const quoteDate = dayjs().subtract(1, 'year').subtract(Math.floor(Math.random() * 30), 'day');
+					const issueDate = quoteDate.add(Math.floor(Math.random() * 30), 'day');
+					return [ `Q${index}`, quoteDate.format('YYYY/MM/DD'), true, `P${index}`, issueDate.format('YYYY/MM/DD'), 10000, 'John Doe', '1985/02/13', 'M', 'AU' ];
+				})
+			});
+		}, 5000);
+	});
 };

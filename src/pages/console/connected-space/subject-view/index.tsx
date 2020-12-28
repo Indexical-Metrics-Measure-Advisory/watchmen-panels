@@ -16,10 +16,13 @@ import { useDialog } from '../../../context/dialog';
 import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
 import { SubjectContextProvider } from './context';
+import { DataSet } from './dataset';
 import { DataSetDef } from './dataset-def';
 
 interface Visible {
+	definition: boolean;
 	dataset: boolean;
+	graphics: boolean;
 }
 
 const SubjectViewContainer = styled.div.attrs({
@@ -44,11 +47,11 @@ const SubjectViewMenu = styled.div`
 		&:first-child {
 			border-top-left-radius: var(--border-radius);
 			border-bottom-left-radius: var(--border-radius);
-		}		
+		}
 		&:last-child {
 			border-top-right-radius: var(--border-radius);
 			border-bottom-right-radius: var(--border-radius);
-		}		
+		}
 	}
 `;
 
@@ -101,7 +104,7 @@ export const SubjectViewContent = (props: {
 	const dialog = useDialog();
 	const { closeSubjectIfCan, subjectRenamed } = useSpaceContext();
 	const forceUpdate = useForceUpdate();
-	const [ visible, setVisible ] = useState<Visible>({ dataset: false });
+	const [ visible, setVisible ] = useState<Visible>({ definition: false, dataset: false, graphics: false });
 
 	initDataSet(subject);
 
@@ -120,6 +123,7 @@ export const SubjectViewContent = (props: {
 	});
 	const onVisibleChanged = (key: keyof Visible) => () => setVisible({ ...visible, [key]: !visible[key] });
 	const changeVisible = (key: keyof Visible) => (value: boolean) => setVisible({ ...visible, [key]: value });
+	const switchToDefinition = () => setVisible({ definition: true, dataset: false, graphics: false });
 
 	return <SubjectViewContainer>
 		<SubjectViewMenu>
@@ -131,23 +135,24 @@ export const SubjectViewContent = (props: {
 			            center={true}>
 				<FontAwesomeIcon icon={faTrashAlt}/>
 			</LinkButton>
-			<LinkButton onClick={onVisibleChanged('dataset')} ignoreHorizontalPadding={true}
-			            tooltip='Show DataSet Definition'>
+			<LinkButton onClick={onVisibleChanged('definition')} ignoreHorizontalPadding={true}
+			            tooltip='Show Dataset Definition'>
 				<FontAwesomeIcon icon={faDatabase}/>
 			</LinkButton>
-			<LinkButton onClick={() => {
-			}} ignoreHorizontalPadding={true}
-			            tooltip='Show DataSet'>
+			<LinkButton onClick={onVisibleChanged('dataset')} ignoreHorizontalPadding={true}
+			            tooltip='Show Dataset'>
 				<FontAwesomeIcon icon={faTable}/>
 			</LinkButton>
-			<LinkButton onClick={() => {
-			}} ignoreHorizontalPadding={true}
+			<LinkButton onClick={onVisibleChanged('graphics')} ignoreHorizontalPadding={true}
 			            tooltip='Show Graphics'>
 				<FontAwesomeIcon icon={faChartBar}/>
 			</LinkButton>
 		</SubjectViewMenu>
 		<DataSetDef space={space} subject={subject}
-		            visible={visible.dataset} onVisibleChanged={changeVisible('dataset')}/>
+		            visible={visible.definition} onVisibleChanged={changeVisible('definition')}/>
+		<DataSet space={space} subject={subject}
+		         visible={visible.dataset} onVisibleChanged={changeVisible('dataset')}
+		         switchToDefinition={switchToDefinition}/>
 	</SubjectViewContainer>;
 };
 
