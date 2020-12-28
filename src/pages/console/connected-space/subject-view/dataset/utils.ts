@@ -3,10 +3,9 @@ import { FactorColumnDef, FactorMap } from './types';
 
 export const filterColumns = (options: {
 	columns: Array<ConsoleSpaceSubjectDataSetColumn>;
-	include: (column: ConsoleSpaceSubjectDataSetColumn) => boolean;
 	factorMap: FactorMap;
 }) => {
-	const { columns, include, factorMap } = options;
+	const { columns, factorMap } = options;
 
 	return columns.map((column, columnIndex) => {
 		const { factorId } = column;

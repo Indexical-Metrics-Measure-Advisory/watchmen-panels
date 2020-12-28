@@ -116,11 +116,7 @@ export const DataSet = (props: {
 	const [ columnDefs, setColumnDefs ] = useState<{ fixed: Array<FactorColumnDef>, data: Array<FactorColumnDef> }>(() => {
 		return {
 			fixed: [],
-			data: filterColumns({
-				columns,
-				include: () => true,
-				factorMap: buildFactorMap(space.topics)
-			})
+			data: filterColumns({ columns, factorMap: buildFactorMap(space.topics) })
 		};
 	});
 	// fetch data
