@@ -37,14 +37,16 @@ export const DataSetTableHeader = styled.div
 	z-index: 1;
 `;
 
-export const DataSetTableHeaderCell = styled.div.attrs<{ filler?: true }>(({ filler }) => {
-	return {
-		'data-widget': 'console-subject-view-dataset-table-header-cell',
-		style: {
-			borderRightColor: filler ? 'transparent' : 'var(--border-color)'
-		}
-	};
-})<{ filler?: true }>`
+export const DataSetTableHeaderCell = styled.div
+	.attrs<{ lastColumn: boolean, filler?: true }>(({ lastColumn, filler }) => {
+		return {
+			'data-widget': 'console-subject-view-dataset-table-header-cell',
+			style: {
+				borderRightColor: filler ? 'transparent' : 'var(--border-color)',
+				borderRightWidth: lastColumn ? 2 : 1
+			}
+		};
+	})<{ lastColumn: boolean, filler?: true }>`
 	display: flex;
 	align-items: center;
 	font-size: 0.8em;
@@ -56,16 +58,11 @@ export const DataSetTableHeaderCell = styled.div.attrs<{ filler?: true }>(({ fil
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	&:hover {
-		> button {
-			opacity: 1;
-		}
-	}
 	> span {
 		flex-grow: 1;
 	}
 	> button {
-		opacity: 0;
+		opacity: 0.7;
 		font-size: 0.9em;
 		> svg:nth-child(2) {
 			display: block;
@@ -94,15 +91,17 @@ export const DataSetTableBody = styled.div
 	grid-auto-rows: 32px;
 `;
 
-export const DataSetTableBodyCell = styled.div.attrs<{ lastRow: boolean, filler?: true }>(({ lastRow, filler }) => {
-	return {
-		'data-widget': 'console-subject-view-dataset-table-body-cell',
-		style: {
-			borderBottomColor: lastRow ? 'transparent' : 'var(--border-color)',
-			borderRightColor: filler ? 'transparent' : 'var(--border-color)'
-		}
-	};
-})<{ lastRow: boolean, filler?: true }>`
+export const DataSetTableBodyCell = styled.div
+	.attrs<{ lastRow: boolean, lastColumn: boolean, filler?: true }>(({ lastRow, lastColumn, filler }) => {
+		return {
+			'data-widget': 'console-subject-view-dataset-table-body-cell',
+			style: {
+				borderBottomColor: lastRow ? 'transparent' : 'var(--border-color)',
+				borderRightColor: filler ? 'transparent' : 'var(--border-color)',
+				borderRightWidth: lastColumn ? 2 : 1
+			}
+		};
+	})<{ lastRow: boolean, lastColumn: boolean, filler?: true }>`
 	display: flex;
 	align-items: center;
 	font-size: 0.8em;
