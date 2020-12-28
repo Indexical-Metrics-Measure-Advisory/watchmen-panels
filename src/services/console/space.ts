@@ -325,14 +325,20 @@ export const createSubject = async (data: { space: ConnectedConsoleSpace, group?
 export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
 };
 
-export const fetchSubjectData = async (subjectId: string): Promise<DataPage<Array<any>>> => {
+export const fetchSubjectData = async (options: {
+	subjectId: string;
+	pageNumber?: number;
+	pageSize?: number;
+}): Promise<DataPage<Array<any>>> => {
+	const { pageNumber = 1, pageSize = 100 } = options;
+
 	return new Promise(resolve => {
 		setTimeout(() => {
 			resolve({
-				itemCount: 1,
-				pageNumber: 1,
-				pageSize: 1,
-				pageCount: 1,
+				itemCount: 300,
+				pageNumber,
+				pageSize,
+				pageCount: 3,
 				data: new Array(100).fill(1).map((row, rowIndex) => {
 					const index = `${rowIndex}`.padStart(5, '0');
 					const quoteDate = dayjs().subtract(1, 'year').subtract(Math.floor(Math.random() * 30), 'day');
