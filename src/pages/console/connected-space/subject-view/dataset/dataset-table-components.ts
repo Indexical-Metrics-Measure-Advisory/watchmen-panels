@@ -88,7 +88,7 @@ export const DataSetTableBody = styled.div
 	display: grid;
 	justify-items: stretch;
 	align-items: stretch;
-	grid-auto-rows: 32px;
+	grid-auto-rows: 24px;
 `;
 
 export const DataSetTableBodyCell = styled.div
