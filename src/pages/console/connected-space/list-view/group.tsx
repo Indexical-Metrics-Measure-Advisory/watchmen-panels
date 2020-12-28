@@ -77,6 +77,11 @@ const GroupHeader = styled.div.attrs({
 		opacity: 0;
 		pointer-events: none;
 		transition: all 300ms ease-in-out;
+		&[data-collapsed=true] {
+			> button:last-child > svg {
+				transform: rotateZ(180deg);
+			}
+		}
 		> button {
 			font-size: 0.8em;
 			font-weight: var(--font-bold);
@@ -84,6 +89,11 @@ const GroupHeader = styled.div.attrs({
 			opacity: 0.6;
 			&:hover {
 				opacity: 1;
+			}
+			&:last-child {
+				> svg {
+					transition: all 300ms ease-in-out;
+				}
 			}
 			> svg {
 				margin-right: calc(var(--margin) / 4);
@@ -257,7 +267,7 @@ export const Group = (props: {
 				<span>{group.name}</span>
 				{openable ? <FontAwesomeIcon icon={faExternalLinkAlt}/> : null}
 			</GroupName>
-			<div data-widget='console-list-view-header-buttons'>
+			<div data-widget='console-list-view-header-buttons' data-collapsed={collapsed}>
 				{canAddSubject
 					? <LinkButton onClick={onAddSubjectClicked}>
 						<FontAwesomeIcon icon={faFlagCheckered}/>

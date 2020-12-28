@@ -164,9 +164,12 @@ export const DataSet = (props: {
 	};
 	// fetch data
 	useEffect(() => {
+		if (!visible) {
+			return;
+		}
 		fetchData();
 		// eslint-disable-next-line
-	}, []);
+	}, [ visible ]);
 	// link scroll between fixed table and data table
 	useEffect(() => {
 		if (!tableRef.current || !fixedTableRef.current) {
