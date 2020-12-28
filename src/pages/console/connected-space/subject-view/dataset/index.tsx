@@ -1,6 +1,6 @@
 import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { DataPage } from '../../../../../services/admin/types';
 import { fetchSubjectData } from '../../../../../services/console/space';
@@ -48,34 +48,49 @@ const DataSetContainer = styled.div.attrs({
 		pointer-events: none;
 	}
 `;
-const DataSetTable = styled.div.attrs({
-	'data-widget': 'console-subject-view-dataset-table'
+const DataSetTableWrapper = styled.div.attrs({
+	'data-widget': 'console-subject-view-dataset-table-wrapper'
 })`
-	flex-grow: 1;
 	display: flex;
-	flex-direction: column;
 	position: absolute;
 	top: 40px;
 	left: 0;
 	width: 100%;
 	height: calc(100% - 40px);
-	overflow: auto;
+	overflow: hidden;
 `;
-const DataSetTableHeader = styled.div.attrs<{ columns: Array<ColumnDef> }>(({ columns }) => {
+const DataSetTable = styled.div.attrs<{ columns: Array<ColumnDef>, autoFill: boolean }>(({ columns, autoFill }) => {
 	return {
-		'data-widget': 'console-subject-view-dataset-table-header',
+		'data-widget': 'console-subject-view-dataset-table',
 		style: {
-			gridTemplateColumns: `${columns.map(def => `${def.width}px`).join(' ')} minmax(40px, 1fr)`
+			minWidth: autoFill ? 'unset' : columns.reduce((width, column) => width + column.width, 0)
 		}
 	};
-})<{ columns: Array<ColumnDef> }>`
+})<{ columns: Array<ColumnDef>, autoFill: boolean }>`
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	& + div[data-widget='console-subject-view-dataset-table'] {
+		flex-grow: 1;
+		overflow: auto;
+	}
+`;
+const DataSetTableHeader = styled.div
+	.attrs<{ columns: Array<ColumnDef>, autoFill: boolean }>(
+		({ columns, autoFill }) => {
+			return {
+				'data-widget': 'console-subject-view-dataset-table-header',
+				style: {
+					gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(40px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
+				}
+			};
+		})<{ columns: Array<ColumnDef>, autoFill: boolean }>`
 	display: grid;
 	position: sticky;
 	top: 0;
 	justify-items: stretch;
 	align-items: stretch;
 	height: 32px;
-	background-color: var(--bg-color);
 	z-index: 1;
 `;
 const DataSetTableHeaderCell = styled.div.attrs<{ filler?: true }>(({ filler }) => {
@@ -90,6 +105,7 @@ const DataSetTableHeaderCell = styled.div.attrs<{ filler?: true }>(({ filler }) 
 	align-items: center;
 	font-size: 0.8em;
 	font-family: var(--console-title-font-family);
+	background-color: var(--bg-color);
 	padding: 0 8px;
 	border-right: var(--border);
 	border-bottom: var(--border);
@@ -97,14 +113,15 @@ const DataSetTableHeaderCell = styled.div.attrs<{ filler?: true }>(({ filler }) 
 	overflow: hidden;
 	text-overflow: ellipsis;
 `;
-const DataSetTableBody = styled.div.attrs<{ columns: Array<ColumnDef> }>(({ columns }) => {
-	return {
-		'data-widget': 'console-subject-view-dataset-table-body',
-		style: {
-			gridTemplateColumns: `${columns.map(def => `${def.width}px`).join(' ')} minmax(40px, 1fr)`
-		}
-	};
-})<{ columns: Array<ColumnDef> }>`
+const DataSetTableBody = styled.div
+	.attrs<{ columns: Array<ColumnDef>, autoFill: boolean }>(({ columns, autoFill }) => {
+		return {
+			'data-widget': 'console-subject-view-dataset-table-body',
+			style: {
+				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(40px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
+			}
+		};
+	})<{ columns: Array<ColumnDef>, autoFill: boolean }>`
 	display: grid;
 	justify-items: stretch;
 	align-items: stretch;
@@ -210,6 +227,8 @@ export const DataSet = (props: {
 	const { dataset = {} } = subject;
 	const { columns = [] } = dataset;
 
+	const fixedTableRef = useRef<HTMLDivElement>(null);
+	const tableRef = useRef<HTMLDivElement>(null);
 	const [ loading, setLoading ] = useState(false);
 	const [ data, setData ] = useState<DataPage<Array<any>>>({
 		itemCount: 0,
@@ -243,6 +262,24 @@ export const DataSet = (props: {
 			}
 		})();
 	}, [ subject.subjectId ]);
+	useEffect(() => {
+		if (!tableRef.current || !fixedTableRef.current) {
+			return;
+		}
+		const scrollBarHeight = tableRef.current.offsetHeight - tableRef.current.clientHeight;
+		if (scrollBarHeight <= 0) {
+			return;
+		}
+		fixedTableRef.current.style.height = `calc(100% - ${scrollBarHeight}px)`;
+		fixedTableRef.current.style.boxShadow = `0 1px 0 0 var(--border-color)`;
+		const onTableScroll = () => {
+			fixedTableRef.current!.scrollTop = tableRef.current!.scrollTop;
+		};
+		tableRef.current.addEventListener('scroll', onTableScroll);
+		return () => {
+			tableRef.current!.removeEventListener('scroll', onTableScroll);
+		};
+	});
 
 	const onToDefClicked = () => switchToDefinition();
 
@@ -256,7 +293,10 @@ export const DataSet = (props: {
 		const width = columnWidths.get(factorId) || 200;
 		return { topic, factor, fixed: false, width } as FactorColumnDef;
 	}).filter(x => x) as Array<ColumnDef>;
-	columnDefs.unshift({ fixed: true, width: columnWidths.get('#') || 40 } as SequenceColumnDef);
+	const fixedColumnDefs: Array<ColumnDef> = [ {
+		fixed: true,
+		width: columnWidths.get('#') || 40
+	} as SequenceColumnDef ];
 
 	return <DataSetContainer data-visible={visible}>
 		<SubjectPanelHeader>
@@ -267,35 +307,48 @@ export const DataSet = (props: {
 			</LinkButton>
 		</SubjectPanelHeader>
 		{hasColumns
-			? <DataSetTable>
-				<DataSetTableHeader columns={columnDefs}>
-					<DataSetTableHeaderCell>#</DataSetTableHeaderCell>
-					{columns.map(({ factorId }) => {
-						if (!factorId) {
-							return null;
-						}
-						const { factor } = factorMap.get(factorId)!;
-						return <DataSetTableHeaderCell key={factorId}>
-							<span>{factor.label || factor.name}</span>
-						</DataSetTableHeaderCell>;
-					}).filter(x => x)}
-					<DataSetTableHeaderCell filler={true}/>
-				</DataSetTableHeader>
-				<DataSetTableBody columns={columnDefs}>
-					{data.data.map((row, rowIndex, rows) => {
-						const lastRow = rows.length - 1 === rowIndex;
-						return <Fragment key={`${rowIndex}-#`}>
-							<DataSetTableBodyCell lastRow={lastRow}>{rowIndex + 1}</DataSetTableBodyCell>
-							{row.map((cell, cellIndex) => {
-								return <DataSetTableBodyCell lastRow={lastRow} key={`${rowIndex}-${cellIndex}`}>
-									{`${cell}`}
-								</DataSetTableBodyCell>;
-							})}
-							<DataSetTableBodyCell lastRow={lastRow} filler={true}/>
-						</Fragment>;
-					})}
-				</DataSetTableBody>
-			</DataSetTable>
+			? <DataSetTableWrapper>
+				<DataSetTable columns={fixedColumnDefs} autoFill={false} ref={fixedTableRef}>
+					<DataSetTableHeader columns={fixedColumnDefs} autoFill={false}>
+						<DataSetTableHeaderCell>#</DataSetTableHeaderCell>
+					</DataSetTableHeader>
+					<DataSetTableBody columns={fixedColumnDefs} autoFill={false}>
+						{data.data.map((row, rowIndex, rows) => {
+							const lastRow = rows.length - 1 === rowIndex;
+							return <DataSetTableBodyCell lastRow={lastRow} key={`${rowIndex}-#`}>
+								{rowIndex + 1}
+							</DataSetTableBodyCell>;
+						})}
+					</DataSetTableBody>
+				</DataSetTable>
+				<DataSetTable columns={columnDefs} autoFill={true} ref={tableRef}>
+					<DataSetTableHeader columns={columnDefs} autoFill={true}>
+						{columns.map(({ factorId }) => {
+							if (!factorId) {
+								return null;
+							}
+							const { factor } = factorMap.get(factorId)!;
+							return <DataSetTableHeaderCell key={factorId}>
+								<span>{factor.label || factor.name}</span>
+							</DataSetTableHeaderCell>;
+						}).filter(x => x)}
+						<DataSetTableHeaderCell filler={true}/>
+					</DataSetTableHeader>
+					<DataSetTableBody columns={columnDefs} autoFill={true}>
+						{data.data.map((row, rowIndex, rows) => {
+							const lastRow = rows.length - 1 === rowIndex;
+							return <Fragment key={`${rowIndex}-#`}>
+								{row.map((cell, cellIndex) => {
+									return <DataSetTableBodyCell lastRow={lastRow} key={`${rowIndex}-${cellIndex}`}>
+										{`${cell}`}
+									</DataSetTableBodyCell>;
+								})}
+								<DataSetTableBodyCell lastRow={lastRow} filler={true}/>
+							</Fragment>;
+						})}
+					</DataSetTableBody>
+				</DataSetTable>
+			</DataSetTableWrapper>
 			: <DataSetNoDef>
 				<span>No columns defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
 			</DataSetNoDef>}

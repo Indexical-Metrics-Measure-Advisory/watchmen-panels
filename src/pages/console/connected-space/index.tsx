@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import Path from '../../../common/path';
 import { useConsoleContext } from '../context/console-context';
 import { Container } from './components';
@@ -8,7 +8,6 @@ import { SpaceContextProvider } from './space-context';
 import { ConnectedSpaceHeader } from './space-header';
 
 const ConnectedSpaceContent = () => {
-	const history = useHistory();
 	const { connectId } = useParams<{ connectId: string }>();
 
 	const { spaces: { connected: spaces } } = useConsoleContext();
@@ -17,8 +16,7 @@ const ConnectedSpaceContent = () => {
 	const space = spaces.find(space => space.connectId == connectId)!;
 
 	if (!space) {
-		history.replace(Path.CONSOLE_HOME);
-		return null;
+		return <Redirect to={Path.CONSOLE_HOME}/>;
 	}
 
 	return <Container>
