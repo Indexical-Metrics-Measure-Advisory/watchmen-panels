@@ -7,6 +7,7 @@ import { fetchSubjectData } from '../../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
+import { DataSetTableContextProvider } from './dataset-table-context';
 import { DataSetTableWrapper } from './dataset-table-wrapper';
 
 const DataSetContainer = styled.div.attrs({
@@ -157,40 +158,42 @@ export const DataSet = (props: {
 
 	const hasColumns = columns.length !== 0;
 
-	return <DataSetContainer data-visible={visible}>
-		<DataSetHeader>
-			<div>Dataset of {subject.name}</div>
-			<div>
-				{data.pageNumber !== 1
-					? <LinkButton ignoreHorizontalPadding={true}
-					              tooltip='Previous Page' center={true} offsetY={6}
-					              onClick={onPreviousPageClicked}>
-						<FontAwesomeIcon icon={faAngleLeft}/>
-					</LinkButton>
-					: null}
+	return <DataSetTableContextProvider>
+		<DataSetContainer data-visible={visible}>
+			<DataSetHeader>
+				<div>Dataset of {subject.name}</div>
 				<div>
-					Page {data.pageNumber} of {data.pageCount}, {data.itemCount} Row{data.itemCount !== 1 ? 's' : ''} Total.
+					{data.pageNumber !== 1
+						? <LinkButton ignoreHorizontalPadding={true}
+						              tooltip='Previous Page' center={true} offsetY={6}
+						              onClick={onPreviousPageClicked}>
+							<FontAwesomeIcon icon={faAngleLeft}/>
+						</LinkButton>
+						: null}
+					<div>
+						Page {data.pageNumber} of {data.pageCount}, {data.itemCount} Row{data.itemCount !== 1 ? 's' : ''} Total.
+					</div>
+					{data.pageNumber !== data.pageCount
+						? <LinkButton ignoreHorizontalPadding={true}
+						              tooltip='Next Page' center={true} offsetY={6}
+						              onClick={onNextPageClicked}>
+							<FontAwesomeIcon icon={faAngleRight}/>
+						</LinkButton>
+						: null}
 				</div>
-				{data.pageNumber !== data.pageCount
-					? <LinkButton ignoreHorizontalPadding={true}
-					              tooltip='Next Page' center={true} offsetY={6}
-					              onClick={onNextPageClicked}>
-						<FontAwesomeIcon icon={faAngleRight}/>
-					</LinkButton>
-					: null}
-			</div>
-			<LinkButton onClick={() => onVisibleChanged(false)} ignoreHorizontalPadding={true} tooltip='Minimize'
-			            center={true}>
-				<FontAwesomeIcon icon={faTimes}/>
-			</LinkButton>
-		</DataSetHeader>
-		{hasColumns
-			? <DataSetTableWrapper space={space} subject={subject} data={data}/>
-			: <DataSetNoDef>
-				<span>No columns defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
-			</DataSetNoDef>}
-		<DataSetLoading data-visible={loading}>
-			<FontAwesomeIcon icon={faSpinner} spin={true}/>
-		</DataSetLoading>
-	</DataSetContainer>;
+				<LinkButton onClick={() => onVisibleChanged(false)} ignoreHorizontalPadding={true} tooltip='Minimize'
+				            center={true}>
+					<FontAwesomeIcon icon={faTimes}/>
+				</LinkButton>
+			</DataSetHeader>
+			{hasColumns
+				? <DataSetTableWrapper space={space} subject={subject} data={data}/>
+				: <DataSetNoDef>
+					<span>No columns defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
+				</DataSetNoDef>}
+			<DataSetLoading data-visible={loading}>
+				<FontAwesomeIcon icon={faSpinner} spin={true}/>
+			</DataSetLoading>
+		</DataSetContainer>
+	</DataSetTableContextProvider>;
 };

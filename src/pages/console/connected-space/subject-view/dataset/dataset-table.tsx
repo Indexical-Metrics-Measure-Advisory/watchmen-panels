@@ -6,6 +6,7 @@ import {
 	DataSetTableHeader,
 	DataSetTableHeaderCell
 } from './dataset-table-components';
+import { useDataSetTableContext } from './dataset-table-context';
 import { ColumnDef, FactorColumnDef, SequenceColumnDef } from './types';
 
 const HeaderCell = (props: {
@@ -29,17 +30,17 @@ export const DataSetTable = forwardRef((props: {
 	showRowNo: boolean;
 	rowNoColumnWidth: number;
 	data: Array<Array<any>>;
-	select: (rowIndex: number, columnIndex: number) => void;
 }, ref: ForwardedRef<HTMLDivElement>) => {
-	const { displayColumns, showRowNo, rowNoColumnWidth, data, select } = props;
+	const { displayColumns, showRowNo, rowNoColumnWidth, data } = props;
 
+	const { selectionChange } = useDataSetTableContext();
 	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
 		// const { clientX, clientY } = event;
 	};
 	const onSelectionChanged = (rowIndex: number, columnIndex: number) => (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
-		select(rowIndex, columnIndex);
+		selectionChange(showRowNo, rowIndex, columnIndex);
 	};
 
 	const allDisplayColumns: Array<ColumnDef> = [ ...displayColumns ];
