@@ -1,4 +1,4 @@
-import { ConsoleSpaceSubjectDataSetColumn } from '../../../../../services/console/types';
+import { ConsoleSpaceSubjectDataSetColumn, ConsoleTopic } from '../../../../../services/console/types';
 import { FactorColumnDef, FactorMap } from './types';
 
 export const filterColumns = (options: {
@@ -23,4 +23,13 @@ export const filterColumns = (options: {
 		// initial width is 200 pixels
 		return { topic, factor, fixed: false, width: 200, index: columnIndex };
 	}).filter(x => x) as Array<FactorColumnDef>;
+};
+
+export const buildFactorMap = (topics: Array<ConsoleTopic>): FactorMap => {
+	return topics.reduce((map, topic) => {
+		topic.factors.forEach(factor => {
+			map.set(factor.factorId, { topic, factor });
+		});
+		return map;
+	}, new Map());
 };

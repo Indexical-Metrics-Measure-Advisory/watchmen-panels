@@ -1,16 +1,13 @@
 import { faAngleLeft, faAngleRight, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DataPage } from '../../../../../services/admin/types';
 import { fetchSubjectData } from '../../../../../services/console/space';
-import { ConnectedConsoleSpace, ConsoleSpaceSubject, ConsoleTopic } from '../../../../../services/console/types';
+import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
-import { DataSetTable } from './dataset-table';
 import { DataSetTableWrapper } from './dataset-table-wrapper';
-import { FactorColumnDef, FactorMap } from './types';
-import { filterColumns } from './utils';
 
 const DataSetContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-dataset'
@@ -106,15 +103,6 @@ const DataSetLoading = styled.div`
 	}
 `;
 
-const buildFactorMap = (topics: Array<ConsoleTopic>): FactorMap => {
-	return topics.reduce((map, topic) => {
-		topic.factors.forEach(factor => {
-			map.set(factor.factorId, { topic, factor });
-		});
-		return map;
-	}, new Map());
-};
-
 export const DataSet = (props: {
 	space: ConnectedConsoleSpace;
 	subject: ConsoleSpaceSubject;
@@ -130,8 +118,6 @@ export const DataSet = (props: {
 	const { dataset = {} } = subject;
 	const { columns = [] } = dataset;
 
-	const fixedTableRef = useRef<HTMLDivElement>(null);
-	const tableRef = useRef<HTMLDivElement>(null);
 	const [ loading, setLoading ] = useState(false);
 	const [ data, setData ] = useState<DataPage<Array<any>>>({
 		itemCount: 0,
@@ -141,12 +127,6 @@ export const DataSet = (props: {
 		data: []
 	});
 
-	const [ columnDefs, setColumnDefs ] = useState<{ fixed: Array<FactorColumnDef>, data: Array<FactorColumnDef> }>(() => {
-		return {
-			fixed: [],
-			data: filterColumns({ columns, factorMap: buildFactorMap(space.topics) })
-		};
-	});
 	const fetchData = (pageNumber: number = 1) => {
 		(async () => {
 			try {
@@ -170,49 +150,10 @@ export const DataSet = (props: {
 		fetchData();
 		// eslint-disable-next-line
 	}, [ visible ]);
-	// link scroll between fixed table and data table
-	useEffect(() => {
-		if (!tableRef.current || !fixedTableRef.current) {
-			return;
-		}
-		const table = tableRef.current;
-		const fixedTable = fixedTableRef.current;
-		const arrangeFixedTableStyle = () => {
-			const scrollBarHeight = table.offsetHeight - table.clientHeight;
-			fixedTable.style.height = `calc(100% - ${scrollBarHeight}px)`;
-			fixedTable.style.boxShadow = `0 1px 0 0 var(--border-color)`;
-		};
-		const onTableScroll = () => {
-			arrangeFixedTableStyle();
-			fixedTable.scrollTop = tableRef.current!.scrollTop;
-		};
-		setTimeout(arrangeFixedTableStyle, 100);
-		table.addEventListener('scroll', onTableScroll);
-		return () => {
-			table.removeEventListener('scroll', onTableScroll);
-		};
-	});
 
 	const onPreviousPageClicked = () => fetchData(data.pageNumber - 1);
 	const onNextPageClicked = () => fetchData(data.pageNumber + 1);
 	const onToDefClicked = () => switchToDefinition();
-	const pinColumn = (column: FactorColumnDef, pin: boolean) => {
-		column.fixed = pin;
-		if (pin) {
-			// move to fixed
-			setColumnDefs({
-				fixed: [ ...columnDefs.fixed, column ],
-				data: columnDefs.data.filter(c => c !== column)
-			});
-		} else {
-			// remove from fixed
-			setColumnDefs({
-				fixed: columnDefs.fixed.filter(c => c !== column),
-				// to original column index
-				data: [ ...columnDefs.data, column ].sort((c1, c2) => c1.index - c2.index)
-			});
-		}
-	};
 
 	const hasColumns = columns.length !== 0;
 
@@ -228,7 +169,7 @@ export const DataSet = (props: {
 					</LinkButton>
 					: null}
 				<div>
-					Page {data.pageNumber} of {data.pageCount}, {data.itemCount} Rows Total.
+					Page {data.pageNumber} of {data.pageCount}, {data.itemCount} Row{data.itemCount !== 1 ? 's' : ''} Total.
 				</div>
 				{data.pageNumber !== data.pageCount
 					? <LinkButton ignoreHorizontalPadding={true}
@@ -244,14 +185,7 @@ export const DataSet = (props: {
 			</LinkButton>
 		</DataSetHeader>
 		{hasColumns
-			? <DataSetTableWrapper>
-				<DataSetTable displayColumns={columnDefs.fixed} showRowNo={true} data={data.data}
-				              pinColumn={pinColumn}
-				              ref={fixedTableRef}/>
-				<DataSetTable displayColumns={columnDefs.data} showRowNo={false} data={data.data}
-				              pinColumn={pinColumn}
-				              ref={tableRef}/>
-			</DataSetTableWrapper>
+			? <DataSetTableWrapper space={space} subject={subject} data={data}/>
 			: <DataSetNoDef>
 				<span>No columns defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
 			</DataSetNoDef>}

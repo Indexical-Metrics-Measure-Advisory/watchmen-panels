@@ -58,6 +58,11 @@ export const DataSetTableHeaderCell = styled.div
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	&:not([data-rowno=true]) {
+		&:hover {
+			cursor: s-resize;
+		}
+	}
 	> span {
 		flex-grow: 1;
 	}
@@ -112,4 +117,14 @@ export const DataSetTableBodyCell = styled.div
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	&[data-rowno=true] {
+		&:hover {
+			cursor: e-resize;
+		}
+		> span {
+			font-family: var(--console-title-font-family);
+			transform: scale(0.8);
+			transform-origin: left;
+		}
+	}
 `;

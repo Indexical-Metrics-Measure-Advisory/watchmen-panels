@@ -1,7 +1,4 @@
-import { faMapPin, faSlash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { ForwardedRef, forwardRef, Fragment, useRef, useState } from 'react';
-import { LinkButton } from '../../../../component/console/link-button';
+import React, { ForwardedRef, forwardRef, Fragment, useRef } from 'react';
 import {
 	DataSetTableBody,
 	DataSetTableBodyCell,
@@ -14,38 +11,36 @@ import { ColumnDef, FactorColumnDef, SequenceColumnDef } from './types';
 const HeaderCell = (props: {
 	column: FactorColumnDef;
 	last: boolean;
-	togglePinned: (pin: boolean) => void;
+	selectColumn: (event: React.MouseEvent<HTMLDivElement>) => void;
 }) => {
-	const { column, last, togglePinned } = props;
+	const { column, last, selectColumn } = props;
 
 	const cellRef = useRef<HTMLDivElement>(null);
 
-	return <DataSetTableHeaderCell lastColumn={last} ref={cellRef}>
+	return <DataSetTableHeaderCell lastColumn={last}
+	                               onClick={selectColumn}
+	                               ref={cellRef}>
 		<span>{column.factor.label || column.factor.name}</span>
-		{column.fixed
-			? <LinkButton ignoreHorizontalPadding={true} onClick={() => togglePinned(false)}
-			              tooltip='Unpin Column' right={true} offsetX={-11} offsetY={8}>
-				<FontAwesomeIcon icon={faMapPin}/>
-				<FontAwesomeIcon icon={faSlash} color='var(--console-danger-color)'/>
-			</LinkButton>
-			: <LinkButton ignoreHorizontalPadding={true} onClick={() => togglePinned(true)}
-			              tooltip='Pin Column' right={true} offsetX={-11} offsetY={8}>
-				<FontAwesomeIcon icon={faMapPin}/>
-			</LinkButton>}
 	</DataSetTableHeaderCell>;
 };
 
 export const DataSetTable = forwardRef((props: {
 	displayColumns: Array<FactorColumnDef>;
 	showRowNo: boolean;
+	rowNoColumnWidth: number;
 	data: Array<Array<any>>;
-	pinColumn: (column: FactorColumnDef, pin: boolean) => void;
+	select: (rowIndex: number, columnIndex: number) => void;
 }, ref: ForwardedRef<HTMLDivElement>) => {
-	const { displayColumns, showRowNo, data, pinColumn } = props;
+	const { displayColumns, showRowNo, rowNoColumnWidth, data, select } = props;
 
-	const [ rowNoColumnWidth ] = useState(40);
-
-	const onColumnPinToggle = (column: FactorColumnDef) => (pin: boolean) => pinColumn(column, pin);
+	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+		// const { clientX, clientY } = event;
+	};
+	const onSelectionChanged = (rowIndex: number, columnIndex: number) => (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		select(rowIndex, columnIndex);
+	};
 
 	const allDisplayColumns: Array<ColumnDef> = [ ...displayColumns ];
 	if (showRowNo) {
@@ -53,16 +48,19 @@ export const DataSetTable = forwardRef((props: {
 	}
 	const autoFill = !showRowNo;
 
-	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill} ref={ref}>
+	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill}
+	                              onMouseMove={onMouseMove}
+	                              ref={ref}>
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
 			{showRowNo
-				? <DataSetTableHeaderCell lastColumn={displayColumns.length === 0}>#</DataSetTableHeaderCell>
+				? <DataSetTableHeaderCell lastColumn={displayColumns.length === 0}
+				                          data-rowno={true}>#</DataSetTableHeaderCell>
 				: null}
 			{displayColumns.map((column, columnIndex, columns) => {
 				const lastColumn = showRowNo && columnIndex === columns.length - 1;
 				return <HeaderCell column={column}
 				                   last={lastColumn}
-				                   togglePinned={onColumnPinToggle(column)}
+				                   selectColumn={onSelectionChanged(-1, columnIndex)}
 				                   key={`0-${columnIndex}`}/>;
 			})}
 			{autoFill ? <DataSetTableHeaderCell lastColumn={false}/> : null}
@@ -72,13 +70,16 @@ export const DataSetTable = forwardRef((props: {
 				const lastRow = rows.length - 1 === rowIndex;
 				return <Fragment key={`${rowIndex}`}>
 					{showRowNo
-						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={displayColumns.length === 0}>
-							{rowIndex + 1}
+						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={displayColumns.length === 0}
+						                        onClick={onSelectionChanged(rowIndex, -1)}
+						                        data-rowno={true}>
+							<span>{rowIndex + 1}</span>
 						</DataSetTableBodyCell>
 						: null}
 					{displayColumns.map((def, columnIndex, columns) => {
 						const lastColumn = showRowNo && columnIndex === columns.length - 1;
 						return <DataSetTableBodyCell lastRow={lastRow} lastColumn={lastColumn}
+						                             onClick={onSelectionChanged(rowIndex, columnIndex)}
 						                             key={`${rowIndex}-${columnIndex}`}>
 							{`${row[def.index]}`}
 						</DataSetTableBodyCell>;

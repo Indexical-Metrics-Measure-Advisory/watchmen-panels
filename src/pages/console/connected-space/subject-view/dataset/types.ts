@@ -20,3 +20,20 @@ export interface DataSetTableProps {
 	columns: Array<ColumnDef>,
 	autoFill: boolean
 }
+
+export interface ColumnDefs {
+	fixed: Array<FactorColumnDef>;
+	data: Array<FactorColumnDef>;
+}
+
+export interface TableSelection {
+	inFixTable: boolean;
+	row: number;
+
+	column: number;
+	columnLeft: number;
+	columnWidth: number;
+
+	verticalScroll: number;
+	horizontalScroll: number;
+}
