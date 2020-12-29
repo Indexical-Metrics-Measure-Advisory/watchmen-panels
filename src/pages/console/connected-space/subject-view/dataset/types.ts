@@ -29,6 +29,8 @@ export interface ColumnDefs {
 export interface TableSelection {
 	inFixTable: boolean;
 	row: number;
+	rowTop: number;
+	rowHeight: number;
 
 	column: number;
 	columnLeft: number;

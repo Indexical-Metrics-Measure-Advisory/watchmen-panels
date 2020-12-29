@@ -54,7 +54,9 @@ export const DataSetTable = forwardRef((props: {
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
 			{showRowNo
 				? <DataSetTableHeaderCell lastColumn={displayColumns.length === 0}
-				                          data-rowno={true}>#</DataSetTableHeaderCell>
+				                          data-rowno={true}>
+					<span>#</span>
+				</DataSetTableHeaderCell>
 				: null}
 			{displayColumns.map((column, columnIndex, columns) => {
 				const lastColumn = showRowNo && columnIndex === columns.length - 1;
@@ -63,7 +65,7 @@ export const DataSetTable = forwardRef((props: {
 				                   selectColumn={onSelectionChanged(-1, columnIndex)}
 				                   key={`0-${columnIndex}`}/>;
 			})}
-			{autoFill ? <DataSetTableHeaderCell lastColumn={false}/> : null}
+			{autoFill ? <DataSetTableHeaderCell lastColumn={false} data-filler={true}/> : null}
 		</DataSetTableHeader>
 		<DataSetTableBody columns={allDisplayColumns} autoFill={autoFill}>
 			{data.map((row, rowIndex, rows) => {
@@ -84,7 +86,7 @@ export const DataSetTable = forwardRef((props: {
 							{`${row[def.index]}`}
 						</DataSetTableBodyCell>;
 					})}
-					{autoFill ? <DataSetTableBodyCell lastRow={lastRow} lastColumn={false}/> : null}
+					{autoFill ? <DataSetTableBodyCell lastRow={lastRow} lastColumn={false} data-filler={true}/> : null}
 				</Fragment>;
 			})}
 		</DataSetTableBody>
