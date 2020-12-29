@@ -26,8 +26,15 @@ export const DataSetTableContainer = styled.div
 	})<DataSetTableProps>`
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
-	& + div[data-widget='console-subject-view-dataset-table'] {
+	&:first-child {
+		overflow-x: hidden;
+		overflow-y: auto;
+		&::-webkit-scrollbar {
+			background-color: transparent;
+			width: 0;
+		}
+	}
+	&:nth-child(2) {
 		flex-grow: 1;
 		overflow: auto;
 	}
@@ -62,6 +69,7 @@ export const DataSetTableHeaderCell = styled.div
 		};
 	})<{ lastColumn: boolean, filler?: true }>`
 	display: flex;
+	position: relative;
 	align-items: center;
 	font-size: 0.8em;
 	font-family: var(--console-title-font-family);
@@ -75,6 +83,10 @@ export const DataSetTableHeaderCell = styled.div
 	&:not([data-rowno=true]):not([data-filler=true]) {
 		&:hover {
 			cursor: s-resize;
+			> div[data-widget='console-subject-view-dataset-table-header-cell-buttons'] {
+				opacity: 1;
+				pointer-events: auto;
+			}
 		}
 	}
 	> span {
@@ -94,6 +106,23 @@ export const DataSetTableHeaderCell = styled.div
 		}
 	}
 `;
+export const HeaderCellButtons = styled.div.attrs({
+	'data-widget': 'console-subject-view-dataset-table-header-cell-buttons'
+})`
+	display: flex;
+	position: absolute;
+	height: 32px;
+	top: 0;
+	right: 0;
+	padding: calc(var(--margin) / 8);
+	opacity: 0;
+	transition: all 300ms ease-in-out;
+	pointer-events: none;
+	> button {
+		font-size: 0.9em;
+		width: 24px;
+	}
+`;
 
 export const DataSetTableBody = styled.div
 	.attrs<DataSetTableProps>(({ columns, autoFill }) => {
@@ -111,7 +140,7 @@ export const DataSetTableBody = styled.div
 `;
 
 export const DataSetTableBodyCell = styled.div
-	.attrs<{ lastRow: boolean, lastColumn: boolean, filler?: true }>(({ lastColumn, filler }) => {
+	.attrs<{ lastRow: boolean, lastColumn: boolean, filler?: true }>(({ lastRow, lastColumn, filler }) => {
 		return {
 			'data-widget': 'console-subject-view-dataset-table-body-cell',
 			style: {
@@ -160,7 +189,7 @@ export const RowSelection = styled.div
 	background-color: var(--console-favorite-color);
 	opacity: 0.1;
 	pointer-events: none;
-	transition: top 300ms ease-in-out, height 1ms linear 200ms;
+	transition: top 300ms ease-in-out;
 	z-index: 10;
 `;
 
@@ -183,6 +212,6 @@ export const ColumnSelection = styled.div
 	background-color: var(--console-favorite-color);
 	opacity: 0.05;
 	pointer-events: none;
-	transition: left 300ms ease-in-out, width 1ms linear 200ms;
+	transition: left 300ms ease-in-out;
 	z-index: 10;
 `;

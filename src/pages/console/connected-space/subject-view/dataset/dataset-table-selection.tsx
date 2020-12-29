@@ -37,7 +37,7 @@ const computeColumnSelectionPosition = (options: {
 	inFixTable: boolean;
 	columnIndex: number;
 	scrollLeft: number;
-	clientWidth: number;
+	dataTableClientWidth: number;
 	verticalScroll: boolean;
 	data: DataPage<Array<any>>;
 	columnDefs: ColumnDefs;
@@ -48,32 +48,47 @@ const computeColumnSelectionPosition = (options: {
 		return { columnLeft: 0, columnWidth: 0, columnHeight: 0 };
 	}
 
-	const { inFixTable, scrollLeft, clientWidth, verticalScroll, data, columnDefs, rowNoColumnWidth } = options;
+	const {
+		inFixTable,
+		scrollLeft,
+		dataTableClientWidth,
+		verticalScroll,
+		data,
+		columnDefs,
+		rowNoColumnWidth
+	} = options;
 
 	const selectColumnDef = inFixTable ? columnDefs.fixed[columnIndex] : columnDefs.data[columnIndex];
 	const selectColumnWidth = selectColumnDef?.width || 0;
+	// compute left in my table, total width of previous columns
 	const selectColumnLeft = (inFixTable ? columnDefs.fixed : columnDefs.data).reduce((left, columnDef, index) => {
 		if (index < columnIndex) {
 			left += columnDef.width;
 		}
 		return left;
-	}, inFixTable ? 0 : (0 - scrollLeft));
+	}, 0);
 
 	let columnWidth = selectColumnWidth;
 	let columnLeft;
+	const fixTableWidth = columnDefs.fixed.reduce((left, column) => left + column.width, rowNoColumnWidth);
+	const totalWidth = fixTableWidth + dataTableClientWidth;
 	if (inFixTable) {
-		columnLeft = selectColumnLeft;
+		columnLeft = selectColumnLeft + rowNoColumnWidth;
 	} else {
-		const fixTableWidth = columnDefs.fixed.reduce((left, column) => left + column.width, rowNoColumnWidth);
-		columnLeft = fixTableWidth + selectColumnLeft;
+		columnLeft = fixTableWidth + selectColumnLeft - scrollLeft;
+		if (columnLeft + columnWidth <= fixTableWidth || columnLeft >= totalWidth) {
+			// column is hide in fix table
+			// or column is beyond total width
+			return { columnLeft: 0, columnWidth: 0, columnHeight: 0 };
+		}
 		if (columnLeft < fixTableWidth) {
 			columnWidth -= fixTableWidth - columnLeft;
 			columnWidth = Math.max(0, columnWidth);
 			columnLeft = fixTableWidth;
 		}
 	}
-	if (columnWidth + columnLeft > clientWidth + rowNoColumnWidth) {
-		columnWidth = clientWidth + rowNoColumnWidth - columnLeft;
+	if (columnWidth + columnLeft > totalWidth) {
+		columnWidth = totalWidth - columnLeft;
 	}
 	return {
 		columnLeft,
@@ -126,7 +141,7 @@ const useSelection = (options: {
 			inFixTable,
 			columnIndex,
 			scrollLeft,
-			clientWidth,
+			dataTableClientWidth: clientWidth,
 			verticalScroll: offsetHeight !== clientHeight,
 			data,
 			columnDefs,
@@ -178,12 +193,12 @@ const useSelection = (options: {
 				rowHeight = height;
 			}
 			if (columnIndex !== -1 && columnSelectionRef.current) {
-				const { scrollLeft, clientWidth, offsetHeight, clientHeight } = dataTable;
+				const { scrollLeft, clientWidth: dataTableClientWidth, offsetHeight, clientHeight } = dataTable;
 				const { columnLeft: left, columnWidth: width } = computeColumnSelectionPosition({
 					inFixTable,
 					columnIndex,
 					scrollLeft,
-					clientWidth,
+					dataTableClientWidth,
 					verticalScroll: offsetHeight !== clientHeight,
 					data,
 					columnDefs,

@@ -1,20 +1,27 @@
+import { faLock, faLockOpen, faSortAmountUpAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ForwardedRef, forwardRef, Fragment, useRef } from 'react';
+import { LinkButton } from '../../../../component/console/link-button';
 import {
 	DataSetTableBody,
 	DataSetTableBodyCell,
 	DataSetTableContainer,
 	DataSetTableHeader,
-	DataSetTableHeaderCell
+	DataSetTableHeaderCell,
+	HeaderCellButtons
 } from './dataset-table-components';
 import { useDataSetTableContext } from './dataset-table-context';
 import { ColumnDef, FactorColumnDef, SequenceColumnDef } from './types';
 
 const HeaderCell = (props: {
 	column: FactorColumnDef;
+	isFixTable: boolean;
 	last: boolean;
 	selectColumn: (event: React.MouseEvent<HTMLDivElement>) => void;
+	fixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	unfixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
-	const { column, last, selectColumn } = props;
+	const { column, isFixTable, last, selectColumn, fixColumn, unfixColumn } = props;
 
 	const cellRef = useRef<HTMLDivElement>(null);
 
@@ -22,16 +29,34 @@ const HeaderCell = (props: {
 	                               onClick={selectColumn}
 	                               ref={cellRef}>
 		<span>{column.factor.label || column.factor.name}</span>
+		<HeaderCellButtons>
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort ascending'
+			            right={true} offsetX={-6} offsetY={6}>
+				<FontAwesomeIcon icon={faSortAmountUpAlt}/>
+			</LinkButton>
+			{isFixTable
+				? <LinkButton ignoreHorizontalPadding={true} tooltip='Unfix this and follows'
+				              right={true} offsetX={-6} offsetY={6}
+				              onClick={unfixColumn}>
+					<FontAwesomeIcon icon={faLockOpen}/>
+				</LinkButton>
+				: <LinkButton ignoreHorizontalPadding={true} tooltip='Fix columns to here'
+				              right={true} offsetX={-6} offsetY={6}
+				              onClick={fixColumn}>
+					<FontAwesomeIcon icon={faLock}/>
+				</LinkButton>}
+		</HeaderCellButtons>
 	</DataSetTableHeaderCell>;
 };
 
 export const DataSetTable = forwardRef((props: {
 	displayColumns: Array<FactorColumnDef>;
-	showRowNo: boolean;
-	rowNoColumnWidth: number;
 	data: Array<Array<any>>;
+	isFixTable: boolean;
+	rowNoColumnWidth: number;
+	onColumnFixChange: (column: FactorColumnDef, fix: boolean) => void;
 }, ref: ForwardedRef<HTMLDivElement>) => {
-	const { displayColumns, showRowNo, rowNoColumnWidth, data } = props;
+	const { displayColumns, isFixTable, rowNoColumnWidth, data, onColumnFixChange } = props;
 
 	const { selectionChange } = useDataSetTableContext();
 	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -40,30 +65,38 @@ export const DataSetTable = forwardRef((props: {
 	const onSelectionChanged = (rowIndex: number, columnIndex: number) => (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
-		selectionChange(showRowNo, rowIndex, columnIndex);
+		selectionChange(isFixTable, rowIndex, columnIndex);
+	};
+	const fixColumn = (fix: boolean, column: FactorColumnDef) => (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		onColumnFixChange(column, fix);
 	};
 
 	const allDisplayColumns: Array<ColumnDef> = [ ...displayColumns ];
-	if (showRowNo) {
+	if (isFixTable) {
 		allDisplayColumns.unshift({ fixed: true, width: rowNoColumnWidth } as SequenceColumnDef);
 	}
-	const autoFill = !showRowNo;
+	const autoFill = !isFixTable;
 
 	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill}
 	                              onMouseMove={onMouseMove}
 	                              ref={ref}>
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
-			{showRowNo
+			{isFixTable
 				? <DataSetTableHeaderCell lastColumn={displayColumns.length === 0}
 				                          data-rowno={true}>
 					<span>#</span>
 				</DataSetTableHeaderCell>
 				: null}
 			{displayColumns.map((column, columnIndex, columns) => {
-				const lastColumn = showRowNo && columnIndex === columns.length - 1;
+				const lastColumn = isFixTable && columnIndex === columns.length - 1;
 				return <HeaderCell column={column}
+				                   isFixTable={isFixTable}
 				                   last={lastColumn}
 				                   selectColumn={onSelectionChanged(-1, columnIndex)}
+				                   fixColumn={fixColumn(true, column)}
+				                   unfixColumn={fixColumn(false, column)}
 				                   key={`0-${columnIndex}`}/>;
 			})}
 			{autoFill ? <DataSetTableHeaderCell lastColumn={false} data-filler={true}/> : null}
@@ -72,7 +105,7 @@ export const DataSetTable = forwardRef((props: {
 			{data.map((row, rowIndex, rows) => {
 				const lastRow = rows.length - 1 === rowIndex;
 				return <Fragment key={`${rowIndex}`}>
-					{showRowNo
+					{isFixTable
 						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={displayColumns.length === 0}
 						                        onClick={onSelectionChanged(rowIndex, -1)}
 						                        data-rowno={true}>
@@ -80,7 +113,7 @@ export const DataSetTable = forwardRef((props: {
 						</DataSetTableBodyCell>
 						: null}
 					{displayColumns.map((def, columnIndex, columns) => {
-						const lastColumn = showRowNo && columnIndex === columns.length - 1;
+						const lastColumn = isFixTable && columnIndex === columns.length - 1;
 						return <DataSetTableBodyCell lastRow={lastRow} lastColumn={lastColumn}
 						                             onClick={onSelectionChanged(rowIndex, columnIndex)}
 						                             key={`${rowIndex}-${columnIndex}`}>

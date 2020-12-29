@@ -4,7 +4,7 @@ import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../servi
 import { DataSetTable } from './dataset-table';
 import { Wrapper } from './dataset-table-components';
 import { DataSetTableSelection } from './dataset-table-selection';
-import { ColumnDefs } from './types';
+import { ColumnDefs, FactorColumnDef } from './types';
 import { buildFactorMap, filterColumns } from './utils';
 
 const useDecorateFixStyle = (options: {
@@ -25,14 +25,18 @@ const useDecorateFixStyle = (options: {
 			fixTable.style.height = `calc(100% - ${scrollBarHeight}px)`;
 			fixTable.style.boxShadow = `0 1px 0 0 var(--border-color)`;
 		};
-		const onScroll = () => {
+		const onDataTableScroll = () => {
 			arrangeFixedTableStyle();
-			fixTable.scrollTop = dataTableRef.current!.scrollTop;
+			fixTable.scrollTop = dataTable.scrollTop;
 		};
 		setTimeout(arrangeFixedTableStyle, 100);
-		dataTable.addEventListener('scroll', onScroll);
+		dataTable.addEventListener('scroll', onDataTableScroll);
+		// synchronize scroll top to data table
+		const onFixTableScroll = () => dataTable.scrollTop = fixTable.scrollTop;
+		fixTable.addEventListener('scroll', onFixTableScroll);
 		return () => {
-			dataTable.removeEventListener('scroll', onScroll);
+			dataTable.removeEventListener('scroll', onDataTableScroll);
+			fixTable.removeEventListener('scroll', onFixTableScroll);
 		};
 	});
 };
@@ -47,7 +51,7 @@ export const DataSetTableWrapper = (props: {
 	const fixTableRef = useRef<HTMLDivElement>(null);
 	const dataTableRef = useRef<HTMLDivElement>(null);
 	const [ rowNoColumnWidth ] = useState(40);
-	const [ columnDefs ] = useState<ColumnDefs>(() => {
+	const [ columnDefs, setColumnDefs ] = useState<ColumnDefs>(() => {
 		return {
 			fixed: [],
 			data: filterColumns({ columns: subject.dataset?.columns || [], factorMap: buildFactorMap(space.topics) })
@@ -55,32 +59,34 @@ export const DataSetTableWrapper = (props: {
 	});
 	useDecorateFixStyle({ fixTableRef, dataTableRef });
 
-	// const pinColumn = (column: FactorColumnDef, pin: boolean) => {
-	// 	column.fixed = pin;
-	// 	if (pin) {
-	// 		// move to fixed
-	// 		setColumnDefs({
-	// 			fixed: [ ...columnDefs.fixed, column ],
-	// 			data: columnDefs.data.filter(c => c !== column)
-	// 		});
-	// 	} else {
-	// 		// remove from fixed
-	// 		setColumnDefs({
-	// 			fixed: columnDefs.fixed.filter(c => c !== column),
-	// 			// to original column index
-	// 			data: [ ...columnDefs.data, column ].sort((c1, c2) => c1.index - c2.index)
-	// 		});
-	// 	}
-	// };
+	const onColumnFixChange = (column: FactorColumnDef, fix: boolean) => {
+		if (fix) {
+			// move leading columns from data columns to fix columns
+			const index = columnDefs.data.indexOf(column);
+			setColumnDefs({
+				fixed: [ ...columnDefs.fixed, ...columnDefs.data.splice(0, index + 1) ],
+				data: [ ...columnDefs.data ]
+			});
+		} else {
+			// move tailing columns from fix columns to data columns
+			const index = columnDefs.fixed.indexOf(column);
+			setColumnDefs({
+				data: [ ...columnDefs.fixed.splice(index), ...columnDefs.data ],
+				fixed: [ ...columnDefs.fixed ]
+			});
+		}
+	};
 
 	return <Wrapper>
 		<DataSetTable displayColumns={columnDefs.fixed}
-		              showRowNo={true} rowNoColumnWidth={rowNoColumnWidth}
+		              isFixTable={true} rowNoColumnWidth={rowNoColumnWidth}
 		              data={data.data}
+		              onColumnFixChange={onColumnFixChange}
 		              ref={fixTableRef}/>
 		<DataSetTable displayColumns={columnDefs.data}
-		              showRowNo={false} rowNoColumnWidth={rowNoColumnWidth}
+		              isFixTable={false} rowNoColumnWidth={rowNoColumnWidth}
 		              data={data.data}
+		              onColumnFixChange={onColumnFixChange}
 		              ref={dataTableRef}/>
 		<DataSetTableSelection data={data} columnDefs={columnDefs}
 		                       rowNoColumnWidth={rowNoColumnWidth}
