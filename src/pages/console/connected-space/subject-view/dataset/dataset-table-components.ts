@@ -165,19 +165,21 @@ export const RowSelection = styled.div
 `;
 
 export const ColumnSelection = styled.div
-	.attrs<{ index: number, left: number, width: number, scroll: number }>(({ index, left, width, scroll }) => {
-		return {
-			'data-widget': 'console-subject-view-dataset-table-column-selection',
-			style: {
-				display: index !== -1 ? 'block' : 'none',
-				left,
-				width: width,
-				height: `calc(100% + 1px - ${scroll}px)`
-			}
-		};
-	})<{ index: number, left: number, width: number, scroll: number }>`
+	.attrs<{ index: number, left: number, width: number, height: number, scroll: number }>(
+		({ index, left, width, height, scroll }
+		) => {
+			return {
+				'data-widget': 'console-subject-view-dataset-table-column-selection',
+				style: {
+					display: index !== -1 ? 'block' : 'none',
+					left,
+					width: width,
+					height: height === 0 ? `calc(100% + 1px - ${scroll}px)` : height
+				}
+			};
+		})<{ index: number, left: number, width: number, height: number, scroll: number }>`
 	position: absolute;
-	top: -1px;
+	top: 0;
 	background-color: var(--console-favorite-color);
 	opacity: 0.05;
 	pointer-events: none;

@@ -2,7 +2,7 @@ import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { DataPage } from '../../../../../services/admin/types';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { DataSetTable } from './dataset-table';
-import { ColumnSelection, ROW_HEIGHT, RowSelection, Wrapper } from './dataset-table-components';
+import { ColumnSelection, HEADER_HEIGHT, ROW_HEIGHT, RowSelection, Wrapper } from './dataset-table-components';
 import { ColumnDefs, TableSelection } from './types';
 import { buildFactorMap, filterColumns } from './utils';
 
@@ -70,15 +70,17 @@ const computeColumnSelectionPosition = (options: {
 	columnIndex: number;
 	scrollLeft: number;
 	clientWidth: number;
+	verticalScroll: boolean;
+	data: DataPage<Array<any>>;
 	columnDefs: ColumnDefs;
 	rowNoColumnWidth: number;
 }) => {
 	const { columnIndex } = options;
 	if (columnIndex === -1) {
-		return { columnLeft: 0, columnWidth: 0 };
+		return { columnLeft: 0, columnWidth: 0, columnHeight: 0 };
 	}
 
-	const { inFixTable, scrollLeft, clientWidth, columnDefs, rowNoColumnWidth } = options;
+	const { inFixTable, scrollLeft, clientWidth, verticalScroll, data, columnDefs, rowNoColumnWidth } = options;
 
 	const selectColumnDef = inFixTable ? columnDefs.fixed[columnIndex] : columnDefs.data[columnIndex];
 	const selectColumnWidth = selectColumnDef?.width || 0;
@@ -105,16 +107,21 @@ const computeColumnSelectionPosition = (options: {
 	if (columnWidth + columnLeft > clientWidth + rowNoColumnWidth) {
 		columnWidth = clientWidth + rowNoColumnWidth - columnLeft;
 	}
-	return { columnLeft, columnWidth };
+	return {
+		columnLeft,
+		columnWidth,
+		columnHeight: verticalScroll ? 0 : data.data.length * ROW_HEIGHT + HEADER_HEIGHT
+	};
 };
 
 const useSelection = (options: {
+	data: DataPage<Array<any>>;
 	columnDefs: ColumnDefs;
 	dataTableRef: RefObject<HTMLDivElement>;
 	rowSelectionRef: RefObject<HTMLDivElement>;
 	columnSelectionRef: RefObject<HTMLDivElement>;
 }) => {
-	const { columnDefs, dataTableRef, rowSelectionRef, columnSelectionRef } = options;
+	const { data, columnDefs, dataTableRef, rowSelectionRef, columnSelectionRef } = options;
 
 	const [ rowNoColumnWidth ] = useState(40);
 	const [ selection, setSelection ] = useState<TableSelection>({
@@ -124,6 +131,7 @@ const useSelection = (options: {
 		column: -1,
 		columnLeft: 0,
 		columnWidth: 0,
+		columnHeight: 0,
 		inFixTable: false,
 		verticalScroll: 0,
 		horizontalScroll: 0
@@ -146,6 +154,8 @@ const useSelection = (options: {
 			columnIndex,
 			scrollLeft,
 			clientWidth,
+			verticalScroll: offsetHeight !== clientHeight,
+			data,
 			columnDefs,
 			rowNoColumnWidth
 		});
@@ -195,12 +205,14 @@ const useSelection = (options: {
 				rowHeight = height;
 			}
 			if (columnIndex !== -1 && columnSelectionRef.current) {
-				const { scrollLeft, clientWidth } = dataTable;
+				const { scrollLeft, clientWidth, offsetHeight, clientHeight } = dataTable;
 				const { columnLeft: left, columnWidth: width } = computeColumnSelectionPosition({
 					inFixTable,
 					columnIndex,
 					scrollLeft,
 					clientWidth,
+					verticalScroll: offsetHeight !== clientHeight,
+					data,
 					columnDefs,
 					rowNoColumnWidth
 				});
@@ -248,6 +260,7 @@ export const DataSetTableWrapper = (props: {
 		};
 	});
 	const { rowNoColumnWidth, selection, select } = useSelection({
+		data,
 		columnDefs,
 		dataTableRef,
 		rowSelectionRef,
@@ -289,7 +302,7 @@ export const DataSetTableWrapper = (props: {
 		              scroll={selection.verticalScroll}
 		              ref={rowSelectionRef}/>
 		<ColumnSelection index={selection.column}
-		                 left={selection.columnLeft} width={selection.columnWidth}
+		                 left={selection.columnLeft} width={selection.columnWidth} height={selection.columnHeight}
 		                 scroll={selection.horizontalScroll}
 		                 ref={columnSelectionRef}/>
 	</Wrapper>;

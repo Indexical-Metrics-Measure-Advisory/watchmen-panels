@@ -35,6 +35,7 @@ export interface TableSelection {
 	column: number;
 	columnLeft: number;
 	columnWidth: number;
+	columnHeight: number;
 
 	verticalScroll: number;
 	horizontalScroll: number;
