@@ -1,6 +1,7 @@
-import { faLock, faLockOpen, faSortAmountUpAlt } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faLockOpen, faSortAmountDown, faSortAmountUpAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ForwardedRef, forwardRef, Fragment, useRef } from 'react';
+import { DataPage } from '../../../../../services/admin/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import {
 	DataSetTableBody,
@@ -20,8 +21,10 @@ const HeaderCell = (props: {
 	selectColumn: (event: React.MouseEvent<HTMLDivElement>) => void;
 	fixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	unfixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	sortColumnAsc: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	sortColumnDesc: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
-	const { column, isFixTable, last, selectColumn, fixColumn, unfixColumn } = props;
+	const { column, isFixTable, last, selectColumn, fixColumn, unfixColumn, sortColumnAsc, sortColumnDesc } = props;
 
 	const cellRef = useRef<HTMLDivElement>(null);
 
@@ -31,11 +34,17 @@ const HeaderCell = (props: {
 		<span>{column.factor.label || column.factor.name}</span>
 		<HeaderCellButtons>
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort ascending'
-			            right={true} offsetX={-6} offsetY={6}>
+			            right={true} offsetX={-6} offsetY={6}
+			            onClick={sortColumnAsc}>
 				<FontAwesomeIcon icon={faSortAmountUpAlt}/>
 			</LinkButton>
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort descending'
+			            right={true} offsetX={-6} offsetY={6}
+			            onClick={sortColumnDesc}>
+				<FontAwesomeIcon icon={faSortAmountDown}/>
+			</LinkButton>
 			{isFixTable
-				? <LinkButton ignoreHorizontalPadding={true} tooltip='Unfix this and follows'
+				? <LinkButton ignoreHorizontalPadding={true} tooltip='Unfix me and follows'
 				              right={true} offsetX={-6} offsetY={6}
 				              onClick={unfixColumn}>
 					<FontAwesomeIcon icon={faLockOpen}/>
@@ -51,12 +60,19 @@ const HeaderCell = (props: {
 
 export const DataSetTable = forwardRef((props: {
 	displayColumns: Array<FactorColumnDef>;
-	data: Array<Array<any>>;
+	data: DataPage<Array<any>>;
 	isFixTable: boolean;
 	rowNoColumnWidth: number;
 	onColumnFixChange: (column: FactorColumnDef, fix: boolean) => void;
+	onColumnSort: (column: FactorColumnDef, asc: boolean) => void;
 }, ref: ForwardedRef<HTMLDivElement>) => {
-	const { displayColumns, isFixTable, rowNoColumnWidth, data, onColumnFixChange } = props;
+	const {
+		displayColumns,
+		isFixTable,
+		rowNoColumnWidth,
+		data: { data, pageNumber, pageSize },
+		onColumnFixChange, onColumnSort
+	} = props;
 
 	const { selectionChange } = useDataSetTableContext();
 	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -71,6 +87,11 @@ export const DataSetTable = forwardRef((props: {
 		event.preventDefault();
 		event.stopPropagation();
 		onColumnFixChange(column, fix);
+	};
+	const sortColumn = (asc: boolean, column: FactorColumnDef) => (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		onColumnSort(column, asc);
 	};
 
 	const allDisplayColumns: Array<ColumnDef> = [ ...displayColumns ];
@@ -97,6 +118,8 @@ export const DataSetTable = forwardRef((props: {
 				                   selectColumn={onSelectionChanged(-1, columnIndex)}
 				                   fixColumn={fixColumn(true, column)}
 				                   unfixColumn={fixColumn(false, column)}
+				                   sortColumnAsc={sortColumn(true, column)}
+				                   sortColumnDesc={sortColumn(false, column)}
 				                   key={`0-${columnIndex}`}/>;
 			})}
 			{autoFill ? <DataSetTableHeaderCell lastColumn={false} data-filler={true}/> : null}
@@ -109,7 +132,7 @@ export const DataSetTable = forwardRef((props: {
 						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={displayColumns.length === 0}
 						                        onClick={onSelectionChanged(rowIndex, -1)}
 						                        data-rowno={true}>
-							<span>{rowIndex + 1}</span>
+							<span>{pageSize * (pageNumber - 1) + rowIndex + 1}</span>
 						</DataSetTableBodyCell>
 						: null}
 					{displayColumns.map((def, columnIndex, columns) => {

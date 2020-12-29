@@ -1,10 +1,11 @@
 import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { useForceUpdate } from '../../../../../common/utils';
 import { DataPage } from '../../../../../services/admin/types';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { DataSetTable } from './dataset-table';
 import { Wrapper } from './dataset-table-components';
 import { DataSetTableSelection } from './dataset-table-selection';
-import { ColumnDefs, FactorColumnDef } from './types';
+import { ColumnDefs, ColumnSortBy, FactorColumnDef } from './types';
 import { buildFactorMap, filterColumns } from './utils';
 
 const useDecorateFixStyle = (options: {
@@ -57,6 +58,7 @@ export const DataSetTableWrapper = (props: {
 			data: filterColumns({ columns: subject.dataset?.columns || [], factorMap: buildFactorMap(space.topics) })
 		};
 	});
+	const forceUpdate = useForceUpdate();
 	useDecorateFixStyle({ fixTableRef, dataTableRef });
 
 	const onColumnFixChange = (column: FactorColumnDef, fix: boolean) => {
@@ -76,17 +78,50 @@ export const DataSetTableWrapper = (props: {
 			});
 		}
 	};
+	const onColumnSort = (column: FactorColumnDef, asc: boolean) => {
+		const index = column.index;
+		if (asc && column.sort === ColumnSortBy.ASC) {
+			return;
+		}
+		if (!asc && column.sort === ColumnSortBy.DESC) {
+			return;
+		}
+
+		data.data.sort((r1, r2) => {
+			let ret;
+			const v1 = r1[index];
+			const v2 = r2[index];
+			if (v1 == null) {
+				ret = -1;
+			} else if (v2 == null) {
+				ret = 1;
+			} else if (typeof v1 === 'number' && typeof v2 === 'number') {
+				ret = v1 - v2;
+			} else if (typeof v1 === 'boolean' && typeof v2 === 'boolean') {
+				ret = !v1 ? -1 : (!v2 ? 1 : 0);
+			} else {
+				ret = `${v1}`.toUpperCase().localeCompare(`${v2}`.toUpperCase());
+			}
+			return asc ? ret : ret * -1;
+		});
+		column.sort = asc ? ColumnSortBy.ASC : ColumnSortBy.DESC;
+		columnDefs.fixed.filter(c => c !== column).forEach(c => delete c.sort);
+		columnDefs.data.filter(c => c !== column).forEach(c => delete c.sort);
+		forceUpdate();
+	};
 
 	return <Wrapper>
 		<DataSetTable displayColumns={columnDefs.fixed}
 		              isFixTable={true} rowNoColumnWidth={rowNoColumnWidth}
-		              data={data.data}
+		              data={data}
 		              onColumnFixChange={onColumnFixChange}
+		              onColumnSort={onColumnSort}
 		              ref={fixTableRef}/>
 		<DataSetTable displayColumns={columnDefs.data}
 		              isFixTable={false} rowNoColumnWidth={rowNoColumnWidth}
-		              data={data.data}
+		              data={data}
 		              onColumnFixChange={onColumnFixChange}
+		              onColumnSort={onColumnSort}
 		              ref={dataTableRef}/>
 		<DataSetTableSelection data={data} columnDefs={columnDefs}
 		                       rowNoColumnWidth={rowNoColumnWidth}

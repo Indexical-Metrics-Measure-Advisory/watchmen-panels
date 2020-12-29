@@ -2,10 +2,16 @@ import { ConsoleTopic, ConsoleTopicFactor } from '../../../../../services/consol
 
 export type FactorMap = Map<string, { topic: ConsoleTopic, factor: ConsoleTopicFactor }>;
 
+export enum ColumnSortBy {
+	ASC = 'asc',
+	DESC = 'desc'
+}
+
 export interface ColumnDef {
 	fixed: boolean;
 	width: number;
 	index: number;
+	sort?: ColumnSortBy;
 }
 
 export interface FactorColumnDef extends ColumnDef {

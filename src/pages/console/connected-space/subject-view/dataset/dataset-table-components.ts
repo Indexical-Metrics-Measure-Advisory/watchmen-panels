@@ -16,19 +16,32 @@ export const Wrapper = styled.div.attrs({
 `;
 
 export const DataSetTableContainer = styled.div
-	.attrs<DataSetTableProps>(({ columns, autoFill }) => {
-		return {
-			'data-widget': 'console-subject-view-dataset-table',
-			style: {
-				minWidth: autoFill ? 'unset' : columns.reduce((width, column) => width + column.width, 0)
-			}
-		};
-	})<DataSetTableProps>`
+	.attrs<DataSetTableProps>(
+		({ columns, autoFill }) => {
+			const fixTableWidth = columns.reduce((width, column) => width + column.width, 0);
+			return {
+				'data-widget': 'console-subject-view-dataset-table',
+				style: {
+					minWidth: autoFill ? 'unset' : fixTableWidth
+				}
+			};
+		})<DataSetTableProps>`
 	display: flex;
 	flex-direction: column;
+	height: 100%;
 	&:first-child {
 		overflow-x: hidden;
 		overflow-y: auto;
+		> div:nth-child(2) > div:after {
+			content: '';
+			display: block;
+			position: absolute;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: var(--console-primary-color);
+			opacity: 0.02;
+		}
 		&::-webkit-scrollbar {
 			background-color: transparent;
 			width: 0;
@@ -59,12 +72,11 @@ export const DataSetTableHeader = styled.div
 `;
 
 export const DataSetTableHeaderCell = styled.div
-	.attrs<{ lastColumn: boolean, filler?: true }>(({ lastColumn, filler }) => {
+	.attrs<{ filler?: true }>(({ filler }) => {
 		return {
 			'data-widget': 'console-subject-view-dataset-table-header-cell',
 			style: {
-				borderRightColor: filler ? 'transparent' : 'var(--border-color)',
-				borderRightWidth: lastColumn ? 2 : 1
+				borderRightColor: filler ? 'transparent' : 'var(--border-color)'
 			}
 		};
 	})<{ lastColumn: boolean, filler?: true }>`
@@ -81,11 +93,12 @@ export const DataSetTableHeaderCell = styled.div
 	overflow: hidden;
 	text-overflow: ellipsis;
 	&:not([data-rowno=true]):not([data-filler=true]) {
+		cursor: s-resize;
 		&:hover {
-			cursor: s-resize;
 			> div[data-widget='console-subject-view-dataset-table-header-cell-buttons'] {
 				opacity: 1;
 				pointer-events: auto;
+				transition: all 300ms ease-in-out;
 			}
 		}
 	}
@@ -116,7 +129,6 @@ export const HeaderCellButtons = styled.div.attrs({
 	right: 0;
 	padding: calc(var(--margin) / 8);
 	opacity: 0;
-	transition: all 300ms ease-in-out;
 	pointer-events: none;
 	> button {
 		font-size: 0.9em;
@@ -140,17 +152,17 @@ export const DataSetTableBody = styled.div
 `;
 
 export const DataSetTableBodyCell = styled.div
-	.attrs<{ lastRow: boolean, lastColumn: boolean, filler?: true }>(({ lastRow, lastColumn, filler }) => {
+	.attrs<{ lastRow: boolean, filler?: true }>(({ lastRow, filler }) => {
 		return {
 			'data-widget': 'console-subject-view-dataset-table-body-cell',
 			style: {
 				borderBottomColor: 'var(--border-color)',
-				borderRightColor: filler ? 'transparent' : 'var(--border-color)',
-				borderRightWidth: lastColumn ? 2 : 1
+				borderRightColor: filler ? 'transparent' : 'var(--border-color)'
 			}
 		};
 	})<{ lastRow: boolean, lastColumn: boolean, filler?: true }>`
 	display: flex;
+	position: relative;
 	align-items: center;
 	font-size: 0.8em;
 	padding: 0 8px;
