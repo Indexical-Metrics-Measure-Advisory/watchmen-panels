@@ -142,7 +142,7 @@ const useSelection = (options: {
 			columnIndex,
 			scrollLeft,
 			dataTableClientWidth: clientWidth,
-			verticalScroll: offsetHeight !== clientHeight,
+			verticalScroll: offsetWidth !== clientWidth,
 			data,
 			columnDefs,
 			rowNoColumnWidth

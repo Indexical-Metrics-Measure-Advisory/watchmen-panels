@@ -156,8 +156,9 @@ export const DataSetTableBodyCell = styled.div
 		return {
 			'data-widget': 'console-subject-view-dataset-table-body-cell',
 			style: {
-				borderBottomColor: 'var(--border-color)',
-				borderRightColor: filler ? 'transparent' : 'var(--border-color)'
+				borderBottom: lastRow ? 0 : 'var(--border)',
+				borderRightColor: filler ? 'transparent' : 'var(--border-color)',
+				boxShadow: lastRow ? '0 1px 0 0 var(--border-color)' : 'none'
 			}
 		};
 	})<{ lastRow: boolean, lastColumn: boolean, filler?: true }>`
@@ -168,7 +169,6 @@ export const DataSetTableBodyCell = styled.div
 	padding: 0 8px;
 	background-color: var(--invert-color);
 	border-right: var(--border);
-	border-bottom: var(--border);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -192,7 +192,7 @@ export const RowSelection = styled.div
 				display: index === -1 ? 'none' : 'block',
 				top,
 				width: `calc(100% - ${scroll}px)`,
-				height
+				height: height + 1
 			}
 		};
 	})<{ index: number, top: number, height: number, scroll: number }>`
