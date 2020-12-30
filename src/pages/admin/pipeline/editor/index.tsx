@@ -250,9 +250,14 @@ export const Editor = (props: {
 		if (node.toNext) {
 			changeSelectedPipeline(node.toNext);
 			return node.toNext;
+		} else if (node.toMe) {
+			changeSelectedPipeline(node.toMe[0]);
+			return node.toMe[0];
+		} else if (node.fromMe) {
+			changeSelectedPipeline(node.fromMe[0]);
+			return node.fromMe[0];
 		} else {
-			changeSelectedPipeline(node.toMe![0]);
-			return node.toMe![0];
+			return (void 0);
 		}
 	};
 	let pipeline = selectedPipeline;
@@ -266,29 +271,41 @@ export const Editor = (props: {
 	}
 
 	const onCreatePipelineClicked = () => {
-		const pipeline: Pipeline = {
+		const newPipeline: Pipeline = {
 			topicId: topic.topicId,
 			type: PipelineTriggerType.INSERT_OR_MERGE,
 			stages: [ createStage() ]
 		};
 		const arrangedPipeline = {
-			...pipeline,
+			...newPipeline,
 			targetTopicIds: [] as Array<string>,
-			origin: pipeline,
+			origin: newPipeline,
 			uuid: v4()
 		} as ArrangedPipeline;
-		node.fromMe?.push(arrangedPipeline);
-		changeSelectedPipeline(arrangedPipeline);
+		if (!node.fromMe) {
+			node.fromMe = [];
+		}
+		node.fromMe.push(arrangedPipeline);
+		if (pipeline) {
+			changeSelectedPipeline(arrangedPipeline);
+		} else {
+			// pipeline = selectNextPipeline();
+			forceUpdate();
+		}
 	};
 
 	// eslint-disable-next-line
-	const isOutbound = pipeline.topicId == topic.topicId;
+	const isOutbound = pipeline?.topicId == topic.topicId;
 
 	return <EditorContainer>
 		<EditorTitle data-topic-type={topic.type}>
 			<div>{topic.name}</div>
-			<PipelineButton label='Inbound' count={inboundCount} pipelines={node.toMe} pipeline={pipeline}/>
-			<PipelineButton label='Outbound' count={outboundCount} pipelines={node.fromMe} pipeline={pipeline}/>
+			{pipeline
+				? <PipelineButton label='Inbound' count={inboundCount} pipelines={node.toMe} pipeline={pipeline}/>
+				: null}
+			{pipeline
+				? <PipelineButton label='Outbound' count={outboundCount} pipelines={node.fromMe} pipeline={pipeline}/>
+				: null}
 			<PrimaryObjectButton onClick={onCreatePipelineClicked}>
 				<FontAwesomeIcon icon={faWaveSquare}/>
 				<span>Create New Outbound Pipeline</span>
