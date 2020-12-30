@@ -134,6 +134,17 @@ const useDecorateFixStyle = (options: {
 }) => {
 	const { fixTableRef, dataTableRef } = options;
 
+	const arrangeFixedTableStyle = () => {
+		if (!dataTableRef.current || !fixTableRef.current) {
+			return;
+		}
+		const dataTable = dataTableRef.current;
+		const fixTable = fixTableRef.current;
+		const scrollBarHeight = dataTable.offsetHeight - dataTable.clientHeight;
+		fixTable.style.height = `calc(100% - ${scrollBarHeight}px)`;
+		fixTable.style.boxShadow = `0 1px 0 0 var(--border-color)`;
+	};
+
 	// link scroll between fixed table and data table
 	useEffect(() => {
 		if (!dataTableRef.current || !fixTableRef.current) {
@@ -141,11 +152,6 @@ const useDecorateFixStyle = (options: {
 		}
 		const dataTable = dataTableRef.current;
 		const fixTable = fixTableRef.current;
-		const arrangeFixedTableStyle = () => {
-			const scrollBarHeight = dataTable.offsetHeight - dataTable.clientHeight;
-			fixTable.style.height = `calc(100% - ${scrollBarHeight}px)`;
-			fixTable.style.boxShadow = `0 1px 0 0 var(--border-color)`;
-		};
 		const onDataTableScroll = () => {
 			arrangeFixedTableStyle();
 			fixTable.scrollTop = dataTable.scrollTop;
@@ -160,6 +166,8 @@ const useDecorateFixStyle = (options: {
 			fixTable.removeEventListener('scroll', onFixTableScroll);
 		};
 	});
+
+	return arrangeFixedTableStyle;
 };
 
 export const DataSetTableWrapper = (props: {
@@ -186,7 +194,7 @@ export const DataSetTableWrapper = (props: {
 	const [ resizeState, setResizeState ] = useState<ResizeState>(ResizeState.NONE);
 	const [ resizeColumn, setResizeColumn ] = useState<ResizeColumn | null>(null);
 	const forceUpdate = useForceUpdate();
-	useDecorateFixStyle({ fixTableRef, dataTableRef });
+	const arrangeFixedTableStyle = useDecorateFixStyle({ fixTableRef, dataTableRef });
 	useEffect(() => {
 		const onColumnWidthCompress = () => {
 			columnDefs.fixed.forEach(c => c.width = MIN_COLUMN_WIDTH);
@@ -250,6 +258,7 @@ export const DataSetTableWrapper = (props: {
 				dataTable.style.width = `calc(100% - ${left}px)`;
 			}
 			repaintSelection();
+			arrangeFixedTableStyle();
 		}
 	};
 	const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
