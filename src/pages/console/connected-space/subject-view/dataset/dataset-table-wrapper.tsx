@@ -114,13 +114,13 @@ export const DataSetTableWrapper = (props: {
 	};
 
 	return <Wrapper>
-		<DataSetTable displayColumns={columnDefs.fixed}
+		<DataSetTable displayColumns={columnDefs.fixed} fixColumns={columnDefs.fixed}
 		              isFixTable={true} rowNoColumnWidth={rowNoColumnWidth}
 		              data={data}
 		              onColumnFixChange={onColumnFixChange}
 		              onColumnSort={onColumnSort}
 		              ref={fixTableRef}/>
-		<DataSetTable displayColumns={columnDefs.data}
+		<DataSetTable displayColumns={columnDefs.data} fixColumns={columnDefs.fixed}
 		              isFixTable={false} rowNoColumnWidth={rowNoColumnWidth}
 		              data={data}
 		              onColumnFixChange={onColumnFixChange}

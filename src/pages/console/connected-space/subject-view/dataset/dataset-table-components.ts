@@ -29,6 +29,13 @@ export const DataSetTableContainer = styled.div
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	&[data-resize-state=pick-column] {
+		cursor: s-resize;
+	}
+	&[data-resize-state=can-resize],
+	&[data-resize-state=resizing] {
+		cursor: ew-resize;
+	}
 	&:first-child {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -93,7 +100,7 @@ export const DataSetTableHeaderCell = styled.div
 	overflow: hidden;
 	text-overflow: ellipsis;
 	&:not([data-rowno=true]):not([data-filler=true]) {
-		cursor: s-resize;
+		//cursor: s-resize;
 		&:hover {
 			> div[data-widget='console-subject-view-dataset-table-header-cell-buttons'] {
 				opacity: 1;
