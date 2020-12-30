@@ -13,8 +13,9 @@ export const Wrapper = styled.div.attrs({
 	left: 0;
 	width: 100%;
 	height: calc(100% - ${TITLE_HEIGHT}px);
-	&[data-resize-state=pick-column] {
-		cursor: s-resize;
+	&[data-resize-state=pick-column],
+	&[data-resize-state=dragging] {
+		cursor: move;
 	}
 	&[data-resize-state=can-resize],
 	&[data-resize-state=resizing] {
