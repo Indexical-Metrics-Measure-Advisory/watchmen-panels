@@ -24,6 +24,9 @@ const DataSetHeaderContainer = styled(SubjectPanelHeader)`
 		> div {
 			padding: 0 calc(var(--margin) / 4);
 			font-variant: petite-caps;
+			> span {
+				font-variant: unicase;
+			}
 		}
 		> button {
 			font-weight: normal;
@@ -66,7 +69,7 @@ export const DataSetHeader = (props: {
 				</LinkButton>
 				: null}
 			<div>
-				Page {data.pageNumber} of {data.pageCount}, {data.itemCount} Row{data.itemCount !== 1 ? 's' : ''} Total.
+				{data.itemCount} Row{data.itemCount !== 1 ? 's' : ''} Total, <span>#</span>{data.pageNumber} of {data.pageCount} Pages.
 			</div>
 			{data.pageNumber !== data.pageCount
 				? <LinkButton ignoreHorizontalPadding={true}
