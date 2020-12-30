@@ -33,23 +33,23 @@ const HeaderCell = (props: {
 	                               ref={cellRef}>
 		<span>{column.factor.label || column.factor.name}</span>
 		<HeaderCellButtons>
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort ascending'
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort Ascending'
 			            right={true} offsetX={-6} offsetY={6}
 			            onClick={sortColumnAsc}>
 				<FontAwesomeIcon icon={faSortAmountUpAlt}/>
 			</LinkButton>
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort descending'
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort Descending'
 			            right={true} offsetX={-6} offsetY={6}
 			            onClick={sortColumnDesc}>
 				<FontAwesomeIcon icon={faSortAmountDown}/>
 			</LinkButton>
 			{isFixTable
-				? <LinkButton ignoreHorizontalPadding={true} tooltip='Unfix me and follows'
+				? <LinkButton ignoreHorizontalPadding={true} tooltip='Unfix Me and Follows'
 				              right={true} offsetX={-6} offsetY={6}
 				              onClick={unfixColumn}>
 					<FontAwesomeIcon icon={faLockOpen}/>
 				</LinkButton>
-				: <LinkButton ignoreHorizontalPadding={true} tooltip='Fix columns to here'
+				: <LinkButton ignoreHorizontalPadding={true} tooltip='Fix Columns to Here'
 				              right={true} offsetX={-6} offsetY={6}
 				              onClick={fixColumn}>
 					<FontAwesomeIcon icon={faLock}/>

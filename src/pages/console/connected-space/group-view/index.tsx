@@ -323,23 +323,23 @@ export const GroupView = (props: {
 			</SubjectListHeader>
 			<SubjectListHeader>
 				<div>Subjects</div>
-				<LinkButton onClick={onAddClicked} ignoreHorizontalPadding={true} tooltip='Add subject' center={true}>
+				<LinkButton onClick={onAddClicked} ignoreHorizontalPadding={true} tooltip='Add Subject' center={true}>
 					<FontAwesomeIcon icon={faPoll}/>
 				</LinkButton>
 				<LinkButton onClick={onSortByNameAscClicked} ignoreHorizontalPadding={true}
-				            tooltip='Sort by name, ascending' center={true}>
+				            tooltip='Sort by Name, Ascending' center={true}>
 					<FontAwesomeIcon icon={faSortAlphaUp}/>
 				</LinkButton>
 				<LinkButton onClick={onSortByNameDescClicked} ignoreHorizontalPadding={true}
-				            tooltip='Sort by name, descending' center={true}>
+				            tooltip='Sort by Name, Descending' center={true}>
 					<FontAwesomeIcon icon={faSortAlphaDown}/>
 				</LinkButton>
 				<LinkButton onClick={onSortByVisitAscClicked} ignoreHorizontalPadding={true}
-				            tooltip='Sort by visit, latest on top' center={true}>
+				            tooltip='Sort by Visit, Latest on Top' center={true}>
 					<FontAwesomeIcon icon={faHistory} style={{ transform: 'rotateY(180deg)' }}/>
 				</LinkButton>
 				<LinkButton onClick={onSortByVisitDescClicked} ignoreHorizontalPadding={true}
-				            tooltip='Sort by visit, latest on bottom' center={true}>
+				            tooltip='Sort by Visit, Latest on Bottom' center={true}>
 					<FontAwesomeIcon icon={faHistory}/>
 				</LinkButton>
 			</SubjectListHeader>
@@ -354,7 +354,7 @@ export const GroupView = (props: {
 								<div>
 									<span>{subject.name}</span>
 									<LinkButton onClick={onSubjectDeleteClicked(subject)} ignoreHorizontalPadding={true}
-									            tooltip='Delete subject' center={true}>
+									            tooltip='Delete Subject' center={true}>
 										<FontAwesomeIcon icon={faTrashAlt}/>
 									</LinkButton>
 								</div>

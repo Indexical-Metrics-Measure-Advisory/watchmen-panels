@@ -123,7 +123,7 @@ const useSelection = (options: {
 		dataTableRef, rowSelectionRef, columnSelectionRef
 	} = options;
 
-	const { addSelectionRepaintListener, removeSelectionRepaintListener } = useDataSetTableContext();
+	const { addRepaintSelectionHandler, removeRepaintSelectionHandler } = useDataSetTableContext();
 	const [ selection, setSelection ] = useState<TableSelection>(buildDefaultSelection());
 	const select = (inFixTable: boolean, rowIndex: number, columnIndex: number) => {
 		if (!dataTableRef.current) {
@@ -224,10 +224,10 @@ const useSelection = (options: {
 		};
 		const dataTable = dataTableRef.current;
 		dataTable?.addEventListener('scroll', repaintSelection);
-		addSelectionRepaintListener(repaintSelection);
+		addRepaintSelectionHandler(repaintSelection);
 		return () => {
 			dataTable?.removeEventListener('scroll', repaintSelection);
-			removeSelectionRepaintListener(repaintSelection);
+			removeRepaintSelectionHandler(repaintSelection);
 		};
 	});
 

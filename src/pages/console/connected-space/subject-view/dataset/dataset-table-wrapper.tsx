@@ -169,7 +169,10 @@ export const DataSetTableWrapper = (props: {
 }) => {
 	const { space, subject, data } = props;
 
-	const { fixColumnChange, selectionRepaint } = useDataSetTableContext();
+	const {
+		fixColumnChange, repaintSelection,
+		addColumnWidthCompressHandler, removeColumnWidthCompressHandler
+	} = useDataSetTableContext();
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const fixTableRef = useRef<HTMLDivElement>(null);
 	const dataTableRef = useRef<HTMLDivElement>(null);
@@ -184,6 +187,15 @@ export const DataSetTableWrapper = (props: {
 	const [ resizeColumn, setResizeColumn ] = useState<ResizeColumn | null>(null);
 	const forceUpdate = useForceUpdate();
 	useDecorateFixStyle({ fixTableRef, dataTableRef });
+	useEffect(() => {
+		const onColumnWidthCompress = () => {
+			columnDefs.fixed.forEach(c => c.width = MIN_COLUMN_WIDTH);
+			columnDefs.data.forEach(c => c.width = MIN_COLUMN_WIDTH);
+			forceUpdate();
+		};
+		addColumnWidthCompressHandler(onColumnWidthCompress);
+		return () => removeColumnWidthCompressHandler(onColumnWidthCompress);
+	});
 
 	const manageCursor = (options: { table: HTMLDivElement | null, mouseClientX: number, mouseClientY: number, avoidResize: boolean }) => {
 		const { table } = options;
@@ -237,7 +249,7 @@ export const DataSetTableWrapper = (props: {
 				dataTable.style.position = 'absolute';
 				dataTable.style.width = `calc(100% - ${left}px)`;
 			}
-			selectionRepaint();
+			repaintSelection();
 		}
 	};
 	const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {

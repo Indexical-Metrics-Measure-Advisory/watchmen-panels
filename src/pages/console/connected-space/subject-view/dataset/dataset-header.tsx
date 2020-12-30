@@ -1,4 +1,4 @@
-import { faAngleLeft, faAngleRight, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight, faCompressAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
@@ -38,6 +38,11 @@ const DataSetHeaderContainer = styled(SubjectPanelHeader)`
 			display: none;
 		}
 	}
+	> button {
+		width: 24px;
+		height: 24px;
+		margin-left: calc(var(--margin) / 8);
+	}
 `;
 
 export const DataSetHeader = (props: {
@@ -48,7 +53,7 @@ export const DataSetHeader = (props: {
 }) => {
 	const { subject, data, onHide, fetchData } = props;
 
-	const { selectionChange } = useDataSetTableContext();
+	const { selectionChange, compressColumnWidth } = useDataSetTableContext();
 	const onPreviousPageClicked = () => {
 		fetchData(data.pageNumber - 1);
 		selectionChange(false, -1, -1);
@@ -79,8 +84,12 @@ export const DataSetHeader = (props: {
 				</LinkButton>
 				: null}
 		</div>
+		<LinkButton onClick={compressColumnWidth} ignoreHorizontalPadding={true} tooltip='Compress Columns'
+		            right={true} offsetX={-6}>
+			<FontAwesomeIcon icon={faCompressAlt} transform={{ rotate: 45 }}/>
+		</LinkButton>
 		<LinkButton onClick={onHide} ignoreHorizontalPadding={true} tooltip='Minimize'
-		            center={true}>
+		            right={true} offsetX={-6}>
 			<FontAwesomeIcon icon={faTimes}/>
 		</LinkButton>
 	</DataSetHeaderContainer>;

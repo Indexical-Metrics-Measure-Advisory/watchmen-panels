@@ -28,7 +28,7 @@ export const MailItem = (props: { data: ConsoleMail, readable: boolean }) => {
 		<MessageItemHeader>
 			<MessageItemSubject>{subject}</MessageItemSubject>
 			<MessageItemOperators>
-				<ReadButton readable={readable} tooltip='Set as read'
+				<ReadButton readable={readable} tooltip='Set as Read'
 				            onRead={() => setRead(true)}
 				            readOne={() => context.mails.readOne(data)}/>
 			</MessageItemOperators>
