@@ -4,6 +4,12 @@ import { DataSetTableProps } from './types';
 export const TITLE_HEIGHT = 40;
 export const HEADER_HEIGHT = 32;
 export const ROW_HEIGHT = 24;
+export const DEFAULT_COLUMN_WIDTH = 200;
+export const RESIZE_DEVIATION = 3;
+export const MIN_COLUMN_WIDTH = 100;
+export const MAX_COLUMN_WIDTH = 500;
+export const DRAG_DEVIATION = 30;
+
 export const Wrapper = styled.div.attrs({
 	'data-widget': 'console-subject-view-dataset-table-wrapper'
 })`
@@ -178,9 +184,6 @@ export const DataSetTableBodyCell = styled.div
 	padding: 0 8px;
 	background-color: var(--invert-color);
 	border-right: var(--border);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	&[data-rowno=true] {
 		&:hover {
 			cursor: e-resize;

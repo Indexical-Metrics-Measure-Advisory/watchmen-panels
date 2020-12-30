@@ -3,8 +3,18 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { DataPage } from '../../../../../services/admin/types';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { DataSetTable } from './dataset-table';
-import { DataSetResizeShade, HEADER_HEIGHT, Wrapper } from './dataset-table-components';
+import {
+	DataSetResizeShade,
+	DRAG_DEVIATION,
+	HEADER_HEIGHT,
+	MAX_COLUMN_WIDTH,
+	MIN_COLUMN_WIDTH,
+	RESIZE_DEVIATION,
+	ROW_HEIGHT,
+	Wrapper
+} from './dataset-table-components';
 import { useDataSetTableContext } from './dataset-table-context';
+import { DataSetTableDragColumn } from './dataset-table-drag-column';
 import { DataSetTableSelection } from './dataset-table-selection';
 import { ColumnDefs, ColumnSortBy, FactorColumnDef } from './types';
 import { buildFactorMap, filterColumns } from './utils';
@@ -14,18 +24,25 @@ enum Behavior {
 	PICK_COLUMN = 'pick-column',
 	CAN_RESIZE = 'can-resize',
 	RESIZING = 'resizing',
+	READY_TO_DRAG = 'ready-to-drag',
 	DRAGGING = 'dragging'
 }
 
 interface PickedColumn {
 	column: FactorColumnDef;
+	// offset-x between mouse down point to wrapper left
 	offsetX: number;
 	originalWidth: number;
 }
 
-const RESIZE_DEVIATION = 3;
-const MIN_COLUMN_WIDTH = 100;
-const MAX_COLUMN_WIDTH = 500;
+interface PickColumnOptions {
+	wrapperLeft: number;
+	table: HTMLDivElement;
+	mouseClientX: number;
+	columnDefs: ColumnDefs
+	isFixTable: boolean;
+	rowNoColumnWidth: number;
+}
 
 const findDataTable = (element: HTMLElement): HTMLDivElement | null => {
 	const widgetType = element.getAttribute('data-widget');
@@ -94,15 +111,27 @@ const computeAndSetCursor = (options: {
 	changeBehavior(canResize ? Behavior.CAN_RESIZE : Behavior.PICK_COLUMN);
 };
 
-const findPickedColumn = (options: {
-	wrapperLeft: number;
-	table: HTMLDivElement;
-	mouseClientX: number;
-	columnDefs: ColumnDefs
-	isFixTable: boolean;
-	rowNoColumnWidth: number;
-}): PickedColumn => {
-	const { wrapperLeft, table, mouseClientX, columnDefs, isFixTable, rowNoColumnWidth } = options;
+const findPickedColumn = (options: PickColumnOptions & { matchColumnIndex: (widths: Array<number>, offsetLeft: number) => number }): PickedColumn => {
+	const { wrapperLeft, table, mouseClientX, columnDefs, isFixTable, rowNoColumnWidth, matchColumnIndex } = options;
+
+	const tableColumnDefs = isFixTable ? columnDefs.fixed : columnDefs.data;
+	let offsetLeft: number;
+	if (isFixTable) {
+		offsetLeft = mouseClientX - table.getBoundingClientRect().left - rowNoColumnWidth;
+	} else {
+		offsetLeft = mouseClientX - table.getBoundingClientRect().left + table.scrollLeft;
+	}
+	const widths = computeTableColumnsRightPositions(tableColumnDefs);
+	const index = matchColumnIndex(widths, offsetLeft);
+	return {
+		column: tableColumnDefs[index],
+		offsetX: mouseClientX - wrapperLeft,
+		originalWidth: tableColumnDefs[index].width
+	};
+};
+
+const findPickedColumnForResize = (options: PickColumnOptions): PickedColumn => {
+	const { wrapperLeft, table, mouseClientX, columnDefs, isFixTable } = options;
 
 	if (!isFixTable && mouseClientX - table.getBoundingClientRect().left <= RESIZE_DEVIATION) {
 		// to resize the last column of fix table
@@ -112,21 +141,19 @@ const findPickedColumn = (options: {
 			originalWidth: columnDefs.fixed[columnDefs.fixed.length - 1].width
 		};
 	}
-
-	const tableColumnDefs = isFixTable ? columnDefs.fixed : columnDefs.data;
-	const widths = computeTableColumnsRightPositions(tableColumnDefs);
-	let offsetLeft: number;
-	if (isFixTable) {
-		offsetLeft = mouseClientX - table.getBoundingClientRect().left - rowNoColumnWidth;
-	} else {
-		offsetLeft = mouseClientX - table.getBoundingClientRect().left + table.scrollLeft;
-	}
-	const index = widths.findIndex(width => Math.abs(width - offsetLeft) <= RESIZE_DEVIATION);
-	return {
-		column: tableColumnDefs[index],
-		offsetX: mouseClientX - wrapperLeft,
-		originalWidth: tableColumnDefs[index].width
+	const matchColumnIndex = (widths: Array<number>, offsetLeft: number) => {
+		return widths.findIndex(width => Math.abs(width - offsetLeft) <= RESIZE_DEVIATION);
 	};
+	return findPickedColumn({ ...options, matchColumnIndex });
+};
+
+const findPickedColumnForDrag = (options: PickColumnOptions): PickedColumn => {
+	const matchColumnIndex = (widths: Array<number>, offsetLeft: number) => {
+		return widths.findIndex((width, index) => {
+			return width > offsetLeft && (index === 0 || widths[index - 1] < offsetLeft);
+		});
+	};
+	return findPickedColumn({ ...options, matchColumnIndex });
 };
 
 const useDecorateFixStyle = (options: {
@@ -179,7 +206,7 @@ export const DataSetTableWrapper = (props: {
 	const { space, subject, data } = props;
 
 	const {
-		fixColumnChange, repaintSelection,
+		fixColumnChange, repaintSelection, dragColumnVisibleChange, dragColumnStateChange, determineDragColumnVisible,
 		addColumnWidthCompressHandler, removeColumnWidthCompressHandler
 	} = useDataSetTableContext();
 	const wrapperRef = useRef<HTMLDivElement>(null);
@@ -226,91 +253,154 @@ export const DataSetTableWrapper = (props: {
 			} : setBehavior
 		});
 	};
-	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-		switch (behavior) {
-			case Behavior.RESIZING:
-				if (!pickedColumn) {
-					return;
-				}
-				const { clientX: mouseClientX } = event;
-				const { left: wrapperLeft } = wrapperRef.current!.getBoundingClientRect();
-				const movementX = mouseClientX - wrapperLeft - pickedColumn.offsetX;
-				pickedColumn.column.width = Math.min(Math.max(MIN_COLUMN_WIDTH, pickedColumn.originalWidth + movementX), MAX_COLUMN_WIDTH);
 
-				const isFixTable = columnDefs.fixed.includes(pickedColumn.column);
-				const table = isFixTable ? fixTableRef.current! : dataTableRef.current!;
-				const columns = isFixTable ? columnDefs.fixed : columnDefs.data;
-				const header = table.querySelector('div[data-widget="console-subject-view-dataset-table-header"]')! as HTMLDivElement;
-				const body = table.querySelector('div[data-widget="console-subject-view-dataset-table-body"]')! as HTMLDivElement;
-				const gridTemplateColumns = header.style.gridTemplateColumns.split(' ');
-				gridTemplateColumns[columns.indexOf(pickedColumn.column) + (isFixTable ? 1 : 0)] = `${pickedColumn.column.width}px`;
-				const newGridTemplateColumns = gridTemplateColumns.join(' ');
-				header.style.gridTemplateColumns = newGridTemplateColumns;
-				body.style.gridTemplateColumns = newGridTemplateColumns;
-				if (isFixTable) {
-					// left of data table doesn't change when resize column in fix table
-					const dataTable = dataTableRef.current!;
-					const left = gridTemplateColumns.map(width => parseInt(width)).reduce((total, width) => total + width, 0);
-					dataTable.style.left = `${left}px`;
-					dataTable.style.position = 'absolute';
-					dataTable.style.width = `calc(100% - ${left}px)`;
-				}
-				repaintSelection();
-				arrangeFixedTableStyle();
-				break;
-			default:
-				manageCursor({
-					table: findDataTable(event.target as HTMLElement),
-					mouseClientX: event.clientX,
-					mouseClientY: event.clientY,
-					avoidResize: false
-				});
+	const resizeColumn = (mouseClientX: number) => {
+		if (!pickedColumn) {
+			return;
+		}
+		const { left: wrapperLeft } = wrapperRef.current!.getBoundingClientRect();
+		const movementX = mouseClientX - wrapperLeft - pickedColumn.offsetX;
+		pickedColumn.column.width = Math.min(Math.max(MIN_COLUMN_WIDTH, pickedColumn.originalWidth + movementX), MAX_COLUMN_WIDTH);
+
+		const isFixTable = columnDefs.fixed.includes(pickedColumn.column);
+		const table = isFixTable ? fixTableRef.current! : dataTableRef.current!;
+		const columns = isFixTable ? columnDefs.fixed : columnDefs.data;
+		const header = table.querySelector('div[data-widget="console-subject-view-dataset-table-header"]')! as HTMLDivElement;
+		const body = table.querySelector('div[data-widget="console-subject-view-dataset-table-body"]')! as HTMLDivElement;
+		const gridTemplateColumns = header.style.gridTemplateColumns.split(' ');
+		gridTemplateColumns[columns.indexOf(pickedColumn.column) + (isFixTable ? 1 : 0)] = `${pickedColumn.column.width}px`;
+		const newGridTemplateColumns = gridTemplateColumns.join(' ');
+		header.style.gridTemplateColumns = newGridTemplateColumns;
+		body.style.gridTemplateColumns = newGridTemplateColumns;
+		if (isFixTable) {
+			// left of data table doesn't change when resize column in fix table
+			const dataTable = dataTableRef.current!;
+			const left = gridTemplateColumns.map(width => parseInt(width)).reduce((total, width) => total + width, 0);
+			dataTable.style.left = `${left}px`;
+			dataTable.style.position = 'absolute';
+			dataTable.style.width = `calc(100% - ${left}px)`;
+		}
+		repaintSelection();
+		arrangeFixedTableStyle();
+	};
+
+	const dragColumn = async (mouseClientX: number) => {
+		if (!pickedColumn) {
+			return;
+		}
+		const { left: wrapperLeft } = wrapperRef.current!.getBoundingClientRect();
+		const movementX = mouseClientX - wrapperLeft - pickedColumn.offsetX;
+		const dragColumnVisible = await determineDragColumnVisible();
+		if (!dragColumnVisible && Math.abs(movementX) <= DRAG_DEVIATION) {
+			// start dragging when movement reach deviation
+			return;
+		}
+
+		dragColumnStateChange({ movementX });
+		setBehavior(Behavior.DRAGGING);
+		if (!dragColumnVisible) {
+			dragColumnVisibleChange(true);
+		}
+	};
+
+	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (behavior === Behavior.RESIZING && pickedColumn) {
+			resizeColumn(event.clientX);
+		} else if ((behavior === Behavior.READY_TO_DRAG || behavior === Behavior.DRAGGING) && pickedColumn) {
+			// noinspection JSIgnoredPromiseFromCall
+			dragColumn(event.clientX);
+		} else {
+			// nothing decide yet, just manager cursor to remind user
+			manageCursor({
+				table: findDataTable(event.target as HTMLElement),
+				mouseClientX: event.clientX,
+				mouseClientY: event.clientY,
+				avoidResize: false
+			});
 		}
 	};
 	const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-		switch (behavior) {
-			case Behavior.CAN_RESIZE:
-				// start to resize column
-				const table = findDataTable(event.target as HTMLElement)!;
-				setPickedColumn(findPickedColumn({
-					wrapperLeft: wrapperRef.current!.getBoundingClientRect().left,
-					table,
-					mouseClientX: event.clientX,
-					columnDefs,
-					isFixTable: table === fixTableRef.current,
-					rowNoColumnWidth
-				}));
-				setBehavior(Behavior.RESIZING);
-				break;
-			case Behavior.PICK_COLUMN:
-				// start to drag column
-				setBehavior(Behavior.DRAGGING);
-				break;
+		if (behavior === Behavior.CAN_RESIZE) {
+			// start to resize column
+			const table = findDataTable(event.target as HTMLElement)!;
+			setPickedColumn(findPickedColumnForResize({
+				wrapperLeft: wrapperRef.current!.getBoundingClientRect().left,
+				table,
+				mouseClientX: event.clientX,
+				columnDefs,
+				isFixTable: table === fixTableRef.current,
+				rowNoColumnWidth
+			}));
+			setBehavior(Behavior.RESIZING);
+		} else if (behavior === Behavior.PICK_COLUMN) {
+			// start to resize column
+			const table = findDataTable(event.target as HTMLElement)!;
+			const isFixTable = table === fixTableRef.current;
+			const mouseClientX = event.clientX;
+			const wrapperLeft = wrapperRef.current!.getBoundingClientRect().left;
+			const pickedColumn = findPickedColumnForDrag({
+				wrapperLeft,
+				table,
+				mouseClientX,
+				columnDefs,
+				isFixTable,
+				rowNoColumnWidth
+			});
+			setPickedColumn(pickedColumn);
+			const { scrollTop } = table;
+			const height = Math.min(table.clientHeight, HEADER_HEIGHT + data.data.length * ROW_HEIGHT);
+			const tableColumnDefs = isFixTable ? columnDefs.fixed : columnDefs.data;
+			let left;
+			if (isFixTable) {
+				const index = columnDefs.fixed.indexOf(pickedColumn.column);
+				if (index === 0) {
+					left = rowNoColumnWidth;
+				} else {
+					const widths = computeTableColumnsRightPositions(tableColumnDefs);
+					left = widths[index - 1] + rowNoColumnWidth;
+				}
+			} else {
+				const index = columnDefs.data.indexOf(pickedColumn.column);
+				if (index === 0) {
+					left = dataTableRef.current!.getBoundingClientRect().left - wrapperLeft;
+				} else {
+					const widths = computeTableColumnsRightPositions(tableColumnDefs);
+					left = widths[index - 1] + dataTableRef.current!.getBoundingClientRect().left - wrapperLeft;
+				}
+			}
+
+			dragColumnStateChange({
+				left,
+				height,
+				startRowIndex: Math.floor(scrollTop / ROW_HEIGHT),
+				endRowIndex: Math.ceil((height - HEADER_HEIGHT) / ROW_HEIGHT + 2),
+				firstRowOffsetY: scrollTop % ROW_HEIGHT,
+				movementX: 0
+			});
+			setBehavior(Behavior.READY_TO_DRAG);
 		}
 	};
 	const onMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
-		switch (behavior) {
-			case Behavior.RESIZING:
-				// recover data table layout
-				const dataTable = dataTableRef.current!;
-				dataTable.style.left = '';
-				dataTable.style.position = '';
-				dataTable.style.width = '';
-				// always fire mouse up on resize shade, find resize table by state
-				const resizeTable = columnDefs.fixed.some(c => c === pickedColumn?.column) ? fixTableRef.current : dataTableRef.current;
-				// clear resize data
-				setPickedColumn(null);
-				// recover cursor
-				manageCursor({
-					table: resizeTable,
-					mouseClientX: event.clientX,
-					mouseClientY: event.clientY,
-					avoidResize: true
-				});
-				break;
-			case Behavior.DRAGGING:
-				setBehavior(Behavior.NONE);
-				break;
+		if (behavior === Behavior.RESIZING) {
+			// recover data table layout
+			const dataTable = dataTableRef.current!;
+			dataTable.style.left = '';
+			dataTable.style.position = '';
+			dataTable.style.width = '';
+			// always fire mouse up on resize shade, find resize table by state
+			const resizeTable = columnDefs.fixed.some(c => c === pickedColumn?.column) ? fixTableRef.current : dataTableRef.current;
+			// clear resize data
+			setPickedColumn(null);
+			// recover cursor
+			manageCursor({
+				table: resizeTable,
+				mouseClientX: event.clientX,
+				mouseClientY: event.clientY,
+				avoidResize: true
+			});
+		} else if (behavior === Behavior.DRAGGING || behavior === Behavior.READY_TO_DRAG) {
+			setPickedColumn(null);
+			setBehavior(Behavior.NONE);
 		}
 	};
 	const onMouseLeave = () => {
@@ -320,6 +410,10 @@ export const DataSetTableWrapper = (props: {
 			dataTable.style.left = '';
 			dataTable.style.position = '';
 			dataTable.style.width = '';
+			setPickedColumn(null);
+			setBehavior(Behavior.NONE);
+		} else if (behavior === Behavior.DRAGGING || behavior === Behavior.READY_TO_DRAG) {
+			// TODO undo dragging
 			setPickedColumn(null);
 			setBehavior(Behavior.NONE);
 		}
@@ -393,6 +487,7 @@ export const DataSetTableWrapper = (props: {
 		<DataSetTableSelection data={data} columnDefs={columnDefs}
 		                       rowNoColumnWidth={rowNoColumnWidth}
 		                       dataTableRef={dataTableRef}/>
-		<DataSetResizeShade data-visible={behavior === Behavior.RESIZING}/>
+		<DataSetResizeShade data-visible={behavior === Behavior.RESIZING || behavior === Behavior.DRAGGING}/>
+		<DataSetTableDragColumn data={data} column={pickedColumn?.column}/>
 	</Wrapper>;
 };

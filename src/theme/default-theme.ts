@@ -103,6 +103,8 @@ const DefaultTheme = {
 	// console favorite
 	consoleFavoriteColor: 'rgba(255,142,43, 0.9)',
 	consoleFavoritePinnedHeight: 36,
+	consoleFavoriteShadow: '0 0 11px 0 rgba(255,142,43, 0.6)',
+	consoleFavoriteHoverShadow: '0 0 11px 0 rgba(255,142,43, 1)',
 
 	// console home
 	consoleHomeSectionBodyBgColor: 'rgba(233,235,240,.7)',

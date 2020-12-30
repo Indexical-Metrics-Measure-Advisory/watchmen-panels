@@ -1,4 +1,5 @@
 import { ConsoleSpaceSubjectDataSetColumn, ConsoleTopic } from '../../../../../services/console/types';
+import { DEFAULT_COLUMN_WIDTH } from './dataset-table-components';
 import { FactorColumnDef, FactorMap } from './types';
 
 export const filterColumns = (options: {
@@ -21,7 +22,7 @@ export const filterColumns = (options: {
 		}
 
 		// initial width is 200 pixels
-		return { topic, factor, fixed: false, width: 200, index: columnIndex };
+		return { topic, factor, fixed: false, width: DEFAULT_COLUMN_WIDTH, index: columnIndex };
 	}).filter(x => x) as Array<FactorColumnDef>;
 };
 
