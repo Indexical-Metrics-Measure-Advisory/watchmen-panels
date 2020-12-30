@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../common/utils';
 import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeline-types';
+import { TopicType } from '../../../../services/admin/types';
+import { usePipelineContext } from '../pipeline-context';
 import { HorizontalOptions } from './components/horizontal-options';
 
 const Trigger = styled.div`
@@ -31,6 +33,8 @@ const TriggerTypeOptions: { [key in PipelineTriggerType]: string } = {
 export const PipelineTrigger = (props: { pipeline: Pipeline }) => {
 	const { pipeline } = props;
 
+	const { store: { topics } } = usePipelineContext();
+
 	const forceUpdate = useForceUpdate();
 	const onTypeChanged = (newType: PipelineTriggerType) => {
 		// TODO pipeline trigger type changed, notify & save?
@@ -38,10 +42,17 @@ export const PipelineTrigger = (props: { pipeline: Pipeline }) => {
 		forceUpdate();
 	};
 
+	let availableTypes = Object.values(PipelineTriggerType);
+	// eslint-disable-next-line
+	const topic = topics.find(topic => topic.topicId == pipeline.topicId);
+	if (topic?.type === TopicType.RAW) {
+		availableTypes = availableTypes.filter(type => [ PipelineTriggerType.INSERT, PipelineTriggerType.DELETE ].includes(type));
+	}
+
 	return <Trigger>
 		<div>Trigger On:</div>
 		<HorizontalOptions label={TriggerTypeOptions[pipeline.type]}
-		                   options={Object.values(PipelineTriggerType).filter(type => type !== pipeline.type)}
+		                   options={availableTypes.filter(type => type !== pipeline.type)}
 		                   toLabel={(type) => TriggerTypeOptions[type as PipelineTriggerType]}
 		                   onSelect={onTypeChanged}/>
 	</Trigger>;
