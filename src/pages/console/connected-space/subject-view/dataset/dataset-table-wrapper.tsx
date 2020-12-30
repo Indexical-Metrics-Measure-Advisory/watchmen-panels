@@ -4,6 +4,7 @@ import { DataPage } from '../../../../../services/admin/types';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { DataSetTable } from './dataset-table';
 import { Wrapper } from './dataset-table-components';
+import { useDataSetTableContext } from './dataset-table-context';
 import { DataSetTableSelection } from './dataset-table-selection';
 import { ColumnDefs, ColumnSortBy, FactorColumnDef } from './types';
 import { buildFactorMap, filterColumns } from './utils';
@@ -49,10 +50,11 @@ export const DataSetTableWrapper = (props: {
 }) => {
 	const { space, subject, data } = props;
 
+	const { fixColumnChange } = useDataSetTableContext();
 	const fixTableRef = useRef<HTMLDivElement>(null);
 	const dataTableRef = useRef<HTMLDivElement>(null);
 	const [ rowNoColumnWidth ] = useState(40);
-	const [ columnDefs, setColumnDefs ] = useState<ColumnDefs>(() => {
+	const [ columnDefs ] = useState<ColumnDefs>(() => {
 		return {
 			fixed: [],
 			data: filterColumns({ columns: subject.dataset?.columns || [], factorMap: buildFactorMap(space.topics) })
@@ -62,20 +64,21 @@ export const DataSetTableWrapper = (props: {
 	useDecorateFixStyle({ fixTableRef, dataTableRef });
 
 	const onColumnFixChange = (column: FactorColumnDef, fix: boolean) => {
+		// defs must be synchronized to memory immediately, otherwise selection cannot compute positions correctly
+		// according to this, here change the state, and call force update manually.
 		if (fix) {
-			// move leading columns from data columns to fix columns
+			// move leading columns and me from data columns to fix columns
 			const index = columnDefs.data.indexOf(column);
-			setColumnDefs({
-				fixed: [ ...columnDefs.fixed, ...columnDefs.data.splice(0, index + 1) ],
-				data: [ ...columnDefs.data ]
-			});
+			columnDefs.fixed = [ ...columnDefs.fixed, ...columnDefs.data.splice(0, index + 1) ];
+			fixColumnChange(fix, index + 1);
+			forceUpdate();
 		} else {
-			// move tailing columns from fix columns to data columns
+			// move me and tailing columns from fix columns to data columns
 			const index = columnDefs.fixed.indexOf(column);
-			setColumnDefs({
-				data: [ ...columnDefs.fixed.splice(index), ...columnDefs.data ],
-				fixed: [ ...columnDefs.fixed ]
-			});
+			const count = columnDefs.fixed.length - index;
+			columnDefs.data = [ ...columnDefs.fixed.splice(index), ...columnDefs.data ];
+			fixColumnChange(fix, count);
+			forceUpdate();
 		}
 	};
 	const onColumnSort = (column: FactorColumnDef, asc: boolean) => {

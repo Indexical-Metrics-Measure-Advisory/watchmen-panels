@@ -237,7 +237,10 @@ export const DataSetTableSelection = (props: {
 		rowNoColumnWidth
 	} = props;
 
-	const { addSelectionChangeListener, removeSelectionChangeListener } = useDataSetTableContext();
+	const {
+		addSelectionChangeListener, removeSelectionChangeListener,
+		addFixColumnChangeListener, removeFixColumnChangeListener
+	} = useDataSetTableContext();
 	const rowSelectionRef = useRef<HTMLDivElement>(null);
 	const columnSelectionRef = useRef<HTMLDivElement>(null);
 	const { selection, select } = useSelection({
@@ -249,8 +252,52 @@ export const DataSetTableSelection = (props: {
 		columnSelectionRef
 	});
 	useEffect(() => {
+		const onFixColumnChange = (fix: boolean, columnCount: number) => {
+			const { column: selectionColumnIndex, inFixTable } = selection;
+			if (selectionColumnIndex === -1) {
+				// no selection column
+				return;
+			}
+			if (inFixTable) {
+				// current selection column in fix table
+				if (fix) {
+					// append columns to fix table, do nothing
+					return;
+				} else {
+					// move columns from fix table to data table
+					if (selectionColumnIndex < columnDefs.fixed.length) {
+						// selection column still in fix table, do nothing
+						return;
+					} else {
+						// selection column move to data table
+						select(false, selection.row, selectionColumnIndex - columnDefs.fixed.length);
+					}
+				}
+			} else {
+				// current selection column in data table
+				if (fix) {
+					// move columns from data table to fix table
+					if (selectionColumnIndex >= columnCount) {
+						// selection column remains in data table
+						select(false, selection.row, selectionColumnIndex - columnCount);
+					} else {
+						// selection column moves to fix table
+						// index starts from original fix columns count
+						select(true, selection.row, columnDefs.fixed.length - columnCount + selectionColumnIndex);
+					}
+				} else {
+					// move columns from fix table to data table
+					// index always be increased, because of columns prepended
+					select(false, selection.row, selectionColumnIndex + columnCount);
+				}
+			}
+		};
 		addSelectionChangeListener(select);
-		return () => removeSelectionChangeListener(select);
+		addFixColumnChangeListener(onFixColumnChange);
+		return () => {
+			removeSelectionChangeListener(select);
+			removeFixColumnChangeListener(onFixColumnChange);
+		};
 	});
 
 	return <Fragment>
