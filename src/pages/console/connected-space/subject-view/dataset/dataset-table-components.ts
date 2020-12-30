@@ -13,6 +13,13 @@ export const Wrapper = styled.div.attrs({
 	left: 0;
 	width: 100%;
 	height: calc(100% - ${TITLE_HEIGHT}px);
+	&[data-resize-state=pick-column] {
+		cursor: s-resize;
+	}
+	&[data-resize-state=can-resize],
+	&[data-resize-state=resizing] {
+		cursor: col-resize;
+	}
 `;
 
 export const DataSetTableContainer = styled.div
@@ -29,13 +36,6 @@ export const DataSetTableContainer = styled.div
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	&[data-resize-state=pick-column] {
-		cursor: s-resize;
-	}
-	&[data-resize-state=can-resize],
-	&[data-resize-state=resizing] {
-		cursor: ew-resize;
-	}
 	&:first-child {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -96,9 +96,6 @@ export const DataSetTableHeaderCell = styled.div
 	padding: 0 8px;
 	border-right: var(--border);
 	border-bottom: var(--border);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	&:not([data-rowno=true]):not([data-filler=true]) {
 		//cursor: s-resize;
 		&:hover {
@@ -111,6 +108,9 @@ export const DataSetTableHeaderCell = styled.div
 	}
 	> span {
 		flex-grow: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	> button {
 		opacity: 0.7;
@@ -131,10 +131,11 @@ export const HeaderCellButtons = styled.div.attrs({
 })`
 	display: flex;
 	position: absolute;
-	height: 32px;
+	height: 31px;
 	top: 0;
 	right: 0;
 	padding: calc(var(--margin) / 8);
+	background-color: var(--bg-color);
 	opacity: 0;
 	pointer-events: none;
 	> button {
@@ -189,6 +190,12 @@ export const DataSetTableBodyCell = styled.div
 			transform-origin: left;
 		}
 	}
+	> span {
+		flex-grow: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 `;
 
 export const RowSelection = styled.div
@@ -233,4 +240,17 @@ export const ColumnSelection = styled.div
 	pointer-events: none;
 	transition: left 300ms ease-in-out;
 	z-index: 10;
+`;
+
+export const DataSetResizeShade = styled.div`
+	display: block;
+	position: absolute;
+	z-index: 20;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 100%;
+	&[data-visible=true] {
+		width: 100%;
+	}
 `;

@@ -123,6 +123,7 @@ const useSelection = (options: {
 		dataTableRef, rowSelectionRef, columnSelectionRef
 	} = options;
 
+	const { addSelectionRepaintListener, removeSelectionRepaintListener } = useDataSetTableContext();
 	const [ selection, setSelection ] = useState<TableSelection>(buildDefaultSelection());
 	const select = (inFixTable: boolean, rowIndex: number, columnIndex: number) => {
 		if (!dataTableRef.current) {
@@ -159,16 +160,17 @@ const useSelection = (options: {
 	};
 
 	useEffect(() => {
-		if (!dataTableRef.current) {
-			return;
-		}
-		const dataTable = dataTableRef.current;
 		// compute and set new positions of row and column selection here.
 		// in case of handle scroll, transition is not needed; in the meantime, refresh by state change is not as fast as hoped.
 		// therefore, use plain javascript to clear transition css and set positions.
 		// and synchronize selection state after a short time (setTimeout on several milliseconds), and remove the transition clearing.
 		// selection state synchronization is required, otherwise cannot response click cell/row header/column header correctly.
-		const onScroll = () => {
+		const repaintSelection = () => {
+			if (!dataTableRef.current) {
+				return;
+			}
+			const dataTable = dataTableRef.current;
+
 			let {
 				inFixTable,
 				row: rowIndex,
@@ -178,6 +180,7 @@ const useSelection = (options: {
 				columnLeft,
 				columnWidth
 			} = selection;
+
 			if (rowIndex !== -1 && rowSelectionRef.current) {
 				const { scrollTop, clientHeight } = dataTable;
 				const { rowTop: top, rowHeight: height } = computeRowSelectionPosition({
@@ -219,8 +222,13 @@ const useSelection = (options: {
 				}, 5);
 			}
 		};
-		dataTable.addEventListener('scroll', onScroll);
-		return () => dataTable.removeEventListener('scroll', onScroll);
+		const dataTable = dataTableRef.current;
+		dataTable?.addEventListener('scroll', repaintSelection);
+		addSelectionRepaintListener(repaintSelection);
+		return () => {
+			dataTable?.removeEventListener('scroll', repaintSelection);
+			removeSelectionRepaintListener(repaintSelection);
+		};
 	});
 
 	return { selection, select };

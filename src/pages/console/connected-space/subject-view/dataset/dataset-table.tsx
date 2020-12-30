@@ -1,6 +1,6 @@
 import { faLock, faLockOpen, faSortAmountDown, faSortAmountUpAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { ForwardedRef, forwardRef, Fragment, useRef, useState } from 'react';
+import React, { ForwardedRef, forwardRef, Fragment, useRef } from 'react';
 import { DataPage } from '../../../../../services/admin/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import {
@@ -9,20 +9,10 @@ import {
 	DataSetTableContainer,
 	DataSetTableHeader,
 	DataSetTableHeaderCell,
-	HEADER_HEIGHT,
 	HeaderCellButtons
 } from './dataset-table-components';
 import { useDataSetTableContext } from './dataset-table-context';
 import { ColumnDef, FactorColumnDef, SequenceColumnDef } from './types';
-
-enum ResizeState {
-	NONE = 'none',
-	PICK_COLUMN = 'pick-column',
-	CAN_RESIZE = 'can-resize',
-	RESIZING = 'resizing'
-}
-
-const RESIZE_DEVIATION = 3;
 
 const HeaderCell = (props: {
 	column: FactorColumnDef;
@@ -68,71 +58,8 @@ const HeaderCell = (props: {
 	</DataSetTableHeaderCell>;
 };
 
-const findDataTable = (element: HTMLElement) => {
-	const widgetType = element.getAttribute('data-widget');
-	if (widgetType !== 'console-subject-view-dataset-table') {
-		return element.closest('div[data-widget="console-subject-view-dataset-table"]')! as HTMLElement;
-	}
-	return element;
-};
-const manageCursor = (options: {
-	eventTarget: HTMLElement;
-	mouseClientX: number;
-	mouseClientY: number;
-	isFixTable: boolean;
-	rowNoColumnWidth: number;
-	displayColumns: Array<FactorColumnDef>;
-	fixColumns: Array<FactorColumnDef>;
-	changeResizeState: (state: ResizeState) => void;
-}) => {
-	const {
-		eventTarget, mouseClientX, mouseClientY,
-		isFixTable, rowNoColumnWidth,
-		displayColumns, fixColumns,
-		changeResizeState
-	} = options;
-
-	const element = findDataTable(eventTarget);
-	const { top: containerTop, left: containerLeft } = element.getBoundingClientRect();
-	if (mouseClientY - containerTop > HEADER_HEIGHT) {
-		// not in header
-		changeResizeState(ResizeState.NONE);
-		return;
-	}
-	const left = mouseClientX - containerLeft;
-	if (isFixTable && left <= rowNoColumnWidth) {
-		// in row number column
-		changeResizeState(ResizeState.NONE);
-		return;
-	}
-
-	// compute every resize point
-	const widths = displayColumns.map(column => column.width);
-	for (let index = 1, count = widths.length; index < count; index++) {
-		widths[index] += widths[index - 1];
-	}
-
-	if (!isFixTable && left > widths[widths.length - 1] + RESIZE_DEVIATION - element.scrollLeft) {
-		// in filler column
-		changeResizeState(ResizeState.NONE);
-		return;
-	}
-
-	const offsetLeft = isFixTable ? left - rowNoColumnWidth : left;
-	let canResize;
-	if (isFixTable) {
-		canResize = widths.some(width => Math.abs(width - offsetLeft) <= RESIZE_DEVIATION);
-	} else {
-		// resize self, or last fix column
-		canResize = (fixColumns.length !== 0 && offsetLeft <= RESIZE_DEVIATION)
-			|| widths.some(width => Math.abs(width - offsetLeft - element.scrollLeft) <= RESIZE_DEVIATION);
-	}
-	changeResizeState(canResize ? ResizeState.CAN_RESIZE : ResizeState.PICK_COLUMN);
-};
-
 export const DataSetTable = forwardRef((props: {
 	displayColumns: Array<FactorColumnDef>;
-	fixColumns: Array<FactorColumnDef>;
 	data: DataPage<Array<any>>;
 	isFixTable: boolean;
 	rowNoColumnWidth: number;
@@ -140,7 +67,7 @@ export const DataSetTable = forwardRef((props: {
 	onColumnSort: (column: FactorColumnDef, asc: boolean) => void;
 }, ref: ForwardedRef<HTMLDivElement>) => {
 	const {
-		displayColumns, fixColumns,
+		displayColumns,
 		isFixTable,
 		rowNoColumnWidth,
 		data: { data, pageNumber, pageSize },
@@ -148,33 +75,6 @@ export const DataSetTable = forwardRef((props: {
 	} = props;
 
 	const { selectionChange } = useDataSetTableContext();
-	const [ resizeState, setResizeState ] = useState<ResizeState>(ResizeState.NONE);
-	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-		if (resizeState !== ResizeState.RESIZING) {
-			manageCursor({
-				eventTarget: event.target as HTMLElement,
-				mouseClientX: event.clientX,
-				mouseClientY: event.clientY,
-				isFixTable,
-				rowNoColumnWidth,
-				displayColumns,
-				fixColumns,
-				changeResizeState: setResizeState
-			});
-		} else {
-
-		}
-	};
-	const onMouseDown = () => {
-		if (resizeState === ResizeState.CAN_RESIZE) {
-			setResizeState(ResizeState.RESIZING);
-		}
-	};
-	const onMouseUp = () => {
-		if (resizeState === ResizeState.RESIZING) {
-			setResizeState(ResizeState.PICK_COLUMN);
-		}
-	};
 	const onSelectionChanged = (rowIndex: number, columnIndex: number) => (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -198,8 +98,6 @@ export const DataSetTable = forwardRef((props: {
 	const autoFill = !isFixTable;
 
 	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill}
-	                              data-resize-state={resizeState}
-	                              onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp}
 	                              ref={ref}>
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
 			{isFixTable
@@ -238,7 +136,7 @@ export const DataSetTable = forwardRef((props: {
 						return <DataSetTableBodyCell lastRow={lastRow} lastColumn={lastColumn}
 						                             onClick={onSelectionChanged(rowIndex, columnIndex)}
 						                             key={`${rowIndex}-${columnIndex}`}>
-							{`${row[def.index]}`}
+							<span>{`${row[def.index]}`}</span>
 						</DataSetTableBodyCell>;
 					})}
 					{autoFill ? <DataSetTableBodyCell lastRow={lastRow} lastColumn={false} data-filler={true}/> : null}
