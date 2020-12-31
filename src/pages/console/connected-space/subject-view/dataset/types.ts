@@ -46,3 +46,7 @@ export interface TableSelection {
 	verticalScroll: number;
 	horizontalScroll: number;
 }
+
+export interface SelectionRef {
+	selection: () => TableSelection;
+}

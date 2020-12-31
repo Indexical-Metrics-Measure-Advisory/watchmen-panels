@@ -1,8 +1,17 @@
-import React, { Fragment, RefObject, useEffect, useRef, useState } from 'react';
+import React, {
+	ForwardedRef,
+	forwardRef,
+	Fragment,
+	RefObject,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState
+} from 'react';
 import { DataPage } from '../../../../../services/admin/types';
 import { ColumnSelection, HEADER_HEIGHT, ROW_HEIGHT, RowSelection } from './dataset-table-components';
 import { useDataSetTableContext } from './dataset-table-context';
-import { ColumnDefs, TableSelection } from './types';
+import { ColumnDefs, SelectionRef, TableSelection } from './types';
 
 const computeRowSelectionPosition = (options: {
 	rowIndex: number;
@@ -234,12 +243,12 @@ const useSelection = (options: {
 	return { selection, select };
 };
 
-export const DataSetTableSelection = (props: {
+export const DataSetTableSelection = forwardRef((props: {
 	data: DataPage<Array<any>>;
 	columnDefs: ColumnDefs;
 	dataTableRef: RefObject<HTMLDivElement>;
 	rowNoColumnWidth: number;
-}) => {
+}, ref: ForwardedRef<SelectionRef>) => {
 	const {
 		data, columnDefs, dataTableRef,
 		rowNoColumnWidth
@@ -259,6 +268,7 @@ export const DataSetTableSelection = (props: {
 		rowSelectionRef,
 		columnSelectionRef
 	});
+	useImperativeHandle(ref, () => ({ selection: () => selection }));
 	useEffect(() => {
 		const onFixColumnChange = (fix: boolean, columnCount: number) => {
 			const { column: selectionColumnIndex, inFixTable } = selection;
@@ -318,4 +328,4 @@ export const DataSetTableSelection = (props: {
 		                 scroll={selection.horizontalScroll}
 		                 ref={columnSelectionRef}/>
 	</Fragment>;
-};
+});

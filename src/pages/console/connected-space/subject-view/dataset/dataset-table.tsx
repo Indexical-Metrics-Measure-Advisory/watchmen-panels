@@ -18,6 +18,7 @@ const HeaderCell = (props: {
 	column: FactorColumnDef;
 	isFixTable: boolean;
 	last: boolean;
+	gridColumnIndex: number;
 	selectColumn: (event: React.MouseEvent<HTMLDivElement>) => void;
 	fixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	unfixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -27,14 +28,15 @@ const HeaderCell = (props: {
 }) => {
 	const {
 		column, isFixTable,
-		last, selectColumn,
-		fixColumn, unfixColumn, sortColumnAsc, sortColumnDesc,
+		last, gridColumnIndex,
+		selectColumn, fixColumn, unfixColumn, sortColumnAsc, sortColumnDesc,
 		dragging
 	} = props;
 
 	const cellRef = useRef<HTMLDivElement>(null);
 
-	return <DataSetTableHeaderCell lastColumn={last} onClick={selectColumn}
+	return <DataSetTableHeaderCell lastColumn={last} column={gridColumnIndex}
+	                               onClick={selectColumn}
 	                               data-dragging={dragging}
 	                               data-last-column={last}
 	                               ref={cellRef}>
@@ -111,6 +113,7 @@ export const DataSetTable = forwardRef((props: {
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
 			{isFixTable
 				? <DataSetTableHeaderCell lastColumn={displayColumns.length === 0}
+				                          column={2}
 				                          data-rowno={true}>
 					<span>#</span>
 				</DataSetTableHeaderCell>
@@ -120,6 +123,7 @@ export const DataSetTable = forwardRef((props: {
 				return <HeaderCell column={column}
 				                   isFixTable={isFixTable}
 				                   last={lastColumn}
+				                   gridColumnIndex={(columnIndex + (isFixTable ? 1 : 0) + 1) * 2}
 				                   selectColumn={onSelectionChanged(-1, columnIndex)}
 				                   fixColumn={fixColumn(true, column)}
 				                   unfixColumn={fixColumn(false, column)}
@@ -128,7 +132,11 @@ export const DataSetTable = forwardRef((props: {
 				                   dragging={column === dragColumn}
 				                   key={`0-${columnIndex}`}/>;
 			})}
-			{autoFill ? <DataSetTableHeaderCell lastColumn={false} data-filler={true}/> : null}
+			{autoFill
+				? <DataSetTableHeaderCell lastColumn={false}
+				                          column={allDisplayColumns.length * 2 + 2}
+				                          data-filler={true}/>
+				: null}
 		</DataSetTableHeader>
 		<DataSetTableBody columns={allDisplayColumns} autoFill={autoFill}>
 			{data.map((row, rowIndex, rows) => {
@@ -136,6 +144,7 @@ export const DataSetTable = forwardRef((props: {
 				return <Fragment key={`${rowIndex}`}>
 					{isFixTable
 						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={displayColumns.length === 0}
+						                        column={2}
 						                        onClick={onSelectionChanged(rowIndex, -1)}
 						                        data-rowno={true}>
 							<span>{pageSize * (pageNumber - 1) + rowIndex + 1}</span>
@@ -144,6 +153,7 @@ export const DataSetTable = forwardRef((props: {
 					{displayColumns.map((def, columnIndex, columns) => {
 						const lastColumn = isFixTable && columnIndex === columns.length - 1;
 						return <DataSetTableBodyCell lastRow={lastRow} lastColumn={lastColumn}
+						                             column={(columnIndex + (isFixTable ? 1 : 0) + 1) * 2}
 						                             onClick={onSelectionChanged(rowIndex, columnIndex)}
 						                             data-dragging={def === dragColumn}
 						                             data-last-row={lastRow} data-last-column={lastColumn}
@@ -151,7 +161,11 @@ export const DataSetTable = forwardRef((props: {
 							<span>{`${row[def.index]}`}</span>
 						</DataSetTableBodyCell>;
 					})}
-					{autoFill ? <DataSetTableBodyCell lastRow={lastRow} lastColumn={false} data-filler={true}/> : null}
+					{autoFill
+						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={false}
+						                        column={allDisplayColumns.length * 2 + 2}
+						                        data-filler={true}/>
+						: null}
 				</Fragment>;
 			})}
 		</DataSetTableBody>

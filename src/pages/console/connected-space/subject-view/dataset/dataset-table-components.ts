@@ -74,7 +74,8 @@ export const DataSetTableHeader = styled.div
 		return {
 			'data-widget': 'console-subject-view-dataset-table-header',
 			style: {
-				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
+				// each data column hold 2 physical columns, the first is show data, the second is for show drag placeholder
+				gridTemplateColumns: autoFill ? `0px ${columns.map(def => `${def.width}px 0`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : `0px ${columns.map(def => `${def.width}px 0`).join(' ')}`
 			}
 		};
 	})<DataSetTableProps>`
@@ -88,14 +89,15 @@ export const DataSetTableHeader = styled.div
 `;
 
 export const DataSetTableHeaderCell = styled.div
-	.attrs<{ filler?: true }>(({ filler }) => {
+	.attrs<{ column: number, filler?: true }>(({ column, filler }) => {
 		return {
 			'data-widget': 'console-subject-view-dataset-table-header-cell',
 			style: {
+				gridColumn: column,
 				borderRightColor: filler ? 'transparent' : 'var(--border-color)'
 			}
 		};
-	})<{ lastColumn: boolean, filler?: true }>`
+	})<{ lastColumn: boolean, column: number, filler?: true }>`
 	display: flex;
 	position: relative;
 	align-items: center;
@@ -105,8 +107,8 @@ export const DataSetTableHeaderCell = styled.div
 	padding: 0 8px;
 	border-right: var(--border);
 	border-bottom: var(--border);
+	box-shadow: -1px 0 0 0 var(--border-color);
 	&:not([data-rowno=true]):not([data-filler=true]) {
-		//cursor: s-resize;
 		&:hover {
 			> div[data-widget='console-subject-view-dataset-table-header-cell-buttons'] {
 				opacity: 1;
@@ -116,10 +118,7 @@ export const DataSetTableHeaderCell = styled.div
 		}
 	}
 	&[data-dragging=true] {
-		opacity: 0;
-		& + div {
-			box-shadow: -1px 0 0 0 var(--border-color);
-		}
+		display: none;
 	}
 	> span {
 		flex-grow: 1;
@@ -164,7 +163,8 @@ export const DataSetTableBody = styled.div
 		return {
 			'data-widget': 'console-subject-view-dataset-table-body',
 			style: {
-				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
+				// each data column hold 2 physical columns, the first is show data, the second is for show drag placeholder
+				gridTemplateColumns: autoFill ? `0 ${columns.map(def => `${def.width}px 0`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : `0 ${columns.map(def => `${def.width}px 0`).join(' ')}`
 			}
 		};
 	})<DataSetTableProps>`
@@ -175,15 +175,16 @@ export const DataSetTableBody = styled.div
 `;
 
 export const DataSetTableBodyCell = styled.div
-	.attrs<{ lastRow: boolean, filler?: true }>(({ lastRow, filler }) => {
+	.attrs<{ lastRow: boolean, column: number, filler?: true }>(({ lastRow, column, filler }) => {
 		return {
 			'data-widget': 'console-subject-view-dataset-table-body-cell',
 			style: {
+				gridColumn: column,
 				borderBottom: lastRow ? 0 : 'var(--border)',
 				borderRightColor: filler ? 'transparent' : 'var(--border-color)'
 			}
 		};
-	})<{ lastRow: boolean, lastColumn: boolean, filler?: true }>`
+	})<{ lastRow: boolean, lastColumn: boolean, column: number, filler?: true }>`
 	display: flex;
 	position: relative;
 	align-items: center;
@@ -191,6 +192,7 @@ export const DataSetTableBodyCell = styled.div
 	padding: 0 8px;
 	background-color: var(--invert-color);
 	border-right: var(--border);
+	box-shadow: -1px 0 0 0 var(--border-color);
 	&[data-rowno=true] {
 		&:hover {
 			cursor: e-resize;
@@ -202,16 +204,10 @@ export const DataSetTableBodyCell = styled.div
 		}
 	}
 	&[data-last-row=true] {
-		box-shadow: 0 1px 0 0 var(--border-color);
+		box-shadow: -1px 0 0 0 var(--border-color), 0 1px 0 0 var(--border-color);
 	}
 	&[data-dragging=true] {
-		opacity: 0;
-		& + div {
-			box-shadow: -1px 0 0 0 var(--border-color);
-		}
-		&[data-last-row=true] + div {
-			box-shadow: 0 1px 0 0 var(--border-color), -1px 0 0 0 var(--border-color);
-		}
+		display: none;
 	}
 	> span {
 		flex-grow: 1;
@@ -273,7 +269,7 @@ export const DataSetResizeShade = styled.div`
 	left: 0;
 	width: 0;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.05);
+	//background-color: rgba(0, 0, 0, 0.05);
 	&[data-visible=true] {
 		width: 100%;
 	}

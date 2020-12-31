@@ -19,7 +19,13 @@ const DragColumnContainer = styled.div
 		const rotate = Math.max(-10, Math.min(10, movementX / 10));
 		return {
 			'data-widget': 'console-subject-view-dataset-drag-column',
-			style: { top: -1, left: left + movementX, width, height: height + 1, transform: `rotate(${rotate}deg)` }
+			style: {
+				top: -1,
+				left,
+				width,
+				height: height + 1,
+				transform: `rotate(${rotate}deg)`
+			}
 		};
 	})<ContainerProps>`
 	display: flex;
