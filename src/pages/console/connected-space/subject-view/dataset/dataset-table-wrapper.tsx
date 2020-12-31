@@ -288,7 +288,10 @@ export const DataSetTableWrapper = (props: {
 		if (!pickedColumn) {
 			return;
 		}
-		const { left: wrapperLeft } = wrapperRef.current!.getBoundingClientRect();
+
+		const wrapper = wrapperRef.current!;
+		const { left: wrapperLeft } = wrapper.getBoundingClientRect();
+
 		const movementX = mouseClientX - wrapperLeft - pickedColumn.offsetX;
 		const dragColumnVisible = await determineDragColumnVisible();
 		if (!dragColumnVisible && Math.abs(movementX) <= DRAG_DEVIATION) {
@@ -296,8 +299,13 @@ export const DataSetTableWrapper = (props: {
 			return;
 		}
 
+		// table content should be selected since shade is not shown now,
+		// force clear selection to avoid confusing
+		window.getSelection()?.removeAllRanges();
 		dragColumnStateChange({ movementX });
-		setBehavior(Behavior.DRAGGING);
+		if (behavior !== Behavior.DRAGGING) {
+			setBehavior(Behavior.DRAGGING);
+		}
 		if (!dragColumnVisible) {
 			dragColumnVisibleChange(true);
 		}
@@ -360,12 +368,13 @@ export const DataSetTableWrapper = (props: {
 					left = widths[index - 1] + rowNoColumnWidth;
 				}
 			} else {
+				const dataTable = dataTableRef.current!;
 				const index = columnDefs.data.indexOf(pickedColumn.column);
 				if (index === 0) {
-					left = dataTableRef.current!.getBoundingClientRect().left - wrapperLeft;
+					left = dataTable.getBoundingClientRect().left - wrapperLeft;
 				} else {
 					const widths = computeTableColumnsRightPositions(tableColumnDefs);
-					left = widths[index - 1] + dataTableRef.current!.getBoundingClientRect().left - wrapperLeft;
+					left = widths[index - 1] + dataTable.getBoundingClientRect().left - wrapperLeft - dataTable.scrollLeft;
 				}
 			}
 
@@ -400,6 +409,7 @@ export const DataSetTableWrapper = (props: {
 			});
 		} else if (behavior === Behavior.DRAGGING || behavior === Behavior.READY_TO_DRAG) {
 			setPickedColumn(null);
+			dragColumnVisibleChange(false);
 			setBehavior(Behavior.NONE);
 		}
 	};
@@ -415,6 +425,7 @@ export const DataSetTableWrapper = (props: {
 		} else if (behavior === Behavior.DRAGGING || behavior === Behavior.READY_TO_DRAG) {
 			// TODO undo dragging
 			setPickedColumn(null);
+			dragColumnVisibleChange(false);
 			setBehavior(Behavior.NONE);
 		}
 	};
@@ -475,14 +486,14 @@ export const DataSetTableWrapper = (props: {
 		<DataSetTable displayColumns={columnDefs.fixed}
 		              isFixTable={true} rowNoColumnWidth={rowNoColumnWidth}
 		              data={data}
-		              onColumnFixChange={onColumnFixChange}
-		              onColumnSort={onColumnSort}
+		              onColumnFixChange={onColumnFixChange} onColumnSort={onColumnSort}
+		              dragColumn={behavior === Behavior.DRAGGING ? pickedColumn?.column : (void 0)}
 		              ref={fixTableRef}/>
 		<DataSetTable displayColumns={columnDefs.data}
 		              isFixTable={false} rowNoColumnWidth={rowNoColumnWidth}
 		              data={data}
-		              onColumnFixChange={onColumnFixChange}
-		              onColumnSort={onColumnSort}
+		              onColumnFixChange={onColumnFixChange} onColumnSort={onColumnSort}
+		              dragColumn={behavior === Behavior.DRAGGING ? pickedColumn?.column : (void 0)}
 		              ref={dataTableRef}/>
 		<DataSetTableSelection data={data} columnDefs={columnDefs}
 		                       rowNoColumnWidth={rowNoColumnWidth}

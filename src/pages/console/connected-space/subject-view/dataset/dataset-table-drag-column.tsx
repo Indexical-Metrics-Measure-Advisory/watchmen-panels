@@ -32,6 +32,9 @@ const DragColumnContainer = styled.div
 	pointer-events: none;
 	transform-origin: center center;
 	box-shadow: var(--console-favorite-shadow);
+	&[data-visible=false] {
+		display: none;
+	}
 	&:after {
 		content: '';
 		display: block;
@@ -137,7 +140,11 @@ export const DataSetTableDragColumn = forwardRef((props: {
 			removeDragColumnVisibleChangeListener(setVisible);
 			removeDragColumnStateChangeListener(stateChangeListener);
 		};
-	});
+	}, [
+		addDragColumnVisibleDeterminationHandler, addDragColumnVisibleChangeListener, addDragColumnStateChangeListener,
+		visible, state,
+		removeDragColumnVisibleDeterminationHandler, removeDragColumnVisibleChangeListener, removeDragColumnStateChangeListener
+	]);
 
 	if (!column || !state) {
 		return null;

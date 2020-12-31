@@ -5,10 +5,11 @@ export const TITLE_HEIGHT = 40;
 export const HEADER_HEIGHT = 32;
 export const ROW_HEIGHT = 24;
 export const DEFAULT_COLUMN_WIDTH = 200;
+export const FILLER_MIN_WIDTH = 40;
 export const RESIZE_DEVIATION = 3;
 export const MIN_COLUMN_WIDTH = 100;
 export const MAX_COLUMN_WIDTH = 500;
-export const DRAG_DEVIATION = 30;
+export const DRAG_DEVIATION = 10;
 
 export const Wrapper = styled.div.attrs({
 	'data-widget': 'console-subject-view-dataset-table-wrapper'
@@ -20,6 +21,7 @@ export const Wrapper = styled.div.attrs({
 	width: 100%;
 	height: calc(100% - ${TITLE_HEIGHT}px);
 	&[data-resize-state=pick-column],
+	&[data-resize-state=ready-to-drag],
 	&[data-resize-state=dragging] {
 		cursor: move;
 	}
@@ -72,7 +74,7 @@ export const DataSetTableHeader = styled.div
 		return {
 			'data-widget': 'console-subject-view-dataset-table-header',
 			style: {
-				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(40px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
+				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
 			}
 		};
 	})<DataSetTableProps>`
@@ -111,6 +113,12 @@ export const DataSetTableHeaderCell = styled.div
 				pointer-events: auto;
 				transition: all 300ms ease-in-out;
 			}
+		}
+	}
+	&[data-dragging=true] {
+		opacity: 0;
+		& + div {
+			box-shadow: -1px 0 0 0 var(--border-color);
 		}
 	}
 	> span {
@@ -156,7 +164,7 @@ export const DataSetTableBody = styled.div
 		return {
 			'data-widget': 'console-subject-view-dataset-table-body',
 			style: {
-				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(40px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
+				gridTemplateColumns: autoFill ? `${columns.map(def => `${def.width}px`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : columns.map(def => `${def.width}px`).join(' ')
 			}
 		};
 	})<DataSetTableProps>`
@@ -172,8 +180,7 @@ export const DataSetTableBodyCell = styled.div
 			'data-widget': 'console-subject-view-dataset-table-body-cell',
 			style: {
 				borderBottom: lastRow ? 0 : 'var(--border)',
-				borderRightColor: filler ? 'transparent' : 'var(--border-color)',
-				boxShadow: lastRow ? '0 1px 0 0 var(--border-color)' : 'none'
+				borderRightColor: filler ? 'transparent' : 'var(--border-color)'
 			}
 		};
 	})<{ lastRow: boolean, lastColumn: boolean, filler?: true }>`
@@ -192,6 +199,18 @@ export const DataSetTableBodyCell = styled.div
 			font-family: var(--console-title-font-family);
 			transform: scale(0.8);
 			transform-origin: left;
+		}
+	}
+	&[data-last-row=true] {
+		box-shadow: 0 1px 0 0 var(--border-color);
+	}
+	&[data-dragging=true] {
+		opacity: 0;
+		& + div {
+			box-shadow: -1px 0 0 0 var(--border-color);
+		}
+		&[data-last-row=true] + div {
+			box-shadow: 0 1px 0 0 var(--border-color), -1px 0 0 0 var(--border-color);
 		}
 	}
 	> span {
@@ -254,6 +273,7 @@ export const DataSetResizeShade = styled.div`
 	left: 0;
 	width: 0;
 	height: 100%;
+	background-color: rgba(0, 0, 0, 0.05);
 	&[data-visible=true] {
 		width: 100%;
 	}

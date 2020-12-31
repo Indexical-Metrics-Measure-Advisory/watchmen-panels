@@ -23,13 +23,20 @@ const HeaderCell = (props: {
 	unfixColumn: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	sortColumnAsc: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	sortColumnDesc: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	dragging: boolean;
 }) => {
-	const { column, isFixTable, last, selectColumn, fixColumn, unfixColumn, sortColumnAsc, sortColumnDesc } = props;
+	const {
+		column, isFixTable,
+		last, selectColumn,
+		fixColumn, unfixColumn, sortColumnAsc, sortColumnDesc,
+		dragging
+	} = props;
 
 	const cellRef = useRef<HTMLDivElement>(null);
 
-	return <DataSetTableHeaderCell lastColumn={last}
-	                               onClick={selectColumn}
+	return <DataSetTableHeaderCell lastColumn={last} onClick={selectColumn}
+	                               data-dragging={dragging}
+	                               data-last-column={last}
 	                               ref={cellRef}>
 		<span>{column.factor.label || column.factor.name}</span>
 		<HeaderCellButtons>
@@ -65,13 +72,15 @@ export const DataSetTable = forwardRef((props: {
 	rowNoColumnWidth: number;
 	onColumnFixChange: (column: FactorColumnDef, fix: boolean) => void;
 	onColumnSort: (column: FactorColumnDef, asc: boolean) => void;
+	dragColumn?: FactorColumnDef;
 }, ref: ForwardedRef<HTMLDivElement>) => {
 	const {
 		displayColumns,
 		isFixTable,
 		rowNoColumnWidth,
 		data: { data, pageNumber, pageSize },
-		onColumnFixChange, onColumnSort
+		onColumnFixChange, onColumnSort,
+		dragColumn
 	} = props;
 
 	const { selectionChange } = useDataSetTableContext();
@@ -116,6 +125,7 @@ export const DataSetTable = forwardRef((props: {
 				                   unfixColumn={fixColumn(false, column)}
 				                   sortColumnAsc={sortColumn(true, column)}
 				                   sortColumnDesc={sortColumn(false, column)}
+				                   dragging={column === dragColumn}
 				                   key={`0-${columnIndex}`}/>;
 			})}
 			{autoFill ? <DataSetTableHeaderCell lastColumn={false} data-filler={true}/> : null}
@@ -135,6 +145,8 @@ export const DataSetTable = forwardRef((props: {
 						const lastColumn = isFixTable && columnIndex === columns.length - 1;
 						return <DataSetTableBodyCell lastRow={lastRow} lastColumn={lastColumn}
 						                             onClick={onSelectionChanged(rowIndex, columnIndex)}
+						                             data-dragging={def === dragColumn}
+						                             data-last-row={lastRow} data-last-column={lastColumn}
 						                             key={`${rowIndex}-${columnIndex}`}>
 							<span>{`${row[def.index]}`}</span>
 						</DataSetTableBodyCell>;
