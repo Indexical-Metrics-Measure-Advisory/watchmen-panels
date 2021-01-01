@@ -395,7 +395,7 @@ export const DataSetTableWrapper = (props: {
 			const targetColumnRightX = targetColumnsWidths[targetColumnIndex];
 			const targetColumnLeftX = targetColumnRightX - targetColumns[targetColumnIndex].width;
 			const targetColumnCenterX = (targetColumnRightX + targetColumnLeftX) / 2;
-			if (mouseClientX - targetTableLeft > targetColumnCenterX + targetScrollLeft) {
+			if (mouseClientX - targetTableLeft > targetColumnCenterX - targetScrollLeft) {
 				// drag column after this
 				targetGridTemplateColumns[(targetColumnIndex + 1) * 2 + (targetIsFixTable ? 2 : 0)] = `${pickedColumn.width}px`;
 			} else {
