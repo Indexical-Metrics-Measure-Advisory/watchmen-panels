@@ -675,6 +675,8 @@ export const DataSetTableWrapper = (props: {
 		setPickedColumn(null);
 		dragColumnVisibleChange(false);
 		setBehavior(Behavior.NONE);
+		const selection = selectionRef.current!.selection();
+		selectionChange(toFixTable, selection.row, targetColumnIndex);
 	};
 	const onMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (behavior === Behavior.RESIZING) {
