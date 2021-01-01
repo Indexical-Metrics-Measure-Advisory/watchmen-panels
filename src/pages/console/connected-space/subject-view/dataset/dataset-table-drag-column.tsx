@@ -24,7 +24,7 @@ const DragColumnContainer = styled.div
 				left,
 				width,
 				height: height + 1,
-				transform: `rotate(${rotate}deg)`
+				transform: `translateY(${HEADER_HEIGHT}px) rotate(${rotate}deg)`
 			}
 		};
 	})<ContainerProps>`
