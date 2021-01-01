@@ -581,11 +581,13 @@ export const DataSetTableWrapper = (props: {
 			setPickedColumn(pickedColumn);
 			const { scrollTop } = table;
 			const height = Math.min(table.clientHeight, HEADER_HEIGHT + data.data.length * ROW_HEIGHT);
+			const startRowIndex = Math.floor(scrollTop / ROW_HEIGHT);
+			const endRowIndex = startRowIndex + Math.ceil((height - HEADER_HEIGHT) / ROW_HEIGHT + 2);
 
 			dragColumnStateChange({
 				height,
-				startRowIndex: Math.floor(scrollTop / ROW_HEIGHT),
-				endRowIndex: Math.ceil((height - HEADER_HEIGHT) / ROW_HEIGHT + 2),
+				startRowIndex,
+				endRowIndex,
 				firstRowOffsetY: scrollTop % ROW_HEIGHT,
 				movementX: 0
 			});
