@@ -466,6 +466,32 @@ export const DataSetTableWrapper = (props: {
 		dataTable.style.width = `calc(100% - ${fixTableWidth}px)`;
 	};
 
+	const computeSourceAndTarget = (mouseClientX: number, column: FactorColumnDef) => {
+		const dataTable = dataTableRef.current!;
+		const fixTable = fixTableRef.current!;
+		const dataTableLeft = dataTable.getBoundingClientRect().left;
+		let fromFixTable, toFixTable, sourceTable, sourceColumns, targetTable, targetColumns;
+		if (columnDefs.data.includes(column)) {
+			fromFixTable = false;
+			sourceTable = dataTable;
+			sourceColumns = columnDefs.data;
+		} else {
+			fromFixTable = true;
+			sourceTable = fixTable;
+			sourceColumns = columnDefs.fixed;
+		}
+		if (mouseClientX >= dataTableLeft) {
+			toFixTable = false;
+			targetTable = dataTable;
+			targetColumns = columnDefs.data;
+		} else {
+			toFixTable = true;
+			targetTable = fixTable;
+			targetColumns = columnDefs.fixed;
+		}
+		return { fromFixTable, toFixTable, sourceTable, sourceColumns, targetTable, targetColumns };
+	};
+
 	const dragColumn = async (mouseClientX: number) => {
 		if (!pickedColumn) {
 			return;
@@ -497,25 +523,12 @@ export const DataSetTableWrapper = (props: {
 		if (!dragColumnVisible) {
 			dragColumnVisibleChange(true);
 		}
-
-		const dataTable = dataTableRef.current!;
-		const fixTable = fixTableRef.current!;
-		const dataTableLeft = dataTable.getBoundingClientRect().left;
-		let sourceTable, sourceColumns, targetTable, targetColumns;
-		if (columnDefs.data.includes(pickedColumn.column)) {
-			sourceTable = dataTable;
-			sourceColumns = columnDefs.data;
-		} else {
-			sourceTable = fixTable;
-			sourceColumns = columnDefs.fixed;
-		}
-		if (mouseClientX >= dataTableLeft) {
-			targetTable = dataTable;
-			targetColumns = columnDefs.data;
-		} else {
-			targetTable = fixTable;
-			targetColumns = columnDefs.fixed;
-		}
+		const {
+			sourceTable,
+			sourceColumns,
+			targetTable,
+			targetColumns
+		} = computeSourceAndTarget(mouseClientX, pickedColumn.column);
 		// repaint drag column placeholder
 		repaintWhenDragging({
 			mouseClientX, sourceTable, sourceColumns, targetTable, targetColumns, pickedColumn: pickedColumn.column
@@ -579,6 +592,90 @@ export const DataSetTableWrapper = (props: {
 			setBehavior(Behavior.READY_TO_DRAG);
 		}
 	};
+	const releaseDragColumn = (mouseClientX: number) => {
+		if (!pickedColumn) {
+			return;
+		}
+
+		const dragColumn = pickedColumn.column;
+		const { fromFixTable, toFixTable } = computeSourceAndTarget(mouseClientX, dragColumn);
+		let sourceColumnIndex;
+		if (fromFixTable) {
+			sourceColumnIndex = columnDefs.fixed.indexOf(dragColumn);
+			columnDefs.fixed.splice(sourceColumnIndex, 1);
+		} else {
+			sourceColumnIndex = columnDefs.data.indexOf(dragColumn);
+			columnDefs.data.splice(sourceColumnIndex, 1);
+		}
+		const fixTable = fixTableRef.current!;
+		const dataTable = dataTableRef.current!;
+		let targetColumnIndex;
+		// detect the move to index, convert the placeholder index to column index
+		if (toFixTable) {
+			// in grid template columns css, placeholder index is 2, 4, 6, ..., column length * 2 + 2
+			const fixTableHeader = fixTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-header"]')!;
+			const fixTableBody = fixTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-body"]')!;
+			const placeholderWidths = fixTableHeader.style.gridTemplateColumns.split(' ')
+				.filter((width, index) => index >= 2 && index % 2 === 0).map(width => parseInt(width));
+			const placeholderIndex = placeholderWidths.findIndex(width => width !== 0);
+			if (fromFixTable) {
+				// if drag column is from fix table, it depends on the relationship between source column index and target column index
+				if (placeholderIndex === sourceColumnIndex || placeholderIndex - 1 === sourceColumnIndex) {
+					// actually doesn't change columns order
+					targetColumnIndex = sourceColumnIndex;
+				} else if (placeholderIndex < sourceColumnIndex) {
+					// move backward, use placeholder index as target column index
+					targetColumnIndex = placeholderIndex;
+				} else {
+					// move forward, use placeholder index subtract 1
+					targetColumnIndex = placeholderIndex - 1;
+				}
+			} else {
+				// otherwise drag column is from data table, simply use placeholder index as target column index
+				targetColumnIndex = placeholderIndex;
+			}
+			columnDefs.fixed.splice(targetColumnIndex, 0, dragColumn);
+			const fixTableGridColumns = `0 ${rowNoColumnWidth}px 0 ${columnDefs.fixed.map(column => `${column.width}px 0`).join(' ')}`;
+			fixTableHeader.style.gridTemplateColumns = fixTableGridColumns;
+			fixTableBody.style.gridTemplateColumns = fixTableGridColumns;
+		} else {
+			// in grid template columns css, placeholder index is 0, 2, 4, 6, ..., column length * 2
+			const dataTableHeader = dataTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-header"]')!;
+			const dataTableBody = dataTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-body"]')!;
+			const placeholderWidths = dataTableHeader.style.gridTemplateColumns.split(' ')
+				.filter((width, index) => index % 2 === 0).map(width => parseInt(width));
+			const placeholderIndex = placeholderWidths.findIndex(width => width !== 0);
+			if (fromFixTable) {
+				// if drag column is from fix table, simply use placeholder index as target column index
+				targetColumnIndex = placeholderIndex;
+			} else {
+				// otherwise, it depends on the relationship between source column index and target column index
+				if (placeholderIndex === sourceColumnIndex || placeholderIndex - 1 === sourceColumnIndex) {
+					// actually doesn't change columns order
+					targetColumnIndex = sourceColumnIndex;
+				} else if (placeholderIndex < sourceColumnIndex) {
+					// move backward, use placeholder index as target column index
+					targetColumnIndex = placeholderIndex;
+				} else {
+					// move forward, use placeholder index subtract 1
+					targetColumnIndex = placeholderIndex - 1;
+				}
+			}
+			columnDefs.data.splice(targetColumnIndex, 0, dragColumn);
+			const dataTableGridColumns = `0 ${columnDefs.data.map(column => `${column.width}px 0`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)`;
+			dataTableHeader.style.gridTemplateColumns = dataTableGridColumns;
+			dataTableBody.style.gridTemplateColumns = dataTableGridColumns;
+		}
+		// recover table styles
+		fixTable.style.minWidth = `${columnDefs.fixed.reduce((width, column) => width + column.width, rowNoColumnWidth)}px`;
+		fixTable.style.width = '';
+		dataTable.style.left = '';
+		dataTable.style.position = '';
+		dataTable.style.width = '';
+		setPickedColumn(null);
+		dragColumnVisibleChange(false);
+		setBehavior(Behavior.NONE);
+	};
 	const onMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (behavior === Behavior.RESIZING) {
 			// recover data table layout
@@ -597,13 +694,15 @@ export const DataSetTableWrapper = (props: {
 				mouseClientY: event.clientY,
 				avoidResize: true
 			});
-		} else if (behavior === Behavior.DRAGGING || behavior === Behavior.READY_TO_DRAG) {
+		} else if (behavior === Behavior.READY_TO_DRAG) {
 			setPickedColumn(null);
 			dragColumnVisibleChange(false);
-			setBehavior(Behavior.NONE);
+			setBehavior(Behavior.PICK_COLUMN);
+		} else if (behavior === Behavior.DRAGGING) {
+			releaseDragColumn(event.clientX);
 		}
 	};
-	const onMouseLeave = () => {
+	const onMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (behavior === Behavior.RESIZING) {
 			// recover data table layout
 			const dataTable = dataTableRef.current!;
@@ -612,10 +711,12 @@ export const DataSetTableWrapper = (props: {
 			dataTable.style.width = '';
 			setPickedColumn(null);
 			setBehavior(Behavior.NONE);
-		} else if (behavior === Behavior.DRAGGING || behavior === Behavior.READY_TO_DRAG) {
+		} else if (behavior === Behavior.READY_TO_DRAG) {
 			setPickedColumn(null);
 			dragColumnVisibleChange(false);
-			setBehavior(Behavior.NONE);
+			setBehavior(Behavior.PICK_COLUMN);
+		} else if (behavior === Behavior.DRAGGING) {
+			releaseDragColumn(event.clientX);
 		}
 	};
 	const onColumnFixChange = (column: FactorColumnDef, fix: boolean) => {
