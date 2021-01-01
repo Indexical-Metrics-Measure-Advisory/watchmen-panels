@@ -6,6 +6,7 @@ import { DataSetTable } from './dataset-table';
 import {
 	DataSetResizeShade,
 	DRAG_DEVIATION,
+	FILLER_MIN_WIDTH,
 	HEADER_HEIGHT,
 	MAX_COLUMN_WIDTH,
 	MIN_COLUMN_WIDTH,
@@ -343,11 +344,6 @@ export const DataSetTableWrapper = (props: {
 		} else {
 			sourceGridTemplateColumns[(dragColumnIndex + 1) * 2 - 1] = '0';
 		}
-		if (sourceTable !== targetTable) {
-			const newSourceGridTemplateColumns = sourceGridTemplateColumns.join(' ');
-			sourceHeader.style.gridTemplateColumns = newSourceGridTemplateColumns;
-			sourceBody.style.gridTemplateColumns = newSourceGridTemplateColumns;
-		}
 
 		// handle target table
 		const targetIsFixTable = targetTable === fixTableRef.current;
@@ -358,9 +354,6 @@ export const DataSetTableWrapper = (props: {
 			// fix table has row number column
 			return width - targetScrollLeft > mouseClientX - targetTableLeft - (targetIsFixTable ? rowNoColumnWidth : 0);
 		});
-		const targetColumnRightX = targetColumnsWidths[targetColumnIndex];
-		const targetColumnLeftX = targetColumnRightX - targetColumns[targetColumnIndex].width;
-		const targetColumnCenterX = (targetColumnRightX + targetColumnLeftX) / 2;
 		let targetHeader, targetBody, targetGridTemplateColumns;
 		if (sourceTable === targetTable) {
 			targetHeader = sourceHeader;
@@ -375,16 +368,102 @@ export const DataSetTableWrapper = (props: {
 				isFixTable: targetIsFixTable
 			});
 		}
-		if (mouseClientX - targetTableLeft > targetColumnCenterX + targetScrollLeft) {
-			// drag column after this
-			targetGridTemplateColumns[(targetColumnIndex + 1) * 2 + (targetIsFixTable ? 2 : 0)] = `${pickedColumn.width}px`;
+		if (targetColumnIndex === -1) {
+			// console.group();
+			// console.info('target is fix table:', targetIsFixTable);
+			// console.info('mouse client x:', mouseClientX, ', target scroll left:', targetScrollLeft);
+			// console.info('fix table left:', fixTableRef.current!.getBoundingClientRect().left);
+			// console.info('data table left:', dataTableRef.current!.getBoundingClientRect().left);
+			// console.info('column widths:', targetColumnsWidths.join(', '));
+			// console.groupEnd();
+			// 2 scenarios here:
+			if (targetIsFixTable) {
+				// 1. in fix table, dragging column is from data table, and mouse is at right of all fixed columns.
+				// the tricky scenario as below,
+				// when a column is from data table, move into fix table, and now it is at tail of last column of fix table (mouse client x in right half of fix table column),
+				// physically, the mouse client x is still in fix table (sometimes it is moved to data table, catch by above logic branch, not in this discussion),
+				// and in repaint function call, even the last column right position is less than mouse client x,
+				// then the target column cannot be found, the undefined error raised in repaint function call.
+				// root cause of this scenario is table width must be resized when a dragging column move in and out, a column placeholder is simulated for reminding current situation.
+				// for fix this, it will be treated same as dragging column still in fix table, as last column.
+				targetGridTemplateColumns[(targetColumns.length + 1) * 2] = `${pickedColumn.width}px`;
+			} else {
+				// 2. in data table, mouse is at right of all columns.
+				targetGridTemplateColumns[targetColumns.length * 2 + 1] = `${pickedColumn.width}px`;
+			}
 		} else {
-			// drag column before this
-			targetGridTemplateColumns[(targetColumnIndex + 1) * 2 + (targetIsFixTable ? 2 : 0) - 2] = `${pickedColumn.width}px`;
+			const targetColumnRightX = targetColumnsWidths[targetColumnIndex];
+			const targetColumnLeftX = targetColumnRightX - targetColumns[targetColumnIndex].width;
+			const targetColumnCenterX = (targetColumnRightX + targetColumnLeftX) / 2;
+			if (mouseClientX - targetTableLeft > targetColumnCenterX + targetScrollLeft) {
+				// drag column after this
+				targetGridTemplateColumns[(targetColumnIndex + 1) * 2 + (targetIsFixTable ? 2 : 0)] = `${pickedColumn.width}px`;
+			} else {
+				// drag column before this
+				targetGridTemplateColumns[(targetColumnIndex + 1) * 2 + (targetIsFixTable ? 2 : 0) - 2] = `${pickedColumn.width}px`;
+			}
+		}
+
+		// repaint
+		const isTableInside = sourceTable === targetTable;
+		if (!isTableInside) {
+			// ignore once when move column inside
+			const newSourceGridTemplateColumns = sourceGridTemplateColumns.join(' ');
+			sourceHeader.style.gridTemplateColumns = newSourceGridTemplateColumns;
+			sourceBody.style.gridTemplateColumns = newSourceGridTemplateColumns;
 		}
 		const newTargetGridTemplateColumns = targetGridTemplateColumns.join(' ');
 		targetHeader.style.gridTemplateColumns = newTargetGridTemplateColumns;
 		targetBody.style.gridTemplateColumns = newTargetGridTemplateColumns;
+
+		// move column from one table to another, should change fix table width and data table left.
+		// even move inside table, since column might be move out and move in again, therefore compute width and left is required.
+		let fixTableWidth;
+		let fixTable;
+		let dataTable;
+		if (sourceIsFixTable) {
+			// source from fix table
+			fixTableWidth = sourceGridTemplateColumns.map(width => parseInt(width)).reduce((total, width) => total + width, 0);
+			if (isTableInside) {
+				// target to fix table
+				fixTable = sourceTable;
+				// reset data table since processing above is all about fix table
+				dataTable = dataTableRef.current!;
+				const dataTableHeader = dataTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-header"]')!;
+				const dataTableBody = dataTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-body"]')!;
+				const dataTableGridColumns = `0 ${columnDefs.data.map(column => `${column.width}px 0`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)`;
+				dataTableHeader.style.gridTemplateColumns = dataTableGridColumns;
+				dataTableBody.style.gridTemplateColumns = dataTableGridColumns;
+			} else {
+				// target to data table
+				fixTable = sourceTable;
+				dataTable = targetTable;
+			}
+		} else {
+			// source from data table
+			if (isTableInside) {
+				// target to data table
+				// reset fix table since processing above is all about data table
+				fixTable = fixTableRef.current!;
+				const fixTableHeader = fixTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-header"]')!;
+				const fixTableBody = fixTable.querySelector<HTMLDivElement>('div[data-widget="console-subject-view-dataset-table-body"]')!;
+				const fixTableGridColumns = `0 ${rowNoColumnWidth}px 0 ${columnDefs.fixed.map(column => `${column.width}px 0`).join(' ')}`;
+				fixTableHeader.style.gridTemplateColumns = fixTableGridColumns;
+				fixTableBody.style.gridTemplateColumns = fixTableGridColumns;
+				fixTableWidth = columnDefs.fixed.reduce((width, column) => width + column.width, rowNoColumnWidth);
+				dataTable = sourceTable;
+			} else {
+				// target to fix table
+				fixTableWidth = targetGridTemplateColumns.map(width => parseInt(width)).reduce((total, width) => total + width, 0);
+				fixTable = targetTable;
+				dataTable = sourceTable;
+			}
+		}
+		fixTable.style.minWidth = 'unset';
+		fixTable.style.width = `${fixTableWidth}px`;
+		dataTable.style.left = `${fixTableWidth}px`;
+		dataTable.style.position = 'absolute';
+		dataTable.style.width = `calc(100% - ${fixTableWidth}px)`;
 	};
 
 	const dragColumn = async (mouseClientX: number) => {

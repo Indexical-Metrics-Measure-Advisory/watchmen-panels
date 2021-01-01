@@ -108,7 +108,7 @@ export const DataSetTable = forwardRef((props: {
 	}
 	const autoFill = !isFixTable;
 
-	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill}
+	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill} rowCount={data.length}
 	                              ref={ref}>
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
 			{isFixTable
@@ -146,6 +146,7 @@ export const DataSetTable = forwardRef((props: {
 						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={displayColumns.length === 0}
 						                        column={2}
 						                        onClick={onSelectionChanged(rowIndex, -1)}
+						                        data-last-row={lastRow}
 						                        data-rowno={true}>
 							<span>{pageSize * (pageNumber - 1) + rowIndex + 1}</span>
 						</DataSetTableBodyCell>
@@ -164,6 +165,7 @@ export const DataSetTable = forwardRef((props: {
 					{autoFill
 						? <DataSetTableBodyCell lastRow={lastRow} lastColumn={false}
 						                        column={allDisplayColumns.length * 2 + 2}
+						                        data-last-row={lastRow}
 						                        data-filler={true}/>
 						: null}
 				</Fragment>;

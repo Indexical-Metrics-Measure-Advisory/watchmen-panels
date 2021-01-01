@@ -41,9 +41,10 @@ export const DataSetTableContainer = styled.div
 					minWidth: autoFill ? 'unset' : fixTableWidth
 				}
 			};
-		})<DataSetTableProps>`
+		})<DataSetTableProps & { rowCount: number }>`
 	display: flex;
 	flex-direction: column;
+	position: relative;
 	height: 100%;
 	&:first-child {
 		overflow-x: hidden;
@@ -57,6 +58,16 @@ export const DataSetTableContainer = styled.div
 			height: 100%;
 			background-color: var(--console-primary-color);
 			opacity: 0.02;
+		}
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 1px;
+			height: ${({ rowCount }) => ROW_HEIGHT * rowCount}px;
+			background-color: var(--border-color);
 		}
 		&::-webkit-scrollbar {
 			background-color: transparent;
@@ -75,7 +86,7 @@ export const DataSetTableHeader = styled.div
 			'data-widget': 'console-subject-view-dataset-table-header',
 			style: {
 				// each data column hold 2 physical columns, the first is show data, the second is for show drag placeholder
-				gridTemplateColumns: autoFill ? `0px ${columns.map(def => `${def.width}px 0`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : `0px ${columns.map(def => `${def.width}px 0`).join(' ')}`
+				gridTemplateColumns: autoFill ? `0 ${columns.map(def => `${def.width}px 0`).join(' ')} minmax(${FILLER_MIN_WIDTH}px, 1fr)` : `0 ${columns.map(def => `${def.width}px 0`).join(' ')}`
 			}
 		};
 	})<DataSetTableProps>`
