@@ -18,6 +18,7 @@ import { useSpaceContext } from '../space-context';
 import { SubjectContextProvider } from './context';
 import { DataSet } from './dataset';
 import { DataSetDef } from './dataset-def';
+import { Graphics } from './graphics';
 
 interface Visible {
 	definition: boolean;
@@ -153,6 +154,9 @@ export const SubjectViewContent = (props: {
 		<DataSet space={space} subject={subject}
 		         visible={visible.dataset} onVisibleChanged={changeVisible('dataset')}
 		         switchToDefinition={switchToDefinition}/>
+		<Graphics space={space} subject={subject}
+		          visible={visible.graphics} onVisibleChanged={changeVisible('graphics')}
+		          switchToDefinition={switchToDefinition}/>
 	</SubjectViewContainer>;
 };
 

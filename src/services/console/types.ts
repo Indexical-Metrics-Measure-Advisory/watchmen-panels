@@ -143,6 +143,18 @@ export interface ConsoleSpaceSubjectDataSetJoin {
 	relationId?: string;
 }
 
+export interface ConsoleSpaceSubjectChart {
+	chartId?: string;
+	name?: string;
+	rect?: {
+		top: number;
+		left: number;
+		width: number;
+		height: number;
+		max: boolean;
+	}
+}
+
 export interface ConsoleSpaceSubject {
 	subjectId: string;
 	name: string;
@@ -154,7 +166,8 @@ export interface ConsoleSpaceSubject {
 		filters?: Array<ConsoleSpaceSubjectDataSetFilter>;
 		columns?: Array<ConsoleSpaceSubjectDataSetColumn>;
 		joins?: Array<ConsoleSpaceSubjectDataSetJoin>;
-	}
+	},
+	graphics?: Array<ConsoleSpaceSubjectChart>;
 }
 
 export interface ConsoleSpaceGroup {

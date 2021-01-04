@@ -14,17 +14,19 @@ const DataSetContainer = styled.div.attrs({
 })`
 	align-self: flex-end;
 	display: flex;
-	position: relative;
+	position: absolute;
 	flex-direction: column;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
 	background-color: var(--bg-color);
-	transition: height 300ms ease-in-out, opacity 300ms ease-in-out;
+	transition: top 300ms ease-in-out, height 300ms ease-in-out, opacity 300ms ease-in-out;
 	overflow: hidden;
 	&[data-visible=false] {
 		opacity: 0;
+		top: 100%;
 		height: 0;
-		width: 0;
 		pointer-events: none;
 	}
 `;
@@ -135,7 +137,7 @@ export const DataSet = (props: {
 			{hasColumns
 				? <DataSetTableWrapper space={space} subject={subject} data={data}/>
 				: <DataSetNoDef>
-					<span>No columns defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
+					<span>No column defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
 				</DataSetNoDef>}
 			<DataSetLoading data-visible={loading}>
 				<FontAwesomeIcon icon={faSpinner} spin={true}/>
