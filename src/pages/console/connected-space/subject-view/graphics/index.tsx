@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { v4 } from 'uuid';
+import { ChartKey } from '../../../../../charts/custom/types';
 import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConnectedConsoleSpace,
@@ -124,7 +125,13 @@ export const Graphics = (props: {
 		if (!subject.graphics) {
 			subject.graphics = [];
 		}
-		subject.graphics.push({ name: 'Noname', rect: generateChartRect(containerRef.current!) });
+		subject.graphics.push({
+			title: 'Noname',
+			key: ChartKey.BAR,
+			indicators: [],
+			dimensions: [],
+			rect: generateChartRect(containerRef.current!)
+		});
 		if (locked) {
 			setLocked(false);
 		} else {
@@ -174,7 +181,7 @@ export const Graphics = (props: {
 					if (!chart.chartId) {
 						chart.chartId = v4();
 					}
-					return <Chart containerRef={containerRef} subject={subject} chart={chart} lock={locked}
+					return <Chart containerRef={containerRef} subject={subject} chart={chart} locked={locked}
 					              onDeleteChart={onDeleteChart}
 					              key={chart.chartId}/>;
 				})

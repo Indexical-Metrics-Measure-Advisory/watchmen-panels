@@ -1,44 +1,40 @@
 import { faCog, faCompressArrowsAlt, faExpandArrowsAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ResizeDirection } from 're-resizable';
 import React, { Fragment, RefObject, useEffect, useRef, useState } from 'react';
-import { DraggableData, DraggableEvent } from 'react-draggable';
-import { Rnd } from 'react-rnd';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../../common/utils';
 import { ConsoleSpaceSubject, ConsoleSpaceSubjectChart } from '../../../../../services/console/types';
 import Button, { ButtonType } from '../../../../component/button';
 import { LinkButton } from '../../../../component/console/link-button';
 import { useDialog } from '../../../../context/dialog';
+import { ChartSettings } from './chart-settings';
+import { ChartRect } from './types';
 import { generateChartRect } from './utils';
 
-interface MaxRect {
-	top: number;
-	left: number;
-	width: number;
-	height: number;
-}
-
-const ChartContainer = styled.div.attrs<{ max: MaxRect | null }>(({ max }) => {
-	return {
-		'data-widget': 'console-subject-view-chart',
-		style: {
-			position: max ? 'fixed' : 'relative',
-			top: max?.top,
-			left: max?.left,
-			width: max ? (max.width + 2) : '',
-			height: max ? (max.height + 2) : '',
-			borderRadius: max ? 0 : '',
-			zIndex: max ? 2 : ''
-		}
-	};
-})<{ max: MaxRect | null }>`
+const ChartContainer = styled.div
+	.attrs<{ 'data-max': boolean, rect: ChartRect | null }>(
+		({ 'data-max': max, rect }
+		) => {
+			return {
+				'data-widget': 'console-subject-view-chart',
+				style: {
+					position: max ? 'fixed' : 'absolute',
+					top: rect?.top,
+					left: rect?.left,
+					width: rect ? (rect.width + 2) : '',
+					height: rect ? (rect.height + 2) : '',
+					borderRadius: max ? 0 : '',
+					zIndex: max ? 2 : ''
+				}
+			};
+		})<{ 'data-max': boolean, rect: ChartRect | null }>`
 	display: flex;
 	flex-direction: column;
 	border-radius: var(--border-radius);
 	border: var(--border);
 	height: 100%;
 	background-color: var(--bg-color);
+	transition: all 300ms ease-in-out;
 `;
 const Header = styled.div.attrs({
 	'data-widget': 'console-subject-view-chart-header'
@@ -81,87 +77,81 @@ const Body = styled.div.attrs({
 	'data-widget': 'console-subject-view-chart-body'
 })`
 	flex-grow: 1;
+	position: relative;
 `;
 
 export const Chart = (props: {
 	containerRef: RefObject<HTMLDivElement>;
 	subject: ConsoleSpaceSubject;
 	chart: ConsoleSpaceSubjectChart;
-	lock: boolean;
+	locked: boolean;
 	onDeleteChart: (chart: ConsoleSpaceSubjectChart) => void;
 }) => {
-	const { containerRef, chart, lock, onDeleteChart } = props;
-	const { rect } = chart;
+	const {
+		containerRef,
+		subject, chart,
+		locked,
+		onDeleteChart
+	} = props;
 
 	const dialog = useDialog();
 	const chartRef = useRef<HTMLDivElement>(null);
-	const [ maxRect, setMaxRect ] = useState<MaxRect | null>(null);
+	const [ max, setMax ] = useState(false);
+	const [ settingsVisible, setSettingsVisible ] = useState(false);
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
-		if (rect) {
+		// initialize rect, defensive
+		if (chart.rect) {
 			return;
 		}
 		chart.rect = generateChartRect(containerRef.current!);
 		forceUpdate();
 	});
-	const resetRect = () => {
-		if (!rect || !rect.max) {
-			return;
-		}
-
-		const { top, left } = containerRef.current!.getBoundingClientRect();
-		const { offsetWidth, offsetHeight } = containerRef.current!;
-		if (!!maxRect && top === maxRect.top + 1 && left === maxRect.left + 1 && offsetWidth === maxRect.width && offsetHeight === maxRect.height) {
-			return;
-		}
-		setMaxRect({
-			top: top - 1,
-			left: left - 1,
-			width: offsetWidth,
-			height: offsetHeight
-		});
-	};
 	useEffect(() => {
 		// @ts-ignore
 		const resizeObserver = new ResizeObserver(() => {
-			if (!containerRef.current) {
+			if (!containerRef.current || !max) {
 				return;
 			}
 
-			resetRect();
+			forceUpdate();
 		});
 		resizeObserver.observe(containerRef.current);
 		return () => resizeObserver.disconnect();
 	});
 
-	if (!rect) {
+	if (!chart.rect) {
 		return null;
 	}
 
-	const onDragStop = (e: DraggableEvent, d: DraggableData) => {
-		rect.top = d.y;
-		rect.left = d.x;
-		forceUpdate();
+	const maxChart = () => {
+		const { top, left } = containerRef.current!.getBoundingClientRect();
+		const { offsetWidth, offsetHeight } = containerRef.current!;
+		return {
+			top: top - 1,
+			left: left - 1,
+			width: offsetWidth,
+			height: offsetHeight
+		};
 	};
-	const onResize = (e: MouseEvent | TouchEvent, direction: ResizeDirection, ref: HTMLElement /*, delta: ResizableDelta, position: Position */) => {
-		rect.width = ref.offsetWidth;
-		rect.height = ref.offsetHeight;
-		forceUpdate();
-	};
-	const onToggleExpandClicked = () => {
-		rect.max = !rect.max;
 
-		if (rect.max) {
-			resetRect();
-		} else {
-			setMaxRect(null);
-		}
+	const onToggleMaxClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setMax(!max);
+	};
+	const onToggleSettingsClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setSettingsVisible(!settingsVisible);
 	};
 	const onDeleteConfirmClicked = () => {
 		onDeleteChart(chart);
 		dialog.hide();
 	};
-	const onDeleteClicked = () => {
+	const onDeleteClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
 		dialog.show(
 			<div data-widget='dialog-console-delete'>
 				<span>Are you sure to delete this chart?</span>
@@ -173,16 +163,17 @@ export const Chart = (props: {
 			</Fragment>
 		);
 	};
-	const max = !!maxRect;
 
-	const chartDOM = <ChartContainer max={maxRect} ref={chartRef}>
+	const rect = max ? maxChart() : chart.rect;
+
+	return <ChartContainer data-max={max} rect={rect} ref={chartRef}>
 		<Header>
-			<span>{chart.name}</span>
-			<HeaderButtons data-visible={!lock} data-expanded={rect.max}>
-				<LinkButton ignoreHorizontalPadding={true} onClick={onToggleExpandClicked}>
-					<FontAwesomeIcon icon={rect.max ? faCompressArrowsAlt : faExpandArrowsAlt}/>
+			<span>{chart.title}</span>
+			<HeaderButtons data-visible={!locked} data-expanded={max}>
+				<LinkButton ignoreHorizontalPadding={true} onClick={onToggleMaxClicked}>
+					<FontAwesomeIcon icon={max ? faCompressArrowsAlt : faExpandArrowsAlt}/>
 				</LinkButton>
-				<LinkButton ignoreHorizontalPadding={true}>
+				<LinkButton ignoreHorizontalPadding={true} onClick={onToggleSettingsClicked}>
 					<FontAwesomeIcon icon={faCog}/>
 				</LinkButton>
 				<LinkButton ignoreHorizontalPadding={true} onClick={onDeleteClicked}>
@@ -191,21 +182,7 @@ export const Chart = (props: {
 			</HeaderButtons>
 		</Header>
 		<Body>
-
+			<ChartSettings subject={subject} chart={chart} visible={settingsVisible}/>
 		</Body>
 	</ChartContainer>;
-
-	if (max) {
-		return chartDOM;
-	} else {
-		console.log(rect.top);
-		return <Rnd enableResizing={!lock} disableDragging={lock}
-		            size={{ width: rect.width, height: rect.height }}
-		            position={{ x: rect.left, y: rect.top }}
-		            onDragStop={onDragStop}
-		            onResize={onResize}>
-			{chartDOM}
-		</Rnd>;
-	}
-
 };

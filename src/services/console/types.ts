@@ -1,3 +1,5 @@
+import { ChartSettings } from '../../charts/custom/types';
+
 export interface ConsoleMessage {
 	id: string;
 	subject: string;
@@ -143,15 +145,13 @@ export interface ConsoleSpaceSubjectDataSetJoin {
 	relationId?: string;
 }
 
-export interface ConsoleSpaceSubjectChart {
+export interface ConsoleSpaceSubjectChart extends ChartSettings {
 	chartId?: string;
-	name?: string;
 	rect?: {
 		top: number;
 		left: number;
 		width: number;
 		height: number;
-		max: boolean;
 	}
 }
 
