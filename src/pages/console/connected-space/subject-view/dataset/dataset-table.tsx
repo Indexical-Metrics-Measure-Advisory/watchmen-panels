@@ -109,6 +109,7 @@ export const DataSetTable = forwardRef((props: {
 	const autoFill = !isFixTable;
 
 	return <DataSetTableContainer columns={allDisplayColumns} autoFill={autoFill} rowCount={data.length}
+	                              data-scrollable={!dragColumn}
 	                              ref={ref}>
 		<DataSetTableHeader columns={allDisplayColumns} autoFill={autoFill}>
 			{isFixTable

@@ -78,6 +78,9 @@ export const DataSetTableContainer = styled.div
 		flex-grow: 1;
 		overflow: auto;
 	}
+	&[data-scrollable=false]:nth-child(2) {
+		overflow: hidden;
+	}
 `;
 
 export const DataSetTableHeader = styled.div
@@ -284,4 +287,44 @@ export const DataSetResizeShade = styled.div`
 	&[data-visible=true] {
 		width: 100%;
 	}
+`;
+
+export const DataSetScrollVerticalShade = styled.div
+	.attrs<{ width: number, heightOffset: number, visible: boolean }>(
+		({ width, heightOffset, visible }) => {
+			return {
+				style: {
+					width,
+					height: `calc(100% - ${heightOffset}px)`,
+					display: visible ? 'block' : 'none'
+				}
+			};
+		})<{ width: number, heightOffset: number, visible: boolean }>`
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	z-index: 15;
+	overflow-x: hidden;
+	overflow-y: scroll;
+`;
+
+export const DataSetScrollHorizontalShade = styled.div
+	.attrs<{ left: number, height: number, widthOffset: number, visible: boolean }>(
+		({ left, height, widthOffset, visible }) => {
+			return {
+				style: {
+					display: visible ? 'block' : 'none',
+					left,
+					width: `calc(100% - ${left}px - ${widthOffset}px)`,
+					height
+				}
+			};
+		})<{ left: number, height: number, widthOffset: number, visible: boolean }>`
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 15;
+	overflow-y: hidden;
+	overflow-x: scroll;
 `;

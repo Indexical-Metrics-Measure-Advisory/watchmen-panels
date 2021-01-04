@@ -16,6 +16,7 @@ import {
 } from './dataset-table-components';
 import { useDataSetTableContext } from './dataset-table-context';
 import { DataSetTableDragColumn } from './dataset-table-drag-column';
+import { DataTableScrollShade } from './dataset-table-scroll-shade';
 import { DataSetTableSelection } from './dataset-table-selection';
 import { ColumnDefs, ColumnSortBy, FactorColumnDef, SelectionRef } from './types';
 import { buildFactorMap, filterColumns } from './utils';
@@ -551,49 +552,56 @@ export const DataSetTableWrapper = (props: {
 			});
 		}
 	};
+
+	const prepareToDragColumn = (table: HTMLDivElement, mouseClientX: number) => {
+		const isFixTable = table === fixTableRef.current;
+		const wrapperLeft = wrapperRef.current!.getBoundingClientRect().left;
+		const pickedColumn = findPickedColumnForDrag({
+			wrapperLeft,
+			table,
+			mouseClientX,
+			columnDefs,
+			isFixTable,
+			rowNoColumnWidth
+		});
+		setPickedColumn(pickedColumn);
+		const { scrollTop } = table;
+		const height = Math.min(table.clientHeight, HEADER_HEIGHT + data.data.length * ROW_HEIGHT);
+		const startRowIndex = Math.floor(scrollTop / ROW_HEIGHT);
+		const endRowIndex = startRowIndex + Math.ceil((height - HEADER_HEIGHT) / ROW_HEIGHT + 2);
+
+		dragColumnStateChange({
+			height,
+			startRowIndex,
+			endRowIndex,
+			firstRowOffsetY: scrollTop % ROW_HEIGHT,
+			movementX: 0
+		});
+		setBehavior(Behavior.READY_TO_DRAG);
+	};
+
+	const prepareToResizeColumn = (table: HTMLDivElement, mouseClientX: number) => {
+		setPickedColumn(findPickedColumnForResize({
+			wrapperLeft: wrapperRef.current!.getBoundingClientRect().left,
+			table,
+			mouseClientX,
+			columnDefs,
+			isFixTable: table === fixTableRef.current,
+			rowNoColumnWidth
+		}));
+		setBehavior(Behavior.RESIZING);
+	};
+
 	const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (behavior === Behavior.CAN_RESIZE) {
 			// start to resize column
-			const table = findDataTable(event.target as HTMLElement)!;
-			setPickedColumn(findPickedColumnForResize({
-				wrapperLeft: wrapperRef.current!.getBoundingClientRect().left,
-				table,
-				mouseClientX: event.clientX,
-				columnDefs,
-				isFixTable: table === fixTableRef.current,
-				rowNoColumnWidth
-			}));
-			setBehavior(Behavior.RESIZING);
+			prepareToResizeColumn(findDataTable(event.target as HTMLElement)!, event.clientX);
 		} else if (behavior === Behavior.PICK_COLUMN) {
 			// start to resize column
-			const table = findDataTable(event.target as HTMLElement)!;
-			const isFixTable = table === fixTableRef.current;
-			const mouseClientX = event.clientX;
-			const wrapperLeft = wrapperRef.current!.getBoundingClientRect().left;
-			const pickedColumn = findPickedColumnForDrag({
-				wrapperLeft,
-				table,
-				mouseClientX,
-				columnDefs,
-				isFixTable,
-				rowNoColumnWidth
-			});
-			setPickedColumn(pickedColumn);
-			const { scrollTop } = table;
-			const height = Math.min(table.clientHeight, HEADER_HEIGHT + data.data.length * ROW_HEIGHT);
-			const startRowIndex = Math.floor(scrollTop / ROW_HEIGHT);
-			const endRowIndex = startRowIndex + Math.ceil((height - HEADER_HEIGHT) / ROW_HEIGHT + 2);
-
-			dragColumnStateChange({
-				height,
-				startRowIndex,
-				endRowIndex,
-				firstRowOffsetY: scrollTop % ROW_HEIGHT,
-				movementX: 0
-			});
-			setBehavior(Behavior.READY_TO_DRAG);
+			prepareToDragColumn(findDataTable(event.target as HTMLElement)!, event.clientX);
 		}
 	};
+
 	const releaseDragColumn = (mouseClientX: number) => {
 		if (!pickedColumn) {
 			return;
@@ -794,5 +802,7 @@ export const DataSetTableWrapper = (props: {
 		                       dataTableRef={dataTableRef} ref={selectionRef}/>
 		<DataSetResizeShade data-visible={behavior === Behavior.RESIZING || behavior === Behavior.DRAGGING}/>
 		<DataSetTableDragColumn data={data} column={pickedColumn?.column}/>
+		<DataTableScrollShade wrapperRef={wrapperRef} dataTableRef={dataTableRef}
+		                      visible={behavior === Behavior.DRAGGING}/>
 	</Wrapper>;
 };
