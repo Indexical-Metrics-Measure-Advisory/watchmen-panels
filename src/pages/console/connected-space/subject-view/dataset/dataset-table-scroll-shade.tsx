@@ -1,4 +1,4 @@
-import React, { Fragment, RefObject } from 'react';
+import React, { Fragment, RefObject, useEffect, useRef } from 'react';
 import { DataSetScrollHorizontalShade, DataSetScrollVerticalShade } from './dataset-table-components';
 
 export const DataTableScrollShade = (props: {
@@ -10,6 +10,18 @@ export const DataTableScrollShade = (props: {
 
 	const wrapper = wrapperRef.current;
 	const dataTable = dataTableRef.current;
+
+	const verticalScrollRef = useRef<HTMLDivElement>(null);
+	const horizontalScrollRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		if (!visible || !dataTable || !verticalScrollRef.current || !horizontalScrollRef.current) {
+			return;
+		}
+		const { scrollTop, scrollLeft } = dataTable;
+		verticalScrollRef.current.scrollTop = scrollTop;
+		horizontalScrollRef.current.scrollLeft = scrollLeft;
+	});
+
 	if (!wrapper || !dataTable) {
 		return null;
 	}
@@ -21,12 +33,14 @@ export const DataTableScrollShade = (props: {
 	return <Fragment>
 		<DataSetScrollVerticalShade width={offsetWidth - clientWidth}
 		                            heightOffset={offsetHeight - clientHeight}
-		                            visible={visible}>
+		                            visible={visible}
+		                            ref={verticalScrollRef}>
 			<div style={{ width: 1, height: scrollHeight }}/>
 		</DataSetScrollVerticalShade>
 		<DataSetScrollHorizontalShade left={horizontalScrollLeft - wrapperLeft} height={offsetHeight - clientHeight}
 		                              widthOffset={offsetWidth - clientWidth}
-		                              visible={visible}>
+		                              visible={visible}
+		                              ref={horizontalScrollRef}>
 			<div style={{ width: scrollWidth, height: 1 }}/>
 		</DataSetScrollHorizontalShade>
 		{/* bottom left paster */}
