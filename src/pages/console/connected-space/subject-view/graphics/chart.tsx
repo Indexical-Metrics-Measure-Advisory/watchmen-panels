@@ -142,6 +142,7 @@ export const Chart = (props: {
 		};
 	};
 
+	// TODO drag and drop
 	const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (max || locked) {
 			return;

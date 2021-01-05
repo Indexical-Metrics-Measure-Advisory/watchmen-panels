@@ -9,9 +9,9 @@ import { buildDescartesByDimensions } from './chart-utils';
 import { ChartTypeDefinition } from './types';
 import { findFactorByIndicator } from './utils';
 
-export const BAR: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.BAR,
-	name: 'Bar',
+export const LINE: ChartTypeDefinition = {
+	type: ConsoleSpaceSubjectChartType.LINE,
+	name: 'Line',
 	buildOptions: (chart: ConsoleSpaceSubjectChart, space: ConsoleSpace, dataset: ConsoleSpaceSubjectChartDataSet) => {
 		const { indicators } = chart;
 
@@ -36,7 +36,7 @@ export const BAR: ChartTypeDefinition = {
 			series: legends.map(({ label, index: indicatorIndex }) => {
 				return {
 					name: label,
-					type: 'bar',
+					type: 'line',
 					barGap: 0,
 					label: {
 						show: true,

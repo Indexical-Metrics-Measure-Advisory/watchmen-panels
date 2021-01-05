@@ -1,4 +1,3 @@
-import { EChartOption, EChartsResponsiveOption } from 'echarts';
 import {
 	ConsoleSpace,
 	ConsoleSpaceSubjectChart,
@@ -7,31 +6,11 @@ import {
 	ConsoleSpaceSubjectChartType
 } from '../../../services/console/types';
 import { BAR } from './chart-bar';
+import { COUNT } from './chart-count';
+import { LINE } from './chart-line';
+import { validateDimensionCount, validateIndicatorCount } from './chart-utils';
+import { ChartTypeDefinition, ValidationFailure, ValidationSuccess, Validator } from './types';
 
-export interface ChartTypeDefinition {
-	type: ConsoleSpaceSubjectChartType;
-	name: string;
-	minDimensionCount?: number;
-	minIndicatorCount?: number;
-	defend?: (chart: ConsoleSpaceSubjectChart) => void;
-	canReduceDimensions?: (chart: ConsoleSpaceSubjectChart) => boolean;
-	canAppendDimensions?: (chart: ConsoleSpaceSubjectChart) => boolean;
-	canReduceIndicators?: (chart: ConsoleSpaceSubjectChart) => boolean;
-	canAppendIndicators?: (chart: ConsoleSpaceSubjectChart) => boolean;
-	validate?: (chart: ConsoleSpaceSubjectChart) => boolean | string;
-	buildOptions?: (chart: ConsoleSpaceSubjectChart, space: ConsoleSpace, dataset: ConsoleSpaceSubjectChartDataSet) => EChartOption | EChartsResponsiveOption;
-}
-
-export const COUNT: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.COUNT,
-	name: 'Count',
-	minDimensionCount: 0
-};
-
-export const LINE: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.LINE,
-	name: 'Bar'
-};
 export const SCATTER: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.SCATTER,
 	name: 'Scatter'
@@ -61,7 +40,7 @@ export const TREEMAP: ChartTypeDefinition = {
 	name: 'Treemap'
 };
 
-export const ChartTypes: Array<ChartTypeDefinition> = [ COUNT, BAR, PIE, DOUGHNUT, NIGHTINGALE, SCATTER, SUNBURST, TREE, TREEMAP ];
+export const ChartTypes: Array<ChartTypeDefinition> = [ COUNT, BAR, LINE, PIE, DOUGHNUT, NIGHTINGALE, SCATTER, SUNBURST, TREE, TREEMAP ];
 export const ChartTypeDropdownOptions = ChartTypes.map(({ name, type }) => ({ label: name, value: type }));
 export const ChartTypeMap: Map<ConsoleSpaceSubjectChartType, ChartTypeDefinition> = ChartTypes.reduce((map, def) => {
 	map.set(def.type, def);
@@ -81,72 +60,74 @@ export const defendChart = (chart: ConsoleSpaceSubjectChart) => {
 	}
 
 	const def = findChartTypeDefinition(chart.type);
-	const defend = def.defend;
-	if (defend) {
-		defend(chart);
-		return;
-	}
-
 	new Array(Math.max((def.minDimensionCount || 1) - chart.dimensions.length, 0)).fill(1).forEach(() => chart.dimensions.push({}));
 	new Array(Math.max((def.minIndicatorCount || 1) - chart.indicators.length, 0)).fill(1).forEach(() => chart.indicators.push({ aggregator: ConsoleSpaceSubjectChartIndicatorAggregator.NONE }));
+
+	const defend = def.defend;
+	if (defend) {
+		defend(chart, def);
+		return;
+	}
 };
 
 export const isDimensionCanRemove = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
 	const canReduceDimensions = def.canReduceDimensions;
 	if (canReduceDimensions) {
-		return canReduceDimensions(chart);
+		return canReduceDimensions(chart, def);
+	} else {
+		return (chart.dimensions || []).length > (def.minDimensionCount || 1);
 	}
-
-	return (chart.dimensions || []).length > (def.minDimensionCount || 1);
 };
 export const isDimensionCanAppend = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
 	const canAppendDimensions = def.canAppendDimensions;
-	if (canAppendDimensions) {
-		return canAppendDimensions(chart);
-	}
-
-	return true;
+	return !canAppendDimensions || canAppendDimensions(chart, def);
 };
 export const isIndicatorCanRemove = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
 	const canReduceIndicators = def.canReduceIndicators;
 	if (canReduceIndicators) {
-		return canReduceIndicators(chart);
+		return canReduceIndicators(chart, def);
+	} else {
+		return (chart.indicators || []).length > (def.minIndicatorCount || 1);
 	}
-
-	return (chart.indicators || []).length > (def.minIndicatorCount || 1);
 };
 export const isIndicatorCanAppend = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
 	const canAppendIndicators = def.canAppendIndicators;
-	if (canAppendIndicators) {
-		return canAppendIndicators(chart);
-	}
-
-	return true;
+	return !canAppendIndicators || canAppendIndicators(chart, def);
 };
-export const validate = (chart: ConsoleSpaceSubjectChart): { pass: boolean; error?: string } => {
+const customValidate: Validator = (chart: ConsoleSpaceSubjectChart, def: ChartTypeDefinition) => {
+	const validate = def.validate;
+	if (validate) {
+		const ret = validate(chart, def);
+		if (ret === true) {
+			return { pass: true };
+		} else {
+			return { pass: false, error: typeof ret === 'string' ? ret : '' };
+		}
+	}
+	return { pass: true };
+};
+export const validate = (chart: ConsoleSpaceSubjectChart): ValidationSuccess | ValidationFailure => {
 	if (!chart.type) {
 		return { pass: false, error: 'No chart type defined.' };
 	}
 
 	const def = findChartTypeDefinition(chart.type);
-	const validate = def.validate;
-	if (validate) {
-		const ret = validate(chart);
-		if (ret === true) {
-			return { pass: true };
+	return [
+		validateDimensionCount,
+		validateIndicatorCount,
+		customValidate
+	].reduce((prev: ValidationSuccess | ValidationFailure, validate) => {
+		if (!prev.pass) {
+			// previous not passed, return directly
+			return prev;
 		} else {
-			return { pass: false, error: typeof ret === 'string' ? ret : (void 0) };
+			return validate(chart, def);
 		}
-	}
-
-	if (!chart.indicators || chart.indicators.length === 0) {
-		return { pass: false, error: 'No indicator defined.' };
-	}
-	return { pass: true };
+	}, { pass: true });
 };
 export const buildEChartsOptions = (chart: ConsoleSpaceSubjectChart, space: ConsoleSpace, dataset: ConsoleSpaceSubjectChartDataSet) => {
 	const def = findChartTypeDefinition(chart.type!);
