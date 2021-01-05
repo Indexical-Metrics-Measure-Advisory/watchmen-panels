@@ -1,5 +1,5 @@
 import { faUncharted } from '@fortawesome/free-brands-svg-icons';
-import { faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+import { faDoorOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from "react";
 import { v4 } from 'uuid';
@@ -13,6 +13,7 @@ import {
 	ConsoleSpaceSubjectChartIndicatorAggregator,
 	ConsoleSpaceSubjectChartType
 } from '../../../../../services/console/types';
+import { DangerObjectButton } from '../../../../admin/pipeline/editor/components/object-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import Input from '../../../../component/input';
 import {
@@ -23,22 +24,32 @@ import {
 } from '../../../chart/chart-defender';
 import { ChartSettingsDimension } from './chart-settings-dimension';
 import { ChartSettingsIndicator } from './chart-settings-indicator';
-import { AppendButton, BottomGapper, SettingsContainer, SettingsRowLabel, SettingsSegmentTitle } from './components';
+import {
+	AppendButton,
+	BottomGapper,
+	SettingsBackdrop,
+	SettingsBody,
+	SettingsContainer,
+	SettingsFooter,
+	SettingsHeader,
+	SettingsRowLabel,
+	SettingsSegmentTitle
+} from './components';
 
 export const ChartSettingsPanel = (props: {
 	space: ConsoleSpace;
 	subject: ConsoleSpaceSubject;
 	chart: ConsoleSpaceSubjectChart;
 	visible: boolean;
-	onNameChange: () => void;
+	closeSettings: () => void;
 }) => {
-	const { space, subject, chart, visible, onNameChange } = props;
+	const { space, subject, chart, visible, closeSettings } = props;
 
 	const forceUpdate = useForceUpdate();
 
 	const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		chart.name = event.target.value;
-		onNameChange();
+		forceUpdate();
 	};
 	const onTypeChanged = async (option: DropdownOption) => {
 		chart.type = option.value as ConsoleSpaceSubjectChartType;
@@ -60,40 +71,53 @@ export const ChartSettingsPanel = (props: {
 		chart.indicators.push({ aggregator: ConsoleSpaceSubjectChartIndicatorAggregator.NONE });
 		forceUpdate();
 	};
+	const onSettingsCloseClicked = () => closeSettings();
 
 	defendChart(chart);
 	const canAddDimension = isDimensionCanAppend(chart);
 	const canAddIndicator = isIndicatorCanAppend(chart);
 
 	return <SettingsContainer data-visible={visible}>
-		<SettingsRowLabel>Name:</SettingsRowLabel>
-		<Input value={chart.name || ''} onChange={onNameChanged}/>
-		<SettingsRowLabel>Type:</SettingsRowLabel>
-		<Dropdown options={ChartTypeDropdownOptions} value={chart.type} onChange={onTypeChanged}/>
-		<SettingsSegmentTitle><span>Dimensions</span></SettingsSegmentTitle>
-		{chart.dimensions.map(dimension => {
-			return <ChartSettingsDimension space={space} subject={subject} chart={chart} dimension={dimension}
-			                               onRemove={onDimensionRemove}
-			                               key={v4()}/>;
-		})}
-		{canAddDimension
-			? <AppendButton onClick={onDimensionAddClicked}>
-				<FontAwesomeIcon icon={faLayerGroup}/>
-				<span>Add Dimension</span>
-			</AppendButton>
-			: null}
-		<SettingsSegmentTitle><span>Indicators</span></SettingsSegmentTitle>
-		{chart.indicators.map(indicator => {
-			return <ChartSettingsIndicator space={space} subject={subject} chart={chart} indicator={indicator}
-			                               onRemove={onIndicatorRemove}
-			                               key={v4()}/>;
-		})}
-		{canAddIndicator
-			? <AppendButton onClick={onIndicatorAddClicked}>
-				<FontAwesomeIcon icon={faUncharted}/>
-				<span>Add Indicator</span>
-			</AppendButton>
-			: null}
-		<BottomGapper/>
+		<SettingsBackdrop/>
+		<SettingsHeader>
+			<span>{chart.name || 'Noname'}</span>
+		</SettingsHeader>
+		<SettingsBody>
+			<SettingsRowLabel>Name:</SettingsRowLabel>
+			<Input value={chart.name || ''} onChange={onNameChanged}/>
+			<SettingsRowLabel>Type:</SettingsRowLabel>
+			<Dropdown options={ChartTypeDropdownOptions} value={chart.type} onChange={onTypeChanged}/>
+			<SettingsSegmentTitle><span>Dimensions</span></SettingsSegmentTitle>
+			{chart.dimensions.map(dimension => {
+				return <ChartSettingsDimension space={space} subject={subject} chart={chart} dimension={dimension}
+				                               onRemove={onDimensionRemove}
+				                               key={v4()}/>;
+			})}
+			{canAddDimension
+				? <AppendButton onClick={onDimensionAddClicked}>
+					<FontAwesomeIcon icon={faLayerGroup}/>
+					<span>Add Dimension</span>
+				</AppendButton>
+				: null}
+			<SettingsSegmentTitle><span>Indicators</span></SettingsSegmentTitle>
+			{chart.indicators.map(indicator => {
+				return <ChartSettingsIndicator space={space} subject={subject} chart={chart} indicator={indicator}
+				                               onRemove={onIndicatorRemove}
+				                               key={v4()}/>;
+			})}
+			{canAddIndicator
+				? <AppendButton onClick={onIndicatorAddClicked}>
+					<FontAwesomeIcon icon={faUncharted}/>
+					<span>Add Indicator</span>
+				</AppendButton>
+				: null}
+			<BottomGapper/>
+		</SettingsBody>
+		<SettingsFooter>
+			<DangerObjectButton onClick={onSettingsCloseClicked}>
+				<FontAwesomeIcon icon={faDoorOpen}/>
+				<span>Done & Close</span>
+			</DangerObjectButton>
+		</SettingsFooter>
 	</SettingsContainer>;
 };

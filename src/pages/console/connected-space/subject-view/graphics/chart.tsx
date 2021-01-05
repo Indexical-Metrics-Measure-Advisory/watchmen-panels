@@ -163,11 +163,12 @@ export const Chart = (props: {
 		event.stopPropagation();
 		setMax(!max);
 	};
-	const onToggleSettingsClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+	const onOpenSettingsClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
-		setSettingsVisible(!settingsVisible);
+		setSettingsVisible(true);
 	};
+	const onCloseSettings = () => setSettingsVisible(false);
 	const onDeleteConfirmClicked = () => {
 		onDeleteChart(chart);
 		dialog.hide();
@@ -186,7 +187,6 @@ export const Chart = (props: {
 			</Fragment>
 		);
 	};
-	const onNameChange = () => forceUpdate();
 
 	const rect = max ? maxChart() : chart.rect;
 
@@ -197,21 +197,24 @@ export const Chart = (props: {
 		        onMouseMove={onMouseMove}>
 			<span>{chart.name || 'Noname'}</span>
 			<HeaderButtons data-visible={!locked} data-expanded={max}>
-				<LinkButton ignoreHorizontalPadding={true} onClick={onToggleMaxClicked}>
+				<LinkButton ignoreHorizontalPadding={true} tooltip={max ? 'Minimize' : 'Maximize'} center={true}
+				            onClick={onToggleMaxClicked}>
 					<FontAwesomeIcon icon={max ? faCompressArrowsAlt : faExpandArrowsAlt}/>
 				</LinkButton>
-				<LinkButton ignoreHorizontalPadding={true} onClick={onToggleSettingsClicked}>
+				<LinkButton ignoreHorizontalPadding={true} tooltip='Open Settings' center={true}
+				            onClick={onOpenSettingsClicked}>
 					<FontAwesomeIcon icon={faCog}/>
 				</LinkButton>
-				<LinkButton ignoreHorizontalPadding={true} onClick={onDeleteClicked}>
+				<LinkButton ignoreHorizontalPadding={true} tooltip='Delete Chart' center={true}
+				            onClick={onDeleteClicked}>
 					<FontAwesomeIcon icon={faTimes}/>
 				</LinkButton>
 			</HeaderButtons>
 		</Header>
 		<Body>
-			<ChartSettingsPanel space={space} subject={subject} chart={chart} visible={!locked && settingsVisible}
-			                    onNameChange={onNameChange}/>
 			<ChartDiagram space={space} subject={subject} chart={chart} visible={!settingsVisible}/>
+			<ChartSettingsPanel space={space} subject={subject} chart={chart} visible={!locked && settingsVisible}
+			                    closeSettings={onCloseSettings}/>
 		</Body>
 	</ChartContainer>;
 };

@@ -9,10 +9,12 @@ function findFactorInSpace(topicId: string | undefined, factorId: string | undef
 		throw new Error(`Factor not defined in ${where}.`);
 	}
 
+	// eslint-disable-next-line
 	const topic = space.topics.find(topic => topic.topicId == topicId);
 	if (!topic) {
 		throw new Error(`Topic mismatched according to ${where}.`);
 	}
+	// eslint-disable-next-line
 	const factor = topic.factors.find(factor => factor.factorId == factorId);
 	if (!factor) {
 		throw new Error(`Factor mismatched according to ${where}.`);
