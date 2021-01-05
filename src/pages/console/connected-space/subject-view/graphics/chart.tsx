@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, RefObject, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../../common/utils';
-import { ConsoleSpaceSubject, ConsoleSpaceSubjectChart } from '../../../../../services/console/types';
+import { ConsoleSpace, ConsoleSpaceSubject, ConsoleSpaceSubjectChart } from '../../../../../services/console/types';
 import Button, { ButtonType } from '../../../../component/button';
 import { LinkButton } from '../../../../component/console/link-button';
 import { useDialog } from '../../../../context/dialog';
-import { ChartSettings } from './chart-settings';
+import { ChartSettingsPanel } from './chart-settings-panel';
 import { ChartRect } from './types';
 import { generateChartRect } from './utils';
 
@@ -32,7 +32,6 @@ const ChartContainer = styled.div
 	flex-direction: column;
 	border-radius: var(--border-radius);
 	border: var(--border);
-	height: 100%;
 	background-color: var(--bg-color);
 	transition: all 300ms ease-in-out;
 `;
@@ -82,6 +81,7 @@ const Body = styled.div.attrs({
 
 export const Chart = (props: {
 	containerRef: RefObject<HTMLDivElement>;
+	space: ConsoleSpace;
 	subject: ConsoleSpaceSubject;
 	chart: ConsoleSpaceSubjectChart;
 	locked: boolean;
@@ -89,7 +89,7 @@ export const Chart = (props: {
 }) => {
 	const {
 		containerRef,
-		subject, chart,
+		space, subject, chart,
 		locked,
 		onDeleteChart
 	} = props;
@@ -110,10 +110,16 @@ export const Chart = (props: {
 	useEffect(() => {
 		// @ts-ignore
 		const resizeObserver = new ResizeObserver(() => {
-			if (!containerRef.current || !max) {
+			if (!containerRef.current || !chartRef.current || !max) {
 				return;
 			}
-
+			const chart = chartRef.current;
+			const { top: currentTop, left: currentLeft } = chart.getBoundingClientRect();
+			const { clientWidth: currentWidth, clientHeight: currentHeight } = chart;
+			const { top, left, width, height } = maxChart();
+			if (top === currentTop && left === currentLeft && width === currentWidth && height === currentHeight) {
+				return;
+			}
 			forceUpdate();
 		});
 		resizeObserver.observe(containerRef.current);
@@ -135,6 +141,21 @@ export const Chart = (props: {
 		};
 	};
 
+	const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (max || locked) {
+			return;
+		}
+	};
+	const onMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (max || locked) {
+			return;
+		}
+	};
+	const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (max || locked) {
+			return;
+		}
+	};
 	const onToggleMaxClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -163,12 +184,16 @@ export const Chart = (props: {
 			</Fragment>
 		);
 	};
+	const onNameChange = () => forceUpdate();
 
 	const rect = max ? maxChart() : chart.rect;
 
-	return <ChartContainer data-max={max} rect={rect} ref={chartRef}>
-		<Header>
-			<span>{chart.title}</span>
+	// console.log(chart)
+	return <ChartContainer data-max={max} rect={rect}
+	                       ref={chartRef}>
+		<Header onMouseDown={onMouseDown} onMouseUp={onMouseUp}
+		        onMouseMove={onMouseMove}>
+			<span>{chart.name || 'Noname'}</span>
 			<HeaderButtons data-visible={!locked} data-expanded={max}>
 				<LinkButton ignoreHorizontalPadding={true} onClick={onToggleMaxClicked}>
 					<FontAwesomeIcon icon={max ? faCompressArrowsAlt : faExpandArrowsAlt}/>
@@ -182,7 +207,8 @@ export const Chart = (props: {
 			</HeaderButtons>
 		</Header>
 		<Body>
-			<ChartSettings subject={subject} chart={chart} visible={settingsVisible}/>
+			<ChartSettingsPanel space={space} subject={subject} chart={chart} visible={settingsVisible}
+			                    onNameChange={onNameChange}/>
 		</Body>
 	</ChartContainer>;
 };

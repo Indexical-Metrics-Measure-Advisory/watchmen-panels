@@ -1,5 +1,3 @@
-import { ChartSettings } from '../../charts/custom/types';
-
 export interface ConsoleMessage {
 	id: string;
 	subject: string;
@@ -145,8 +143,43 @@ export interface ConsoleSpaceSubjectDataSetJoin {
 	relationId?: string;
 }
 
-export interface ConsoleSpaceSubjectChart extends ChartSettings {
+export enum ConsoleSpaceSubjectChartType {
+	COUNT = 'count',
+	BAR = 'bar',
+	LINE = 'line',
+	SCATTER = 'scatter',
+	PIE = 'pie',
+	DOUGHNUT = 'doughnut',
+	NIGHTINGALE = 'nightingale',
+	SUNBURST = 'sunburst',
+	TREE = 'tree',
+	TREEMAP = 'treemap'
+}
+
+export enum ConsoleSpaceSubjectChartIndicatorAggregator {
+	NONE = 'none',
+	COUNT = 'count',
+	SUMMARY = 'sum',
+	AVERAGE = 'avg',
+	MEDIAN = 'med',
+	MAXIMUM = 'max',
+	MINIMUM = 'min'
+}
+
+export interface ConsoleSpaceSubjectChartIndicator extends ConsoleSpaceSubjectDataSetColumn {
+	aggregator: ConsoleSpaceSubjectChartIndicatorAggregator;
+}
+
+export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {
+}
+
+export interface ConsoleSpaceSubjectChart {
 	chartId?: string;
+	name?: string;
+	type?: ConsoleSpaceSubjectChartType;
+	indicators: Array<ConsoleSpaceSubjectChartIndicator>,
+	dimensions: Array<ConsoleSpaceSubjectChartDimension>,
+	// for subject chart view
 	rect?: {
 		top: number;
 		left: number;

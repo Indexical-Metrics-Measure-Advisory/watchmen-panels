@@ -1,14 +1,14 @@
-import { faLock, faPlus, faTimes, faUnlock } from '@fortawesome/free-solid-svg-icons';
+import { faHighlighter, faPlus, faThumbtack, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { v4 } from 'uuid';
-import { ChartKey } from '../../../../../charts/custom/types';
 import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
-	ConsoleSpaceSubjectChart
+	ConsoleSpaceSubjectChart,
+	ConsoleSpaceSubjectChartType
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { Chart } from './chart';
@@ -82,7 +82,7 @@ export const Graphics = (props: {
 	onVisibleChanged: (visible: boolean) => void;
 	switchToDefinition: () => void;
 }) => {
-	const { subject, visible, onVisibleChanged, switchToDefinition } = props;
+	const { space, subject, visible, onVisibleChanged, switchToDefinition } = props;
 	const { dataset = {}, graphics: charts = [] } = subject;
 	const { columns = [] } = dataset;
 
@@ -126,8 +126,8 @@ export const Graphics = (props: {
 			subject.graphics = [];
 		}
 		subject.graphics.push({
-			title: 'Noname',
-			key: ChartKey.BAR,
+			name: 'Noname',
+			type: ConsoleSpaceSubjectChartType.BAR,
 			indicators: [],
 			dimensions: [],
 			rect: generateChartRect(containerRef.current!)
@@ -155,13 +155,13 @@ export const Graphics = (props: {
 			{hasCharts && !locked
 				? <LinkButton tooltip='Lock Charts' right={true} offsetX={-3} offsetY={8}
 				              onClick={onLockClicked}>
-					<FontAwesomeIcon icon={faLock}/>
+					<FontAwesomeIcon icon={faThumbtack}/>
 				</LinkButton>
 				: null}
 			{hasCharts && locked
-				? <LinkButton tooltip='Unlock Charts' right={true} offsetX={-3} offsetY={8}
+				? <LinkButton tooltip='Settings & Layout' right={true} offsetX={-3} offsetY={8}
 				              onClick={onUnlockClicked}>
-					<FontAwesomeIcon icon={faUnlock}/>
+					<FontAwesomeIcon icon={faHighlighter}/>
 				</LinkButton>
 				: null}
 			{hasColumns
@@ -175,21 +175,24 @@ export const Graphics = (props: {
 				<FontAwesomeIcon icon={faTimes}/>
 			</LinkButton>
 		</Buttons>
-		{hasColumns
-			? (hasCharts
-				? charts.map((chart: ConsoleSpaceSubjectChart) => {
-					if (!chart.chartId) {
-						chart.chartId = v4();
-					}
-					return <Chart containerRef={containerRef} subject={subject} chart={chart} locked={locked}
-					              onDeleteChart={onDeleteChart}
-					              key={chart.chartId}/>;
-				})
+		{visible
+			? (hasColumns
+				? (hasCharts
+					? charts.map((chart: ConsoleSpaceSubjectChart) => {
+						if (!chart.chartId) {
+							chart.chartId = v4();
+						}
+						return <Chart containerRef={containerRef}
+						              space={space} subject={subject} chart={chart} locked={locked}
+						              onDeleteChart={onDeleteChart}
+						              key={chart.chartId}/>;
+					})
+					: <NoDef>
+						<span>No chart defined yet, <span onClick={onCreateChartClicked}>create one</span> now?</span>
+					</NoDef>)
 				: <NoDef>
-					<span>No chart defined yet, <span onClick={onCreateChartClicked}>create one</span> now?</span>
+					<span>No column defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
 				</NoDef>)
-			: <NoDef>
-				<span>No column defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
-			</NoDef>}
+			: null}
 	</GraphicsContainer>;
 };
