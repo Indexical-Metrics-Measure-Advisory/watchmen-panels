@@ -1,8 +1,12 @@
+import { EChartOption, EChartsResponsiveOption } from 'echarts';
 import {
+	ConsoleSpace,
 	ConsoleSpaceSubjectChart,
+	ConsoleSpaceSubjectChartDataSet,
 	ConsoleSpaceSubjectChartIndicatorAggregator,
 	ConsoleSpaceSubjectChartType
-} from '../../../../../services/console/types';
+} from '../../../services/console/types';
+import { BAR } from './chart-bar';
 
 export interface ChartTypeDefinition {
 	type: ConsoleSpaceSubjectChartType;
@@ -14,6 +18,8 @@ export interface ChartTypeDefinition {
 	canAppendDimensions?: (chart: ConsoleSpaceSubjectChart) => boolean;
 	canReduceIndicators?: (chart: ConsoleSpaceSubjectChart) => boolean;
 	canAppendIndicators?: (chart: ConsoleSpaceSubjectChart) => boolean;
+	validate?: (chart: ConsoleSpaceSubjectChart) => boolean | string;
+	buildOptions?: (chart: ConsoleSpaceSubjectChart, space: ConsoleSpace, dataset: ConsoleSpaceSubjectChartDataSet) => EChartOption | EChartsResponsiveOption;
 }
 
 export const COUNT: ChartTypeDefinition = {
@@ -22,10 +28,6 @@ export const COUNT: ChartTypeDefinition = {
 	minDimensionCount: 0
 };
 
-export const BAR: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.BAR,
-	name: 'Bar'
-};
 export const LINE: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.LINE,
 	name: 'Bar'
@@ -124,4 +126,29 @@ export const isIndicatorCanAppend = (chart: ConsoleSpaceSubjectChart) => {
 	}
 
 	return true;
+};
+export const validate = (chart: ConsoleSpaceSubjectChart): { pass: boolean; error?: string } => {
+	if (!chart.type) {
+		return { pass: false, error: 'No chart type defined.' };
+	}
+
+	const def = findChartTypeDefinition(chart.type);
+	const validate = def.validate;
+	if (validate) {
+		const ret = validate(chart);
+		if (ret === true) {
+			return { pass: true };
+		} else {
+			return { pass: false, error: typeof ret === 'string' ? ret : (void 0) };
+		}
+	}
+
+	if (!chart.indicators || chart.indicators.length === 0) {
+		return { pass: false, error: 'No indicator defined.' };
+	}
+	return { pass: true };
+};
+export const buildEChartsOptions = (chart: ConsoleSpaceSubjectChart, space: ConsoleSpace, dataset: ConsoleSpaceSubjectChartDataSet) => {
+	const def = findChartTypeDefinition(chart.type!);
+	return def.buildOptions && def.buildOptions(chart, space, dataset);
 };

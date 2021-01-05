@@ -173,6 +173,19 @@ export interface ConsoleSpaceSubjectChartIndicator extends ConsoleSpaceSubjectDa
 export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {
 }
 
+export type ConsoleSpaceSubjectChartDataSetRow = Array<any>;
+export type ConsoleSpaceSubjectChartDataSetGrid = Array<ConsoleSpaceSubjectChartDataSetRow>;
+
+export interface ConsoleSpaceSubjectChartDataSetColumn {
+	topicId: string;
+	factorId: string;
+}
+
+export interface ConsoleSpaceSubjectChartDataSet {
+	meta?: Array<ConsoleSpaceSubjectChartDataSetColumn>;
+	data: ConsoleSpaceSubjectChartDataSetGrid;
+}
+
 export interface ConsoleSpaceSubjectChart {
 	chartId?: string;
 	name?: string;

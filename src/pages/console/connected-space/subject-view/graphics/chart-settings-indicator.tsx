@@ -13,7 +13,7 @@ import {
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
-import { isIndicatorCanRemove } from './chart-defender';
+import { isIndicatorCanRemove } from '../../../chart/chart-defender';
 import { SettingsSegmentRowLabel } from './components';
 
 const IndicatorEditor = styled.div`

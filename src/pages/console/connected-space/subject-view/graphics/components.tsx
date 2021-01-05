@@ -14,6 +14,7 @@ export const SettingsContainer = styled.div`
 	overflow-x: hidden;
 	overflow-y: auto;
 	transition: all 300ms ease-in-out;
+	z-index: 1;
 	&[data-visible=false] {
 		padding-top: 0;
 		padding-bottom: 0;

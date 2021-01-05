@@ -15,7 +15,12 @@ import {
 } from '../../../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import Input from '../../../../component/input';
-import { ChartTypeDropdownOptions, defendChart, isDimensionCanAppend, isIndicatorCanAppend } from './chart-defender';
+import {
+	ChartTypeDropdownOptions,
+	defendChart,
+	isDimensionCanAppend,
+	isIndicatorCanAppend
+} from '../../../chart/chart-defender';
 import { ChartSettingsDimension } from './chart-settings-dimension';
 import { ChartSettingsIndicator } from './chart-settings-indicator';
 import { AppendButton, BottomGapper, SettingsContainer, SettingsRowLabel, SettingsSegmentTitle } from './components';

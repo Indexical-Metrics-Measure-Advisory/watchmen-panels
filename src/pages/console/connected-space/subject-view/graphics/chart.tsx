@@ -7,6 +7,7 @@ import { ConsoleSpace, ConsoleSpaceSubject, ConsoleSpaceSubjectChart } from '../
 import Button, { ButtonType } from '../../../../component/button';
 import { LinkButton } from '../../../../component/console/link-button';
 import { useDialog } from '../../../../context/dialog';
+import { ChartDiagram } from '../../../chart/chart-diagram';
 import { ChartSettingsPanel } from './chart-settings-panel';
 import { ChartRect } from './types';
 import { generateChartRect } from './utils';
@@ -207,8 +208,9 @@ export const Chart = (props: {
 			</HeaderButtons>
 		</Header>
 		<Body>
-			<ChartSettingsPanel space={space} subject={subject} chart={chart} visible={settingsVisible}
+			<ChartSettingsPanel space={space} subject={subject} chart={chart} visible={!locked && settingsVisible}
 			                    onNameChange={onNameChange}/>
+			<ChartDiagram space={space} subject={subject} chart={chart} visible={!settingsVisible}/>
 		</Body>
 	</ChartContainer>;
 };

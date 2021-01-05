@@ -11,7 +11,7 @@ import {
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
-import { isDimensionCanRemove } from './chart-defender';
+import { isDimensionCanRemove } from '../../../chart/chart-defender';
 import { SettingsSegmentRowLabel } from './components';
 
 const DimensionEditor = styled.div`
