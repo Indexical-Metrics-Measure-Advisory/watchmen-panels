@@ -160,7 +160,7 @@ export const ChartDiagram = (props: {
 						console.error(e);
 						setValidation({
 							pass: false,
-							error: 'Unpredicted error occurred, check your chart settings please.'
+							error: 'Unpredicted error occurred, check chart settings please.'
 						});
 					}
 				})();
@@ -185,7 +185,7 @@ export const ChartDiagram = (props: {
 	} catch (e) {
 		console.error(e);
 		return <ChartDiagramContainer>
-			<Error data-visible={true}>Unpredicted error occurred, check your chart settings please.</Error>
+			<Error data-visible={true}>Unpredicted error occurred, check chart settings please.</Error>
 		</ChartDiagramContainer>;
 	}
 };
