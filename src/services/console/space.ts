@@ -5,6 +5,7 @@ import {
 	ConsoleSpace,
 	ConsoleSpaceGroup,
 	ConsoleSpaceSubject,
+	ConsoleSpaceSubjectChartDataSet,
 	ConsoleSpaceType,
 	ConsoleTopic,
 	ConsoleTopicFactorType,
@@ -347,5 +348,23 @@ export const fetchSubjectData = async (options: {
 				})
 			});
 		}, 1000);
+	});
+};
+
+export const fetchCountChartData = async (subjectId: string, chartId: string): Promise<ConsoleSpaceSubjectChartDataSet> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve({
+			meta: [],
+			data: [ [ 1234 ] ]
+		} as ConsoleSpaceSubjectChartDataSet), 500);
+	});
+};
+
+export const fetchChartData = async (subjectId: string, chartId: string): Promise<ConsoleSpaceSubjectChartDataSet> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve({
+			meta: [],
+			data: []
+		} as ConsoleSpaceSubjectChartDataSet), 500);
 	});
 };
