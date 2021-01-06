@@ -3,32 +3,14 @@ import {
 	ConsoleSpace,
 	ConsoleSpaceSubjectChart,
 	ConsoleSpaceSubjectChartDataSet,
-	ConsoleSpaceSubjectChartDataSetGrid,
 	ConsoleSpaceSubjectChartType
 } from '../../../services/console/types';
 import { buildTreeData } from './chart-utils';
 import { ChartTypeDefinition } from './types';
 
-interface SunburstItem {
-	name: string,
-	children: ConsoleSpaceSubjectChartDataSetGrid
-}
-
-interface SunburstSeriesNode {
-	name: string;
-}
-
-interface SunburstSeriesNonLeafNode extends SunburstSeriesNode {
-	children: Array<SunburstSeriesNode>;
-}
-
-interface SunburstSeriesLeafNode extends SunburstSeriesNode {
-	value: number;
-}
-
-export const SUNBURST: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.SUNBURST,
-	name: 'Sunburst',
+export const TREE: ChartTypeDefinition = {
+	type: ConsoleSpaceSubjectChartType.TREE,
+	name: 'Tree',
 	minDimensionCount: 2,
 	minIndicatorCount: 1,
 	maxIndicatorCount: 1,
@@ -39,8 +21,25 @@ export const SUNBURST: ChartTypeDefinition = {
 				trigger: 'item'
 			},
 			series: [ {
-				type: 'sunburst',
-				radius: [ '10%', '90%' ],
+				type: 'tree',
+				top: '2%',
+				left: '2%',
+				bottom: '2%',
+				right: '2%',
+				symbolSize: 8,
+				label: {
+					position: 'right',
+					verticalAlign: 'middle',
+					align: 'left'
+				},
+				leaves: {
+					label: {
+						position: 'left',
+						verticalAlign: 'middle',
+						align: 'right'
+					}
+				},
+				expandAndCollapse: true,
 				data: buildTreeData(chart, dataset)
 			} ]
 		};

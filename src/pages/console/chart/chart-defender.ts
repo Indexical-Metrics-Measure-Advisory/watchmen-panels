@@ -12,21 +12,14 @@ import { LINE } from './chart-line';
 import { NIGHTINGALE } from './chart-nightingale';
 import { PIE } from './chart-pie';
 import { SUNBURST } from './chart-sunburst';
+import { TREE } from './chart-tree';
+import { TREEMAP } from './chart-treemap';
 import { validateDimensionCount, validateIndicatorCount } from './chart-utils';
 import { ChartTypeDefinition, ValidationFailure, ValidationSuccess, Validator } from './types';
 
 export const SCATTER: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.SCATTER,
 	name: 'Scatter'
-};
-
-export const TREE: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.TREE,
-	name: 'Tree'
-};
-export const TREEMAP: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.TREEMAP,
-	name: 'Treemap'
 };
 
 export const ChartTypes: Array<ChartTypeDefinition> = [ COUNT, BAR, LINE, PIE, DOUGHNUT, NIGHTINGALE, SCATTER, SUNBURST, TREE, TREEMAP ];

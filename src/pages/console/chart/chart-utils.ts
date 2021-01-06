@@ -1,5 +1,26 @@
-import { ConsoleSpaceSubjectChart, ConsoleSpaceSubjectChartDataSet } from '../../../services/console/types';
+import {
+	ConsoleSpaceSubjectChart,
+	ConsoleSpaceSubjectChartDataSet,
+	ConsoleSpaceSubjectChartDataSetGrid
+} from '../../../services/console/types';
 import { ChartTypeDefinition, Validator } from './types';
+
+interface IntermediateTreeNode {
+	name: string,
+	children: ConsoleSpaceSubjectChartDataSetGrid
+}
+
+interface TreeNode {
+	name: string;
+}
+
+interface NonLeafTreeNode extends TreeNode {
+	children: Array<TreeNode>;
+}
+
+interface LeafTreeNode extends TreeNode {
+	value: number;
+}
 
 export const getDimensionColumnIndexOffset = (chart: ConsoleSpaceSubjectChart) => {
 	return chart.indicators.length;
@@ -14,6 +35,46 @@ export const buildDescartesByDimensions = (chart: ConsoleSpaceSubjectChart, data
 	return data.map(row => {
 		return { value: dimensionIndexes.map(index => row[index]).join(','), row };
 	});
+};
+
+/**
+ * multiple roots are allowed, depends on data.
+ * each branch has same depth.
+ */
+export const buildTreeData = (chart: ConsoleSpaceSubjectChart, dataset: ConsoleSpaceSubjectChartDataSet) => {
+	const { dimensions } = chart;
+	const dimensionColumnIndexOffset = getDimensionColumnIndexOffset(chart);
+	const buildData = (dimensionIndex: number, grid: ConsoleSpaceSubjectChartDataSetGrid): Array<NonLeafTreeNode> => {
+		const dimensionValueMap = new Map<string, number>();
+		return grid.reduce<Array<IntermediateTreeNode>>((data, row) => {
+			const dimensionValue = `${row[dimensionIndex + dimensionColumnIndexOffset] || ''}`;
+			const dimensionValueIndex = dimensionValueMap.get(dimensionValue);
+			if (!dimensionValueIndex) {
+				data.push({ name: dimensionValue, children: [ row ] });
+				dimensionValueMap.set(dimensionValue, data.length);
+			} else {
+				data[dimensionValueIndex].children.push(row);
+			}
+			return data;
+		}, [] as Array<IntermediateTreeNode>).map(({ name, children }) => {
+			if (dimensionIndex === dimensions.length - 2) {
+				// non-leaf nodes done, start to process indicator
+				return {
+					name,
+					children: children.map(row => {
+						return {
+							name: `${row[dimensionIndex + 1 + dimensionColumnIndexOffset]}`,
+							value: row[0]
+						} as LeafTreeNode;
+					})
+				};
+			} else {
+				// next dimension
+				return { name, children: buildData(dimensionIndex + 1, children) };
+			}
+		});
+	};
+	return buildData(0, dataset.data);
 };
 
 export const validateIndicatorCount: Validator = (chart: ConsoleSpaceSubjectChart, def: ChartTypeDefinition) => {
