@@ -5,6 +5,8 @@ export const INIT_LEFT = CHART_MARGIN;
 export const INIT_MIN_WIDTH = 300;
 export const CHART_HEADER_HEIGHT = 40;
 export const CHART_ASPECT_RATIO = 3 / 4;
+export const CHART_MIN_HEIGHT = 200 + CHART_HEADER_HEIGHT;
+export const CHART_MIN_WIDTH = CHART_MIN_HEIGHT / CHART_ASPECT_RATIO + CHART_HEADER_HEIGHT;
 
 export const generateChartRect = (container: HTMLDivElement) => {
 	const { clientWidth } = container;
