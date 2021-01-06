@@ -35,6 +35,9 @@ const ChartContainer = styled.div
 	border: var(--border);
 	background-color: var(--bg-color);
 	transition: all 300ms ease-in-out;
+	&:hover {
+		box-shadow: var(--console-shadow);
+	}
 `;
 const Header = styled.div.attrs({
 	'data-widget': 'console-subject-view-chart-header'

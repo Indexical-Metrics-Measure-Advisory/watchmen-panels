@@ -46,6 +46,9 @@ const Chart = styled.div`
 	flex-grow: 1;
 	height: 100%;
 	overflow: hidden;
+	&[data-visible=false] {
+		display: none;
+	}
 `;
 const CountChart = styled.div`
 	display: flex;
@@ -157,7 +160,7 @@ export const ChartDiagram = (props: {
 						console.error(e);
 						setValidation({
 							pass: false,
-							error: 'Uncaught error occurred, check your chart settings please.'
+							error: 'Unpredicted error occurred, check your chart settings please.'
 						});
 					}
 				})();
@@ -171,18 +174,18 @@ export const ChartDiagram = (props: {
 
 	try {
 		return <ChartDiagramContainer>
-			<Chart ref={rootRef}>
+			<Chart ref={rootRef} data-visible={validation.pass}>
 				<CountChartDiagram rootRef={rootRef} data={data}
 				                   visible={chart.type === ConsoleSpaceSubjectChartType.COUNT}/>
 			</Chart>
-			<Error data-visible={validation.pass}>
+			<Error data-visible={!validation.pass}>
 				{!validation.pass && (validation.error || 'Unfinished definition.')}
 			</Error>
 		</ChartDiagramContainer>;
 	} catch (e) {
 		console.error(e);
 		return <ChartDiagramContainer>
-			<Error data-visible={true}>Uncaught error occurred, check your chart settings please.</Error>
+			<Error data-visible={true}>Unpredicted error occurred, check your chart settings please.</Error>
 		</ChartDiagramContainer>;
 	}
 };

@@ -8,6 +8,7 @@ import {
 import { BAR } from './chart-bar';
 import { COUNT } from './chart-count';
 import { LINE } from './chart-line';
+import { PIE } from './chart-pie';
 import { validateDimensionCount, validateIndicatorCount } from './chart-utils';
 import { ChartTypeDefinition, ValidationFailure, ValidationSuccess, Validator } from './types';
 
@@ -15,10 +16,7 @@ export const SCATTER: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.SCATTER,
 	name: 'Scatter'
 };
-export const PIE: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.PIE,
-	name: 'Pie'
-};
+
 export const DOUGHNUT: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.DOUGHNUT,
 	name: 'Doughnut'
@@ -72,29 +70,40 @@ export const defendChart = (chart: ConsoleSpaceSubjectChart) => {
 
 export const isDimensionCanRemove = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
-	const canReduceDimensions = def.canReduceDimensions;
-	if (canReduceDimensions) {
-		return canReduceDimensions(chart, def);
-	} else {
-		return (chart.dimensions || []).length > (def.minDimensionCount || 1);
+	const currentCount = chart.dimensions.length;
+	if (currentCount <= (def.minDimensionCount || 1)) {
+		return false;
 	}
+
+	const canReduceDimensions = def.canReduceDimensions;
+	return !canReduceDimensions || canReduceDimensions(chart, def);
 };
 export const isDimensionCanAppend = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
+	const currentCount = chart.dimensions.length;
+	if (def.maxDimensionCount && currentCount >= def.maxDimensionCount) {
+		return false;
+	}
+
 	const canAppendDimensions = def.canAppendDimensions;
 	return !canAppendDimensions || canAppendDimensions(chart, def);
 };
 export const isIndicatorCanRemove = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
-	const canReduceIndicators = def.canReduceIndicators;
-	if (canReduceIndicators) {
-		return canReduceIndicators(chart, def);
-	} else {
-		return (chart.indicators || []).length > (def.minIndicatorCount || 1);
+	const currentCount = chart.indicators.length;
+	if (currentCount <= (def.minIndicatorCount || 1)) {
+		return false;
 	}
+	const canReduceIndicators = def.canReduceIndicators;
+	return !canReduceIndicators || canReduceIndicators(chart, def);
 };
 export const isIndicatorCanAppend = (chart: ConsoleSpaceSubjectChart) => {
 	const def = findChartTypeDefinition(chart.type!);
+	const currentCount = chart.indicators.length;
+	if (def.maxIndicatorCount && currentCount >= def.maxIndicatorCount) {
+		return false;
+	}
+
 	const canAppendIndicators = def.canAppendIndicators;
 	return !canAppendIndicators || canAppendIndicators(chart, def);
 };
