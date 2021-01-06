@@ -1,11 +1,15 @@
 import { ConsoleSpaceSubjectChart, ConsoleSpaceSubjectChartDataSet } from '../../../services/console/types';
 import { ChartTypeDefinition, Validator } from './types';
 
+export const getDimensionColumnIndexOffset = (chart: ConsoleSpaceSubjectChart) => {
+	return chart.indicators.length;
+};
+
 export const buildDescartesByDimensions = (chart: ConsoleSpaceSubjectChart, dataset: ConsoleSpaceSubjectChartDataSet) => {
 	const { data } = dataset;
-	const { dimensions, indicators } = chart;
+	const { dimensions } = chart;
 
-	const columnIndexOffset = indicators.length;
+	const columnIndexOffset = getDimensionColumnIndexOffset(chart);
 	const dimensionIndexes = new Array(dimensions.length).fill(1).map((v, index) => index + columnIndexOffset);
 	return data.map(row => {
 		return { value: dimensionIndexes.map(index => row[index]).join(','), row };

@@ -9,9 +9,9 @@ import { buildDescartesByDimensions } from './chart-utils';
 import { ChartTypeDefinition } from './types';
 import { findFactorByIndicator } from './utils';
 
-export const PIE: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.PIE,
-	name: 'Pie',
+export const NIGHTINGALE: ChartTypeDefinition = {
+	type: ConsoleSpaceSubjectChartType.NIGHTINGALE,
+	name: 'Nightingale',
 	minDimensionCount: 1,
 	minIndicatorCount: 1,
 	maxIndicatorCount: 1,
@@ -31,6 +31,7 @@ export const PIE: ChartTypeDefinition = {
 			series: [ {
 				name: factor.label || factor.name,
 				type: 'pie',
+				roseType: 'area',
 				center: [ '50%', '50%' ],
 				data: groups.map(({ value, row }) => {
 					return {

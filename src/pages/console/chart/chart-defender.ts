@@ -7,8 +7,11 @@ import {
 } from '../../../services/console/types';
 import { BAR } from './chart-bar';
 import { COUNT } from './chart-count';
+import { DOUGHNUT } from './chart-doughnut';
 import { LINE } from './chart-line';
+import { NIGHTINGALE } from './chart-nightingale';
 import { PIE } from './chart-pie';
+import { SUNBURST } from './chart-sunburst';
 import { validateDimensionCount, validateIndicatorCount } from './chart-utils';
 import { ChartTypeDefinition, ValidationFailure, ValidationSuccess, Validator } from './types';
 
@@ -17,18 +20,6 @@ export const SCATTER: ChartTypeDefinition = {
 	name: 'Scatter'
 };
 
-export const DOUGHNUT: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.DOUGHNUT,
-	name: 'Doughnut'
-};
-export const NIGHTINGALE: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.NIGHTINGALE,
-	name: 'Nightingale'
-};
-export const SUNBURST: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.SUNBURST,
-	name: 'Sunburst'
-};
 export const TREE: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.TREE,
 	name: 'Tree'

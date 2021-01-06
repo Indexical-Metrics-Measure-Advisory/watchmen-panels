@@ -12,6 +12,8 @@ import { findFactorByIndicator } from './utils';
 export const BAR: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.BAR,
 	name: 'Bar',
+	minDimensionCount: 1,
+	minIndicatorCount: 1,
 	buildOptions: (chart: ConsoleSpaceSubjectChart, space: ConsoleSpace, dataset: ConsoleSpaceSubjectChartDataSet) => {
 		const { indicators } = chart;
 
