@@ -11,16 +11,12 @@ import { DOUGHNUT } from './chart-doughnut';
 import { LINE } from './chart-line';
 import { NIGHTINGALE } from './chart-nightingale';
 import { PIE } from './chart-pie';
+import { SCATTER } from './chart-scatter';
 import { SUNBURST } from './chart-sunburst';
 import { TREE } from './chart-tree';
 import { TREEMAP } from './chart-treemap';
 import { validateDimensionCount, validateIndicatorCount } from './chart-utils';
 import { ChartTypeDefinition, ValidationFailure, ValidationSuccess, Validator } from './types';
-
-export const SCATTER: ChartTypeDefinition = {
-	type: ConsoleSpaceSubjectChartType.SCATTER,
-	name: 'Scatter'
-};
 
 export const ChartTypes: Array<ChartTypeDefinition> = [ COUNT, BAR, LINE, PIE, DOUGHNUT, NIGHTINGALE, SCATTER, SUNBURST, TREE, TREEMAP ];
 export const ChartTypeDropdownOptions = ChartTypes.map(({ name, type }) => ({ label: name, value: type }));
@@ -42,6 +38,8 @@ export const defendChart = (chart: ConsoleSpaceSubjectChart) => {
 	}
 
 	const def = findChartTypeDefinition(chart.type);
+
+	// make dimensions and indicators fulfill the minimum count
 	new Array(Math.max((def.minDimensionCount || 1) - chart.dimensions.length, 0)).fill(1).forEach(() => chart.dimensions.push({}));
 	new Array(Math.max((def.minIndicatorCount || 1) - chart.indicators.length, 0)).fill(1).forEach(() => chart.indicators.push({ aggregator: ConsoleSpaceSubjectChartIndicatorAggregator.NONE }));
 

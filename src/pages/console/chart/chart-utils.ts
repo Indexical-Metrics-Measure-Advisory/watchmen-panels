@@ -44,21 +44,21 @@ export const buildDescartesByDimensions = (chart: ConsoleSpaceSubjectChart, data
 export const buildTreeData = (chart: ConsoleSpaceSubjectChart, dataset: ConsoleSpaceSubjectChartDataSet) => {
 	const { dimensions } = chart;
 	const dimensionColumnIndexOffset = getDimensionColumnIndexOffset(chart);
-	const buildData = (dimensionIndex: number, grid: ConsoleSpaceSubjectChartDataSetGrid): Array<NonLeafTreeNode> => {
+	const buildData = (dimensionIndex: number, grid: ConsoleSpaceSubjectChartDataSetGrid): Array<TreeNode> => {
 		const dimensionValueMap = new Map<string, number>();
 		return grid.reduce<Array<IntermediateTreeNode>>((data, row) => {
 			const dimensionValue = `${row[dimensionIndex + dimensionColumnIndexOffset] || ''}`;
 			const dimensionValueIndex = dimensionValueMap.get(dimensionValue);
-			if (!dimensionValueIndex) {
+			if (dimensionValueIndex == null) {
 				data.push({ name: dimensionValue, children: [ row ] });
-				dimensionValueMap.set(dimensionValue, data.length);
+				dimensionValueMap.set(dimensionValue, data.length - 1);
 			} else {
 				data[dimensionValueIndex].children.push(row);
 			}
 			return data;
-		}, [] as Array<IntermediateTreeNode>).map(({ name, children }) => {
+		}, []).map(({ name, children }) => {
 			if (dimensionIndex === dimensions.length - 2) {
-				// non-leaf nodes done, start to process indicator
+				// non-leaf nodes done, start to process last dimension and indicator
 				return {
 					name,
 					children: children.map(row => {
@@ -68,10 +68,31 @@ export const buildTreeData = (chart: ConsoleSpaceSubjectChart, dataset: ConsoleS
 						} as LeafTreeNode;
 					})
 				};
-			} else {
-				// next dimension
-				return { name, children: buildData(dimensionIndex + 1, children) };
 			}
+
+			if (children.length === 1) {
+				// only one data row on this name, check following dimensions.
+				// ignore dimensions has no practical meaning value
+				const stageNode = { name };
+				let parentNode = stageNode;
+				const row = children[0];
+				for (let followDimensionIndex = dimensionIndex + 1, dimensionCount = dimensions.length; followDimensionIndex < dimensionCount; followDimensionIndex++) {
+					const dimensionValue = row[followDimensionIndex + dimensionColumnIndexOffset];
+					if (!dimensionValue) {
+						// no value, ignore
+						continue;
+					}
+					// append a new node
+					const node = parentNode as NonLeafTreeNode;
+					node.children = [ { name: `${dimensionValue}` } ];
+					parentNode = node.children[0];
+				}
+				(parentNode as LeafTreeNode).value = row[0];
+				return stageNode as TreeNode;
+			}
+
+			// next dimension
+			return { name, children: buildData(dimensionIndex + 1, children) };
 		});
 	};
 	return buildData(0, dataset.data);

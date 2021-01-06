@@ -16,6 +16,7 @@ const Trigger = styled.div`
 	> div:first-child {
 		white-space: nowrap;
 		font-weight: var(--font-demi-bold);
+		font-variant: petite-caps;
 	}
 	> div:nth-child(2) {
 		font-variant: petite-caps;
