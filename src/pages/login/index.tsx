@@ -29,6 +29,11 @@ const LoginHeader = styled.div`
 	> svg:first-child {
 		width: 40px;
 		height: 40px;
+		filter: drop-shadow(4px 4px 12px rgba(0, 0, 0, 0.3));
+		> g > ellipse {
+			fill: var(--font-color);
+			stroke: var(--font-color);
+		}
 	}
 	> span:nth-child(2) {
 		font-variant: petite-caps;
