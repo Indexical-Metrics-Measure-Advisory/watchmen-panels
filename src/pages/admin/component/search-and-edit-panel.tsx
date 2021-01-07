@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-
 import { useForceUpdate } from '../../../common/utils';
 import { DataPage } from '../../../services/admin/types';
 import { NarrowPageTitle } from '../../component/console/narrow-page-title';
 import { PlainNarrowContainer } from '../../component/console/page-container';
-import { DangerObjectButton, PrimaryObjectButton } from '../pipeline/editor/components/object-button';
+import { DangerObjectButton, PrimaryObjectButton } from '../../component/object-button';
 import { EditPanel } from './edit-panel';
 import { EditPanelButtons } from './edit-panel-buttons';
 import { SingleSearch } from './single-search';

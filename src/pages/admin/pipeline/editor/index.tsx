@@ -6,9 +6,9 @@ import { v4 } from 'uuid';
 import { useCollapseFixedThing, useForceUpdate } from '../../../../common/utils';
 import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeline-types';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
+import { PrimaryObjectButton } from '../../../component/object-button';
 import { usePipelineContext } from '../pipeline-context';
 import { ArrangedPipeline, PipelinesTopicNode } from '../types';
-import { PrimaryObjectButton } from './components/object-button';
 import { PipelineEditor } from './pipeline-editor';
 import { createStage } from './utils';
 

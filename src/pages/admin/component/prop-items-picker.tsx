@@ -4,7 +4,7 @@ import React, { Fragment, useRef, useState } from "react";
 import styled from 'styled-components';
 import { useCollapseFixedThing } from '../../../common/utils';
 import Input from '../../component/input';
-import { PrimaryObjectButton } from '../pipeline/editor/components/object-button';
+import { PrimaryObjectButton } from '../../component/object-button';
 
 interface DropdownState {
 	visible: boolean;

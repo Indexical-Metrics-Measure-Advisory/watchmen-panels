@@ -33,8 +33,16 @@ interface TooltipContent {
 const Context = React.createContext<ConsoleTooltipContext>({} as ConsoleTooltipContext);
 Context.displayName = 'ConsoleTooltipContext';
 
-
-const TooltipContainer = styled.div.attrs<{ rect?: TooltipRect, 'data-show': boolean }>(({ rect: { align, maxWidth, offsetY = 0, offsetX = 0, trigger } = {}, 'data-show': visible }) => {
+const TooltipContainer = styled.div.attrs<{ rect?: TooltipRect, 'data-show': boolean }>(({
+	                                                                                         rect: {
+		                                                                                         align,
+		                                                                                         maxWidth,
+		                                                                                         offsetY = 0,
+		                                                                                         offsetX = 0,
+		                                                                                         trigger
+	                                                                                         } = {},
+	                                                                                         'data-show': visible
+                                                                                         }) => {
 	const { y = 0, x = 0, width = 0 } = trigger || {};
 	return {
 		'data-widget': 'console-tooltip',
@@ -70,7 +78,12 @@ const TooltipContainer = styled.div.attrs<{ rect?: TooltipRect, 'data-show': boo
 	}
 `;
 
-const Caret = styled(FontAwesomeIcon).attrs<{ rect?: TooltipRect }>(({ rect: { align, trigger: { width = 0 } = {} } = {} }) => {
+const Caret = styled(FontAwesomeIcon).attrs<{ rect?: TooltipRect }>(({
+	                                                                     rect: {
+		                                                                     align,
+		                                                                     trigger: { width = 0 } = {}
+	                                                                     } = {}
+                                                                     }) => {
 	return {
 		style: {
 			left: align === TooltipAlignment.LEFT ? 16 : (align === TooltipAlignment.CENTER ? 'calc(50% - 4px)' : 'unset'),

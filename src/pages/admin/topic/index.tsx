@@ -18,6 +18,7 @@ import { Factor, FactorType, QueriedTopic, Topic, TopicType } from '../../../ser
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { LinkButton } from '../../component/console/link-button';
 import { DropdownOption } from '../../component/dropdown';
+import { PrimaryObjectButton } from '../../component/object-button';
 import { useEditPanelContext } from '../component/edit-panel';
 import { PropDropdown } from '../component/prop-dropdown';
 import { PropInput } from '../component/prop-input';
@@ -25,7 +26,6 @@ import { PropInputLines } from '../component/prop-input-lines';
 import { PropLabel } from '../component/prop-label';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
-import { PrimaryObjectButton } from '../pipeline/editor/components/object-button';
 
 const FactorsButton = styled.div`
 	display: flex;

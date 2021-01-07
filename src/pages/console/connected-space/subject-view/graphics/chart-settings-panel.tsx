@@ -13,9 +13,9 @@ import {
 	ConsoleSpaceSubjectChartIndicatorAggregator,
 	ConsoleSpaceSubjectChartType
 } from '../../../../../services/console/types';
-import { DangerObjectButton } from '../../../../admin/pipeline/editor/components/object-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import Input from '../../../../component/input';
+import { DangerObjectButton } from '../../../../component/object-button';
 import {
 	ChartTypeDropdownOptions,
 	defendChart,

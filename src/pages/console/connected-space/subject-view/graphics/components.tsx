@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { PrimaryObjectButton } from '../../../../admin/pipeline/editor/components/object-button';
+import { PrimaryObjectButton } from '../../../../component/object-button';
 
 export const SettingsContainer = styled.div`
 	display: flex;

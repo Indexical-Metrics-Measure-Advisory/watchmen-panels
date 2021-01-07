@@ -32,7 +32,6 @@ import { SettingsButton } from './settings-button';
 import { SettingsContainer } from './settings-container';
 import { useChartSettingsContext } from './settings-context';
 
-
 const ChartBody = styled.div.attrs({
 	'data-widget': 'chart-body'
 })`
@@ -132,22 +131,22 @@ const ChartDisabledPlaceholder = styled.div.attrs({
 		&:first-child {
 			color: ${DarkenColors24[0]};
 			align-self: end;
-		    justify-self: end;
-		    padding-right: 4px;
+			justify-self: end;
+			padding-right: 4px;
 		}
 		&:nth-child(2) {
 			color: ${DarkenColors24[1]};
 			align-self: end;
-		    padding-left: 4px;
+			padding-left: 4px;
 		}
 		&:nth-child(3) {
 			color: ${DarkenColors24[2]};
 			justify-self: end;
-		    padding-right: 4px;
+			padding-right: 4px;
 		}
 		&:nth-child(4) {
 			color: ${DarkenColors24[3]};
-		    padding-left: 4px;
+			padding-left: 4px;
 		}
 	}
 `;

@@ -12,6 +12,8 @@ const Paths = {
 	GUIDE_MEASURE_INDICATOR: '/guide/:domain/measure-indicator',
 	GUIDE_BUILD_METRICS: '/guide/:domain/build-metrics',
 
+	LOGIN: '/login',
+
 	CONSOLE: '/console',
 	CONSOLE_HOME: '/console/home',
 	CONSOLE_SPACES: '/console/spaces',

@@ -36,13 +36,19 @@ const FavoriteContainer = styled.div.attrs({
 	height: calc(var(--margin) / 3 * 3 + 20 + 28 * ${({ itemCount }) => itemCount});
 	padding: calc(var(--margin) / 3);
 	transition: all 300ms ease-in-out;
-	transform: scale3d(0,0,0);
+	transform: scale3d(0, 0, 0);
 	transform-origin: left center;
 	z-index: 6000;
 	top: ${({ invoker: { rect: { y, height }, isMenuExpanded } }) => isMenuExpanded ? y + height : y}px;
-	left: ${({ theme, invoker: { rect: { x }, isMenuExpanded } }) => isMenuExpanded ? (x + 20) : (theme.consoleMenuWidth - 2)}px;
+	left: ${({
+		         theme,
+		         invoker: {
+			         rect: { x },
+			         isMenuExpanded
+		         }
+	         }) => isMenuExpanded ? (x + 20) : (theme.consoleMenuWidth - 2)}px;
 	&[data-visible=true] {
-		transform: scale3d(1,1,1);
+		transform: scale3d(1, 1, 1);
 		opacity: 1;
 		pointer-events: auto;
 	}

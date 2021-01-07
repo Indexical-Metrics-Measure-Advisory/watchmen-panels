@@ -27,5 +27,5 @@ const Logo = (props: { className?: string; }) => {
 			      strokeMiterlimit='10' pointerEvents='none'/>
 		</g>
 	</SVG>;
-}
+};
 export default Logo;
