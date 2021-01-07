@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { findAccount } from '../../../services/account/account-session';
 import { ConsoleMenuUsable, useConsoleMenu } from '../../component/console/context/console-menu';
 import { ConsoleTooltipContextProvider } from '../../component/console/context/console-tooltip';
 import { ConsoleUser } from '../../component/console/types';
@@ -31,8 +32,11 @@ export const ConsoleContextProvider = (props: { children?: ((props: any) => Reac
 	const { children } = props;
 
 	const menu = useConsoleMenu();
-	// TODO account is fixed now, for demo purpose
-	const [ currentUser ] = useState<ConsoleUser>({ name: 'Walter Kovacs' });
+	const [ currentUser ] = useState<ConsoleUser>(() => {
+		return {
+			name: findAccount()?.name || 'Walter Kovacs'
+		};
+	});
 	const notifications = useConsoleNotifications();
 	const mails = useConsoleMails();
 	const spaces = useConsoleSpaces();
