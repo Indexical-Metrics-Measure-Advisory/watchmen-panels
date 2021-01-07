@@ -8,6 +8,6 @@ export const login = async (account: Account): Promise<LoginResponse> => {
 				admin: account.name === 'imma-admin',
 				error: [ 'imma-admin', 'imma-user' ].includes(account.name || '') ? (void 0) : 'Name or credential cannot be identified now.'
 			});
-		}, 10000);
+		}, 1000);
 	});
 };
