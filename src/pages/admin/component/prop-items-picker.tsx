@@ -275,7 +275,7 @@ const ItemPicker = <T extends any>(props: {
 	return <PropItemsPickerContainer>
 		<ItemFinder data-in-search={inSearch} ref={containerRef}>
 			<Input ref={inputRef}
-			       placeholder='Search by Group Name...'
+			       placeholder='Search by Name...'
 			       value={searchText} onChange={onSearchTextChange}
 			       onFocus={onSearchFocus}/>
 			<PrimaryObjectButton onClick={onSearchClicked}>
