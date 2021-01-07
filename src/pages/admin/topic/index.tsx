@@ -287,7 +287,9 @@ const FactorTypeOptions = [
 	{ value: FactorType.BOOLEAN, label: 'Boolean' },
 	{ value: FactorType.DATETIME, label: 'DateTime' },
 	{ value: FactorType.ENUM, label: 'Enumeration' },
-	{ value: FactorType.SEQUENCE, label: 'Sequence' }
+	{ value: FactorType.SEQUENCE, label: 'Sequence' },
+	{ value: FactorType.OBJECT, label: 'One-2-One' },
+	{ value: FactorType.ARRAY, label: 'One-2-Many' }
 ];
 
 const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
@@ -343,7 +345,10 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 			</FactorTableHeader>
 			<FactorTableBody data-max={max}>
 				{topic.factors.map(factor => {
-					return <Fragment key={factor.factorId || v4()}>
+					if (!factor.factorId) {
+						factor.factorId = v4();
+					}
+					return <Fragment key={factor.factorId}>
 						<div><PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/></div>
 						<div><PropInput value={factor.label} onChange={onFactorPropChange(factor, 'label')}/></div>
 						<div>
@@ -377,7 +382,6 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 };
 
 const renderEditContent = (topic: Topic, onDataChanged: () => void) => {
-
 	const onPropChange = (prop: 'code' | 'name' | 'description') => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		if (topic[prop] !== event.target.value) {
 			topic[prop] = event.target.value;
