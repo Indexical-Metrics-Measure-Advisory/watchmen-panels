@@ -118,6 +118,7 @@ const LoginBody = styled.div`
 						border-radius: 0 calc(var(--border-radius) * 2) 0 0;
 						padding-left: 0;
 						font-size: var(--font-size);
+						transition: none;
 						// for avoid chrome auto fill background
 						box-shadow: 0 0 0 1000px var(--bg-color) inset;
 						&:first-line {
