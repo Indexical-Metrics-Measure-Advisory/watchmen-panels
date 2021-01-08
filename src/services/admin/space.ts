@@ -53,7 +53,6 @@ export const listSpaces = async (options: {
 		});
 
 		const result = await response.json();
-		console.log(result);
 
 		return result;
 	}
@@ -74,28 +73,49 @@ export const listSpacesForUserGroup = async (search: string): Promise<Array<Quer
 export const fetchSpace = async (
 	spaceId: string
 ): Promise<{ space: Space; groups: Array<QueriedUserGroupForGroupsHolder>; topics: Array<QueriedTopicForSpace> }> => {
-	let space: Space;
-	switch (spaceId) {
-		case "1":
-			space = {
-				spaceId: "1",
-				name: "Quotation & Policy",
-				description: "All Sales Data",
-				groupIds: ["1"],
-			};
-			break;
-		default:
-			space = {};
+	console.log(spaceId);
+	if (isMockService()) {
+		// call api
+		let space: Space;
+		switch (spaceId) {
+			case "1":
+				space = {
+					spaceId: "1",
+					name: "Quotation & Policy",
+					description: "All Sales Data",
+					groupIds: ["1"],
+				};
+				break;
+			default:
+				space = {};
+		}
+		return {
+			space,
+			groups: [{ userGroupId: "1", name: "Oklahoma", description: "Northwest market analysis squad." }],
+			topics: [
+				{ topicId: "1", name: "Quotation" },
+				{ topicId: "2", name: "Policy" },
+				{ topicId: "3", name: "Participant" },
+			],
+		};
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}space?space_id=${spaceId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+		// const result = await
+		const space = await response.json();
+		//TODO: load groups and topics
+
+		return { space, groups: [], topics: [] };
 	}
-	return {
-		space,
-		groups: [{ userGroupId: "1", name: "Oklahoma", description: "Northwest market analysis squad." }],
-		topics: [
-			{ topicId: "1", name: "Quotation" },
-			{ topicId: "2", name: "Policy" },
-			{ topicId: "3", name: "Participant" },
-		],
-	};
 };
 
 export const saveSpace = async (space: Space): Promise<void> => {
