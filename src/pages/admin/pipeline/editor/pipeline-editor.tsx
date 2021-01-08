@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../common/utils';
+import { savePipeline } from '../../../../services/admin/pipeline';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
 import { ArrangedPipeline, ArrangedStage } from '../types';
@@ -47,6 +48,11 @@ export const PipelineEditor = (props: {
 
 	const { changeSelectedPipeline } = usePipelineContext();
 	const forceUpdate = useForceUpdate();
+	useEffect(() => {
+		return () => {
+			savePipeline(pipeline.origin);
+		};
+	});
 
 	const onNameChange = (value: string) => {
 		// change both well known pipeline and original one

@@ -313,8 +313,8 @@ export const Editor = (props: {
 		</EditorTitle>
 		<EditorBody>
 			{pipeline ?
-				<PipelineEditor outbound={isOutbound} topic={topic}
-				                pipeline={pipeline}/> : null}
+				<PipelineEditor outbound={isOutbound} topic={topic} pipeline={pipeline}/>
+				: null}
 		</EditorBody>
 	</EditorContainer>;
 };
