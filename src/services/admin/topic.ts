@@ -250,16 +250,43 @@ export const listTopicsForPipeline = async (
 	pageNumber: number,
 	pageSize: number = 100
 ): Promise<{ data: Array<QueriedTopicForPipeline>; completed: boolean }> => {
-	return new Promise((resolve) => {
-		setTimeout(
-			() =>
-				resolve({
-					data: DemoTopics,
-					completed: true,
-				}),
-			1000
-		);
-	});
+	console.log(isMockService());
+	if (isMockService()) {
+		// call api
+		return new Promise((resolve) => {
+			setTimeout(
+				() =>
+					resolve({
+						data: DemoTopics,
+						completed: true,
+					}),
+				1000
+			);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}topic/all`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+			body: JSON.stringify({ pageNumber: pageNumber, pageSize: pageSize }),
+		});
+
+		const result = await response.json();
+		let completed = false;
+		if (result.itemCount < result.pageSize) {
+			completed = true;
+		}
+
+		return { data: result.data, completed: completed };
+	}
+
+	// first 1 100  return data_list items 150
 };
 
 const DemoPipelineOfPolicy = {
@@ -429,17 +456,33 @@ export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {
 };
 
 export const listTopicsForSpace = async (search: string): Promise<Array<QueriedTopicForSpace>> => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve(
-				[
-					{ topicId: "1", name: "Quotation" },
-					{ topicId: "2", name: "Policy" },
-					{ topicId: "3", name: "Participant" },
-				].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
-			);
-		}, 500);
-	});
+	if (isMockService()) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(
+					[
+						{ topicId: "1", name: "Quotation" },
+						{ topicId: "2", name: "Policy" },
+						{ topicId: "3", name: "Participant" },
+					].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
+				);
+			}, 500);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}query/topic/space?query_name=${search}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		return await response.json();
+	}
 };
 
 export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => {
@@ -462,7 +505,7 @@ export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => 
 		// const account = Storage.findAccount();
 	} else {
 		// console.log(mock_flag);
-		const response = await fetch(`${getServiceHost()}topic/topic_id=${topicId}`, {
+		const response = await fetch(`${getServiceHost()}topic?topic_id=${topicId}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -476,19 +519,12 @@ export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => 
 };
 
 export const saveTopic = async (topic: Topic): Promise<void> => {
-	console.log(isMockService());
-	if (isMockService()) {
-		// call api
-		return new Promise((resolve) => {
-			topic.topicId = "10000";
-			setTimeout(() => resolve(), 500);
-		});
+	if (topic.topicId) {
+		console.log("hahaah");
 
-		// const token: string = Storage.findToken();
-		// const account = Storage.findAccount();
-	} else {
-		// console.log(mock_flag);
-		const response = await fetch(`${getServiceHost()}topic`, {
+		//TODO update topic
+
+		const response = await fetch(`${getServiceHost()}update/topic?topic_id=${topic.topicId}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -499,5 +535,29 @@ export const saveTopic = async (topic: Topic): Promise<void> => {
 
 		// const result = await
 		return await response.json();
+	} else {
+		if (isMockService()) {
+			// call api
+			return new Promise((resolve) => {
+				topic.topicId = "10000";
+				setTimeout(() => resolve(), 500);
+			});
+
+			// const token: string = Storage.findToken();
+			// const account = Storage.findAccount();
+		} else {
+			// console.log(mock_flag);
+			const response = await fetch(`${getServiceHost()}topic`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					// authorization: token,
+				},
+				body: JSON.stringify(topic),
+			});
+
+			// const result = await
+			return await response.json();
+		}
 	}
 };

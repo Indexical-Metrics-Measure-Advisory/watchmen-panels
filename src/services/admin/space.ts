@@ -119,19 +119,8 @@ export const fetchSpace = async (
 };
 
 export const saveSpace = async (space: Space): Promise<void> => {
-	console.log(isMockService());
-	if (isMockService()) {
-		// call api
-		return new Promise((resolve) => {
-			space.spaceId = "10000";
-			setTimeout(() => resolve(), 500);
-		});
-
-		// const token: string = Storage.findToken();
-		// const account = Storage.findAccount();
-	} else {
-		// console.log(mock_flag);
-		const response = await fetch(`${getServiceHost()}space`, {
+	if (space.spaceId) {
+		const response = await fetch(`${getServiceHost()}update/space?space_id=${space.spaceId}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -139,8 +128,29 @@ export const saveSpace = async (space: Space): Promise<void> => {
 			},
 			body: JSON.stringify(space),
 		});
+	} else {
+		if (isMockService()) {
+			// call api
+			return new Promise((resolve) => {
+				space.spaceId = "10000";
+				setTimeout(() => resolve(), 500);
+			});
 
-		// const result = await
-		return await response.json();
+			// const token: string = Storage.findToken();
+			// const account = Storage.findAccount();
+		} else {
+			// console.log(mock_flag);
+			const response = await fetch(`${getServiceHost()}space`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					// authorization: token,
+				},
+				body: JSON.stringify(space),
+			});
+
+			// const result = await
+			return await response.json();
+		}
 	}
 };
