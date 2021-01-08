@@ -505,7 +505,7 @@ export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => 
 		// const account = Storage.findAccount();
 	} else {
 		// console.log(mock_flag);
-		const response = await fetch(`${getServiceHost()}topic/topic_id=${topicId}`, {
+		const response = await fetch(`${getServiceHost()}topic?topic_id=${topicId}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -519,19 +519,12 @@ export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => 
 };
 
 export const saveTopic = async (topic: Topic): Promise<void> => {
-	console.log(isMockService());
-	if (isMockService()) {
-		// call api
-		return new Promise((resolve) => {
-			topic.topicId = "10000";
-			setTimeout(() => resolve(), 500);
-		});
+	if (topic.topicId) {
+		console.log("hahaah");
 
-		// const token: string = Storage.findToken();
-		// const account = Storage.findAccount();
-	} else {
-		// console.log(mock_flag);
-		const response = await fetch(`${getServiceHost()}topic`, {
+		//TODO update topic
+
+		const response = await fetch(`${getServiceHost()}update/topic?topic_id=${topic.topicId}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -542,5 +535,29 @@ export const saveTopic = async (topic: Topic): Promise<void> => {
 
 		// const result = await
 		return await response.json();
+	} else {
+		if (isMockService()) {
+			// call api
+			return new Promise((resolve) => {
+				topic.topicId = "10000";
+				setTimeout(() => resolve(), 500);
+			});
+
+			// const token: string = Storage.findToken();
+			// const account = Storage.findAccount();
+		} else {
+			// console.log(mock_flag);
+			const response = await fetch(`${getServiceHost()}topic`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					// authorization: token,
+				},
+				body: JSON.stringify(topic),
+			});
+
+			// const result = await
+			return await response.json();
+		}
 	}
 };
