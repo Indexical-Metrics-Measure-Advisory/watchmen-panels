@@ -57,12 +57,12 @@ export interface QueriedUser {
 }
 
 export enum FactorType {
-	SEQUENCE = 'sequence',
-	NUMBER = 'number',
-	TEXT = 'text',
-	DATETIME = 'datetime',
-	BOOLEAN = 'boolean',
-	ENUM = 'enum'
+	SEQUENCE = "sequence",
+	NUMBER = "number",
+	TEXT = "text",
+	DATETIME = "datetime",
+	BOOLEAN = "boolean",
+	ENUM = "enum",
 }
 
 export interface QueriedFactorForPipeline {
@@ -74,12 +74,12 @@ export interface QueriedFactorForPipeline {
 }
 
 export enum TopicType {
-	RAW = 'raw',
-	DISTINCT = 'distinct',
-	AGGREGATE = 'aggregate',
-	TIME = 'time',
-	RATIO = 'ratio',
-	NOT_DEFINED = 'not-defined'
+	RAW = "raw",
+	DISTINCT = "distinct",
+	AGGREGATE = "aggregate",
+	TIME = "time",
+	RATIO = "ratio",
+	NOT_DEFINED = "not-defined",
 }
 
 export interface QueriedTopicForPipeline {
@@ -91,7 +91,7 @@ export interface QueriedTopicForPipeline {
 }
 
 export interface GroupsHolder {
-	groupIds?: Array<string>
+	groupIds?: Array<string>;
 }
 
 export interface User extends GroupsHolder {
