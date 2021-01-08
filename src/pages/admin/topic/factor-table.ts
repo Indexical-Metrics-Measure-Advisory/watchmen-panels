@@ -29,5 +29,8 @@ export const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: nu
 		// editor in grid layout, 30% 70%, column gap is 32px, table is second column in editor.
 		margin-left: calc((100% + 32px) / 0.7 * 0.3 * -1 - 32px - ${FACTOR_BUTTONS_WIDTH}px);
 		z-index: 1;
+		+ div {
+			margin-left: calc((100% + 32px) / 0.7 * 0.3 * -1 - 32px);
+		}
 	}
 `;
