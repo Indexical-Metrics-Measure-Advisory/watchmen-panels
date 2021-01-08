@@ -133,20 +133,38 @@ export const listUsers = async (options: {
 };
 
 export const listUserGroupsForUser = async (search: string): Promise<Array<QueriedUserGroupForGroupsHolder>> => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve(
-				[
-					{ userGroupId: "1", name: "Oklahoma", description: "South-center market analysis squad." },
-					{ userGroupId: "2", name: "Delaware" },
-					{ userGroupId: "3", name: "Hawaii" },
-					{ userGroupId: "4", name: "Alaska" },
-					{ userGroupId: "5", name: "Missouri" },
-					{ userGroupId: "6", name: "Arkansas" },
-				].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
-			);
-		}, 500);
-	});
+	if (isMockService()) {
+		// call api
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(
+					[
+						{ userGroupId: "1", name: "Oklahoma", description: "South-center market analysis squad." },
+						{ userGroupId: "2", name: "Delaware" },
+						{ userGroupId: "3", name: "Hawaii" },
+						{ userGroupId: "4", name: "Alaska" },
+						{ userGroupId: "5", name: "Missouri" },
+						{ userGroupId: "6", name: "Arkansas" },
+					].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
+				);
+			}, 500);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}query/user_group/space?query_name=${search}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		// const result = await
+		return await response.json();
+	}
 };
 
 export const fetchUser = async (
@@ -314,34 +332,70 @@ export const saveUserGroup = async (group: UserGroup): Promise<void> => {
 };
 
 export const listUsersForUserGroup = async (search: string): Promise<Array<QueriedUserForUserGroup>> => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve(
-				[
-					{ userId: "1", name: "Damon Lindelof" },
-					{ userId: "2", name: "Sally Jupiter" },
-					{ userId: "3", name: "Roy Raymond" },
-					{ userId: "4", name: "Walter Kovacs" },
-					{ userId: "5", name: "Jeffrey Dean Morgan" },
-				].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
-			);
-		}, 500);
-	});
+	if (isMockService()) {
+		// call api
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(
+					[
+						{ userId: "1", name: "Damon Lindelof" },
+						{ userId: "2", name: "Sally Jupiter" },
+						{ userId: "3", name: "Roy Raymond" },
+						{ userId: "4", name: "Walter Kovacs" },
+						{ userId: "5", name: "Jeffrey Dean Morgan" },
+					].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
+				);
+			}, 500);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}query/user/group?query_name=${search}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		// const result = await
+		return await response.json();
+	}
 };
 
 export const listUserGroupsForSpace = async (search: string): Promise<Array<QueriedUserGroupForGroupsHolder>> => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve(
-				[
-					{ userGroupId: "1", name: "Oklahoma", description: "South-center market analysis squad." },
-					{ userGroupId: "2", name: "Delaware" },
-					{ userGroupId: "3", name: "Hawaii" },
-					{ userGroupId: "4", name: "Alaska" },
-					{ userGroupId: "5", name: "Missouri" },
-					{ userGroupId: "6", name: "Arkansas" },
-				].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
-			);
-		}, 500);
-	});
+	if (isMockService()) {
+		// call api
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(
+					[
+						{ userGroupId: "1", name: "Oklahoma", description: "South-center market analysis squad." },
+						{ userGroupId: "2", name: "Delaware" },
+						{ userGroupId: "3", name: "Hawaii" },
+						{ userGroupId: "4", name: "Alaska" },
+						{ userGroupId: "5", name: "Missouri" },
+						{ userGroupId: "6", name: "Arkansas" },
+					].filter((x) => x.name.toUpperCase().includes(search.toUpperCase()))
+				);
+			}, 500);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}query/user_group/space?query_name=${search}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		// const result = await
+		return await response.json();
+	}
 };
