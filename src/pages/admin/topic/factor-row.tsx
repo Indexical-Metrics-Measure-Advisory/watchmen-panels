@@ -63,6 +63,22 @@ const prepareFactorPainting = (topic: Topic, factor: Factor) => {
 	}
 };
 
+const findParentFactor = (topic: Topic, factor: Factor): Factor | undefined => {
+	const factorIndex = topic.factors.indexOf(factor);
+	if (factorIndex === 0) {
+		return (void 0);
+	}
+
+	for (let index = factorIndex - 1; index >= 0; index--) {
+		const f = topic.factors[index];
+		if (f.type === FactorType.OBJECT || f.type === FactorType.ARRAY) {
+			return f;
+		}
+	}
+
+	return (void 0);
+};
+
 export const FactorRow = (props: {
 	topic: Topic;
 	factor: Factor;
@@ -75,7 +91,22 @@ export const FactorRow = (props: {
 		onDataChanged
 	} = props;
 
-	const onFactorPropChange = (prop: 'name' | 'label' | 'description') => (event: React.ChangeEvent<HTMLInputElement>) => {
+	const onFactorNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = event.target;
+		if (value === '.') {
+			const parent = findParentFactor(topic, factor);
+			if (parent) {
+				const { name = '' } = parent;
+				factor.name = name.endsWith('.') ? name : `${name}.`;
+			} else {
+				factor.name = event.target.value;
+			}
+		} else {
+			factor.name = event.target.value;
+		}
+		onDataChanged();
+	};
+	const onFactorPropChange = (prop: | 'label' | 'description') => (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.value === factor[prop]) {
 			return;
 		}
@@ -98,10 +129,12 @@ export const FactorRow = (props: {
 
 	const { pass: passTypeCheck, typeOptions } = prepareFactorPainting(topic, factor);
 	const isValid = passTypeCheck;
+	const namePlaceholder = findParentFactor(topic, factor) ? 'Dot to append into nested' : (void 0);
 
 	return <Fragment key={factor.factorId}>
 		<FactorNameCell data-valid={isValid}>
-			<PropInput value={factor.name || ''} onChange={onFactorPropChange('name')}/>
+			<PropInput value={factor.name || ''} onChange={onFactorNameChange}
+			           placeholder={namePlaceholder}/>
 		</FactorNameCell>
 		<FactorLabelCell data-valid={isValid}>
 			<PropInput value={factor.label || ''} onChange={onFactorPropChange('label')}/>
