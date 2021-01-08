@@ -1,37 +1,16 @@
-import { faCompressAlt, faExpandAlt, faLevelDownAlt, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import { v4 } from 'uuid';
-import { Factor, FactorType, Topic } from '../../../services/admin/types';
-import { LinkButton } from '../../component/console/link-button';
-import { DropdownOption } from '../../component/dropdown';
+import { FactorType, Topic } from '../../../services/admin/types';
 import { PrimaryObjectButton } from '../../component/object-button';
 import { useEditPanelContext } from '../component/edit-panel';
-import { PropDropdown } from '../component/prop-dropdown';
-import { PropInput } from '../component/prop-input';
+import { FactorRow } from './factor-row';
 import { FactorTable } from './factor-table';
-import {
-	FactorButtons,
-	FactorDescCell,
-	FactorLabelCell,
-	FactorNameCell,
-	FactorTableBody,
-	FactorTypeCell
-} from './factor-table-body';
+import { FactorTableBody } from './factor-table-body';
 import { FactorTableFooter } from './factor-table-footer';
 import { FactorTableHeader } from './factor-table-header';
 import { FactorsTableButtons } from './factors-table-buttons';
-
-const FactorTypeOptions = [
-	{ value: FactorType.TEXT, label: 'Text' },
-	{ value: FactorType.NUMBER, label: 'Number' },
-	{ value: FactorType.BOOLEAN, label: 'Boolean' },
-	{ value: FactorType.DATETIME, label: 'DateTime' },
-	{ value: FactorType.ENUM, label: 'Enumeration' },
-	{ value: FactorType.SEQUENCE, label: 'Sequence' },
-	{ value: FactorType.OBJECT, label: 'Nested Object' },
-	{ value: FactorType.ARRAY, label: 'Nested Array' }
-];
 
 export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 	const { topic, onDataChanged } = props;
@@ -41,26 +20,6 @@ export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 	const [ max, setMax ] = useState(false);
 
 	const onExpandToggleClicked = () => setExpanded(!expanded);
-	const onFactorPropChange = (factor: Factor, prop: 'name' | 'label' | 'description') => (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.value === factor[prop]) {
-			return;
-		}
-		factor[prop] = event.target.value;
-		onDataChanged();
-	};
-	const onFactorTypeChange = (factor: Factor) => async (option: DropdownOption) => {
-		factor.type = option.value as FactorType;
-		onDataChanged();
-	};
-	const onFactorDeleteClicked = (factor: Factor) => () => {
-		topic.factors = topic.factors.filter(exists => exists !== factor);
-		onDataChanged();
-	};
-	const onInsertBeforeClicked = (factor: Factor) => () => {
-		const index = topic.factors.indexOf(factor);
-		topic.factors.splice(index, 0, { type: FactorType.TEXT });
-		onDataChanged();
-	};
 	const onFactorAddClicked = () => {
 		topic.factors.push({ type: FactorType.TEXT });
 		onDataChanged();
@@ -94,31 +53,9 @@ export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 					if (!factor.factorId) {
 						factor.factorId = v4();
 					}
-					return <Fragment key={factor.factorId}>
-						<FactorNameCell>
-							<PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/>
-						</FactorNameCell>
-						<FactorLabelCell>
-							<PropInput value={factor.label} onChange={onFactorPropChange(factor, 'label')}/>
-						</FactorLabelCell>
-						<FactorTypeCell>
-							<PropDropdown value={factor.type} options={FactorTypeOptions}
-							              onChange={onFactorTypeChange(factor)}/>
-						</FactorTypeCell>
-						<FactorDescCell>
-							<PropInput value={factor.description} onChange={onFactorPropChange(factor, 'description')}/>
-							<FactorButtons data-max={max}>
-								<LinkButton ignoreHorizontalPadding={true} tooltip='Delete Factor' center={true}
-								            onClick={onFactorDeleteClicked(factor)}>
-									<FontAwesomeIcon icon={faTimes}/>
-								</LinkButton>
-								<LinkButton ignoreHorizontalPadding={true} tooltip='Prepend Factor' center={true}
-								            onClick={onInsertBeforeClicked(factor)}>
-									<FontAwesomeIcon icon={faLevelDownAlt} rotation={270}/>
-								</LinkButton>
-							</FactorButtons>
-						</FactorDescCell>
-					</Fragment>;
+					return <FactorRow topic={topic} factor={factor} max={max}
+					                  onDataChanged={onDataChanged}
+					                  key={factor.factorId}/>;
 				})}
 			</FactorTableBody>
 			<FactorTableFooter>

@@ -44,6 +44,9 @@ export const FactorCell = styled.div`
 	height: ${FACTOR_ROW_HEIGHT}px;
 	padding-left: calc(var(--margin) / 2);
 	transition: all 300ms ease-in-out;
+	//&[data-valid=false] {
+	//	background-color: var(--console-grid-error-bg-color);
+	//}
 	&:nth-child(8n + 5), &:nth-child(8n + 6), &:nth-child(8n + 7), &:nth-child(8n) {
 		background-color: var(--pipeline-bg-color);
 	}
