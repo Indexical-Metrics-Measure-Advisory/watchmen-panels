@@ -10,7 +10,14 @@ import { useEditPanelContext } from '../component/edit-panel';
 import { PropDropdown } from '../component/prop-dropdown';
 import { PropInput } from '../component/prop-input';
 import { FactorTable } from './factor-table';
-import { FactorButtons, FactorTableBody } from './factor-table-body';
+import {
+	FactorButtons,
+	FactorDescCell,
+	FactorLabelCell,
+	FactorNameCell,
+	FactorTableBody,
+	FactorTypeCell
+} from './factor-table-body';
 import { FactorTableFooter } from './factor-table-footer';
 import { FactorTableHeader } from './factor-table-header';
 import { FactorsTableButtons } from './factors-table-buttons';
@@ -88,13 +95,17 @@ export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 						factor.factorId = v4();
 					}
 					return <Fragment key={factor.factorId}>
-						<div><PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/></div>
-						<div><PropInput value={factor.label} onChange={onFactorPropChange(factor, 'label')}/></div>
-						<div>
+						<FactorNameCell>
+							<PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/>
+						</FactorNameCell>
+						<FactorLabelCell>
+							<PropInput value={factor.label} onChange={onFactorPropChange(factor, 'label')}/>
+						</FactorLabelCell>
+						<FactorTypeCell>
 							<PropDropdown value={factor.type} options={FactorTypeOptions}
 							              onChange={onFactorTypeChange(factor)}/>
-						</div>
-						<div>
+						</FactorTypeCell>
+						<FactorDescCell>
 							<PropInput value={factor.description} onChange={onFactorPropChange(factor, 'description')}/>
 							<FactorButtons data-max={max}>
 								<LinkButton ignoreHorizontalPadding={true} tooltip='Delete Factor' center={true}
@@ -106,7 +117,7 @@ export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 									<FontAwesomeIcon icon={faLevelDownAlt} rotation={270}/>
 								</LinkButton>
 							</FactorButtons>
-						</div>
+						</FactorDescCell>
 					</Fragment>;
 				})}
 			</FactorTableBody>
