@@ -443,18 +443,36 @@ export const listTopicsForSpace = async (search: string): Promise<Array<QueriedT
 };
 
 export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => {
-	let topic: Topic;
-	switch (true) {
-		case ["1", "2", "3", "4", "5", "6", "7", "8"].includes(`${topicId}`):
-			const { topicId: id, code, name, type, description, factors } = DemoTopics.find(
-				(topic) => topic.topicId === topicId
-			)!;
-			topic = { topicId: id, code, name, type, description, factors };
-			break;
-		default:
-			topic = { type: TopicType.DISTINCT, factors: [] };
+	console.log(isMockService());
+	if (isMockService()) {
+		let topic: Topic;
+		switch (true) {
+			case ["1", "2", "3", "4", "5", "6", "7", "8"].includes(`${topicId}`):
+				const { topicId: id, code, name, type, description, factors } = DemoTopics.find(
+					(topic) => topic.topicId === topicId
+				)!;
+				topic = { topicId: id, code, name, type, description, factors };
+				break;
+			default:
+				topic = { type: TopicType.DISTINCT, factors: [] };
+		}
+		return { topic };
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}topic/topic_id=${topicId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		let topic = await response.json();
+		return { topic: topic };
 	}
-	return { topic };
 };
 
 export const saveTopic = async (topic: Topic): Promise<void> => {

@@ -53,7 +53,6 @@ export const listSpaces = async (options: {
 		});
 
 		const result = await response.json();
-		console.log(result);
 
 		return result;
 	}

@@ -190,7 +190,6 @@ export const saveUser = async (user: User): Promise<void> => {
 		// const token: string = Storage.findToken();
 		// const account = Storage.findAccount();
 	} else {
-		// console.log(mock_flag);
 		const response = await fetch(`${getServiceHost()}user`, {
 			method: "POST",
 			headers: {
@@ -200,7 +199,6 @@ export const saveUser = async (user: User): Promise<void> => {
 			body: JSON.stringify(user),
 		});
 
-		// const result = await
 		return await response.json();
 	}
 };
