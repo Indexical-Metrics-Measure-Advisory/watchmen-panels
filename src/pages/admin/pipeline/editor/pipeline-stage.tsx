@@ -5,10 +5,11 @@ import React, { Fragment, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../common/utils';
 import Button, { ButtonType } from '../../../component/button';
+import { WaiveObjectButton } from '../../../component/object-button';
 import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedPipeline, ArrangedProcessUnit, ArrangedStage } from '../types';
 import { AutoSwitchInput } from './components/auto-switch-input';
-import { DropdownButton, WaiveObjectButton } from './components/object-button';
+import { DropdownButton } from './components/dropdown-button';
 import { PipelineUnit } from './pipeline-unit';
 import { createAlarmUnit } from './utils';
 

@@ -63,6 +63,8 @@ export enum FactorType {
 	DATETIME = "datetime",
 	BOOLEAN = "boolean",
 	ENUM = "enum",
+	OBJECT = "object",
+	ARRAY = "array",
 }
 
 export interface QueriedFactorForPipeline {

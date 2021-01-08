@@ -18,6 +18,7 @@ import { Factor, FactorType, QueriedTopic, Topic, TopicType } from '../../../ser
 import { TooltipCarvedButton } from '../../component/console/carved-button';
 import { LinkButton } from '../../component/console/link-button';
 import { DropdownOption } from '../../component/dropdown';
+import { PrimaryObjectButton } from '../../component/object-button';
 import { useEditPanelContext } from '../component/edit-panel';
 import { PropDropdown } from '../component/prop-dropdown';
 import { PropInput } from '../component/prop-input';
@@ -25,7 +26,6 @@ import { PropInputLines } from '../component/prop-input-lines';
 import { PropLabel } from '../component/prop-label';
 import { SearchAndEditPanel } from '../component/search-and-edit-panel';
 import { SingleSearchItemCard } from '../component/single-search';
-import { PrimaryObjectButton } from '../pipeline/editor/components/object-button';
 
 const FactorsButton = styled.div`
 	display: flex;
@@ -93,10 +93,10 @@ const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: number }>
 `;
 const FactorTableHeader = styled.div`
 	display: grid;
-	grid-template-columns: 150px 150px 120px 1fr;
+	grid-template-columns: 150px 150px 160px 1fr;
 	transition: all 300ms ease-in-out;
 	&[data-max=true] {
-		grid-template-columns: 220px 220px 120px 1fr;
+		grid-template-columns: 220px 220px 160px 1fr;
 	}
 	> div {
 		display: flex;
@@ -110,7 +110,7 @@ const FactorTableHeader = styled.div`
 `;
 const FactorTableBody = styled.div`
 	display: grid;
-	grid-template-columns: 150px 150px 120px 1fr;
+	grid-template-columns: 150px 150px 160px 1fr;
 	margin: 0 -4px 0 -40px;
 	padding: 0 4px 0 40px;
 	max-height: ${FactorTableBodyMaxHeight}px;
@@ -118,9 +118,9 @@ const FactorTableBody = styled.div`
 	overflow-y: auto;
 	transition: all 300ms ease-in-out;
 	&[data-max=true] {
-		grid-template-columns: 220px 220px 120px 1fr;
+		grid-template-columns: 220px 220px 160px 1fr;
 		> div:nth-child(4n) > div {
-			left: calc((220px + 220px + 120px + 40px) * -1);
+			left: calc((220px + 220px + 160px + 40px) * -1);
 		}
 	}
 	&::-webkit-scrollbar {
@@ -163,7 +163,7 @@ const FactorTableBody = styled.div`
 				opacity: 0;
 				pointer-events: none;
 				padding: 4px 8px 4px calc(var(--margin) / 4);
-				left: calc((150px + 150px + 120px + 40px) * -1);
+				left: calc((150px + 150px + 160px + 40px) * -1);
 				height: 32px;
 				button {
 					width: 24px;
@@ -287,7 +287,9 @@ const FactorTypeOptions = [
 	{ value: FactorType.BOOLEAN, label: 'Boolean' },
 	{ value: FactorType.DATETIME, label: 'DateTime' },
 	{ value: FactorType.ENUM, label: 'Enumeration' },
-	{ value: FactorType.SEQUENCE, label: 'Sequence' }
+	{ value: FactorType.SEQUENCE, label: 'Sequence' },
+	{ value: FactorType.OBJECT, label: 'Nested Object' },
+	{ value: FactorType.ARRAY, label: 'Nested Array Object' }
 ];
 
 const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
@@ -343,7 +345,10 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 			</FactorTableHeader>
 			<FactorTableBody data-max={max}>
 				{topic.factors.map(factor => {
-					return <Fragment key={factor.factorId || v4()}>
+					if (!factor.factorId) {
+						factor.factorId = v4();
+					}
+					return <Fragment key={factor.factorId}>
 						<div><PropInput value={factor.name} onChange={onFactorPropChange(factor, 'name')}/></div>
 						<div><PropInput value={factor.label} onChange={onFactorPropChange(factor, 'label')}/></div>
 						<div>
@@ -377,7 +382,6 @@ const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 };
 
 const renderEditContent = (topic: Topic, onDataChanged: () => void) => {
-
 	const onPropChange = (prop: 'code' | 'name' | 'description') => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		if (topic[prop] !== event.target.value) {
 			topic[prop] = event.target.value;

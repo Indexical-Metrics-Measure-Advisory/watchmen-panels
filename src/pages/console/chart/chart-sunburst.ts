@@ -3,28 +3,10 @@ import {
 	ConsoleSpace,
 	ConsoleSpaceSubjectChart,
 	ConsoleSpaceSubjectChartDataSet,
-	ConsoleSpaceSubjectChartDataSetGrid,
 	ConsoleSpaceSubjectChartType
 } from '../../../services/console/types';
 import { buildTreeData } from './chart-utils';
 import { ChartTypeDefinition } from './types';
-
-interface SunburstItem {
-	name: string,
-	children: ConsoleSpaceSubjectChartDataSetGrid
-}
-
-interface SunburstSeriesNode {
-	name: string;
-}
-
-interface SunburstSeriesNonLeafNode extends SunburstSeriesNode {
-	children: Array<SunburstSeriesNode>;
-}
-
-interface SunburstSeriesLeafNode extends SunburstSeriesNode {
-	value: number;
-}
 
 export const SUNBURST: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.SUNBURST,

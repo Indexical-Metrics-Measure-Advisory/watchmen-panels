@@ -195,7 +195,6 @@ const DateTimeFactorFilterTillNowValue = (props: {
 	return <Dropdown options={TillNowOptions} value={filter.value} onChange={onFilterValueOptionChanged}/>;
 };
 
-
 const ExpressionValueContainer = styled.div`
 	width: 0;
 	flex-grow: 0;

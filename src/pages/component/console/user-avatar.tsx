@@ -44,11 +44,11 @@ export const UserAvatar = (props: { name: string, showTooltip?: boolean }) => {
 
 	let first = 'X';
 	let second = '';
-	const names = (name || '').split(' ');
+	const names = (name || '').split(/[\s.-]/);
 	if (names.length !== 0) {
 		first = ((names[0] || '')[0] || 'X').toUpperCase();
 		if (names.length > 1) {
-			second = (names[names.length - 1] || '')[0] || '';
+			second = ((names[names.length - 1] || '')[0] || '').toUpperCase();
 		}
 	}
 

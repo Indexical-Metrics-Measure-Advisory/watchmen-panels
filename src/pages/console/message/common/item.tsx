@@ -31,31 +31,31 @@ export const MessageItemContainer = styled.div.attrs({
 	flex-direction: column;
 	border-radius: calc(var(--border-radius));
 	margin-top: var(--margin);
-    box-shadow: var(--console-shadow);
-    transition: all 300ms ease-in-out;
-    &[data-read=true] {
-    	animation: ${ReadAnimation} 1s ease-in-out forwards;
-    }
-    &:hover {
-    	box-shadow: var(--console-hover-shadow);
-    	div[data-widget='console-messages-item-operators'] {
-    		opacity: 1;
-    		pointer-events: auto;
-    	}
-    }
+	box-shadow: var(--console-shadow);
+	transition: all 300ms ease-in-out;
+	&[data-read=true] {
+		animation: ${ReadAnimation} 1s ease-in-out forwards;
+	}
+	&:hover {
+		box-shadow: var(--console-hover-shadow);
+		div[data-widget='console-messages-item-operators'] {
+			opacity: 1;
+			pointer-events: auto;
+		}
+	}
 `;
 
 export const MessageItemHeader = styled.div`
-    border-bottom: var(--border);
-    margin-bottom: -1px;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    grid-column-gap: calc(var(--margin) / 2);
-    align-items: center;
-    padding: calc(var(--margin) / 3) calc(var(--margin) / 2) calc(var(--margin) / 4);
-    background-color: var(--console-message-header-bg-color);
-    overflow: hidden;
+	border-bottom: var(--border);
+	margin-bottom: -1px;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	grid-column-gap: calc(var(--margin) / 2);
+	align-items: center;
+	padding: calc(var(--margin) / 3) calc(var(--margin) / 2) calc(var(--margin) / 4);
+	background-color: var(--console-message-header-bg-color);
+	overflow: hidden;
 `;
 export const MessageItemSender = styled.div`
 	justify-self: center;
@@ -84,14 +84,14 @@ export const MessageItemOperators = styled.div.attrs({
 const MessageItemBody = styled.div`
 	display: grid;
 	grid-template-columns: 1fr auto;
-    grid-column-gap: calc(var(--margin) / 2);
+	grid-column-gap: calc(var(--margin) / 2);
 	padding: 20px calc(var(--margin) / 2);
 `;
 const MessageItemBodyContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	line-height: 20px;
-    word-break: break-word;
+	word-break: break-word;
 `;
 const MessageItemBodyImage = styled.div`
 `;

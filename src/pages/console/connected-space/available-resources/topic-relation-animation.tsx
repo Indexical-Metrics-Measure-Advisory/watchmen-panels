@@ -6,14 +6,16 @@ import { Graphics, TopicRelationCurvePoints, TopicRelationGraphics, TopicSelecti
 
 const TopicRelationAnimationFrames = keyframes`
 	from {
-        offset-distance: 0;
-    }
-
-    to {
-        offset-distance: 100%;
-    }
+		offset-distance: 0;
+	}
+	to {
+		offset-distance: 100%;
+	}
 `;
-const TopicRelationAnimationDot = styled.div.attrs<{ lattice: TopicRelationCurvePoints, visible: boolean }>(({ lattice: { drawn }, visible }) => {
+const TopicRelationAnimationDot = styled.div.attrs<{ lattice: TopicRelationCurvePoints, visible: boolean }>(({
+	                                                                                                             lattice: { drawn },
+	                                                                                                             visible
+                                                                                                             }) => {
 	return {
 		style: {
 			display: visible ? 'block' : 'none',

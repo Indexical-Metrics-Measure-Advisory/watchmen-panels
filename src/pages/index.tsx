@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Path from '../common/path';
 import Home from './home';
+import Login from './login';
 import Welcome from './welcome';
 
 const Guide = lazy(() => import(/* webpackChunkName: "guide" */ './guide'));
@@ -14,6 +15,7 @@ export const Pages = () => {
 			<Switch>
 				<Route path={Path.HOME}><Home/></Route>
 				<Route path={Path.GUIDE}><Guide/></Route>
+				<Route path={Path.LOGIN}><Login/></Route>
 				<Route path={Path.CONSOLE}><Console/></Route>
 				<Route path={Path.ADMIN}><Admin/></Route>
 				<Route path='*'><Welcome/></Route>
