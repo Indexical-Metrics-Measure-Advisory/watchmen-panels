@@ -1,9 +1,11 @@
-import { faCompressAlt, faExpandAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt, faPlus, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useState } from 'react';
 import { v4 } from 'uuid';
+import { parseFromCsv, parseFromJson } from '../../../services/admin/topic-import';
 import { FactorType, Topic } from '../../../services/admin/types';
-import { PrimaryObjectButton } from '../../component/object-button';
+import { PrimaryObjectButton, SuccessObjectButton } from '../../component/object-button';
+import { useNotImplemented } from '../../context/not-implemented';
 import { useEditPanelContext } from '../component/edit-panel';
 import { FactorRow } from './factor-row';
 import { FactorTable } from './factor-table';
@@ -15,6 +17,7 @@ import { FactorsTableButtons } from './factors-table-buttons';
 export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 	const { topic, onDataChanged } = props;
 
+	const notImpl = useNotImplemented();
 	const { changeBackgroundPosition } = useEditPanelContext();
 	const [ expanded, setExpanded ] = useState(false);
 	const [ max, setMax ] = useState(false);
@@ -31,6 +34,43 @@ export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 		} else {
 			changeBackgroundPosition('top 50px left');
 		}
+	};
+	const onFileSelected = (input: HTMLInputElement) => async () => {
+		if (!input.files || input.files.length === 0) {
+			return;
+		}
+		const file = input.files.item(0);
+		if (!file) {
+			return;
+		}
+		const name = file.name;
+		switch (true) {
+			case name.endsWith('.txt'):
+			case name.endsWith('.csv'): {
+				const content = await file.text();
+				topic.factors = await parseFromCsv(content);
+				onDataChanged();
+				break;
+			}
+			case name.endsWith('.json'): {
+				const content = await file.text();
+				topic.factors = await parseFromJson(content);
+				onDataChanged();
+				break;
+			}
+			case name.endsWith('.xml'):
+				break;
+			default:
+				notImpl.show();
+		}
+	};
+	const onImportClicked = () => {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.multiple = false;
+		input.accept = '.txt,.csv,.json';
+		input.onchange = onFileSelected(input);
+		input.click();
 	};
 
 	const factorCount = topic.factors.length;
@@ -67,6 +107,10 @@ export const Factors = (props: { topic: Topic, onDataChanged: () => void }) => {
 					<FontAwesomeIcon icon={max ? faCompressAlt : faExpandAlt}/>
 					<span>{max ? 'Shrink Table' : 'Expand Table'}</span>
 				</PrimaryObjectButton>
+				<SuccessObjectButton onClick={onImportClicked}>
+					<FontAwesomeIcon icon={faUpload}/>
+					<span>Import from File</span>
+				</SuccessObjectButton>
 			</FactorTableFooter>
 		</FactorTable>
 	</Fragment>;

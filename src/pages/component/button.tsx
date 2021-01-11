@@ -40,6 +40,10 @@ const Button = styled.button.attrs<ButtonProps>(({ inkType = ButtonType.DEFAULT 
 		background-color: var(--danger-color);
 		color: var(--invert-color);
 	}
+	&[data-ink-type=success] {
+		background-color: var(--success-color);
+		color: var(--invert-color);
+	}
 	@media (min-width: ${({ theme }) => theme.minDeskWidth}px) {
 		&:hover {
 			transform: scale(1.05);

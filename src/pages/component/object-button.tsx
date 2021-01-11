@@ -21,6 +21,12 @@ export const ObjectButton = styled(Button)`
 			box-shadow: var(--console-danger-hover-shadow);
 		}
 	}
+	&[data-ink-type=success] {
+		background-color: var(--console-success-color);
+		&:hover {
+			box-shadow: var(--console-success-hover-shadow);
+		}
+	}
 	&[data-ink-type=waive] {
 		color: var(--console-font-color);
 		background-color: var(--bg-color);
@@ -91,4 +97,5 @@ export const ObjectButton = styled(Button)`
 
 export const PrimaryObjectButton = styled(ObjectButton).attrs({ 'data-ink-type': 'primary' })``;
 export const DangerObjectButton = styled(ObjectButton).attrs({ 'data-ink-type': 'danger' })``;
+export const SuccessObjectButton = styled(ObjectButton).attrs({ 'data-ink-type': 'success' })``;
 export const WaiveObjectButton = styled(ObjectButton).attrs({ 'data-ink-type': 'waive' })``;
