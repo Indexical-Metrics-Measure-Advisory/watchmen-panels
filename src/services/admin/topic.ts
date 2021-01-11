@@ -444,15 +444,31 @@ const DemoPipelineOfPolicy = {
 };
 
 export const fetchPipeline = async (topicId: string): Promise<PipelineFlow> => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			if (topicId === "2") {
-				resolve(DemoPipelineOfPolicy);
-			} else {
-				resolve({ topicId, consume: [], produce: [] });
-			}
-		}, 1000);
-	});
+	if (isMockService()) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				if (topicId === "2") {
+					resolve(DemoPipelineOfPolicy);
+				} else {
+					resolve({ topicId, consume: [], produce: [] });
+				}
+			}, 1000);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}pipeline?topic_id=${topicId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		return await response.json();
+	}
 };
 
 export const listTopicsForSpace = async (search: string): Promise<Array<QueriedTopicForSpace>> => {

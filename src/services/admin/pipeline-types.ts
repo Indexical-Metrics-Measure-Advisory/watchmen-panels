@@ -8,27 +8,27 @@ export interface FactorHolder extends TopicHolder {
 
 // value used in unit actions
 export enum NoArithmetic {
-	NO_FUNC = 'no-func'
+	NO_FUNC = "no-func",
 }
 
 export enum DatePartArithmetic {
-	YEAR_OF = 'year-of',
-	MONTH_OF = 'month-of',
-	WEEK_OF = 'week-of',
-	WEEKDAY = 'weekday'
+	YEAR_OF = "year-of",
+	MONTH_OF = "month-of",
+	WEEK_OF = "week-of",
+	WEEKDAY = "weekday",
 }
 
 export enum NumericArithmetic {
-	PERCENTAGE = 'percentage',
-	ABSOLUTE_VALUE = 'abs',
-	LOGARITHM = 'log',
+	PERCENTAGE = "percentage",
+	ABSOLUTE_VALUE = "abs",
+	LOGARITHM = "log",
 }
 
 export type SimpleFuncArithmetic = NoArithmetic | DatePartArithmetic | NumericArithmetic;
 
 export enum SomeValueType {
-	IN_MEMORY = 'in-memory',
-	FACTOR = 'factor'
+	IN_MEMORY = "in-memory",
+	FACTOR = "factor",
 }
 
 export interface SomeValue {
@@ -36,7 +36,7 @@ export interface SomeValue {
 }
 
 export interface SimpleFuncValue extends SomeValue {
-	arithmetic: SimpleFuncArithmetic
+	arithmetic: SimpleFuncArithmetic;
 }
 
 export interface InMemoryValue extends SimpleFuncValue {
@@ -52,18 +52,17 @@ export interface FactorValueHolder {
 	value: SomeValue;
 }
 
-export interface Condition {
-}
+export interface Condition {}
 
 export enum ConditionOperator {
-	EQUALS = 'equals',
-	NOT_EQUALS = 'not-equals',
-	LESS = 'less',
-	LESS_EQUALS = 'less-equals',
-	MORE = 'more',
-	MORE_EQUALS = 'more-equals',
-	IN = 'in',
-	NOT_IN = 'not-in',
+	EQUALS = "equals",
+	NOT_EQUALS = "not-equals",
+	LESS = "less",
+	LESS_EQUALS = "less-equals",
+	MORE = "more",
+	MORE_EQUALS = "more-equals",
+	IN = "in",
+	NOT_IN = "not-in",
 }
 
 export interface PlainCondition extends Condition {
@@ -73,8 +72,8 @@ export interface PlainCondition extends Condition {
 }
 
 export enum CompositeMode {
-	AND = 'and',
-	OR = 'or'
+	AND = "and",
+	OR = "or",
 }
 
 export interface CompositeCondition extends Condition {
@@ -99,21 +98,21 @@ export interface MappingRow {
 
 // unit actions
 export enum SystemActionType {
-	ALARM = 'alarm',
-	COPY_TO_MEMORY = 'copy-to-memory'
+	ALARM = "alarm",
+	COPY_TO_MEMORY = "copy-to-memory",
 }
 
 export enum ReadTopicActionType {
-	READ_ROW = 'read-row',
-	READ_FACTOR = 'read-factor',
-	EXISTS = 'exists'
+	READ_ROW = "read-row",
+	READ_FACTOR = "read-factor",
+	EXISTS = "exists",
 }
 
 export enum WriteTopicActionType {
-	MERGE_ROW = 'merge-row',
-	INSERT_ROW = 'insert-row',
-	INSERT_OR_MERGE_ROW = 'insert-or-merge-row',
-	WRITE_FACTOR = 'write-factor'
+	MERGE_ROW = "merge-row",
+	INSERT_ROW = "insert-row",
+	INSERT_OR_MERGE_ROW = "insert-or-merge-row",
+	WRITE_FACTOR = "write-factor",
 }
 
 export type UnitActionType = WriteTopicActionType | ReadTopicActionType | SystemActionType;
@@ -155,10 +154,10 @@ export interface UnitActionExists extends TopicHolder, MemoryWriter, FindBy {
 }
 
 export enum UnitActionAlarmSeverity {
-	LOW = 'low',
-	MEDIUM = 'medium',
-	HIGH = 'high',
-	CRITICAL = 'critical'
+	LOW = "low",
+	MEDIUM = "medium",
+	HIGH = "high",
+	CRITICAL = "critical",
 }
 
 export interface UnitActionAlarm extends UnitAction {
@@ -182,14 +181,15 @@ export interface Stage {
 }
 
 export enum PipelineTriggerType {
-	INSERT = 'insert',
-	MERGE = 'merge',
+	INSERT = "insert",
+	MERGE = "merge",
 	// insert or merge
-	INSERT_OR_MERGE = 'insert-or-merge',
-	DELETE = 'delete'
+	INSERT_OR_MERGE = "insert-or-merge",
+	DELETE = "delete",
 }
 
 export interface Pipeline {
+	pipelineId?: string;
 	topicId: string;
 	name?: string;
 	type: PipelineTriggerType;
