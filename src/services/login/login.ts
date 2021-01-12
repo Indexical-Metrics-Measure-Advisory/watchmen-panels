@@ -31,7 +31,9 @@ export const login = async (account: Account): Promise<LoginResponse> => {
 			}),
 		});
 
+		//TODO add token to session storage
 		const result = await response.json();
+		console.log(result);
 
 		return { pass: true, admin: account.name === ADMIN };
 	}
