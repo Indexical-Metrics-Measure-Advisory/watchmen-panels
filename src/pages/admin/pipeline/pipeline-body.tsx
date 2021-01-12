@@ -115,7 +115,7 @@ const arrangeFlow = (flow: PipelineFlow): ArrangedPipelines => {
 
 export const PipelineBody = () => {
 	const {
-		store: { topics, topic, flow },
+		store: { topics, topic, flow, selectedTopic },
 		changeSelectedTopic,
 		addFlowChangedListener, removeFlowChangedListener
 	} = usePipelineContext();
@@ -136,8 +136,12 @@ export const PipelineBody = () => {
 		if (flow && topic) {
 			setArranged(arrangeFlow(flow));
 			setOrdered(true);
+			// select the given topic when there is no selected
+			if (!selectedTopic) {
+				changeSelectedTopic(topic);
+			}
 		}
-	}, [ topic, topics, flow ]);
+	}, [ topic, topics, flow, selectedTopic, changeSelectedTopic ]);
 
 	const topicMap = topics.reduce((map, topic) => map.set(topic.topicId, topic),
 		new Map<string, QueriedTopicForPipeline>());
