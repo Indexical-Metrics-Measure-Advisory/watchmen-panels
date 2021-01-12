@@ -39,6 +39,7 @@ export const PipelineEditContextProvider = (props: {
 			if (state.pipeline?.origin && !state.saved) {
 				// previous pipeline existed and changed and not saved
 				// don't wait, continue process
+				console.log(`Detect pipeline selection change at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, do save immediately.`, 'color:rgb(251,71,71)', '');
 				doSave(state.pipeline);
 			}
 			// switch to new selection
@@ -65,7 +66,7 @@ export const PipelineEditContextProvider = (props: {
 		}
 
 		((pipeline: ArrangedPipeline) => {
-			console.log(`Receive pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, and will save it after 30 seconds.`, 'color:rgb(251,71,71)', '');
+			console.log(`Detect pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, will save changes after 30 seconds.`, 'color:rgb(251,71,71)', '');
 			// save after 30 seconds
 			state.throttle = setTimeout(async () => {
 				state.throttle = null;
