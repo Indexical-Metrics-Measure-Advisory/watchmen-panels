@@ -84,8 +84,8 @@ export const FacterValueFinder = (props: {
 		value.type = valueType;
 		if (isFactorValue(value)) {
 			value.topicId = sourceTopicId;
-			onTopicChange();
 		}
+		onTopicChange();
 		forceUpdate();
 	};
 	const onInMemoryVariableNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +109,7 @@ export const FacterValueFinder = (props: {
 		}
 		{
 			isMemoryValue(value)
-				? <ActionInput value={value.name} onChange={onInMemoryVariableNameChanged}
+				? <ActionInput value={value.name || ''} onChange={onInMemoryVariableNameChanged}
 				               placeholder='Variable name...'/>
 				: null
 		}

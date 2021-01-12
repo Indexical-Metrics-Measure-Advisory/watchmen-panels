@@ -15,6 +15,7 @@ import { DangerObjectButton, PrimaryObjectButton, WaiveObjectButton } from '../.
 import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
 import { DropdownButton } from './components/dropdown-button';
+import { usePipelineEditContext } from './pipeline-edit-context';
 import { PipelineUnitActionContextProvider } from './pipeline-unit-action-context';
 import { UnitActionNodes } from './pipeline-unit-actions';
 import { PipelineUnitCondition } from './pipeline-unit-condition';
@@ -168,6 +169,7 @@ const UnitActionNode = (props: {
 	const { type } = action;
 
 	const dialog = useDialog();
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const forceUpdate = useForceUpdate();
 
 	const onActionDeleteConfirmClicked = () => {
@@ -177,6 +179,7 @@ const UnitActionNode = (props: {
 	const onClearSettingsConfirmClicked = () => {
 		unit.do.length = 0;
 		unit.do.push(createAlarmAction());
+		firePipelineContentChange();
 		dialog.hide();
 	};
 	const onDeleteActionClicked = () => {
@@ -235,6 +238,7 @@ export const PipelineUnit = (props: {
 	const { stage, unit, appendUnit, prependUnit, deleteUnit } = props;
 
 	const dialog = useDialog();
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const [ expanded, setExpanded ] = useState(true);
 	const forceUpdate = useForceUpdate();
 
@@ -243,11 +247,13 @@ export const PipelineUnit = (props: {
 		const index = unit.do.findIndex(exists => exists === action);
 		if (index !== -1) {
 			unit.do.splice(index, 1);
+			firePipelineContentChange();
 			forceUpdate();
 		}
 	};
 	const onAppendActionClicked = () => {
 		unit.do.push(createAlarmAction());
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onUnitDeleteConfirmClicked = () => {
@@ -256,6 +262,7 @@ export const PipelineUnit = (props: {
 	};
 	const onClearActionsConfirmClicked = () => {
 		unit.do = [ createAlarmAction() ];
+		firePipelineContentChange();
 		dialog.hide();
 	};
 	const onUnitDeleteClicked = () => {

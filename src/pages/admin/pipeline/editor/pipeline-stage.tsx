@@ -10,6 +10,7 @@ import { DialogContext, useDialog } from '../../../context/dialog';
 import { ArrangedPipeline, ArrangedProcessUnit, ArrangedStage } from '../types';
 import { AutoSwitchInput } from './components/auto-switch-input';
 import { DropdownButton } from './components/dropdown-button';
+import { usePipelineEditContext } from './pipeline-edit-context';
 import { PipelineUnit } from './pipeline-unit';
 import { createAlarmUnit } from './utils';
 
@@ -119,17 +120,20 @@ export const StageEditor = (props: {
 	const { pipeline, stage, index, appendStage, prependStage, deleteStage } = props;
 
 	const dialog = useDialog();
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(true);
 	const forceUpdate = useForceUpdate();
 
 	const onNameChanged = (value: string) => {
 		stage.name = value;
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onExpandClicked = () => setExpanded(!expanded);
 	const onAppendUnit = () => {
 		stage.units.push(createAlarmUnit());
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onPrependUnit = (on: ArrangedProcessUnit) => {
@@ -139,6 +143,7 @@ export const StageEditor = (props: {
 		} else {
 			stage.units.splice(index, 0, createAlarmUnit());
 		}
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onStageDeleteConfirmClicked = () => {
@@ -147,6 +152,7 @@ export const StageEditor = (props: {
 	};
 	const onClearUnitsConfirmClicked = () => {
 		stage.units = [ createAlarmUnit() ];
+		firePipelineContentChange();
 		dialog.hide();
 	};
 	const onStageDeleteClicked = () => {
@@ -185,6 +191,7 @@ export const StageEditor = (props: {
 		const index = stage.units.findIndex(exists => exists === unit);
 		if (index !== -1) {
 			stage.units.splice(index, 1);
+			firePipelineContentChange();
 			forceUpdate();
 		}
 	};

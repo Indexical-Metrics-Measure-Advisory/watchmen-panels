@@ -5,6 +5,7 @@ import { Pipeline, PipelineTriggerType } from '../../../../services/admin/pipeli
 import { TopicType } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
 import { HorizontalOptions } from './components/horizontal-options';
+import { usePipelineEditContext } from './pipeline-edit-context';
 
 const Trigger = styled.div`
 	display: grid;
@@ -35,11 +36,11 @@ export const PipelineTrigger = (props: { pipeline: Pipeline }) => {
 	const { pipeline } = props;
 
 	const { store: { topics } } = usePipelineContext();
-
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const forceUpdate = useForceUpdate();
 	const onTypeChanged = (newType: PipelineTriggerType) => {
-		// TODO pipeline trigger type changed, notify & save?
 		pipeline.type = newType;
+		firePipelineContentChange();
 		forceUpdate();
 	};
 

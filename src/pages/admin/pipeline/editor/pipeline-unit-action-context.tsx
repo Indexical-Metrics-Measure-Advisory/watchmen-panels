@@ -1,9 +1,13 @@
 import { EventEmitter } from 'events';
 import React, { useState } from 'react';
+import { usePipelineEditContext } from './pipeline-edit-context';
 
 export enum PipelineUnitActionEvent {
 	TOPIC_CHANGED = 'topic-changed',
 	FACTOR_CHANGED = 'factor-changed',
+	VARIABLE_CHANGED = 'variable-changed',
+	ARITHMETIC_CHANGED = 'arithmetic-changed',
+	MAPPING_CHANGED = 'mapping-changed',
 	FILTER_ADDED = 'filter-added',
 	FILTER_REMOVED = 'filter-removed',
 	FILTER_CHANGED = 'filter-changed',
@@ -30,6 +34,7 @@ export const PipelineUnitActionContextProvider = (props: {
 }) => {
 	const { children } = props;
 
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const [ emitter ] = useState<EventEmitter>(() => {
 		const emitter = new EventEmitter();
 		emitter.setMaxListeners(1000);
@@ -37,7 +42,10 @@ export const PipelineUnitActionContextProvider = (props: {
 	});
 
 	return <Context.Provider value={{
-		firePropertyChange: (event) => emitter.emit(event),
+		firePropertyChange: (event) => {
+			emitter.emit(event);
+			firePipelineContentChange();
+		},
 		addPropertyChangeListener: (event: PipelineUnitActionEvent, listener) => emitter.on(event, listener),
 		removePropertyChangeListener: (event: PipelineUnitActionEvent, listener) => emitter.off(event, listener)
 	}}>{children}</Context.Provider>;

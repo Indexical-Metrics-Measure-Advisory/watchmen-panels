@@ -18,6 +18,7 @@ import { ActionInput } from '../components/action-input';
 import { ConditionOperatorSelect } from '../components/condition-operator-select';
 import { FactorFinder } from '../components/factor-finder';
 import { isFactorValue, isMemoryValue } from '../components/utils';
+import { usePipelineEditContext } from '../pipeline-edit-context';
 import { PipelineUnitConditionEvent, usePipelineUnitConditionContext } from '../pipeline-unit-condition-context';
 import { ArithmeticSelect } from '../unit-actions/arithmetic-select';
 import { asDisplayArithmetic, asDisplayOperator } from '../utils';
@@ -330,6 +331,7 @@ export const PlainConditionRow = (props: {
 }) => {
 	const { left: topic, grandParent: grandParentCondition, parent: parentCondition, condition } = props;
 
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const { firePropertyChange } = usePipelineUnitConditionContext();
 
 	const topContainerRef = useRef<HTMLDivElement>(null);
@@ -372,6 +374,7 @@ export const PlainConditionRow = (props: {
 		parentCondition.children.splice(indexInParent, 1);
 		// add into grand, after parent
 		grandParentCondition.children.splice(indexInGrand + 1, 0, condition);
+		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_OUTDENT);
 	};
 	const onIndentClicked = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -384,6 +387,7 @@ export const PlainConditionRow = (props: {
 		}
 		const index = parentCondition.children.findIndex(child => child === condition);
 		parentCondition.children.splice(index, 1, newParent);
+		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_INDENT);
 	};
 	const onRemoveClicked = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -394,9 +398,13 @@ export const PlainConditionRow = (props: {
 		}
 		const index = parentCondition.children.findIndex(child => child === condition);
 		parentCondition.children.splice(index, 1);
+		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_REMOVED);
 	};
-	const onFilterChange = () => firePropertyChange(PipelineUnitConditionEvent.FILTER_CHANGED);
+	const onFilterChange = () => {
+		firePipelineContentChange();
+		firePropertyChange(PipelineUnitConditionEvent.FILTER_CHANGED);
+	};
 	const onInMemoryVariableNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const name = event.target.value;
 		if (isMemoryValue(condition.right)) {

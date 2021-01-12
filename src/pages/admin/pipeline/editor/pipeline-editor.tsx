@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../common/utils';
-import { savePipeline } from '../../../../services/admin/pipeline';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
 import { ArrangedPipeline, ArrangedStage } from '../types';
 import { AutoSwitchInput } from './components/auto-switch-input';
+import { usePipelineEditContext } from './pipeline-edit-context';
 import { StageEditor } from './pipeline-stage';
 import { PipelineTrigger } from './pipeline-trigger';
 import { createStage } from './utils';
@@ -47,22 +47,20 @@ export const PipelineEditor = (props: {
 	const { outbound, pipeline } = props;
 
 	const { changeSelectedPipeline } = usePipelineContext();
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const forceUpdate = useForceUpdate();
-	useEffect(() => {
-		return () => {
-			savePipeline(pipeline.origin);
-		};
-	});
 
 	const onNameChange = (value: string) => {
 		// change both well known pipeline and original one
 		pipeline.name = value;
 		pipeline.origin.name = value;
 		changeSelectedPipeline(pipeline);
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onAppendStage = () => {
 		pipeline.stages.push(createStage());
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onPrependStage = (on: ArrangedStage) => {
@@ -72,12 +70,14 @@ export const PipelineEditor = (props: {
 		} else {
 			pipeline.stages.splice(index, 0, createStage());
 		}
+		firePipelineContentChange();
 		forceUpdate();
 	};
 	const onDeleteStage = (stage: ArrangedStage) => {
 		const index = pipeline.stages.findIndex(exists => exists === stage);
 		if (index !== -1) {
 			pipeline.stages.splice(index, 1);
+			firePipelineContentChange();
 			forceUpdate();
 		}
 	};
