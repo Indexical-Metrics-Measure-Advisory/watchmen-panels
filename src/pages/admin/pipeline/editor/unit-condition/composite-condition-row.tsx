@@ -235,6 +235,7 @@ export const CompositeConditionRow = (props: {
 	const onToggleExpandedClicked = () => setExpanded(!expanded);
 	const onSelect = (mode: CompositeMode) => {
 		condition.mode = mode;
+		firePropertyChange(PipelineUnitConditionEvent.FILTER_CHANGED);
 		forceUpdate();
 	};
 	const onAddSubFilterClicked = () => {

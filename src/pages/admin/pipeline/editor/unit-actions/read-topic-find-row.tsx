@@ -15,6 +15,7 @@ export const ReadTopicFindRow = (props: { action: UnitAction }) => {
 	const forceUpdate = useForceUpdate();
 	const onTargetNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		read.targetName = event.target.value;
+		firePropertyChange(PipelineUnitActionEvent.VARIABLE_CHANGED);
 		forceUpdate();
 	};
 

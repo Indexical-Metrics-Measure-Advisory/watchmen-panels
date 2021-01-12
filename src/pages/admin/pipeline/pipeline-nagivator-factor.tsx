@@ -56,18 +56,6 @@ const FactorNode = styled.div`
 		margin-right: calc(var(--margin) / 4);
 	}
 `;
-const FactorName = styled.span`
-	flex-grow: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	> span {
-		color: var(--invert-color);
-		background-color: var(--console-favorite-color);
-		border-radius: var(--border-radius);
-		padding: 0 1px;
-	}
-`;
 
 export const NavigatorFactors = (props: {
 	visible: boolean;

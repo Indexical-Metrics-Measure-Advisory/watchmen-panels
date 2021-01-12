@@ -579,7 +579,11 @@ export const TopicMapper = (props: {
 	const { holder } = props;
 
 	const { store: { topics, selectedPipeline } } = usePipelineContext();
-	const { addPropertyChangeListener, removePropertyChangeListener } = usePipelineUnitActionContext();
+	const {
+		firePropertyChange,
+		addPropertyChangeListener,
+		removePropertyChangeListener
+	} = usePipelineUnitActionContext();
 	const [ expanded, setExpanded ] = useState(false);
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
@@ -600,6 +604,7 @@ export const TopicMapper = (props: {
 	const onRuleRemove = (rule: MappingFactor) => {
 		const index = holder.mapping.findIndex(child => child === rule);
 		holder.mapping.splice(index, 1);
+		firePropertyChange(PipelineUnitActionEvent.MAPPING_CHANGED);
 		forceUpdate();
 	};
 	const onAppendMappingRuleClicked = () => {
@@ -614,6 +619,7 @@ export const TopicMapper = (props: {
 			} as FactorValue,
 			to: { type: SomeValueType.FACTOR, topicId: topic?.topicId, arithmetic: NoArithmetic.NO_FUNC } as FactorValue
 		});
+		firePropertyChange(PipelineUnitActionEvent.MAPPING_CHANGED);
 		forceUpdate();
 	};
 	const onSortAlphaDown = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -622,6 +628,7 @@ export const TopicMapper = (props: {
 		holder.mapping.sort((r1, r2) => {
 			return buildLabel({ mapping: r1, topics }).localeCompare(buildLabel({ mapping: r2, topics }));
 		});
+		firePropertyChange(PipelineUnitActionEvent.MAPPING_CHANGED);
 		forceUpdate();
 	};
 	const onSortAlphaUp = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -630,6 +637,7 @@ export const TopicMapper = (props: {
 		holder.mapping.sort((r1, r2) => {
 			return buildLabel({ mapping: r2, topics }).localeCompare(buildLabel({ mapping: r1, topics }));
 		});
+		firePropertyChange(PipelineUnitActionEvent.MAPPING_CHANGED);
 		forceUpdate();
 	};
 

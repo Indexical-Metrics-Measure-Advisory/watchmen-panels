@@ -9,6 +9,7 @@ import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { PrimaryObjectButton } from '../../../component/object-button';
 import { usePipelineContext } from '../pipeline-context';
 import { ArrangedPipeline, PipelinesTopicNode } from '../types';
+import { PipelineEditContextProvider } from './pipeline-edit-context';
 import { PipelineEditor } from './pipeline-editor';
 import { createStage } from './utils';
 
@@ -165,7 +166,7 @@ const Dropdown = styled.div.attrs<DropdownState>(({ visible, top, right }) => {
 `;
 const EditorBody = styled.div`
 	flex-grow: 1;
-	margin-bottom: var(--margin);
+	padding-bottom: var(--margin);
 `;
 
 const PipelineButton = (props: {
@@ -308,13 +309,15 @@ export const Editor = (props: {
 				: null}
 			<PrimaryObjectButton onClick={onCreatePipelineClicked}>
 				<FontAwesomeIcon icon={faWaveSquare}/>
-				<span>Create New Outbound Pipeline</span>
+				<span>New Outbound Pipeline</span>
 			</PrimaryObjectButton>
 		</EditorTitle>
 		<EditorBody>
-			{pipeline ?
-				<PipelineEditor outbound={isOutbound} topic={topic} pipeline={pipeline}/>
-				: null}
+			<PipelineEditContextProvider pipeline={pipeline}>
+				{pipeline ?
+					<PipelineEditor outbound={isOutbound} topic={topic} pipeline={pipeline}/>
+					: null}
+			</PipelineEditContextProvider>
 		</EditorBody>
 	</EditorContainer>;
 };

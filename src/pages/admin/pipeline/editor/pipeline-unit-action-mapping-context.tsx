@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import React, { useState } from 'react';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from './pipeline-unit-action-context';
 
 export enum PipelineUnitActionMappingEvent {
 	FROM_CHANGED = 'from-changed',
@@ -25,6 +26,7 @@ export const PipelineUnitActionMappingContextProvider = (props: {
 }) => {
 	const { children } = props;
 
+	const { firePropertyChange } = usePipelineUnitActionContext();
 	const [ emitter ] = useState<EventEmitter>(() => {
 		const emitter = new EventEmitter();
 		emitter.setMaxListeners(1000);
@@ -32,7 +34,10 @@ export const PipelineUnitActionMappingContextProvider = (props: {
 	});
 
 	return <Context.Provider value={{
-		firePropertyChange: (event) => emitter.emit(event),
+		firePropertyChange: (event) => {
+			emitter.emit(event);
+			firePropertyChange(PipelineUnitActionEvent.MAPPING_CHANGED);
+		},
 		addPropertyChangeListener: (event, listener) => emitter.on(event, listener),
 		removePropertyChangeListener: (event, listener) => emitter.off(event, listener)
 	}}>{children}</Context.Provider>;

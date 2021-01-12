@@ -4,6 +4,7 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { UnitAction, UnitActionAlarm, UnitActionAlarmSeverity } from '../../../../../services/admin/pipeline-types';
 import { ActionInput } from '../components/action-input';
 import { HorizontalOptions } from '../components/horizontal-options';
+import { PipelineUnitActionEvent, usePipelineUnitActionContext } from '../pipeline-unit-action-context';
 import { ActionBody2Columns, ActionBodyItemLabel } from './action-body';
 
 const AlarmContainer = styled(ActionBody2Columns)`
@@ -27,13 +28,16 @@ export const Alarm = (props: { action: UnitAction }) => {
 	const alarm = action as UnitActionAlarm;
 	const { severity, message = '' } = alarm;
 
+	const { firePropertyChange } = usePipelineUnitActionContext();
 	const forceUpdate = useForceUpdate();
 	const onSeverityChanged = (severity: UnitActionAlarmSeverity) => {
 		alarm.severity = severity;
+		firePropertyChange(PipelineUnitActionEvent.VARIABLE_CHANGED);
 		forceUpdate();
 	};
 	const onMessageChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		alarm.message = event.target.value;
+		firePropertyChange(PipelineUnitActionEvent.VARIABLE_CHANGED);
 		forceUpdate();
 	};
 

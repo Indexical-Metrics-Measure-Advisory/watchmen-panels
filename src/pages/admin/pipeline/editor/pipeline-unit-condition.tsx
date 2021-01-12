@@ -7,6 +7,7 @@ import { CompositeMode } from '../../../../services/admin/pipeline-types';
 import { ArrangedProcessUnit } from '../types';
 import { HorizontalOptions } from './components/horizontal-options';
 import { computeConditionCount } from './components/utils';
+import { usePipelineEditContext } from './pipeline-edit-context';
 import {
 	PipelineUnitConditionContextProvider,
 	PipelineUnitConditionEvent,
@@ -126,6 +127,7 @@ export const PipelineUnitCondition = (props: {
 }) => {
 	const { unit, expanded, children } = props;
 
+	const { firePipelineContentChange } = usePipelineEditContext();
 	const [ conditional, setConditional ] = useState(!!unit.on);
 	const [ conditionExpanded, setConditionExpanded ] = useState(false);
 
@@ -137,6 +139,7 @@ export const PipelineUnitCondition = (props: {
 		} else {
 			delete unit.on;
 		}
+		firePipelineContentChange();
 		setConditional(withCondition);
 	};
 

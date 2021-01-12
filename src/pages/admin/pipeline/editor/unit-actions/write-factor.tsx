@@ -13,13 +13,14 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 	const { firePropertyChange } = usePipelineUnitActionContext();
 	const onTopicChange = () => firePropertyChange(PipelineUnitActionEvent.TOPIC_CHANGED);
 	const onFactorChange = () => firePropertyChange(PipelineUnitActionEvent.FACTOR_CHANGED);
-	const onChangeIgnored = () => {
-	};
+	const onVariableChange = () => firePropertyChange(PipelineUnitActionEvent.VARIABLE_CHANGED);
+	const onArithmeticChange = () => firePropertyChange(PipelineUnitActionEvent.ARITHMETIC_CHANGED);
+
 	return <ActionBody2Columns>
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
 		<FacterValueFinder holder={write.value}
 		                   onTopicChange={onTopicChange} onFactorChange={onFactorChange}
-		                   onVariableChange={onChangeIgnored} onArithmeticChange={onChangeIgnored}/>
+		                   onVariableChange={onVariableChange} onArithmeticChange={onArithmeticChange}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<TopicFactorFinder holder={write} onTopicChange={onTopicChange} onFactorChange={onFactorChange}/>
 		<ActionBodyItemLabel>On:</ActionBodyItemLabel>
