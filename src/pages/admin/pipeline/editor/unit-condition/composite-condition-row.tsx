@@ -13,7 +13,6 @@ import {
 import { QueriedTopicForPipeline } from '../../../../../services/admin/types';
 import { HorizontalOptions } from '../components/horizontal-options';
 import { computeConditionLines, isCompositeCondition } from '../components/utils';
-import { usePipelineEditContext } from '../pipeline-edit-context';
 import { PipelineUnitConditionEvent, usePipelineUnitConditionContext } from '../pipeline-unit-condition-context';
 import { PlainConditionRow } from './plain-condition-row';
 
@@ -228,7 +227,6 @@ export const CompositeConditionRow = (props: {
 		level
 	} = props;
 
-	const { firePipelineContentChange } = usePipelineEditContext();
 	const { firePropertyChange } = usePipelineUnitConditionContext();
 	const [ expanded, setExpanded ] = useState(true);
 	const forceUpdate = useForceUpdate();
@@ -237,13 +235,12 @@ export const CompositeConditionRow = (props: {
 	const onToggleExpandedClicked = () => setExpanded(!expanded);
 	const onSelect = (mode: CompositeMode) => {
 		condition.mode = mode;
-		firePipelineContentChange();
+		firePropertyChange(PipelineUnitConditionEvent.FILTER_CHANGED);
 		forceUpdate();
 	};
 	const onAddSubFilterClicked = () => {
 		condition.children.push({ operator: ConditionOperator.EQUALS });
 		expanded ? forceUpdate() : setExpanded(true);
-		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_ADDED);
 	};
 	const onOutdentClicked = () => {
@@ -256,7 +253,6 @@ export const CompositeConditionRow = (props: {
 		parentCondition.children.splice(indexInParent, 1);
 		// add into grand, after parent
 		grandParentCondition.children.splice(indexInGrand + 1, 0, condition);
-		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_OUTDENT);
 	};
 	const onIndentClicked = () => {
@@ -270,7 +266,6 @@ export const CompositeConditionRow = (props: {
 		}
 		const index = parentCondition.children.findIndex(child => child === condition);
 		parentCondition.children.splice(index, 1, newParent);
-		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_INDENT);
 	};
 	const onRemoveClicked = () => {
@@ -279,7 +274,6 @@ export const CompositeConditionRow = (props: {
 		}
 		const index = parentCondition.children.findIndex(child => child === condition);
 		parentCondition.children.splice(index, 1);
-		firePipelineContentChange();
 		firePropertyChange(PipelineUnitConditionEvent.FILTER_REMOVED);
 	};
 
