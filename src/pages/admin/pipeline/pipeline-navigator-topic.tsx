@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fetchPipeline } from '../../../services/admin/topic';
-import { QueriedTopicForPipeline } from '../../../services/admin/types';
+import { QueriedFactorForPipeline, QueriedTopicForPipeline } from '../../../services/admin/types';
 import { LinkButton } from '../../component/console/link-button';
 import { useDialog } from '../../context/dialog';
 import { TopicIcon } from './components';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorFactors } from './pipeline-nagivator-factor';
+import { PipelineNavigatorNodeLabel } from './pipeline-navigator-node-label';
 
 const TopicContainer = styled.div.attrs({
 	'data-widget': 'pipeline-navigator-topic'
@@ -16,6 +17,9 @@ const TopicContainer = styled.div.attrs({
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8em;
+	&[data-visible=false] {
+		display: none;
+	}
 `;
 const TopicContent = styled.div`
 	display: flex;
@@ -26,7 +30,7 @@ const TopicContent = styled.div`
 	cursor: pointer;
 	&:hover {
 		background-color: var(--console-navigator-hover-color);
-		> span ~ button {
+		> button:last-child {
 			opacity: 0.8;
 			pointer-events: auto;
 		}
@@ -54,17 +58,11 @@ const TopicContent = styled.div`
 	> div:nth-child(2) {
 		margin-right: calc(var(--margin) / 4);
 	}
-	> span {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		flex-grow: 1;
-		~ button {
-			font-size: 1em;
-			opacity: 0;
-			pointer-events: none;
-			cursor: pointer;
-		}
+	> button:last-child {
+		font-size: 1em;
+		opacity: 0;
+		pointer-events: none;
+		cursor: pointer;
 	}
 `;
 
@@ -75,18 +73,23 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 	const {
 		store: { topic: current },
 		changeFlow, addFlowChangedListener, removeFlowChangedListener,
-		addCollapseAllTopicsListener, removeCollapseAllTopicsListener
+		addCollapseAllTopicsListener, removeCollapseAllTopicsListener,
+		addTopicFilterChangedListener, removeTopicFilterChangedListener
 	} = usePipelineContext();
 	const [ factorsVisible, setFactorsVisible ] = useState<boolean>(false);
 	const [ active, setActive ] = useState(current === topic);
+	const [ filterText, setFilterText ] = useState('');
 	useEffect(() => {
 		const onFlowChanged = (pickedTopic: QueriedTopicForPipeline) => setActive(pickedTopic === topic);
 		const onCollapseAllTopics = () => setFactorsVisible(false);
+		const onFilterTextChange = (filterText: string) => setFilterText(filterText);
 		addFlowChangedListener(onFlowChanged);
 		addCollapseAllTopicsListener(onCollapseAllTopics);
+		addTopicFilterChangedListener(onFilterTextChange);
 		return () => {
 			removeFlowChangedListener(onFlowChanged);
 			removeCollapseAllTopicsListener(onCollapseAllTopics);
+			removeTopicFilterChangedListener(onFilterTextChange);
 		};
 	});
 
@@ -113,16 +116,33 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 		changeFlow(topic, flow);
 	};
 
-	return <TopicContainer data-topic-id={topic.topicId}>
+	let topicVisible = false;
+	let visibleFactors: Array<QueriedFactorForPipeline> = [];
+	if (filterText) {
+		if (topic.name.toLowerCase().includes(filterText)) {
+			// topic contains filter text
+			topicVisible = true;
+		} else {
+			visibleFactors = topic.factors.filter(factor => factor.name.toLowerCase().includes(filterText));
+			if (visibleFactors.length !== 0) {
+				topicVisible = true;
+			}
+		}
+	} else {
+		topicVisible = true;
+	}
+
+	return <TopicContainer data-topic-id={topic.topicId} data-visible={topicVisible}>
 		<TopicContent data-factors-visible={factorsVisible} onClick={onTitleClicked}>
 			<FontAwesomeIcon icon={faChevronRight}/>
 			<TopicIcon topic={topic}/>
-			<span>{topic.name}</span>
+			<PipelineNavigatorNodeLabel name={topic.name} filter={filterText}/>
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Show Pipeline' right={true} offsetX={-8}
 			            onClick={onShowPipelineClicked}>
 				<FontAwesomeIcon icon={faWaveSquare}/>
 			</LinkButton>
 		</TopicContent>
-		<NavigatorFactors topic={topic} visible={factorsVisible}/>
+		<NavigatorFactors topic={topic} visible={factorsVisible} visibleFactors={visibleFactors}
+		                  filterText={filterText}/>
 	</TopicContainer>;
 };

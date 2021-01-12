@@ -15,7 +15,8 @@ export enum PipelineEvent {
 	TOPIC_SELECTION_CHANGED = 'topic-selection-changed',
 	PIPELINE_SELECTION_CHANGED = 'pipeline-selection-changed',
 
-	COLLAPSE_ALL_TOPICS = 'collapse-all-topics'
+	COLLAPSE_ALL_TOPICS = 'collapse-all-topics',
+	TOPIC_FILTER_TEXT_CHANGED = 'topic-filter-text-changed'
 }
 
 export type TopicsChangeListener = () => void;
@@ -25,6 +26,7 @@ export type CanvasVisibilityListener = (visible: boolean) => void;
 export type TopicSelectionChangeListener = (topic?: QueriedTopicForPipeline) => void;
 export type PipelineSelectionChangeListener = (pipeline?: ArrangedPipeline) => void;
 export type CollapseAllTopicsListener = () => void;
+export type TopicFilterChangedListener = (filterText: string) => void;
 
 export interface PipelineContextStore {
 	topics: Array<QueriedTopicForPipeline>;
@@ -67,6 +69,10 @@ export interface PipelineContextUsable {
 	collapseAllTopics: () => void;
 	addCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => void;
 	removeCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => void;
+
+	changeTopicFilter: (filterText: string) => void;
+	addTopicFilterChangedListener: (listener: TopicFilterChangedListener) => void;
+	removeTopicFilterChangedListener: (listener: TopicFilterChangedListener) => void;
 }
 
 export interface PipelineContext extends PipelineContextUsable {
@@ -92,29 +98,7 @@ export const PipelineContextProvider = (props: {
 		canvasVisible: true,
 		topicsLoadCompleted: false
 	});
-
-	useEffect(() => {
-		(async () => {
-			let pageNumber = 1;
-			while (true) {
-				const { data, completed } = await listTopicsForPipeline(pageNumber);
-				store.topics = [ ...store.topics, ...data ]
-					.sort((a, b) => {
-						return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
-					});
-				store.topicsLoadCompleted = completed;
-				emitter.emit(PipelineEvent.TOPICS_CHANGED);
-				if (completed) {
-					break;
-				}
-				pageNumber++;
-			}
-		})();
-	}, [ store, emitter ]);
-
-	return <Context.Provider value={{
-		store,
-
+	const [ functions ] = useState({
 		addTopicsChangedListener: (listener: TopicsChangeListener) => emitter.on(PipelineEvent.TOPICS_CHANGED, listener),
 		removeTopicsChangedListener: (listener: TopicsChangeListener) => emitter.off(PipelineEvent.TOPICS_CHANGED, listener),
 
@@ -149,8 +133,33 @@ export const PipelineContextProvider = (props: {
 
 		collapseAllTopics: () => emitter.emit(PipelineEvent.COLLAPSE_ALL_TOPICS),
 		addCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => emitter.on(PipelineEvent.COLLAPSE_ALL_TOPICS, listener),
-		removeCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => emitter.off(PipelineEvent.COLLAPSE_ALL_TOPICS, listener)
-	}}>{children}</Context.Provider>;
+		removeCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => emitter.off(PipelineEvent.COLLAPSE_ALL_TOPICS, listener),
+
+		changeTopicFilter: (filterText: string) => emitter.emit(PipelineEvent.TOPIC_FILTER_TEXT_CHANGED, filterText.toLowerCase()),
+		addTopicFilterChangedListener: (listener: TopicFilterChangedListener) => emitter.on(PipelineEvent.TOPIC_FILTER_TEXT_CHANGED, listener),
+		removeTopicFilterChangedListener: (listener: TopicFilterChangedListener) => emitter.off(PipelineEvent.TOPIC_FILTER_TEXT_CHANGED, listener)
+	});
+
+	useEffect(() => {
+		(async () => {
+			let pageNumber = 1;
+			while (true) {
+				const { data, completed } = await listTopicsForPipeline(pageNumber);
+				store.topics = [ ...store.topics, ...data ]
+					.sort((a, b) => {
+						return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+					});
+				store.topicsLoadCompleted = completed;
+				emitter.emit(PipelineEvent.TOPICS_CHANGED);
+				if (completed) {
+					break;
+				}
+				pageNumber++;
+			}
+		})();
+	}, [ store, emitter ]);
+
+	return <Context.Provider value={{ store, ...functions }}>{children}</Context.Provider>;
 };
 
 export const usePipelineContext = () => {

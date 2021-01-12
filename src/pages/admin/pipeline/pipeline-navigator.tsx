@@ -7,6 +7,7 @@ import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { Theme } from '../../../theme/types';
 import { LinkButton } from '../../component/console/link-button';
 import { ResizeHandle, ResizeHandleAlignment } from '../../component/console/menu/resize-handle';
+import Input from '../../component/input';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorTopic } from './pipeline-navigator-topic';
 
@@ -46,16 +47,52 @@ const Title = styled.div.attrs({
 			background-color: var(--console-primary-color);
 		}
 	}
-	> span {
-		flex-grow: 1;
-	}
 	> button {
 		border-radius: var(--border-radius);
 		font-size: 0.8em;
 		padding: calc(var(--margin) / 5);
+		width: 24px;
+		height: 24px;
 	}
 	> button:not(:last-child) {
 		margin-right: calc(var(--margin) / 6);
+	}
+`;
+const Search = styled.div.attrs({
+	'data-widget': 'console-pipeline-topics-navigator-search'
+})`
+	flex-grow: 1;
+	display: flex;
+	position: relative;
+	align-items: center;
+	justify-content: flex-end;
+	padding-left: calc(var(--margin) / 2);
+	margin-right: calc(var(--margin) / 6);
+	> input {
+		flex-grow: 0;
+		min-width: 0;
+		height: 24px;
+		font-size: 0.8em;
+		border-radius: 0;
+		border: 0;
+		padding: 0 24px 0 0;
+		&[data-on-search=false] {
+			padding-right: 0;
+			width: 0;
+		}
+		&[data-on-search=true] {
+			width: 100%;
+			box-shadow: 0 1px 0 0 var(--border-color);
+		}
+	}
+	> button {
+		display: block;
+		position: absolute;
+		right: 0;
+		top: 1px;
+		width: 24px;
+		height: 24px;
+		font-size: 0.8em;
 	}
 `;
 const Body = styled.div.attrs({
@@ -160,6 +197,46 @@ const LoadingInBottom = () => {
 	</LoadingInBottomDiv>;
 };
 
+const SearchInTitle = () => {
+	const { changeTopicFilter } = usePipelineContext();
+	const searchInputRef = useRef<HTMLInputElement>(null);
+	const [ onSearch, setOnSearch ] = useState(false);
+	const [ searchThrottle, setSearchThrottle ] = useState<number | null>(null);
+	const [ searchText, setSearchText ] = useState('');
+
+	const onSearchInputChange = () => {
+		const value = searchInputRef.current?.value;
+		setSearchText(value || '');
+		const searchText = (value || '').trim();
+		if (searchThrottle) {
+			clearTimeout(searchThrottle);
+			setSearchThrottle(null);
+		}
+		setSearchThrottle(setTimeout(() => {
+			setSearchThrottle(null);
+			changeTopicFilter(searchText);
+		}, 300));
+	};
+	const onSearchInputFocus = () => searchInputRef.current?.select();
+	const onSearchInputBlur = () => !searchInputRef.current?.value && setOnSearch(false);
+	const onSearchClicked = () => {
+		setOnSearch(true);
+		searchInputRef.current?.focus();
+	};
+
+	return <Search>
+		<Input data-on-search={onSearch}
+		       value={searchText} placeholder='Filter by name'
+		       onChange={onSearchInputChange}
+		       onFocus={onSearchInputFocus} onBlur={onSearchInputBlur}
+		       ref={searchInputRef}/>
+		<LinkButton ignoreHorizontalPadding={true} tooltip='Search by Name' right={true} offsetX={-8}
+		            onClick={onSearchClicked}>
+			<FontAwesomeIcon icon={faSearch}/>
+		</LinkButton>
+	</Search>;
+};
+
 export const PipelineNavigator = () => {
 	const { consoleSpaceHeaderHeight } = useTheme() as Theme;
 	const {
@@ -204,18 +281,12 @@ export const PipelineNavigator = () => {
 
 	const onLinkTopicClicked = () => setLinkTopic(!linkTopic);
 	const onCollapseAllClicked = () => collapseAllTopics();
-	const onSearchClicked = () => {
-
-	};
 	const onResize = (width: number) => setWidth(Math.min(Math.max(width, ScrollWidth), 500));
 
 	return <Navigator width={width - ScrollWidth} visible={menuVisible}>
 		<Title data-link-topic={linkTopic}>
 			<span>Topics</span>
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Search by Name' right={true} offsetX={-8}
-			            onClick={onSearchClicked}>
-				<FontAwesomeIcon icon={faSearch}/>
-			</LinkButton>
+			<SearchInTitle/>
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Collapse All' right={true} offsetX={-8}
 			            onClick={onCollapseAllClicked}>
 				<FontAwesomeIcon icon={faCompressAlt} transform={{ rotate: -45 }}/>
