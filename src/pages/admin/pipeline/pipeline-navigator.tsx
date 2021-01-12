@@ -1,9 +1,11 @@
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faCompressAlt, faLink, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 import { useForceUpdate } from '../../../common/utils';
+import { QueriedTopicForPipeline } from '../../../services/admin/types';
 import { Theme } from '../../../theme/types';
+import { LinkButton } from '../../component/console/link-button';
 import { ResizeHandle, ResizeHandleAlignment } from '../../component/console/menu/resize-handle';
 import { usePipelineContext } from './pipeline-context';
 import { NavigatorTopic } from './pipeline-navigator-topic';
@@ -11,6 +13,7 @@ import { NavigatorTopic } from './pipeline-navigator-topic';
 const ScrollWidth = 15;
 const Navigator = styled.div.attrs<{ width: number, visible: boolean }>(({ theme, width, visible }) => {
 	return {
+		'data-widget': 'console-pipeline-topics-navigator',
 		style: {
 			position: visible ? 'relative' : 'absolute',
 			right: visible ? 0 : (-1 - width),
@@ -28,18 +31,36 @@ const Navigator = styled.div.attrs<{ width: number, visible: boolean }>(({ theme
 	transition: opacity 300ms ease-in-out, right 300ms ease-in-out;
 	overflow: hidden;
 `;
-const Title = styled.div`
+const Title = styled.div.attrs({
+	'data-widget': 'console-pipeline-topics-navigator-title'
+})`
 	display: flex;
 	align-items: center;
 	font-family: var(--console-title-font-family);
 	min-height: 40px;
 	border-bottom: var(--border);
 	padding: 0 calc(var(--margin) / 2);
+	&[data-link-topic=true] {
+		> button:last-child {
+			color: var(--invert-color);
+			background-color: var(--console-primary-color);
+		}
+	}
 	> span {
 		flex-grow: 1;
 	}
+	> button {
+		border-radius: var(--border-radius);
+		font-size: 0.8em;
+		padding: calc(var(--margin) / 5);
+	}
+	> button:not(:last-child) {
+		margin-right: calc(var(--margin) / 6);
+	}
 `;
-const Body = styled.div`
+const Body = styled.div.attrs({
+	'data-widget': 'console-pipeline-topics-navigator-body'
+})`
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
@@ -144,9 +165,13 @@ export const PipelineNavigator = () => {
 	const {
 		store: { topics, menuVisible },
 		addMenuVisibilityListener, removeMenuVisibilityListener,
-		addTopicsChangedListener, removeTopicsChangedListener
+		addTopicsChangedListener, removeTopicsChangedListener,
+		addTopicSelectionChangedListener, removeTopicSelectionChangedListener,
+		collapseAllTopics
 	} = usePipelineContext();
+	const bodyRef = useRef<HTMLDivElement>(null);
 	const [ width, setWidth ] = useState(300 + ScrollWidth);
+	const [ linkTopic, setLinkTopic ] = useState(false);
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const onVisibleChanged = (visible: boolean) => {
@@ -155,27 +180,52 @@ export const PipelineNavigator = () => {
 			}
 			forceUpdate();
 		};
+		const onTopicLink = (topic?: QueriedTopicForPipeline) => {
+			if (!topic || !linkTopic || !bodyRef.current) {
+				return;
+			}
+
+			const topicNode = bodyRef.current.querySelector(`div[data-topic-id="${topic.topicId}"]`);
+			if (!topicNode) {
+				// not found
+				return;
+			}
+			topicNode.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		};
 		addMenuVisibilityListener(onVisibleChanged);
 		addTopicsChangedListener(forceUpdate);
+		addTopicSelectionChangedListener(onTopicLink);
 		return () => {
 			removeMenuVisibilityListener(onVisibleChanged);
 			removeTopicsChangedListener(forceUpdate);
+			removeTopicSelectionChangedListener(onTopicLink);
 		};
 	});
 
-	// const onLocateTopicClicked = () => {
-	// };
+	const onLinkTopicClicked = () => setLinkTopic(!linkTopic);
+	const onCollapseAllClicked = () => collapseAllTopics();
+	const onSearchClicked = () => {
+
+	};
 	const onResize = (width: number) => setWidth(Math.min(Math.max(width, ScrollWidth), 500));
 
 	return <Navigator width={width - ScrollWidth} visible={menuVisible}>
-		<Title>
+		<Title data-link-topic={linkTopic}>
 			<span>Topics</span>
-			{/*<LinkButton ignoreHorizontalPadding={true} tooltip='Locate In Navigator' right={true} offsetX={-8}*/}
-			{/*            onClick={onLocateTopicClicked}>*/}
-			{/*	<FontAwesomeIcon icon={faCrosshairs}/>*/}
-			{/*</LinkButton>*/}
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Search by Name' right={true} offsetX={-8}
+			            onClick={onSearchClicked}>
+				<FontAwesomeIcon icon={faSearch}/>
+			</LinkButton>
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Collapse All' right={true} offsetX={-8}
+			            onClick={onCollapseAllClicked}>
+				<FontAwesomeIcon icon={faCompressAlt} transform={{ rotate: -45 }}/>
+			</LinkButton>
+			<LinkButton ignoreHorizontalPadding={true} tooltip='Synchronized with Editor' right={true} offsetX={-8}
+			            onClick={onLinkTopicClicked}>
+				<FontAwesomeIcon icon={faLink}/>
+			</LinkButton>
 		</Title>
-		<Body>
+		<Body ref={bodyRef}>
 			{topics.map(topic => <NavigatorTopic topic={topic} key={topic.topicId}/>)}
 			<LoadingInCenter/>
 		</Body>

@@ -74,14 +74,20 @@ export const NavigatorTopic = (props: { topic: QueriedTopicForPipeline }) => {
 	const { show: showDialog, hide: hideDialog } = useDialog();
 	const {
 		store: { topic: current },
-		changeFlow, addFlowChangedListener, removeFlowChangedListener
+		changeFlow, addFlowChangedListener, removeFlowChangedListener,
+		addCollapseAllTopicsListener, removeCollapseAllTopicsListener
 	} = usePipelineContext();
 	const [ factorsVisible, setFactorsVisible ] = useState<boolean>(false);
 	const [ active, setActive ] = useState(current === topic);
 	useEffect(() => {
 		const onFlowChanged = (pickedTopic: QueriedTopicForPipeline) => setActive(pickedTopic === topic);
+		const onCollapseAllTopics = () => setFactorsVisible(false);
 		addFlowChangedListener(onFlowChanged);
-		return () => removeFlowChangedListener(onFlowChanged);
+		addCollapseAllTopicsListener(onCollapseAllTopics);
+		return () => {
+			removeFlowChangedListener(onFlowChanged);
+			removeCollapseAllTopicsListener(onCollapseAllTopics);
+		};
 	});
 
 	const onTitleClicked = () => setFactorsVisible(!factorsVisible);

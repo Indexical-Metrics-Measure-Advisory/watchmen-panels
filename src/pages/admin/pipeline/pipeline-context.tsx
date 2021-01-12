@@ -13,7 +13,9 @@ export enum PipelineEvent {
 	MENU_VISIBLE = 'menu-visible',
 	CANVAS_VISIBLE = 'canvas-visible',
 	TOPIC_SELECTION_CHANGED = 'topic-selection-changed',
-	PIPELINE_SELECTION_CHANGED = 'pipeline-selection-changed'
+	PIPELINE_SELECTION_CHANGED = 'pipeline-selection-changed',
+
+	COLLAPSE_ALL_TOPICS = 'collapse-all-topics'
 }
 
 export type TopicsChangeListener = () => void;
@@ -22,6 +24,7 @@ export type MenuVisibilityListener = (visible: boolean) => void;
 export type CanvasVisibilityListener = (visible: boolean) => void;
 export type TopicSelectionChangeListener = (topic?: QueriedTopicForPipeline) => void;
 export type PipelineSelectionChangeListener = (pipeline?: ArrangedPipeline) => void;
+export type CollapseAllTopicsListener = () => void;
 
 export interface PipelineContextStore {
 	topics: Array<QueriedTopicForPipeline>;
@@ -60,6 +63,10 @@ export interface PipelineContextUsable {
 	changeSelectedPipeline: (pipeline?: ArrangedPipeline) => void;
 	addPipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => void;
 	removePipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => void;
+
+	collapseAllTopics: () => void;
+	addCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => void;
+	removeCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => void;
 }
 
 export interface PipelineContext extends PipelineContextUsable {
@@ -138,7 +145,11 @@ export const PipelineContextProvider = (props: {
 			emitter.emit(PipelineEvent.PIPELINE_SELECTION_CHANGED, pipeline);
 		},
 		addPipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => emitter.on(PipelineEvent.PIPELINE_SELECTION_CHANGED, listener),
-		removePipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => emitter.off(PipelineEvent.PIPELINE_SELECTION_CHANGED, listener)
+		removePipelineSelectionChangedListener: (listener: PipelineSelectionChangeListener) => emitter.off(PipelineEvent.PIPELINE_SELECTION_CHANGED, listener),
+
+		collapseAllTopics: () => emitter.emit(PipelineEvent.COLLAPSE_ALL_TOPICS),
+		addCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => emitter.on(PipelineEvent.COLLAPSE_ALL_TOPICS, listener),
+		removeCollapseAllTopicsListener: (listener: CollapseAllTopicsListener) => emitter.off(PipelineEvent.COLLAPSE_ALL_TOPICS, listener)
 	}}>{children}</Context.Provider>;
 };
 
