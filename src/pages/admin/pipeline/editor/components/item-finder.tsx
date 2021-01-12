@@ -159,8 +159,8 @@ export const ItemFinder = <I extends any>(props: {
 	const searchInputRef = useRef<HTMLInputElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
 	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ left: 0, width: 0, atTop: false });
-	const [ searchText, setSearchText ] = useState<string>(name);
-	const [ filteredItems, setFilteredItems ] = useState<Array<{ item: I, parts: Array<string> }>>(filterItems(name));
+	const [ searchText, setSearchText ] = useState<string>('');
+	const [ filteredItems, setFilteredItems ] = useState<Array<{ item: I, parts: Array<string> }>>(filterItems(''));
 	const [ filterTimeout, setFilterTimeout ] = useState<number | null>(null);
 	useCollapseFixedThing(containerRef, () => setExpanded(false));
 
@@ -197,9 +197,9 @@ export const ItemFinder = <I extends any>(props: {
 	const onItemClicked = (item: I) => () => {
 		onSelect(item);
 		setExpanded(false);
-		const searchText = asLabel(item);
-		setSearchText(searchText);
-		setFilteredItems(filterItems(searchText));
+		// const searchText = asLabel(item);
+		// setSearchText(searchText);
+		// setFilteredItems(filterItems(searchText));
 	};
 
 	return <FinderContainer ref={containerRef}>

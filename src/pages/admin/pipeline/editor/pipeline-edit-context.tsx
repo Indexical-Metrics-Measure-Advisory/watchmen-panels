@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { savePipeline } from '../../../../services/admin/pipeline';
 import { usePipelineContext } from '../pipeline-context';
@@ -64,7 +65,7 @@ export const PipelineEditContextProvider = (props: {
 		}
 
 		((pipeline: ArrangedPipeline) => {
-			console.log('Receive changes from editor, and will save it after 30 seconds.');
+			console.log(`Receive pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, and will save it after 30 seconds.`, 'color:rgb(251,71,71)', '');
 			// save after 30 seconds
 			state.throttle = setTimeout(async () => {
 				state.throttle = null;
