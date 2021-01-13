@@ -49,25 +49,29 @@ const filterByText = <X extends any, Y extends any>(all: Array<Y>, text: string,
 export const filterTopic = (topics: Array<QueriedTopicForPipeline>, text: string): Array<FilteredTopic> => {
 	text = text.trim();
 	if (!text) {
-		return topics.map(topic => ({ item: topic, parts: [ topic.name ] }));
+		return topics.map(topic => ({ item: topic, parts: [ topic.name || '' ] }));
 	} else {
-		return filterByText(topics, text.toUpperCase(), (topic: QueriedTopicForPipeline) => topic.name);
+		return filterByText(topics, text.toUpperCase(), (topic: QueriedTopicForPipeline) => (topic.name || ''));
 	}
 };
 
 export const filterFactor = (factors: Array<QueriedFactorForPipeline>, text: string): Array<FilteredFactor> => {
 	text = text.trim();
 	if (!text) {
-		return factors.map(factor => {
-			return {
-				item: factor,
-				parts: [ factor.label ]
-			};
-		}).sort((a, b) => {
-			return a.parts[0].localeCompare(b.parts[0]);
-		});
+		return factors
+			.map(factor => {
+				return {
+					item: factor,
+					parts: [ factor.label || '' ]
+				};
+			})
+			// filter factors which has no label
+			.filter(x => x.parts[0])
+			.sort((a, b) => {
+				return a.parts[0].localeCompare(b.parts[0]);
+			});
 	} else {
-		return filterByText(factors, text.toUpperCase(), (factor: QueriedFactorForPipeline) => factor.label);
+		return filterByText(factors, text.toUpperCase(), (factor: QueriedFactorForPipeline) => (factor.label || ''));
 	}
 };
 

@@ -18,7 +18,7 @@ export const FactorFinder = (props: { holder: FactorHolder, onChange: () => void
 	// eslint-disable-next-line
 	const factor = currentFactorId ? (topic?.factors.find(factor => factor.factorId == currentFactorId)) : (void 0);
 
-	const asLabel = (factor?: QueriedFactorForPipeline) => factor ? factor.label : '';
+	const asLabel = (factor?: QueriedFactorForPipeline) => factor ? (factor.label || '') : '';
 	const filterItems = (searchText: string) => filterFactor(topic?.factors || [], searchText);
 	const onSelect = (factor: QueriedFactorForPipeline) => {
 		holder.factorId = factor.factorId;
