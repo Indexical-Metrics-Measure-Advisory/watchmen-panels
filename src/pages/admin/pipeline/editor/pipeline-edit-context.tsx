@@ -66,7 +66,7 @@ export const PipelineEditContextProvider = (props: {
 		}
 
 		((pipeline: ArrangedPipeline) => {
-			console.log(`Detect pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, will save changes after 30 seconds.`, 'color:rgb(251,71,71)', '');
+			console.log(`Detect pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, will save changes after 10 seconds.`, 'color:rgb(251,71,71)', '');
 			// save after 30 seconds
 			state.throttle = setTimeout(async () => {
 				state.throttle = null;
@@ -78,7 +78,7 @@ export const PipelineEditContextProvider = (props: {
 					console.error(e);
 					console.groupEnd();
 				}
-			}, 30000);
+			}, 10000);
 		})(state.pipeline);
 	};
 
