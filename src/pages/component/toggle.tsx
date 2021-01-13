@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 
-const ToggleButton = styled.div`
+const ToggleButton = styled.div.attrs({
+	'data-widget': 'toggle'
+})`
 	display: flex;
 	position: relative;
 	align-items: center;
@@ -9,15 +11,16 @@ const ToggleButton = styled.div`
 	height: 22px;
 	border-width: 1px;
 	border-style: solid;
-	border-color: var(--toggle-positive-bg-color);
 	border-radius: 11px;
 	cursor: pointer;
 	transition: all 300ms ease-in-out;
 	&[data-positive=true] {
 		background-color: var(--toggle-positive-bg-color);
+		border-color: var(--toggle-positive-border-color);
 	}
 	&[data-positive=false] {
 		background-color: var(--toggle-negative-bg-color);
+		border-color: var(--toggle-negative-border-color);
 	}
 `;
 const Slider = styled.div`
@@ -59,7 +62,6 @@ const Toggle = (props: {
 		}
 	};
 
-	console.log(value);
 	return <ToggleButton data-positive={value} onClick={onToggleClicked}
 	                     ref={toggleRef}>
 		<Slider data-positive={value}/>

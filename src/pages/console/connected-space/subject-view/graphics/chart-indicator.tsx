@@ -87,7 +87,7 @@ const IndicatorEditor = styled.div`
 	}
 `;
 
-export const ChartSettingsIndicator = (props: {
+export const ChartIndicator = (props: {
 	space: ConsoleSpace;
 	subject: ConsoleSpaceSubject;
 	chart: ConsoleSpaceSubjectChart;

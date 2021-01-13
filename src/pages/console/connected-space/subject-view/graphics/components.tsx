@@ -93,6 +93,10 @@ export const SettingsBody = styled.div`
 			}
 		}
 	}
+	div[data-widget=toggle] {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
 `;
 export const SettingsRowLabel = styled.div`
 	display: flex;
@@ -137,7 +141,7 @@ export const AppendButton = styled(PrimaryObjectButton)`
 	justify-self: end;
 `;
 export const BottomGapper = styled.div`
-	grid-column: span 2;
+	grid-column: span 4;
 	height: calc(var(--margin) / 2);
 `;
 export const SettingsFooter = styled.div`

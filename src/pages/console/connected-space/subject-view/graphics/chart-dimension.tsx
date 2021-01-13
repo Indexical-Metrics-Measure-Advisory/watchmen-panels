@@ -61,7 +61,7 @@ const DimensionEditor = styled.div`
 	}
 `;
 
-export const ChartSettingsDimension = (props: {
+export const ChartDimension = (props: {
 	space: ConsoleSpace;
 	subject: ConsoleSpaceSubject;
 	chart: ConsoleSpaceSubjectChart;

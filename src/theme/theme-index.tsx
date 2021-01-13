@@ -47,6 +47,8 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		--toggle-negative-slider-color: ${({ theme }) => theme.toggleNegativeSliderColor};
 		--toggle-positive-bg-color: ${({ theme }) => theme.togglePositiveBgColor};
 		--toggle-negative-bg-color: ${({ theme }) => theme.toggleNegativeBgColor};
+		--toggle-positive-border-color: var(--toggle-positive-bg-color);
+		--toggle-negative-border-color: var(--toggle-positive-bg-color);
 		--dialog-box-shadow: ${({ theme }) => theme.dialogBoxShadow};
 		--header-bg-color: ${({ theme }) => theme.headerBgColor};
 		--header-box-shadow: ${({ theme }) => theme.headerBoxShadow};

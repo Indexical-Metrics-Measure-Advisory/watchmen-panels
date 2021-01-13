@@ -200,6 +200,7 @@ export interface ConsoleSpaceSubjectChart {
 		height: number;
 	},
 	predefined?: boolean;
+	colors?: Array<string>;
 }
 
 export interface ConsoleSpaceSubject {
