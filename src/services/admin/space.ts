@@ -128,6 +128,7 @@ export const saveSpace = async (space: Space): Promise<void> => {
 			},
 			body: JSON.stringify(space),
 		});
+		return await response.json();
 	} else {
 		if (isMockService()) {
 			// call api

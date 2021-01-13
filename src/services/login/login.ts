@@ -1,3 +1,4 @@
+import { setToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import { Account, LoginResponse } from "./types";
 
@@ -31,7 +32,11 @@ export const login = async (account: Account): Promise<LoginResponse> => {
 			}),
 		});
 
+		//TODO add token to session storage
 		const result = await response.json();
+		console.log(result);
+
+		setToken(result["access_token"]);
 
 		return { pass: true, admin: account.name === ADMIN };
 	}
