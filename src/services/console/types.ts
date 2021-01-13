@@ -198,7 +198,8 @@ export interface ConsoleSpaceSubjectChart {
 		left: number;
 		width: number;
 		height: number;
-	}
+	},
+	predefined?: boolean;
 }
 
 export interface ConsoleSpaceSubject {

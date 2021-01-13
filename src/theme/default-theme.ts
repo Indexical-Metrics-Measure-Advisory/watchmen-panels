@@ -50,6 +50,12 @@ const DefaultTheme = {
 	// input
 	inputIndent: 10,
 
+	// toggle
+	togglePositiveSliderColor: '#f9fafc',
+	toggleNegativeSliderColor: 'rgba(43,80,174,1)',
+	togglePositiveBgColor: 'rgba(43,80,174,1)',
+	toggleNegativeBgColor: 'transparent',
+
 	// dialog
 	dialogBoxShadow: '0 0 20px 0 rgba(37, 38, 94, 0.8)',
 

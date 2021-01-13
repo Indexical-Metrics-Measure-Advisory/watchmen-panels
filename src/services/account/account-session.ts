@@ -15,7 +15,12 @@ export const findAccount = (): { name: string; admin: boolean } | undefined => {
 		}
 	}
 
-	return void 0;
+	return (void 0);
+};
+
+export const isAdmin = (): boolean => {
+	const account = findAccount();
+	return !!account && account.admin;
 };
 
 export const findToken = (): string | null => {

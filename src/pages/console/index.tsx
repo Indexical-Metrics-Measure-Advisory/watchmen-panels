@@ -19,6 +19,8 @@ const Container = styled.div.attrs({
 })`
 	display: flex;
 	color: var(--console-font-color);
+	--toggle-negative-slider-color: var(--console-primary-color);
+	--toggle-positive-bg-color: var(--console-primary-color);
 	> main {
 		flex-grow: 1;
 		display: flex;

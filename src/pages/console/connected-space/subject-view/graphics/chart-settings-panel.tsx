@@ -22,6 +22,7 @@ import {
 	isDimensionCanAppend,
 	isIndicatorCanAppend
 } from '../../../chart/chart-defender';
+import { ChartSettingsAdmin } from './chart-settings-admin';
 import { ChartSettingsDimension } from './chart-settings-dimension';
 import { ChartSettingsIndicator } from './chart-settings-indicator';
 import {
@@ -111,6 +112,7 @@ export const ChartSettingsPanel = (props: {
 					<span>Add Indicator</span>
 				</AppendButton>
 				: null}
+			<ChartSettingsAdmin chart={chart}/>
 			<BottomGapper/>
 		</SettingsBody>
 		<SettingsFooter>
