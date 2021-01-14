@@ -24,7 +24,16 @@ export enum NumericArithmetic {
 	LOGARITHM = "log",
 }
 
-export type SimpleFuncArithmetic = NoArithmetic | DatePartArithmetic | NumericArithmetic;
+export enum AggregateArithmetic {
+	COUNT = 'count',
+	SUM = 'sum',
+	AVG = 'avg',
+	MAX = 'max',
+	MIN = 'min',
+	MEDIAN = 'med'
+}
+
+export type SimpleFuncArithmetic = NoArithmetic | DatePartArithmetic | NumericArithmetic | AggregateArithmetic;
 
 export enum SomeValueType {
 	IN_MEMORY = "in-memory",
@@ -52,7 +61,8 @@ export interface FactorValueHolder {
 	value: SomeValue;
 }
 
-export interface Condition {}
+export interface Condition {
+}
 
 export enum ConditionOperator {
 	EQUALS = "equals",

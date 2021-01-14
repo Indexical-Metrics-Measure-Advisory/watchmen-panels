@@ -26,7 +26,8 @@ export const WriteToMemory = (props: { action: UnitAction }) => {
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
 		<FacterValueFinder holder={write.value}
 		                   onTopicChange={onTopicChange} onFactorChange={onFactorChange}
-		                   onVariableChange={onVariableChange} onArithmeticChange={onArithmeticChange}/>
+		                   onVariableChange={onVariableChange} onArithmeticChange={onArithmeticChange}
+		                   aggregate={false}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<ActionInput value={write.targetName || ''} onChange={onTargetNameChanged}
 		             placeholder='Variable name...'/>

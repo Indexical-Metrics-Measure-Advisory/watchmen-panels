@@ -440,7 +440,7 @@ export const PlainConditionRow = (props: {
 					<div>Memory Context</div>
 					<ActionInput value={condition.right.name} onChange={onInMemoryVariableNameChanged}
 					             placeholder='Variable name...'/>
-					<ArithmeticSelect value={condition.right} right={true} onChange={onFilterChange}/>
+					<ArithmeticSelect aggregate={false} value={condition.right} right={true} onChange={onFilterChange}/>
 				</RightAsInMemoryContainer>
 				: null}
 		</Dropdown>

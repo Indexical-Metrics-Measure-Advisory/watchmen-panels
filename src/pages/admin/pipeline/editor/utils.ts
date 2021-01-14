@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import {
+	AggregateArithmetic,
 	ConditionOperator,
 	DatePartArithmetic,
 	NoArithmetic,
@@ -63,6 +64,12 @@ const ArithmeticLabels: { [key in SimpleFuncArithmetic]: string } = {
 	[DatePartArithmetic.WEEKDAY]: 'Weekday',
 	[NumericArithmetic.PERCENTAGE]: 'Percentage',
 	[NumericArithmetic.ABSOLUTE_VALUE]: 'Abs',
-	[NumericArithmetic.LOGARITHM]: 'Log'
+	[NumericArithmetic.LOGARITHM]: 'Log',
+	[AggregateArithmetic.SUM]: 'Summary',
+	[AggregateArithmetic.AVG]: 'Average',
+	[AggregateArithmetic.COUNT]: 'Count',
+	[AggregateArithmetic.MEDIAN]: 'Median',
+	[AggregateArithmetic.MAX]: 'Maximum',
+	[AggregateArithmetic.MIN]: 'Minimum'
 };
 export const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => ArithmeticLabels[arithmetic];

@@ -20,7 +20,8 @@ export const WriteFactor = (props: { action: UnitAction }) => {
 		<ActionBodyItemLabel>From:</ActionBodyItemLabel>
 		<FacterValueFinder holder={write.value}
 		                   onTopicChange={onTopicChange} onFactorChange={onFactorChange}
-		                   onVariableChange={onVariableChange} onArithmeticChange={onArithmeticChange}/>
+		                   onVariableChange={onVariableChange} onArithmeticChange={onArithmeticChange}
+		                   aggregate={true}/>
 		<ActionBodyItemLabel>To:</ActionBodyItemLabel>
 		<TopicFactorFinder holder={write} onTopicChange={onTopicChange} onFactorChange={onFactorChange}/>
 		<ActionBodyItemLabel>On:</ActionBodyItemLabel>

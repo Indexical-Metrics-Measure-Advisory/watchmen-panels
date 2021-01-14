@@ -563,7 +563,8 @@ const RuleNode = (props: {
 			<FacterValueFinder holder={rule.from}
 			                   onTopicChange={onFromChanged} onFactorChange={onFromChanged}
 			                   onVariableChange={onFromChanged}
-			                   onArithmeticChange={onFromChanged}/>
+			                   onArithmeticChange={onFromChanged}
+			                   aggregate={false}/>
 			<OperatorAndRightContainer>⤋</OperatorAndRightContainer>
 			<FactorContainer>
 				<div>Topic: {topic?.name}</div>

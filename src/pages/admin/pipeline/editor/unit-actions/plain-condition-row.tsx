@@ -400,7 +400,8 @@ export const PlainConditionRow = (props: {
 			<FacterValueFinder holder={condition.right}
 			                   onTopicChange={onFilterChange} onFactorChange={onFilterChange}
 			                   onVariableChange={onFilterChange}
-			                   onArithmeticChange={onFilterChange}/>
+			                   onArithmeticChange={onFilterChange}
+			                   aggregate={false}/>
 		</Dropdown>
 	</Container>;
 };

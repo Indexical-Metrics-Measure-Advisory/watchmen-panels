@@ -66,8 +66,13 @@ export const FacterValueFinder = (props: {
 	onFactorChange: () => void;
 	onVariableChange: () => void;
 	onArithmeticChange: () => void;
+	aggregate: boolean;
 }) => {
-	const { holder: value, onTopicChange, onFactorChange, onVariableChange, onArithmeticChange } = props;
+	const {
+		holder: value,
+		onTopicChange, onFactorChange, onVariableChange, onArithmeticChange,
+		aggregate
+	} = props;
 	const { type: valueType = SomeValueType.FACTOR } = value;
 
 	const { store: { selectedPipeline, topics } } = usePipelineContext();
@@ -115,7 +120,7 @@ export const FacterValueFinder = (props: {
 		}
 		{
 			isFactorValue(value) || isMemoryValue(value)
-				? <ArithmeticSelect value={value} right={true} onChange={onArithmeticChange}/>
+				? <ArithmeticSelect aggregate={aggregate} value={value} right={true} onChange={onArithmeticChange}/>
 				: null
 		}
 	</Container>;

@@ -1,8 +1,10 @@
 import { faEdit } from '@fortawesome/free-regular-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
+	AggregateArithmetic,
 	DatePartArithmetic,
 	NoArithmetic,
 	NumericArithmetic,
@@ -16,9 +18,12 @@ interface DropdownRect {
 	right?: number;
 	width: number;
 	atTop: boolean;
+	aggregate: boolean;
 }
 
-const DropdownHeight = 120;
+const DropdownRowHeight = 28;
+const DropdownHeight = DropdownRowHeight * 7 + 8 * 3;
+const NoAggregateDropdownHeight = DropdownRowHeight * 5 + 8 * 3;
 
 const ArithmeticSelectContainer = styled.div`
 	display: flex;
@@ -44,29 +49,31 @@ const ArithmeticSelectContainer = styled.div`
 		font-variant: petite-caps;
 		font-weight: var(--font-demi-bold);
 		border-top-left-radius: 12px;
-		border-bottom-left-radius: 12px;
+		border-top-right-radius: 12px;
 	}
 	> div:last-child {
 		position: relative;
 		padding: 0 calc(var(--margin) / 3);
 	}
 `;
-const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTop }) => {
-	return {
-		style: {
-			top,
-			left,
-			right: typeof right === 'number' ? `calc(100vw - ${right}px)` : 'unset',
-			minWidth: Math.max(width, 200),
-			transformOrigin: atTop ? 'bottom' : 'top'
-		}
-	};
-})<DropdownRect>`
+const Dropdown = styled.div
+	.attrs<DropdownRect>(
+		({ top, left, right, width, atTop, aggregate }) => {
+			return {
+				style: {
+					top,
+					left,
+					right: typeof right === 'number' ? `calc(100vw - ${right}px)` : 'unset',
+					minWidth: Math.max(width, 200),
+					minHeight: aggregate ? `${DropdownHeight}px` : `${NoAggregateDropdownHeight}px`,
+					transformOrigin: atTop ? 'bottom' : 'top'
+				}
+			};
+		})<DropdownRect>`
 	display: flex;
 	position: fixed;
 	flex-direction: column;
 	z-index: 1000;
-	height: ${DropdownHeight}px;
 	transform: scaleY(0);
 	transition: transform 300ms ease-in-out;
 	pointer-events: none;
@@ -90,14 +97,24 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 		}
 	}
 	> div {
-		min-height: 28px;
+		min-height: ${DropdownRowHeight}px;
 		padding: 0 calc(var(--margin) / 2);
 	}
 	> div[data-role='action-category'] {
 		display: flex;
 		align-items: center;
-		font-weight: var(--font-bold);
 		cursor: default;
+		&:not(:last-child) {
+			font-weight: var(--font-bold);
+		}
+		&:last-child {
+			background-color: var(--bg-color);
+			justify-content: flex-end;
+			padding-top: 8px;
+			padding-bottom: 8px;
+			border-bottom-left-radius: 12px;
+			border-bottom-right-radius: 12px;
+		}
 	}
 	> div[data-role='actions'] {
 		display: flex;
@@ -107,10 +124,6 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 		background-color: var(--bg-color);
 		padding: calc(var(--margin) / 8) calc(var(--margin) / 2);
 		cursor: default;
-		&:last-child {
-			border-bottom-left-radius: 12px;
-			border-bottom-right-radius: 12px;
-		}
 		> div {
 			display: flex;
 			align-items: center;
@@ -133,6 +146,29 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 		}
 	}
 `;
+const ClearButton = styled.div`
+	display: flex;
+	position: relative;
+	align-items: center;
+	height: 24px;
+	line-height: 22px;
+	border-radius: 12px;
+	border: var(--border);
+	padding: 0 calc(var(--margin) / 2);
+	cursor: pointer;
+	> svg {
+		margin-right: calc(var(--margin) / 4);
+	}
+	&:hover,
+	&[data-current=true] {
+		border-color: var(--console-favorite-color);
+		color: var(--invert-color);
+		background-color: var(--console-favorite-color);
+	}
+	&[data-current=true] {
+		cursor: default;
+	}
+`;
 
 const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => {
 	switch (arithmetic) {
@@ -152,15 +188,30 @@ const asDisplayArithmetic = (arithmetic: SimpleFuncArithmetic): string => {
 			return 'Log';
 		case NumericArithmetic.PERCENTAGE:
 			return '%';
+		// aggregate
+		case AggregateArithmetic.COUNT:
+			return 'Count';
+		case AggregateArithmetic.SUM:
+			return 'Sum';
+		case AggregateArithmetic.AVG:
+			return 'Avg';
+		case AggregateArithmetic.MEDIAN:
+			return 'Median';
+		case AggregateArithmetic.MAX:
+			return 'Max';
+		case AggregateArithmetic.MIN:
+			return 'Min';
 		// no func
 		case NoArithmetic.NO_FUNC:
+		default:
 			return 'No Func';
 	}
 };
 
 const ArithmeticTypes = [
-	{ label: 'Date Time', enum: DatePartArithmetic },
-	{ label: 'Numeric', enum: NumericArithmetic }
+	{ label: 'Datetime Transform', enum: DatePartArithmetic },
+	{ label: 'Numeric Compute', enum: NumericArithmetic },
+	{ label: 'Aggregate', enum: AggregateArithmetic }
 ];
 
 const ArithmeticButton = (props: {
@@ -178,14 +229,21 @@ const ArithmeticButton = (props: {
 export const ArithmeticSelect = (props: {
 	value: SimpleFuncValue;
 	right?: boolean;
+	aggregate: boolean;
 	onChange: () => void;
 }) => {
-	const { value, right = false, onChange } = props;
+	const { value, right = false, aggregate, onChange } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [ expanded, setExpanded ] = useState(false);
-	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({ top: 0, left: 0, width: 0, atTop: false });
+	const [ dropdownRect, setDropdownRect ] = useState<DropdownRect>({
+		top: 0,
+		left: 0,
+		width: 0,
+		atTop: false,
+		aggregate
+	});
 	useEffect(() => {
 		const onScroll = () => setExpanded(false);
 		window.addEventListener('scroll', onScroll, true);
@@ -204,7 +262,8 @@ export const ArithmeticSelect = (props: {
 					left: right ? (void 0) : rect.left,
 					right: right ? rect.right : (void 0),
 					width: rect.width,
-					atTop: true
+					atTop: true,
+					aggregate
 				});
 			} else {
 				setDropdownRect({
@@ -212,7 +271,8 @@ export const ArithmeticSelect = (props: {
 					left: right ? (void 0) : rect.left,
 					right: right ? rect.right : (void 0),
 					width: rect.width,
-					atTop: false
+					atTop: false,
+					aggregate
 				});
 			}
 			setExpanded(true);
@@ -226,17 +286,27 @@ export const ArithmeticSelect = (props: {
 		onChange();
 		setExpanded(false);
 	};
+	const onClearFuncClicked = () => {
+		if (!value.arithmetic || value.arithmetic === NoArithmetic.NO_FUNC) {
+			return;
+		}
+		value.arithmetic = NoArithmetic.NO_FUNC;
+		onChange();
+		setExpanded(false);
+	};
 	const onCaretClicked = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 		setExpanded(!expanded);
 	};
 
+	const arithmetics = aggregate ? ArithmeticTypes : ArithmeticTypes.filter(arithmetic => arithmetic.label !== 'Aggregate');
+
 	return <ArithmeticSelectContainer data-expanded={expanded} tabIndex={0} ref={containerRef}
 	                                  onClick={onExpandClick} onBlur={collapse}>
 		<div>{asDisplayArithmetic(value.arithmetic)}</div>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
-			{ArithmeticTypes.map(item => {
+			{arithmetics.map(item => {
 				return <Fragment key={item.label}>
 					<div data-role='action-category'>{item.label}</div>
 					<div data-role='actions'>
@@ -248,6 +318,13 @@ export const ArithmeticSelect = (props: {
 					</div>
 				</Fragment>;
 			})}
+			<div data-role='action-category'>
+				<ClearButton data-current={!value.arithmetic || value.arithmetic === NoArithmetic.NO_FUNC}
+				             onClick={onClearFuncClicked}>
+					<FontAwesomeIcon icon={faTimes}/>
+					<span>No Func</span>
+				</ClearButton>
+			</div>
 		</Dropdown>
 		<div onClick={onCaretClicked}><FontAwesomeIcon icon={faEdit}/></div>
 	</ArithmeticSelectContainer>;
