@@ -59,7 +59,7 @@ export const PipelineEditContextProvider = (props: {
 
 	// will not trigger any repaint
 	const onPipelineContentChange = () => {
-		if (!state.pipeline) {
+		if (!pipeline) {
 			return;
 		}
 
@@ -68,21 +68,19 @@ export const PipelineEditContextProvider = (props: {
 			clearTimeout(state.throttle);
 		}
 
-		((pipeline: ArrangedPipeline) => {
-			console.log(`Detect pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, will save changes after 10 seconds.`, 'color:rgb(251,71,71)', '');
-			// save after 30 seconds
-			state.throttle = setTimeout(async () => {
-				state.throttle = null;
-				try {
-					await doSave(pipeline);
-				} catch (e) {
-					console.groupCollapsed(`%cError on save pipeline.`, 'color:rgb(251,71,71)');
-					console.error('Pipeline: ', pipeline);
-					console.error(e);
-					console.groupEnd();
-				}
-			}, 10000);
-		})(state.pipeline);
+		console.log(`Detect pipeline change from editor at %c[${dayjs().format('YYYY/MM/DD HH:mm:ss.SSS')}]%c, will save changes after 10 seconds.`, 'color:rgb(251,71,71)', '');
+		// save after 30 seconds
+		state.throttle = setTimeout(async () => {
+			state.throttle = null;
+			try {
+				await doSave(pipeline);
+			} catch (e) {
+				console.groupCollapsed(`%cError on save pipeline.`, 'color:rgb(251,71,71)');
+				console.error('Pipeline: ', pipeline);
+				console.error(e);
+				console.groupEnd();
+			}
+		}, 10000);
 	};
 
 	return <Context.Provider
