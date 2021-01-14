@@ -18,6 +18,9 @@ const Context = React.createContext<PipelineEditContext>({} as PipelineEditConte
 Context.displayName = 'PipelineEditContext';
 
 const doSave = async (pipeline: ArrangedPipeline) => {
+	pipeline.origin.name = pipeline.name;
+	pipeline.origin.stages = pipeline.stages;
+	pipeline.origin.type = pipeline.type;
 	await savePipeline(pipeline.origin);
 };
 
