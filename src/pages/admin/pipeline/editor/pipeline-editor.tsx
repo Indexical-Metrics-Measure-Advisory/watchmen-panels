@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 import { useForceUpdate } from '../../../../common/utils';
 import { QueriedTopicForPipeline } from '../../../../services/admin/types';
 import { usePipelineContext } from '../pipeline-context';
@@ -92,6 +93,9 @@ export const PipelineEditor = (props: {
 		<Body>
 			<PipelineTrigger pipeline={pipeline}/>
 			{pipeline.stages.map((stage, index) => {
+				if (!stage.uuid) {
+					stage.uuid = v4();
+				}
 				return <StageEditor pipeline={pipeline} stage={stage}
 				                    appendStage={onAppendStage}
 				                    prependStage={onPrependStage}
