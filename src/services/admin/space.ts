@@ -1,3 +1,4 @@
+import { findToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import {
 	DataPage,
@@ -43,11 +44,13 @@ export const listSpaces = async (options: {
 		// const account = Storage.findAccount();
 	} else {
 		// console.log(mock_flag);
+
+		const token = findToken();
+
 		const response = await fetch(`${getServiceHost()}space/name?query_name=${options.search}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				// authorization: token,
 			},
 			body: JSON.stringify({ pageNumber: options.pageNumber, pageSize: options.pageSize }),
 		});
@@ -59,15 +62,33 @@ export const listSpaces = async (options: {
 };
 
 export const listSpacesForUserGroup = async (search: string): Promise<Array<QueriedSpaceForUserGroup>> => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve(
-				[{ spaceId: "1", name: "Quotation & Policy", description: "All Sales Data" }].filter((x) =>
-					x.name.toUpperCase().includes(search.toUpperCase())
-				)
-			);
-		}, 500);
-	});
+	if (isMockService()) {
+		// call api
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(
+					[{ spaceId: "1", name: "Quotation & Policy", description: "All Sales Data" }].filter((x) =>
+						x.name.toUpperCase().includes(search.toUpperCase())
+					)
+				);
+			}, 500);
+		});
+
+		// const token: string = Storage.findToken();
+		// const account = Storage.findAccount();
+	} else {
+		// console.log(mock_flag);
+		const response = await fetch(`${getServiceHost()}query/space/group?query_name=${search}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+		});
+
+		// const result = await
+		return await response.json();
+	}
 };
 
 export const fetchSpace = async (
@@ -110,11 +131,35 @@ export const fetchSpace = async (
 				// authorization: token,
 			},
 		});
+
 		// const result = await
 		const space = await response.json();
+
+		const topic_response = await fetch(`${getServiceHost()}topic/ids`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+			body: JSON.stringify(space["topicIds"]),
+		});
+
+		const topic_list = await topic_response.json();
+
+		const group_response = await fetch(`${getServiceHost()}user_groups/ids`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+			body: JSON.stringify(space["groupIds"]),
+		});
+
+		const group_list = await group_response.json();
+
 		//TODO: load groups and topics
 
-		return { space, groups: [], topics: [] };
+		return { space, groups: group_list, topics: topic_list };
 	}
 };
 

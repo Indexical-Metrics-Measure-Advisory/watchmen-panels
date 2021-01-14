@@ -210,8 +210,24 @@ export const fetchUser = async (
 		});
 
 		let user = await response.json();
+
+		const groupIds = user["groupIds"];
+		if (groupIds) {
+			const result = await fetch(`${getServiceHost()}user_groups/ids`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					// authorization: token,
+				},
+				body: JSON.stringify(groupIds),
+			});
+			const group_list = await result.json();
+			return { user, groups: group_list };
+		} else {
+			return { user, groups: [] };
+		}
+
 		//TODO load groups
-		return { user, groups: [] };
 	}
 };
 
@@ -299,8 +315,31 @@ export const fetchUserGroup = async (
 		});
 
 		let group = await response.json();
+
+		const user_response = await fetch(`${getServiceHost()}user/ids`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+			body: JSON.stringify(group["userIds"]),
+		});
+
+		const user_list = await user_response.json();
+
+		const space_response = await fetch(`${getServiceHost()}space/ids`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				// authorization: token,
+			},
+			body: JSON.stringify(group["spaceIds"]),
+		});
+
+		const space_list = await space_response.json();
+
 		//TODO load space and  user
-		return { group, users: [], spaces: [] };
+		return { group, users: user_list, spaces: space_list };
 	}
 };
 
