@@ -9,8 +9,7 @@ const MenuItemContainer = styled.div.attrs({
 })`
 	display: flex;
 	position: relative;
-	padding: 0 calc((var(--console-menu-width) - var(--console-menu-item-icon-size)) / 2) \
-			 0 calc(var(--margin) / 4);
+	padding: 0 calc((var(--console-menu-width) - var(--console-menu-item-icon-size)) / 2) 0 calc(var(--margin) / 4);
 	min-height: var(--console-menu-height);
 	align-items: center;
 	cursor: pointer;
@@ -61,8 +60,9 @@ export const MenuItem = (props: {
 	className?: string,
 	active?: boolean
 	onClick?: (rect: DOMRect) => void;
+	visible?: boolean;
 }) => {
-	const { icon, iconSize, label, showTooltip, className, active, onClick } = props;
+	const { icon, iconSize, label, showTooltip, className, active, onClick, visible = true } = props;
 
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +72,10 @@ export const MenuItem = (props: {
 		ref: containerRef,
 		rect: () => ({ align: TooltipAlignment.LEFT, offsetX: -5 })
 	});
+
+	if (!visible) {
+		return null;
+	}
 
 	const onClicked = () => {
 		onClick && onClick(containerRef.current!.getBoundingClientRect());
