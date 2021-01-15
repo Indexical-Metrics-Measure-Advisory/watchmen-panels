@@ -16,7 +16,7 @@ const AvailableSpacesContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-row-gap: var(--margin);
-	padding-top: 64px;
+	margin-top: 50px;
 `;
 const AvailableSpace = styled.div`
 	display: grid;
