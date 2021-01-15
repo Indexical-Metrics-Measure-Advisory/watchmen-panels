@@ -73,6 +73,9 @@ const ChartDragHandle = styled.div`
 const ChartDragHandlePart = styled.div`
 	display: block;
 	position: absolute;
+	&[data-locked=true] {
+		display: none;
+	}
 	&[data-position=${DragType.RESIZE_TOP}],
 	&[data-position=${DragType.RESIZE_BOTTOM}] {
 		left: 6px;
@@ -143,6 +146,9 @@ const Header = styled.div.attrs({
 	padding: 0 calc(var(--margin) / 2);
 	border-bottom: var(--border);
 	cursor: move;
+	&[data-locked=true] {
+		cursor: default;
+	}
 	> span:first-child {
 		flex-grow: 1;
 	}
@@ -502,7 +508,7 @@ export const Chart = (props: {
 	                       ref={chartRef}>
 		<ChartDragHandle onMouseDown={onMouseDown} onMouseUp={onMouseUp}
 		                 onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
-			<Header data-position={DragType.DND} ref={headerRef}>
+			<Header data-position={DragType.DND} data-locked={locked} ref={headerRef}>
 				<span>{chart.name || 'Noname'}</span>
 				<HeaderButtons data-visible={!locked} data-expanded={max} ref={headerButtonsRef}>
 					<LinkButton ignoreHorizontalPadding={true} tooltip={max ? 'Minimize' : 'Maximize'} center={true}
@@ -524,15 +530,15 @@ export const Chart = (props: {
 				<ChartSettingsPanel space={space} subject={subject} chart={chart} visible={!locked && settingsVisible}
 				                    closeSettings={onCloseSettings}/>
 			</Body>
-			<ChartDragHandlePart data-position={DragType.RESIZE_TOP}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_LEFT}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_RIGHT}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_BOTTOM}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_TOP_LEFT}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_TOP_RIGHT}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_BOTTOM_LEFT}/>
-			<ChartDragHandlePart data-position={DragType.RESIZE_BOTTOM_RIGHT}/>
-			<ChartDragHandlePart data-part-type='dragging' data-position={dragState.type}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_TOP} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_LEFT} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_RIGHT} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_BOTTOM} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_TOP_LEFT} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_TOP_RIGHT} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_BOTTOM_LEFT} data-locked={locked}/>
+			<ChartDragHandlePart data-position={DragType.RESIZE_BOTTOM_RIGHT} data-locked={locked}/>
+			<ChartDragHandlePart data-part-type='dragging' data-position={dragState.type} data-locked={locked}/>
 		</ChartDragHandle>
 	</ChartContainer>;
 };
