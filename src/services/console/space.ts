@@ -309,8 +309,30 @@ export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 	} ];
 };
 
-export const deleteSpace = async (space: ConnectedConsoleSpace): Promise<void> => {
+// TODO demo purpose
+let newConnectedSpaceId = 10000;
+export const connectSpace = async (spaceId: string, name: string, type: ConsoleSpaceType): Promise<ConnectedConsoleSpace> => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve({
+				spaceId,
+				connectId: `${newConnectedSpaceId++}`,
+				name,
+				type,
+				lastVisitTime: dayjs().format('YYYY/MM/DD HH:mm:ss'),
+				topics: demoTopics,
+				topicRelations: demoTopicRelations,
+				groups: [],
+				subjects: []
+			});
+		}, 1000);
+	});
+
 };
+
+export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promise<void> => {
+};
+
 // TODO demo purpose
 let newGroupId = 10000;
 let newSubjectId = 10000;

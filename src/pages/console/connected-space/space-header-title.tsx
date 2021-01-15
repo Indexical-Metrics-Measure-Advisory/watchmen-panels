@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
 import { useForceUpdate } from '../../../common/utils';
-import { createGroup, createSubject, deleteSpace } from '../../../services/console/space';
+import { createGroup, createSubject, deleteConnectedSpace } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import Button, { ButtonType } from '../../component/button';
 import { useDialog } from '../../context/dialog';
@@ -103,7 +103,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	const onDeleteClicked = () => {
 		const onDeleteConfirmClicked = async () => {
 			try {
-				await deleteSpace(space);
+				await deleteConnectedSpace(space);
 			} catch (e) {
 				console.groupCollapsed(`%cError on delete space.`, 'color:rgb(251,71,71)');
 				console.error('Space: ', space);

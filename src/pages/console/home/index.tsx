@@ -27,7 +27,7 @@ export const Home = () => {
 
 	return <NarrowContainer background-image={BackgroundImage}>
 		<NarrowPageTitle title='Home'/>
-		<HomeSection title='Spaces' titleIcon={faSatellite}
+		<HomeSection title='Connected Spaces' titleIcon={faSatellite}
 		             titleOperators={<HomeSectionHeaderButton onClick={onConnectSpaceClicked}>
 			             <FontAwesomeIcon icon={faPlug}/>
 			             <span>Connect New Space</span>

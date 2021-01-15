@@ -4,10 +4,12 @@ import { fetchAvailableSpaces, fetchConnectedSpaces } from '../../../services/co
 import { ConnectedConsoleSpace, ConsoleSpace } from '../../../services/console/types';
 
 export enum ConsoleSpacesEvent {
+	SPACE_ADDED = 'space-added',
 	SPACE_DELETED = 'space-deleted',
 	SPACE_RENAMED = 'space-renamed'
 }
 
+export type ConsoleSpaceAddedListener = (space: ConnectedConsoleSpace) => void;
 export type ConsoleSpaceDeletedListener = (space: ConnectedConsoleSpace) => void;
 export type ConsoleSpaceRenamedListener = (space: ConnectedConsoleSpace) => void;
 
@@ -18,6 +20,10 @@ export interface ConsoleSpacesStorage {
 }
 
 export interface ConsoleSpacesUsable {
+	addSpace: (space: ConnectedConsoleSpace) => void;
+	addSpaceAddedListener: (listener: ConsoleSpaceAddedListener) => void;
+	removeSpaceAddedListener: (listener: ConsoleSpaceAddedListener) => void;
+
 	deleteSpace: (space: ConnectedConsoleSpace) => void;
 	addSpaceDeletedListener: (listener: ConsoleSpaceDeletedListener) => void;
 	removeSpaceDeletedListener: (listener: ConsoleSpaceDeletedListener) => void;
@@ -50,6 +56,17 @@ export const useConsoleSpaces = () => {
 		})();
 	}, [ state.initialized ]);
 
+	const addSpace = (space: ConnectedConsoleSpace) => {
+		setState({
+			initialized: true,
+			// eslint-disable-next-line
+			connected: [ ...state.connected, space ],
+			available: state.available
+		});
+	};
+	const addSpaceAddedListener = (listener: ConsoleSpaceAddedListener) => emitter.on(ConsoleSpacesEvent.SPACE_ADDED, listener);
+	const removeSpaceAddedListener = (listener: ConsoleSpaceAddedListener) => emitter.off(ConsoleSpacesEvent.SPACE_ADDED, listener);
+
 	const deleteSpace = (space: ConnectedConsoleSpace) => {
 		setState({
 			initialized: true,
@@ -68,6 +85,7 @@ export const useConsoleSpaces = () => {
 	return {
 		...state,
 
+		addSpace, addSpaceAddedListener, removeSpaceAddedListener,
 		deleteSpace, addSpaceDeletedListener, removeSpaceDeletedListener,
 		spaceRenamed, addSpaceRenamedListener, removeSpaceRenamedListener
 	};

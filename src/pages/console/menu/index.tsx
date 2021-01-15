@@ -92,6 +92,7 @@ export const ConsoleMenu = () => {
 		favorites,
 		spaces: {
 			connected: spaces,
+			addSpaceAddedListener, removeSpaceAddedListener,
 			addSpaceDeletedListener, removeSpaceDeletedListener,
 			addSpaceRenamedListener, removeSpaceRenamedListener
 		}
@@ -99,9 +100,11 @@ export const ConsoleMenu = () => {
 
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
+		addSpaceAddedListener(forceUpdate);
 		addSpaceDeletedListener(forceUpdate);
 		addSpaceRenamedListener(forceUpdate);
 		return () => {
+			removeSpaceAddedListener(forceUpdate);
 			removeSpaceDeletedListener(forceUpdate);
 			removeSpaceRenamedListener(forceUpdate);
 		};

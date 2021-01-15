@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../common/path';
+import { AvailableSpaces } from './available-spaces';
 import { ConnectedSpace } from './connected-space';
 import { ConsoleContextProvider } from './context/console-context';
 import { Dashboard } from './dashboard';
@@ -46,6 +47,7 @@ const ConsoleIndex = () => {
 					<Route path={Path.CONSOLE_HOME}><Home/></Route>
 					<Route path={Path.CONSOLE_CONNECTED_SPACE}><ConnectedSpace/></Route>
 					<Route path={Path.CONSOLE_DASHBOARDS}><Dashboard/></Route>
+					<Route path={Path.CONSOLE_SPACES}><AvailableSpaces/></Route>
 					<Route path={Path.CONSOLE_INBOX}><Inbox/></Route>
 					<Route path={Path.CONSOLE_NOTIFICATION}><Notification/></Route>
 					<Route path={Path.CONSOLE_SETTINGS}><Settings/></Route>
