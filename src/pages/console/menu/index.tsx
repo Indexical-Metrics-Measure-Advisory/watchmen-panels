@@ -108,7 +108,7 @@ export const ConsoleMenu = () => {
 			removeSpaceDeletedListener(forceUpdate);
 			removeSpaceRenamedListener(forceUpdate);
 		};
-	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener, forceUpdate ]);
+	}, [ addSpaceAddedListener, removeSpaceAddedListener, addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener, forceUpdate ]);
 
 	const onResize = (newWidth: number) => {
 		setMenuWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
