@@ -258,6 +258,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	code {
 		font-family: var(--code-font-family);
 	}
+	div[data-widget='dialog-console-create'],
 	div[data-widget='dialog-console-delete'],
 	div[data-widget='dialog-console-rename'],
 	div[data-widget='dialog-console-loading'] {
@@ -266,6 +267,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 		line-height: 1.8em;
 		margin-bottom: var(--margin);
 	}
+	div[data-widget='dialog-console-create'],
 	div[data-widget='dialog-console-rename'] {
 		margin-bottom: 0;
 		> span:first-child {

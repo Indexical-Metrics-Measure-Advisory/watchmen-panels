@@ -187,7 +187,11 @@ export const Favorite = () => {
 			},
 			hide, pin, unpin
 		},
-		dashboards: { items: dashboards },
+		dashboards: {
+			items: dashboards,
+			addDashboardDeletedListener, removeDashboardDeletedListener,
+			addDashboardRenamedListener, removeDashboardRenamedListener
+		},
 		spaces: {
 			connected: spaces,
 			addSpaceDeletedListener, removeSpaceDeletedListener,
@@ -213,13 +217,23 @@ export const Favorite = () => {
 	}, [ pinned, hide ]);
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
+		addDashboardDeletedListener(forceUpdate);
+		addDashboardRenamedListener(forceUpdate);
 		addSpaceDeletedListener(forceUpdate);
 		addSpaceRenamedListener(forceUpdate);
 		return () => {
+			removeDashboardDeletedListener(forceUpdate);
+			removeDashboardRenamedListener(forceUpdate);
 			removeSpaceDeletedListener(forceUpdate);
 			removeSpaceRenamedListener(forceUpdate);
 		};
-	}, [ addSpaceDeletedListener, removeSpaceDeletedListener, addSpaceRenamedListener, removeSpaceRenamedListener, forceUpdate ]);
+	}, [
+		addDashboardDeletedListener, removeDashboardDeletedListener,
+		addDashboardRenamedListener, removeDashboardRenamedListener,
+		addSpaceDeletedListener, removeSpaceDeletedListener,
+		addSpaceRenamedListener, removeSpaceRenamedListener,
+		forceUpdate
+	]);
 
 	const itemCount = items.length;
 	const displayItemCount = Math.min(itemCount, 5);

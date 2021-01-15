@@ -236,6 +236,7 @@ export interface ConsoleDashboard {
 	dashboardId: string;
 	name: string;
 	lastVisitTime: string;
+	current?: boolean;
 }
 
 export enum ConsoleFavoriteType {

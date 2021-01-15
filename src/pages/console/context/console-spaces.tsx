@@ -40,6 +40,31 @@ export const useConsoleSpaces = () => {
 		connected: [],
 		available: []
 	});
+	const [ usable ] = useState<ConsoleSpacesUsable>({
+		addSpace: (space: ConnectedConsoleSpace) => {
+			state.initialized = true;
+			state.connected.push(space);
+			emitter.emit(ConsoleSpacesEvent.SPACE_ADDED, space);
+		},
+		addSpaceAddedListener: (listener: ConsoleSpaceAddedListener) => emitter.on(ConsoleSpacesEvent.SPACE_ADDED, listener),
+		removeSpaceAddedListener: (listener: ConsoleSpaceAddedListener) => emitter.off(ConsoleSpacesEvent.SPACE_ADDED, listener),
+
+		deleteSpace: (space: ConnectedConsoleSpace) => {
+			state.initialized = true;
+			// eslint-disable-next-line
+			const index = state.connected.findIndex(s => s.connectId == space.connectId);
+			if (index !== -1) {
+				state.connected.splice(index, 1);
+			}
+			emitter.emit(ConsoleSpacesEvent.SPACE_DELETED, space);
+		},
+		addSpaceDeletedListener: (listener: ConsoleSpaceDeletedListener) => emitter.on(ConsoleSpacesEvent.SPACE_DELETED, listener),
+		removeSpaceDeletedListener: (listener: ConsoleSpaceDeletedListener) => emitter.off(ConsoleSpacesEvent.SPACE_DELETED, listener),
+
+		spaceRenamed: (space: ConnectedConsoleSpace) => emitter.emit(ConsoleSpacesEvent.SPACE_RENAMED, space),
+		addSpaceRenamedListener: (listener: ConsoleSpaceRenamedListener) => emitter.on(ConsoleSpacesEvent.SPACE_RENAMED, listener),
+		removeSpaceRenamedListener: (listener: ConsoleSpaceRenamedListener) => emitter.off(ConsoleSpacesEvent.SPACE_RENAMED, listener)
+	});
 
 	// TODO simulate data for demo purpose
 	useEffect(() => {
@@ -56,37 +81,5 @@ export const useConsoleSpaces = () => {
 		})();
 	}, [ state.initialized ]);
 
-	const addSpace = (space: ConnectedConsoleSpace) => {
-		setState({
-			initialized: true,
-			// eslint-disable-next-line
-			connected: [ ...state.connected, space ],
-			available: state.available
-		});
-	};
-	const addSpaceAddedListener = (listener: ConsoleSpaceAddedListener) => emitter.on(ConsoleSpacesEvent.SPACE_ADDED, listener);
-	const removeSpaceAddedListener = (listener: ConsoleSpaceAddedListener) => emitter.off(ConsoleSpacesEvent.SPACE_ADDED, listener);
-
-	const deleteSpace = (space: ConnectedConsoleSpace) => {
-		setState({
-			initialized: true,
-			// eslint-disable-next-line
-			connected: state.connected.filter(s => s.connectId != space.connectId),
-			available: state.available
-		});
-	};
-	const addSpaceDeletedListener = (listener: ConsoleSpaceDeletedListener) => emitter.on(ConsoleSpacesEvent.SPACE_DELETED, listener);
-	const removeSpaceDeletedListener = (listener: ConsoleSpaceDeletedListener) => emitter.off(ConsoleSpacesEvent.SPACE_DELETED, listener);
-
-	const spaceRenamed = (space: ConnectedConsoleSpace) => emitter.emit(ConsoleSpacesEvent.SPACE_RENAMED, space);
-	const addSpaceRenamedListener = (listener: ConsoleSpaceRenamedListener) => emitter.on(ConsoleSpacesEvent.SPACE_RENAMED, listener);
-	const removeSpaceRenamedListener = (listener: ConsoleSpaceRenamedListener) => emitter.off(ConsoleSpacesEvent.SPACE_RENAMED, listener);
-
-	return {
-		...state,
-
-		addSpace, addSpaceAddedListener, removeSpaceAddedListener,
-		deleteSpace, addSpaceDeletedListener, removeSpaceDeletedListener,
-		spaceRenamed, addSpaceRenamedListener, removeSpaceRenamedListener
-	};
+	return { ...state, ...usable };
 };
