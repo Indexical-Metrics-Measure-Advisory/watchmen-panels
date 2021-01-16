@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { useEffect, useState } from 'react';
+import { useForceUpdate } from '../../../common/utils';
 import { fetchDashboards } from '../../../services/console/dashboard';
 import { ConsoleDashboard } from '../../../services/console/types';
 
@@ -34,7 +35,7 @@ export interface ConsoleDashboardsUsable {
 
 export const useConsoleDashboards = () => {
 	const [ emitter ] = useState(new EventEmitter());
-	const [ state, setState ] = useState<ConsoleDashboardsStorage>({
+	const [ state ] = useState<ConsoleDashboardsStorage>({
 		initialized: false,
 		items: []
 	});
@@ -63,6 +64,7 @@ export const useConsoleDashboards = () => {
 		addDashboardRenamedListener: (listener: DashboardRenamedListener) => emitter.on(ConsoleDashboardsEvent.DASHBOARD_RENAMED, listener),
 		removeDashboardRenamedListener: (listener: DashboardRenamedListener) => emitter.off(ConsoleDashboardsEvent.DASHBOARD_RENAMED, listener)
 	});
+	const forceUpdate = useForceUpdate();
 
 	// TODO simulate data for demo purpose
 	useEffect(() => {
@@ -70,7 +72,9 @@ export const useConsoleDashboards = () => {
 			(async () => {
 				try {
 					const dashboards = await fetchDashboards();
-					setState({ initialized: true, items: dashboards });
+					state.initialized = true;
+					state.items.push(...dashboards);
+					forceUpdate();
 				} catch (e) {
 					console.groupCollapsed(`%cError on fetch dashboards.`, 'color:rgb(251,71,71)');
 					console.error(e);
@@ -78,7 +82,7 @@ export const useConsoleDashboards = () => {
 				}
 			})();
 		}
-	}, [ state.initialized ]);
+	}, [ forceUpdate, state ]);
 
 	return { ...state, ...usable };
 };

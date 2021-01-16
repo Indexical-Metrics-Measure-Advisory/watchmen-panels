@@ -14,7 +14,6 @@ export const createCreateDashboardClickHandler = (options: {
 	let name = '';
 	const onTextChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 		name = event.target.value;
-		showDialog(createContent(!(name.trim())));
 	};
 	const showDialog = (content: JSX.Element) => {
 		dialog.show(
@@ -29,7 +28,7 @@ export const createCreateDashboardClickHandler = (options: {
 	const createContent = (error: boolean = false) => {
 		return <div data-widget='dialog-console-create'>
 			<span>New dashboard name:</span>
-			<Input onChange={onTextChanged} value={name} data-error={error}/>
+			<Input onChange={onTextChanged} defaultValue={name} data-error={error}/>
 			<span>Name is required.</span>
 		</div>;
 	};

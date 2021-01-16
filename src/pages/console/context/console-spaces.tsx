@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { useEffect, useState } from 'react';
+import { useForceUpdate } from '../../../common/utils';
 import { fetchAvailableSpaces, fetchConnectedSpaces } from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpace } from '../../../services/console/types';
 
@@ -35,7 +36,7 @@ export interface ConsoleSpacesUsable {
 
 export const useConsoleSpaces = () => {
 	const [ emitter ] = useState(new EventEmitter());
-	const [ state, setState ] = useState<ConsoleSpacesStorage>({
+	const [ state ] = useState<ConsoleSpacesStorage>({
 		initialized: false,
 		connected: [],
 		available: []
@@ -65,6 +66,7 @@ export const useConsoleSpaces = () => {
 		addSpaceRenamedListener: (listener: ConsoleSpaceRenamedListener) => emitter.on(ConsoleSpacesEvent.SPACE_RENAMED, listener),
 		removeSpaceRenamedListener: (listener: ConsoleSpaceRenamedListener) => emitter.off(ConsoleSpacesEvent.SPACE_RENAMED, listener)
 	});
+	const forceUpdate = useForceUpdate();
 
 	// TODO simulate data for demo purpose
 	useEffect(() => {
@@ -72,14 +74,17 @@ export const useConsoleSpaces = () => {
 			try {
 				const connected = await fetchConnectedSpaces();
 				const available = await fetchAvailableSpaces();
-				setState({ initialized: true, connected, available });
+				state.initialized = true;
+				state.connected.push(...connected);
+				state.available.push(...available);
+				forceUpdate();
 			} catch (e) {
 				console.groupCollapsed(`%cError on fetch spaces.`, 'color:rgb(251,71,71)');
 				console.error(e);
 				console.groupEnd();
 			}
 		})();
-	}, [ state.initialized ]);
+	}, [ forceUpdate, state ]);
 
 	return { ...state, ...usable };
 };
