@@ -23,3 +23,15 @@ export const createDashboard = async (name: string): Promise<ConsoleDashboard> =
 		}, 1000);
 	});
 };
+
+export const renameDashboard = async (dashboardId: string, name: string): Promise<void> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve(), 500);
+	});
+};
+
+export const deleteDashboard = async (dashboardId: string): Promise<void> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve(), 500);
+	});
+};

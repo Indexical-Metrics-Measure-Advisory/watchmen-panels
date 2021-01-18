@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../common/utils';
+import { ConsoleDashboard } from '../../../services/console/types';
 import { LinkButton } from '../../component/console/link-button';
 import { useDialog } from '../../context/dialog';
 import { useConsoleContext } from '../context/console-context';
 import { createCreateDashboardClickHandler } from './create-dashboard-handler';
+import { createDeleteDashboardClickHandler } from './delete-dashboard-handler';
+import { createRenameDashboardClickHandler } from './rename-dashboard-handler';
 
 const DashboardContainer = styled.div`
 	display: flex;
@@ -38,17 +41,26 @@ export const Dashboard = () => {
 	const {
 		dashboards: {
 			items,
-			addDashboard
+			addDashboard, deleteDashboard
 		}
 	} = useConsoleContext();
 	const forceUpdate = useForceUpdate();
 
-	const onRenameClicked = () => {
+	const onRenameClicked = (dashboard: ConsoleDashboard) => createRenameDashboardClickHandler({
+		dashboard,
+		dialog,
+		onRenamed: (dashboard) => forceUpdate()
+	});
+	const onAddChartClicked = () => {
 	};
-	const onAddClicked = () => {
-	};
-	const onDeleteClicked = () => {
-	};
+	const onDeleteClicked = (dashboard: ConsoleDashboard) => createDeleteDashboardClickHandler({
+		dashboard,
+		dialog,
+		onDeleted: (dashboard) => {
+			deleteDashboard(dashboard);
+			forceUpdate();
+		}
+	});
 	const onCreateClicked = createCreateDashboardClickHandler({
 		dialog,
 		onCreated: (dashboard) => {
@@ -69,21 +81,25 @@ export const Dashboard = () => {
 	return <DashboardContainer data-visible={!!currentDashboard}>
 		<DashboardHeader>
 			<DashboardTitle>{currentDashboard?.name}</DashboardTitle>
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Rename this dashboard'
-			            right={true} offsetX={-4} offsetY={6}
-			            onClick={onRenameClicked}>
-				<FontAwesomeIcon icon={faPenSquare}/>
-			</LinkButton>
+			{currentDashboard
+				? <LinkButton ignoreHorizontalPadding={true} tooltip='Rename this dashboard'
+				              right={true} offsetX={-4} offsetY={6}
+				              onClick={onRenameClicked(currentDashboard)}>
+					<FontAwesomeIcon icon={faPenSquare}/>
+				</LinkButton>
+				: null}
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Add chart'
 			            right={true} offsetX={-4} offsetY={6}
-			            onClick={onAddClicked}>
+			            onClick={onAddChartClicked}>
 				<FontAwesomeIcon icon={faPoll}/>
 			</LinkButton>
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Delete this dashboard'
-			            right={true} offsetX={-4} offsetY={6}
-			            onClick={onDeleteClicked}>
-				<FontAwesomeIcon icon={faTrashAlt}/>
-			</LinkButton>
+			{currentDashboard
+				? <LinkButton ignoreHorizontalPadding={true} tooltip='Delete this dashboard'
+				              right={true} offsetX={-4} offsetY={6}
+				              onClick={onDeleteClicked(currentDashboard)}>
+					<FontAwesomeIcon icon={faTrashAlt}/>
+				</LinkButton>
+				: null}
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Create new dashboard'
 			            right={true} offsetX={-4} offsetY={6}
 			            onClick={onCreateClicked}>
