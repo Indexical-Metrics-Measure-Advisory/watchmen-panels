@@ -22,7 +22,12 @@ export const Dashboard = (props: {
 	const { data: dashboard } = props;
 
 	const history = useHistory();
-	const { favorites: { items: favorites, remove: removeFromFavorite, add: addIntoFavorite } } = useConsoleContext();
+	const {
+		favorites: {
+			items: favorites, remove: removeFromFavorite, add: addIntoFavorite
+		},
+		dashboards: { items: dashboards }
+	} = useConsoleContext();
 	// eslint-disable-next-line
 	const findInFavorite = () => favorites.find(fav => isFavDashboard(fav) && fav.dashboardId == dashboard.dashboardId);
 	const toggleFavorite = () => {
@@ -40,7 +45,10 @@ export const Dashboard = (props: {
 	const lastVisit = dayjs(dashboard.lastVisitTime).fromNow();
 	const isFavorite = !!findInFavorite();
 	const onDashboardClicked = () => {
-		// TODO
+		dashboards.forEach(d => {
+			// eslint-disable-next-line
+			d.current = d.dashboardId == dashboard.dashboardId;
+		});
 		history.push(Path.CONSOLE_DASHBOARDS);
 	};
 
