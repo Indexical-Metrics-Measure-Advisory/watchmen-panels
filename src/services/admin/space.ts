@@ -1,4 +1,3 @@
-import { findToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import {
 	DataPage,
@@ -6,7 +5,7 @@ import {
 	QueriedSpaceForUserGroup,
 	QueriedTopicForSpace,
 	QueriedUserGroupForGroupsHolder,
-	Space,
+	Space
 } from "./types";
 
 export const listSpaces = async (options: {
@@ -45,14 +44,14 @@ export const listSpaces = async (options: {
 	} else {
 		// console.log(mock_flag);
 
-		const token = findToken();
+		// const token = findToken();
 
 		const response = await fetch(`${getServiceHost()}space/name?query_name=${options.search}`, {
 			method: "POST",
 			headers: {
-				"Content-Type": "application/json",
+				"Content-Type": "application/json"
 			},
-			body: JSON.stringify({ pageNumber: options.pageNumber, pageSize: options.pageSize }),
+			body: JSON.stringify({ pageNumber: options.pageNumber, pageSize: options.pageSize })
 		});
 
 		const result = await response.json();

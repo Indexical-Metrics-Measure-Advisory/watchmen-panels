@@ -34,6 +34,7 @@ export const createSwitchDashboardClickHandler = (options: {
 		const forceUpdate = useForceUpdate();
 		const onDashboardChanged = async (option: DropdownOption) => {
 			const dashboardId = option.value as string;
+			// eslint-disable-next-line
 			selected = dashboards.find(d => d.dashboardId == dashboardId)!;
 			forceUpdate();
 		};
