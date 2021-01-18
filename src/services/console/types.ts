@@ -8,22 +8,22 @@ export interface ConsoleMessage {
 }
 
 export enum ConsoleNotificationCategory {
-	CHART_TYPE_PUSHED = 'CHART_TYPE_PUSHED',
+	CHART_TYPE_PUSHED = "CHART_TYPE_PUSHED",
 
-	SPACE_PUSHED = 'SPACE_PUSHED',
-	TOPIC_PUSHED = 'TOPIC_PUSHED',
-	FACTOR_PUSHED = 'FACTOR_PUSHED',
+	SPACE_PUSHED = "SPACE_PUSHED",
+	TOPIC_PUSHED = "TOPIC_PUSHED",
+	FACTOR_PUSHED = "FACTOR_PUSHED",
 
-	REPORT_PUSHED = 'REPORT_PUSHED',
+	REPORT_PUSHED = "REPORT_PUSHED",
 
-	GROUP_JOINED = 'GROUP_JOINED',
-	GROUP_LEFT = 'GROUP_LEFT',
+	GROUP_JOINED = "GROUP_JOINED",
+	GROUP_LEFT = "GROUP_LEFT",
 
-	SPACE_JOINED = 'SPACE_JOINED',
-	SPACE_LEFT = 'SPACE_LEFT',
+	SPACE_JOINED = "SPACE_JOINED",
+	SPACE_LEFT = "SPACE_LEFT",
 
-	SUBSCRIBE_REPORT_CHANGED = 'SUBSCRIBE_REPORT_CHANGED',
-	SUBSCRIBE_REPORT_DELETED = 'SUBSCRIBE_REPORT_DELETED'
+	SUBSCRIBE_REPORT_CHANGED = "SUBSCRIBE_REPORT_CHANGED",
+	SUBSCRIBE_REPORT_DELETED = "SUBSCRIBE_REPORT_DELETED",
 }
 
 export interface ConsoleNotification extends ConsoleMessage {
@@ -32,18 +32,17 @@ export interface ConsoleNotification extends ConsoleMessage {
 
 export type ConsoleNotifications = Array<ConsoleNotification>;
 
-export interface ConsoleMail extends ConsoleMessage {
-}
+export interface ConsoleMail extends ConsoleMessage {}
 
 export type ConsoleMails = Array<ConsoleMail>;
 
 export enum ConsoleTopicFactorType {
-	SEQUENCE = 'sequence',
-	NUMBER = 'number',
-	TEXT = 'text',
-	DATETIME = 'datetime',
-	BOOLEAN = 'boolean',
-	ENUM = 'enum'
+	SEQUENCE = "sequence",
+	NUMBER = "number",
+	TEXT = "text",
+	DATETIME = "datetime",
+	BOOLEAN = "boolean",
+	ENUM = "enum",
 }
 
 export interface ConsoleTopicFactor {
@@ -62,9 +61,9 @@ export interface ConsoleTopic {
 }
 
 export enum ConsoleTopicRelationshipType {
-	ONE_2_ONE = 'one-2-one',
-	ONE_2_MANY = 'one-2-many',
-	MANY_2_ONE = 'many-2-one'
+	ONE_2_ONE = "one-2-one",
+	ONE_2_MANY = "one-2-many",
+	MANY_2_ONE = "many-2-one",
 }
 
 export interface ConsoleTopicRelationship {
@@ -82,9 +81,9 @@ export interface ConsoleTopicRelationship {
 
 export enum ConsoleSpaceType {
 	/** public for all authorized users */
-	PUBLIC = 'public',
+	PUBLIC = "public",
 	/** create by user himself/herself, base on one public space */
-	PRIVATE = 'private'
+	PRIVATE = "private",
 }
 
 export interface ConsoleSpace {
@@ -94,12 +93,11 @@ export interface ConsoleSpace {
 	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
-export interface ConsoleSpaceSubjectDataSetFilter {
-}
+export interface ConsoleSpaceSubjectDataSetFilter {}
 
 export enum FilterJointType {
-	AND = 'and',
-	OR = 'or'
+	AND = "and",
+	OR = "or",
 }
 
 export interface ConsoleSpaceSubjectDataSetFilterJoint extends ConsoleSpaceSubjectDataSetFilter {
@@ -108,23 +106,23 @@ export interface ConsoleSpaceSubjectDataSetFilterJoint extends ConsoleSpaceSubje
 }
 
 export enum FilterExpressionOperator {
-	EQUALS = 'equals',
-	NOT_EQUALS = 'not-equals',
-	LESS = 'less',
-	LESS_EQUALS = 'less-equals',
-	MORE = 'more',
-	MORE_EQUALS = 'more-equals',
-	IN = 'in',
-	NOT_IN = 'not-in',
+	EQUALS = "equals",
+	NOT_EQUALS = "not-equals",
+	LESS = "less",
+	LESS_EQUALS = "less-equals",
+	MORE = "more",
+	MORE_EQUALS = "more-equals",
+	IN = "in",
+	NOT_IN = "not-in",
 	// for date time
-	YEAR_OF = 'year-of',
-	HALF_YEAR_OF = 'half-year-of',
-	QUARTER_OF = 'quarter-of',
-	MONTH_OF = 'month-of',
-	WEEK_OF_YEAR = 'week-of-year',
-	WEEK_OF_MONTH = 'week-of-month',
-	WEEKDAYS = 'weekdays',
-	TILL_NOW = 'till-now'
+	YEAR_OF = "year-of",
+	HALF_YEAR_OF = "half-year-of",
+	QUARTER_OF = "quarter-of",
+	MONTH_OF = "month-of",
+	WEEK_OF_YEAR = "week-of-year",
+	WEEK_OF_MONTH = "week-of-month",
+	WEEKDAYS = "weekdays",
+	TILL_NOW = "till-now",
 }
 
 export interface ConsoleSpaceSubjectDataSetFilterExpression extends ConsoleSpaceSubjectDataSetFilter {
@@ -157,34 +155,33 @@ export interface ConsoleSpaceSubjectDataSetJoin {
 }
 
 export enum ConsoleSpaceSubjectChartType {
-	COUNT = 'count',
-	BAR = 'bar',
-	LINE = 'line',
-	SCATTER = 'scatter',
-	PIE = 'pie',
-	DOUGHNUT = 'doughnut',
-	NIGHTINGALE = 'nightingale',
-	SUNBURST = 'sunburst',
-	TREE = 'tree',
-	TREEMAP = 'treemap'
+	COUNT = "count",
+	BAR = "bar",
+	LINE = "line",
+	SCATTER = "scatter",
+	PIE = "pie",
+	DOUGHNUT = "doughnut",
+	NIGHTINGALE = "nightingale",
+	SUNBURST = "sunburst",
+	TREE = "tree",
+	TREEMAP = "treemap",
 }
 
 export enum ConsoleSpaceSubjectChartIndicatorAggregator {
-	NONE = 'none',
-	COUNT = 'count',
-	SUMMARY = 'sum',
-	AVERAGE = 'avg',
-	MEDIAN = 'med',
-	MAXIMUM = 'max',
-	MINIMUM = 'min'
+	NONE = "none",
+	COUNT = "count",
+	SUMMARY = "sum",
+	AVERAGE = "avg",
+	MEDIAN = "med",
+	MAXIMUM = "max",
+	MINIMUM = "min",
 }
 
 export interface ConsoleSpaceSubjectChartIndicator extends ConsoleSpaceSubjectDataSetColumn {
 	aggregator: ConsoleSpaceSubjectChartIndicatorAggregator;
 }
 
-export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {
-}
+export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {}
 
 export type ConsoleSpaceSubjectChartDataSetRow = Array<any>;
 export type ConsoleSpaceSubjectChartDataSetGrid = Array<ConsoleSpaceSubjectChartDataSetRow>;
@@ -203,15 +200,15 @@ export interface ConsoleSpaceSubjectChart {
 	chartId?: string;
 	name?: string;
 	type?: ConsoleSpaceSubjectChartType;
-	indicators: Array<ConsoleSpaceSubjectChartIndicator>,
-	dimensions: Array<ConsoleSpaceSubjectChartDimension>,
+	indicators: Array<ConsoleSpaceSubjectChartIndicator>;
+	dimensions: Array<ConsoleSpaceSubjectChartDimension>;
 	// for subject chart view
 	rect?: {
 		top: number;
 		left: number;
 		width: number;
 		height: number;
-	},
+	};
 	predefined?: boolean;
 	colors?: string | Array<string>;
 }
@@ -219,15 +216,15 @@ export interface ConsoleSpaceSubjectChart {
 export interface ConsoleSpaceSubject {
 	subjectId: string;
 	name: string;
-	topicCount: number,
-	graphicsCount: number,
-	lastVisitTime: string,
-	createdAt: string
+	topicCount: number;
+	graphicsCount: number;
+	lastVisitTime: string;
+	createdAt: string;
 	dataset?: {
 		filters?: Array<ConsoleSpaceSubjectDataSetFilter>;
 		columns?: Array<ConsoleSpaceSubjectDataSetColumn>;
 		joins?: Array<ConsoleSpaceSubjectDataSetJoin>;
-	},
+	};
 	graphics?: Array<ConsoleSpaceSubjectChart>;
 }
 
@@ -253,8 +250,8 @@ export interface ConsoleDashboard {
 }
 
 export enum ConsoleFavoriteType {
-	SPACE = 'space',
-	DASHBOARD = 'dashboard'
+	SPACE = "space",
+	DASHBOARD = "dashboard",
 }
 
 export interface ConsoleFavorite {
