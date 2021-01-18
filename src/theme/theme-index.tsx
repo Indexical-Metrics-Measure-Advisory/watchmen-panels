@@ -261,6 +261,7 @@ const GlobalStyle = createGlobalStyle<{ theme: Theme }>`
 	div[data-widget='dialog-console-create'],
 	div[data-widget='dialog-console-delete'],
 	div[data-widget='dialog-console-rename'],
+	div[data-widget='dialog-console-switch'],
 	div[data-widget='dialog-console-loading'] {
 		display: flex;
 		flex-direction: column;

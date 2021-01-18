@@ -10,6 +10,7 @@ import { useConsoleContext } from '../context/console-context';
 import { createCreateDashboardClickHandler } from './create-dashboard-handler';
 import { createDeleteDashboardClickHandler } from './delete-dashboard-handler';
 import { createRenameDashboardClickHandler } from './rename-dashboard-handler';
+import { createSwitchDashboardClickHandler } from './switch-dashboard-handler';
 
 const DashboardContainer = styled.div`
 	display: flex;
@@ -71,8 +72,15 @@ export const Dashboard = () => {
 			forceUpdate();
 		}
 	});
-	const onSwitchClicked = () => {
-	};
+	const onSwitchClicked = (dashboard: ConsoleDashboard) => createSwitchDashboardClickHandler({
+		dashboard,
+		dashboards,
+		dialog,
+		onSwitched: (dashboard) => {
+			dashboards.forEach(d => d.current = d === dashboard);
+			forceUpdate();
+		}
+	});
 
 	let currentDashboard = dashboards.find(dashboard => dashboard.current);
 	if (!currentDashboard && dashboards.length > 0) {
@@ -107,10 +115,10 @@ export const Dashboard = () => {
 			            onClick={onCreateClicked}>
 				<FontAwesomeIcon icon={faTachometerAlt}/>
 			</LinkButton>
-			{dashboards.length > 1
+			{dashboards.length > 1 && currentDashboard
 				? <LinkButton ignoreHorizontalPadding={true} tooltip='Switch to another dashboard'
 				              right={true} offsetX={-4} offsetY={6}
-				              onClick={onSwitchClicked}>
+				              onClick={onSwitchClicked(currentDashboard)}>
 					<FontAwesomeIcon icon={faSatelliteDish}/>
 				</LinkButton>
 				: null}
