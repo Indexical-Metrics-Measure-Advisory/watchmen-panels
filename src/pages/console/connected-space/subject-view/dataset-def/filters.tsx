@@ -5,7 +5,8 @@ import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectDataSetFilter,
-	ConsoleSpaceSubjectDataSetFilterJoint
+	ConsoleSpaceSubjectDataSetFilterJoint,
+	FilterJointType
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
@@ -23,7 +24,7 @@ export const SubjectFilters = (props: {
 	} = props;
 
 	const { dataset = {} } = subject;
-	const { filters = [] } = dataset;
+	const { filters = [ { jointType: FilterJointType.AND, filters: [] } ] } = dataset;
 
 	// const { defs: { space: spaceDef } } = useSubjectContext();
 	const forceUpdate = useForceUpdate();
