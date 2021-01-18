@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from 'styled-components';
 import BackgroundImage from '../../../assets/console-dashboard-background.png';
+import { useForceUpdate } from '../../../common/utils';
 import { NarrowPageTitle } from '../../component/console/narrow-page-title';
 import { PageContainer } from '../../component/console/page-container';
+import { useDialog } from '../../context/dialog';
 import { useConsoleContext } from '../context/console-context';
+import { createCreateDashboardClickHandler } from './create-dashboard-handler';
 import { Dashboard } from './dashboard';
 
 const Container = styled(PageContainer)`
@@ -31,10 +34,41 @@ const Reminder = styled.div`
 		opacity: 0.5;
 		height: 100px;
 	}
+	> span {
+		text-decoration: underline;
+		cursor: pointer;
+	}
 `;
 
 export const Dashboards = () => {
-	const { dashboards: { initialized, items: dashboards } } = useConsoleContext();
+	const dialog = useDialog();
+	const {
+		dashboards: {
+			initialized,
+			items: dashboards,
+			addDashboard,
+			addDashboardDeletedListener, removeDashboardDeletedListener
+		}
+	} = useConsoleContext();
+	const forceUpdate = useForceUpdate();
+	useEffect(() => {
+		const onDelete = () => {
+			if (dashboards.length === 0) {
+				forceUpdate();
+			}
+		};
+		addDashboardDeletedListener(onDelete);
+		return () => removeDashboardDeletedListener(onDelete);
+	});
+
+	const onCreateClicked = createCreateDashboardClickHandler({
+		dialog,
+		onCreated: (dashboard) => {
+			dashboards.forEach(dashboard => dashboard.current = false);
+			addDashboard(dashboard);
+			forceUpdate();
+		}
+	});
 
 	const canShow = initialized && dashboards.length !== 0;
 
@@ -46,7 +80,7 @@ export const Dashboards = () => {
 			: <DashboardsContainer>
 				<NarrowPageTitle title='Dashboards'/>
 				<Reminder data-visible={initialized && dashboards.length === 0}>
-					No dashboard yet.
+					No dashboard yet, <span onClick={onCreateClicked}>create one</span>.
 				</Reminder>
 				<Reminder data-visible={!initialized}>
 					Loading...

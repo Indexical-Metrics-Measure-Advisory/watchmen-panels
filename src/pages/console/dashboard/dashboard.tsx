@@ -40,7 +40,7 @@ export const Dashboard = () => {
 	const dialog = useDialog();
 	const {
 		dashboards: {
-			items,
+			items: dashboards,
 			addDashboard, deleteDashboard
 		}
 	} = useConsoleContext();
@@ -58,13 +58,15 @@ export const Dashboard = () => {
 		dialog,
 		onDeleted: (dashboard) => {
 			deleteDashboard(dashboard);
-			forceUpdate();
+			if (dashboards.length >= 1) {
+				forceUpdate();
+			}
 		}
 	});
 	const onCreateClicked = createCreateDashboardClickHandler({
 		dialog,
 		onCreated: (dashboard) => {
-			items.forEach(dashboard => dashboard.current = false);
+			dashboards.forEach(dashboard => dashboard.current = false);
 			addDashboard(dashboard);
 			forceUpdate();
 		}
@@ -72,10 +74,10 @@ export const Dashboard = () => {
 	const onSwitchClicked = () => {
 	};
 
-	let currentDashboard = items.find(dashboard => dashboard.current);
-	if (!currentDashboard && items.length > 0) {
+	let currentDashboard = dashboards.find(dashboard => dashboard.current);
+	if (!currentDashboard && dashboards.length > 0) {
 		// current not found
-		currentDashboard = items[0];
+		currentDashboard = dashboards[0];
 	}
 
 	return <DashboardContainer data-visible={!!currentDashboard}>
@@ -105,7 +107,7 @@ export const Dashboard = () => {
 			            onClick={onCreateClicked}>
 				<FontAwesomeIcon icon={faTachometerAlt}/>
 			</LinkButton>
-			{items.length === 1
+			{dashboards.length > 1
 				? <LinkButton ignoreHorizontalPadding={true} tooltip='Switch to another dashboard'
 				              right={true} offsetX={-4} offsetY={6}
 				              onClick={onSwitchClicked}>
