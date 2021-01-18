@@ -325,7 +325,7 @@ export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpac
 		];
 	} else {
 		const token = findToken();
-		const response = await fetch(`${getServiceHost()}space/connected/me`, {
+		const response = await fetch(`${getServiceHost()}console_space/connected/me`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -384,7 +384,7 @@ export const connectSpace = async (
 					connectId: `${newConnectedSpaceId++}`,
 					name,
 					type,
-					lastVisitTime: dayjs().format("YYYY/MM/DD HH:mm:ss"),
+					lastVisitTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
 					topics: demoTopics,
 					topicRelations: demoTopicRelations,
 					groups: [],
@@ -415,7 +415,22 @@ export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promis
 let newGroupId = 10000;
 let newSubjectId = 10000;
 export const createGroup = async (data: { space: ConnectedConsoleSpace; group: ConsoleSpaceGroup }): Promise<void> => {
-	data.group.groupId = `${newGroupId++}`;
+	if (isMockService()) {
+		data.group.groupId = `${newGroupId++}`;
+	} else {
+		const token = findToken();
+		const response = await fetch(`${getServiceHost()}console_space/group?connect_id=${data.space.connectId}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + token,
+			},
+			body: JSON.stringify(data.group),
+		});
+
+		const result = await response.json();
+		data.group.groupId = result.groupId;
+	}
 };
 export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {};
 
@@ -424,13 +439,49 @@ export const createSubject = async (data: {
 	group?: ConsoleSpaceGroup;
 	subject: ConsoleSpaceSubject;
 }): Promise<void> => {
-	data.subject.subjectId = `${newSubjectId++}`;
+	if (isMockService()) {
+		data.subject.subjectId = `${newSubjectId++}`;
+	} else {
+		const token = findToken();
+		const response = await fetch(
+			`${getServiceHost()}console_space/subject?connect_id=${data.space.connectId}&group_id=${
+				data.group?.groupId
+			}`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+				body: JSON.stringify(data.subject),
+			}
+		);
+
+		const result = await response.json();
+		console.log(result);
+		data.subject.subjectId = result.subjectId;
+	}
 };
 export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {};
 export const saveSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
-	return new Promise((resolve) => {
-		setTimeout(() => resolve(), 500);
-	});
+	if (isMockService()) {
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(), 500);
+		});
+	} else {
+		const token = findToken();
+		const response = await fetch(`${getServiceHost()}console_space/subject/save`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + token,
+			},
+			body: JSON.stringify(subject),
+		});
+
+		const result = await response.json();
+		console.log(result);
+	}
 };
 
 export const fetchSubjectData = async (options: {

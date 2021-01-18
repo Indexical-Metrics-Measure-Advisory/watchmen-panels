@@ -78,7 +78,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 	};
 	const onAddSubjectClicked = async () => {
 		hideMenu({ containerRef, changeState: setMenuShown, offsetY: 6 });
-		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
+		const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 		const newSubject = {
 			subjectId: '',
 			name: 'Noname',
