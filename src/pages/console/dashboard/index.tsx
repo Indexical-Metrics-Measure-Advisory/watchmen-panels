@@ -80,7 +80,7 @@ export const Dashboards = () => {
 			: <DashboardsContainer>
 				<NarrowPageTitle title='Dashboards'/>
 				<Reminder data-visible={initialized && dashboards.length === 0}>
-					No dashboard yet, <span onClick={onCreateClicked}>create one</span>.
+					No dashboard yet, <span onClick={onCreateClicked}>create one</span> now?
 				</Reminder>
 				<Reminder data-visible={!initialized}>
 					Loading...
