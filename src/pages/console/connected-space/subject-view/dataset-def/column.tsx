@@ -47,6 +47,9 @@ const ColumnRowContainer = styled.div.attrs({
 			border-left-color: transparent;
 			margin-left: -1px;
 		}
+		&:nth-child(3) {
+			max-width: 100px;
+		}
 	}
 	> button {
 		min-width: 32px;
