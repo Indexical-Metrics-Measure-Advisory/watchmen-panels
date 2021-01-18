@@ -32,7 +32,8 @@ export interface ConsoleNotification extends ConsoleMessage {
 
 export type ConsoleNotifications = Array<ConsoleNotification>;
 
-export interface ConsoleMail extends ConsoleMessage {}
+export interface ConsoleMail extends ConsoleMessage {
+}
 
 export type ConsoleMails = Array<ConsoleMail>;
 
@@ -93,7 +94,8 @@ export interface ConsoleSpace {
 	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
-export interface ConsoleSpaceSubjectDataSetFilter {}
+export interface ConsoleSpaceSubjectDataSetFilter {
+}
 
 export enum FilterJointType {
 	AND = "and",
@@ -152,6 +154,10 @@ export interface ConsoleSpaceSubjectDataSetColumn {
 
 export interface ConsoleSpaceSubjectDataSetJoin {
 	relationId?: string;
+	fromTopicId?: string;
+	fromFactorId?: string;
+	toTopicId?: string;
+	toFactorId?: string;
 }
 
 export enum ConsoleSpaceSubjectChartType {
@@ -181,7 +187,8 @@ export interface ConsoleSpaceSubjectChartIndicator extends ConsoleSpaceSubjectDa
 	aggregator: ConsoleSpaceSubjectChartIndicatorAggregator;
 }
 
-export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {}
+export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {
+}
 
 export type ConsoleSpaceSubjectChartDataSetRow = Array<any>;
 export type ConsoleSpaceSubjectChartDataSetGrid = Array<ConsoleSpaceSubjectChartDataSetRow>;
