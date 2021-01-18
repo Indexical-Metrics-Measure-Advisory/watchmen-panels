@@ -2,7 +2,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
+import { ConnectedConsoleSpace, ConsoleSpaceSubject, FilterJointType } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
@@ -71,6 +71,26 @@ export const DataSetDef = (props: {
 		onVisibleChanged(false);
 	};
 	const changeCollapsed = (key: keyof Collapsed) => (value: boolean) => setCollapsed({ ...collapsed, [key]: value });
+
+	if (!subject.dataset) {
+		subject.dataset = {
+			filters: [ { jointType: FilterJointType.AND, filters: [] } ],
+			columns: [],
+			joins: []
+		};
+	}
+	if (!subject.dataset.filters) {
+		subject.dataset.filters = [ { jointType: FilterJointType.AND, filters: [] } ];
+	}
+	if (subject.dataset.filters.length === 0) {
+		subject.dataset.filters.push({ jointType: FilterJointType.AND, filters: [] });
+	}
+	if (!subject.dataset.columns) {
+		subject.dataset.columns = [];
+	}
+	if (!subject.dataset.joins) {
+		subject.dataset.joins = [];
+	}
 
 	return <DataSetDefinition data-visible={visible}>
 		<SubjectPanelHeader>
