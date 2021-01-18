@@ -3,7 +3,7 @@ import { findAccount } from '../../../services/account/account-session';
 import { ConsoleMenuUsable, useConsoleMenu } from '../../component/console/context/console-menu';
 import { ConsoleTooltipContextProvider } from '../../component/console/context/console-tooltip';
 import { ConsoleUser } from '../../component/console/types';
-import { ConsoleDashboardsStorage, useConsoleDashboards } from './console-dashboards';
+import { ConsoleDashboardsStorage, ConsoleDashboardsUsable, useConsoleDashboards } from './console-dashboards';
 import { ConsoleFavoritesStorage, ConsoleFavoritesUsable, useConsoleFavorites } from './console-favorites';
 import { ConsoleMailsStorage, ConsoleMailsUsable, useConsoleMails } from './console-mails';
 import {
@@ -20,7 +20,7 @@ export interface ConsoleContext {
 	notifications: ConsoleNotificationsStorage & ConsoleNotificationsUsable;
 	mails: ConsoleMailsStorage & ConsoleMailsUsable;
 	spaces: ConsoleSpacesStorage & ConsoleSpacesUsable;
-	dashboards: ConsoleDashboardsStorage;
+	dashboards: ConsoleDashboardsStorage & ConsoleDashboardsUsable;
 	favorites: ConsoleFavoritesStorage & ConsoleFavoritesUsable;
 	settings: ConsoleSettingsStorage & ConsoleSettingsUsable;
 }

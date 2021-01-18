@@ -2,6 +2,8 @@ import { faSolarPanel } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+import Path from '../../../common/path';
 import {
 	ConsoleDashboard,
 	ConsoleFavorite,
@@ -17,30 +19,46 @@ const isFavDashboard = (fav: ConsoleFavorite): fav is ConsoleFavoriteDashboard =
 export const Dashboard = (props: {
 	data: ConsoleDashboard
 }) => {
-	const { data } = props;
+	const { data: dashboard } = props;
 
-	const { favorites: { items: favorites, remove, add } } = useConsoleContext();
+	const history = useHistory();
+	const {
+		favorites: {
+			items: favorites, remove: removeFromFavorite, add: addIntoFavorite
+		},
+		dashboards: { items: dashboards }
+	} = useConsoleContext();
 	// eslint-disable-next-line
-	const findInFavorite = () => favorites.find(fav => isFavDashboard(fav) && fav.dashboardId == data.dashboardId);
+	const findInFavorite = () => favorites.find(fav => isFavDashboard(fav) && fav.dashboardId == dashboard.dashboardId);
 	const toggleFavorite = () => {
 		const exists = findInFavorite();
 		if (exists) {
-			remove(exists);
+			removeFromFavorite(exists);
 		} else {
-			add({ type: ConsoleFavoriteType.DASHBOARD, dashboardId: data.dashboardId } as ConsoleFavoriteDashboard);
+			addIntoFavorite({
+				type: ConsoleFavoriteType.DASHBOARD,
+				dashboardId: dashboard.dashboardId
+			} as ConsoleFavoriteDashboard);
 		}
 	};
 
-	const lastVisit = dayjs(data.lastVisitTime).fromNow();
+	const lastVisit = dayjs(dashboard.lastVisitTime).fromNow();
 	const isFavorite = !!findInFavorite();
+	const onDashboardClicked = () => {
+		dashboards.forEach(d => {
+			// eslint-disable-next-line
+			d.current = d.dashboardId == dashboard.dashboardId;
+		});
+		history.push(Path.CONSOLE_DASHBOARDS);
+	};
 
-	return <HomeSectionCard>
+	return <HomeSectionCard onClick={onDashboardClicked}>
 		<div>
 			<span>
 				<FontAwesomeIcon icon={faSolarPanel}/>
 				<span>{lastVisit}</span>
 			</span>
-			<span>{data.name}</span>
+			<span>{dashboard.name}</span>
 		</div>
 		<FavoriteButton toggle={toggleFavorite} isFavorite={isFavorite}/>
 	</HomeSectionCard>;

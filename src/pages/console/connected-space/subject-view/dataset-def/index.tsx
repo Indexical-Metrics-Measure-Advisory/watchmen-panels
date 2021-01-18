@@ -2,6 +2,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { saveSubject } from '../../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
@@ -64,12 +65,16 @@ export const DataSetDef = (props: {
 	} = props;
 
 	const [ collapsed, setCollapsed ] = useState<Collapsed>({ filters: false, columns: false, joins: false });
+	const onCloseDef = async () => {
+		await saveSubject(subject);
+		onVisibleChanged(false);
+	};
 	const changeCollapsed = (key: keyof Collapsed) => (value: boolean) => setCollapsed({ ...collapsed, [key]: value });
 
 	return <DataSetDefinition data-visible={visible}>
 		<SubjectPanelHeader>
 			<div>{subject.name}</div>
-			<LinkButton onClick={() => onVisibleChanged(false)} ignoreHorizontalPadding={true} tooltip='Minimize'
+			<LinkButton onClick={onCloseDef} ignoreHorizontalPadding={true} tooltip='Minimize'
 			            center={true}>
 				<FontAwesomeIcon icon={faTimes}/>
 			</LinkButton>

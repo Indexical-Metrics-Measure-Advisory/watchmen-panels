@@ -37,9 +37,8 @@ const DialogContainer = styled.div.attrs({
 `;
 const Dialog = styled.div`
 	margin-top: 25vh;
-	margin-left: 50vw;
+	margin-left: calc(50vw - 250px);
 	width: 500px;
-	transform: translateX(-50%);
 	padding: var(--margin) var(--margin) calc(var(--margin) / 2) var(--margin);
 	display: flex;
 	flex-direction: column;

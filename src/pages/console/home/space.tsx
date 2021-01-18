@@ -23,7 +23,7 @@ export const Space = (props: {
 	const { space } = props;
 
 	const history = useHistory();
-	const { favorites: { items: favorites, remove, add } } = useConsoleContext();
+	const { favorites: { items: favorites, remove: removeFromFavorite, add: addIntoFavorite } } = useConsoleContext();
 	// eslint-disable-next-line
 	const findInFavorite = () => favorites.find(fav => isFavSpace(fav) && fav.connectId == space.connectId);
 	const toggleFavorite = (event: React.MouseEvent) => {
@@ -31,9 +31,9 @@ export const Space = (props: {
 		event.stopPropagation();
 		const exists = findInFavorite();
 		if (exists) {
-			remove(exists);
+			removeFromFavorite(exists);
 		} else {
-			add({ type: ConsoleFavoriteType.SPACE, connectId: space.connectId } as ConsoleFavoriteSpace);
+			addIntoFavorite({ type: ConsoleFavoriteType.SPACE, connectId: space.connectId } as ConsoleFavoriteSpace);
 		}
 	};
 

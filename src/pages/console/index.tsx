@@ -5,7 +5,7 @@ import Path from '../../common/path';
 import { AvailableSpaces } from './available-spaces';
 import { ConnectedSpace } from './connected-space';
 import { ConsoleContextProvider } from './context/console-context';
-import { Dashboard } from './dashboard';
+import { Dashboards } from './dashboard';
 import { Favorite } from './favorite';
 import { Home } from './home';
 import { ConsoleMenu } from './menu';
@@ -46,7 +46,7 @@ const ConsoleIndex = () => {
 				<Switch>
 					<Route path={Path.CONSOLE_HOME}><Home/></Route>
 					<Route path={Path.CONSOLE_CONNECTED_SPACE}><ConnectedSpace/></Route>
-					<Route path={Path.CONSOLE_DASHBOARDS}><Dashboard/></Route>
+					<Route path={Path.CONSOLE_DASHBOARDS}><Dashboards/></Route>
 					<Route path={Path.CONSOLE_SPACES}><AvailableSpaces/></Route>
 					<Route path={Path.CONSOLE_INBOX}><Inbox/></Route>
 					<Route path={Path.CONSOLE_NOTIFICATION}><Notification/></Route>

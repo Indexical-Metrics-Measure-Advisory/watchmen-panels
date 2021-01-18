@@ -424,15 +424,14 @@ export const createSubject = async (data: {
 	group?: ConsoleSpaceGroup;
 	subject: ConsoleSpaceSubject;
 }): Promise<void> => {
-	
-
-
-
-
-
 	data.subject.subjectId = `${newSubjectId++}`;
 };
 export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {};
+export const saveSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
+	return new Promise((resolve) => {
+		setTimeout(() => resolve(), 500);
+	});
+};
 
 export const fetchSubjectData = async (options: {
 	subjectId: string;

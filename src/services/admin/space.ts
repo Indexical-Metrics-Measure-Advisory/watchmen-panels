@@ -1,4 +1,4 @@
-// import { findToken } from "../account/account-session";
+import { findToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import {
 	DataPage,
