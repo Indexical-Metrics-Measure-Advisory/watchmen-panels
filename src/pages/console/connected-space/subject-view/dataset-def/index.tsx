@@ -2,10 +2,10 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { saveSubject } from '../../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
+import { useSubjectContext } from '../context';
 import { SubjectColumns } from './columns';
 import { SubjectFilters } from './filters';
 import { SubjectJoins } from './joins';
@@ -64,9 +64,10 @@ export const DataSetDef = (props: {
 		visible, onVisibleChanged
 	} = props;
 
+	const { save: saveSubject } = useSubjectContext();
 	const [ collapsed, setCollapsed ] = useState<Collapsed>({ filters: false, columns: false, joins: false });
-	const onCloseDef = async () => {
-		await saveSubject(subject);
+	const onCloseDef = () => {
+		saveSubject();
 		onVisibleChanged(false);
 	};
 	const changeCollapsed = (key: keyof Collapsed) => (value: boolean) => setCollapsed({ ...collapsed, [key]: value });

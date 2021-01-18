@@ -7,7 +7,12 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
 import { useForceUpdate } from '../../../common/utils';
-import { createGroup, createSubject, deleteConnectedSpace } from '../../../services/console/space';
+import {
+	createGroup,
+	createSubject,
+	deleteConnectedSpace,
+	renameConnectedSpace
+} from '../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceType } from '../../../services/console/types';
 import Button, { ButtonType } from '../../component/button';
 import { useDialog } from '../../context/dialog';
@@ -97,6 +102,7 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 		renameObject: (options, newName) => space.name = newName,
 		onRenamed: () => {
 			spaceRenamed(space);
+			renameConnectedSpace(space.connectId, space.name);
 			forceUpdate();
 		}
 	});

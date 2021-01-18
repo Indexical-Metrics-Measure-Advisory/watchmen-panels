@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useForceUpdate } from '../../../../common/utils';
-import { createSubject } from '../../../../services/console/space';
+import { createSubject, renameGroup } from '../../../../services/console/space';
 import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../services/console/types';
 import { LinkButton } from '../../../component/console/link-button';
 import { useDialog } from '../../../context/dialog';
@@ -61,7 +61,7 @@ const GroupViewContainer = styled.div.attrs({
 		z-index: 1;
 		transition: all 300ms ease-in-out;
 		&:hover:before {
-			 display: none;
+			display: none;
 		}
 	}
 `;
@@ -273,6 +273,7 @@ export const GroupView = (props: {
 		renameObject: (options, newName) => group.name = newName,
 		onRenamed: () => {
 			groupRenamed({ space, group });
+			renameGroup(group.groupId, group.name);
 			forceUpdate();
 		}
 	});
