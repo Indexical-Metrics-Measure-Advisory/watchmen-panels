@@ -1,4 +1,4 @@
-import { findToken } from "../account/account-session";
+// import { findToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import {
 	DataPage,
@@ -45,7 +45,7 @@ export const listSpaces = async (options: {
 	} else {
 		// console.log(mock_flag);
 
-		const token = findToken();
+		// const token = findToken();
 
 		const response = await fetch(`${getServiceHost()}space/name?query_name=${options.search}`, {
 			method: "POST",
