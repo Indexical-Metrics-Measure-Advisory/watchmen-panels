@@ -134,9 +134,22 @@ export interface ConsoleSpaceSubjectDataSetFilterExpression extends ConsoleSpace
 	value?: string;
 }
 
+export enum ColumnExpressionOperator {
+	NONE = 'none',
+	ADD = 'add',
+	SUBTRACT = 'subtract',
+	MULTIPLY = 'multiply',
+	DIVIDE = 'divide',
+	MODULUS = 'modulus'
+}
+
 export interface ConsoleSpaceSubjectDataSetColumn {
 	topicId?: string;
 	factorId?: string;
+	operator?: ColumnExpressionOperator;
+	secondaryTopicId?: string;
+	secondaryFactorId?: string;
+	alias?: string;
 }
 
 export interface ConsoleSpaceSubjectDataSetJoin {
