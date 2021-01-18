@@ -202,7 +202,7 @@ export const Graphics = (props: {
 						}
 						return <Chart containerRef={containerRef}
 						              space={space} subject={subject} chart={chart} locked={locked}
-						              onDeleteChart={onDeleteChart}
+						              onDeleteChart={onDeleteChart} save={doSave}
 						              key={chart.chartId}/>;
 					})
 					: <NoDef>
