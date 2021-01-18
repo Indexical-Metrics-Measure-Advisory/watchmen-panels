@@ -279,12 +279,13 @@ export const Chart = (props: {
 	chart: ConsoleSpaceSubjectChart;
 	locked: boolean;
 	onDeleteChart: (chart: ConsoleSpaceSubjectChart) => void;
+	save: () => void;
 }) => {
 	const {
 		containerRef,
 		space, subject, chart,
 		locked,
-		onDeleteChart
+		onDeleteChart, save
 	} = props;
 
 	const dialog = useDialog();
@@ -387,6 +388,7 @@ export const Chart = (props: {
 			}
 			setDragState({ top: 0, left: 0, width: 0, height: 0, type: DragType.NONE, startX: 0, startY: 0 });
 			window.getSelection()?.removeAllRanges();
+			save();
 		}
 	};
 	const onMouseUp = () => releaseDraggingIfCan();
@@ -481,7 +483,10 @@ export const Chart = (props: {
 		event.stopPropagation();
 		setSettingsVisible(true);
 	};
-	const onCloseSettings = () => setSettingsVisible(false);
+	const onCloseSettings = () => {
+		setSettingsVisible(false);
+		save();
+	};
 	const onDeleteConfirmClicked = () => {
 		onDeleteChart(chart);
 		dialog.hide();
