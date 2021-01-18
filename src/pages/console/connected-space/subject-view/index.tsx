@@ -15,7 +15,7 @@ import { LinkButton } from '../../../component/console/link-button';
 import { useDialog } from '../../../context/dialog';
 import { createDeleteSubjectClickHandler, createRenameClickHandler } from '../dialog';
 import { useSpaceContext } from '../space-context';
-import { SubjectContextProvider } from './context';
+import { SubjectContextProvider, useSubjectContext } from './context';
 import { DataSet } from './dataset';
 import { DataSetDef } from './dataset-def';
 import { Graphics } from './graphics';
@@ -104,6 +104,7 @@ export const SubjectViewContent = (props: {
 
 	const dialog = useDialog();
 	const { closeSubjectIfCan, subjectRenamed } = useSpaceContext();
+	const { save: saveSubject } = useSubjectContext();
 	const forceUpdate = useForceUpdate();
 	const [ visible, setVisible ] = useState<Visible>({ definition: false, dataset: false, graphics: false });
 
@@ -111,14 +112,17 @@ export const SubjectViewContent = (props: {
 
 	const onDeleteSubjectClicked = createDeleteSubjectClickHandler({
 		dialog, space, group, subject,
-		onDeleted: ({ space, group, subject }) => closeSubjectIfCan({ space, group, subject })
+		onDeleted: async ({ space, group, subject }) => {
+			closeSubjectIfCan({ space, group, subject });
+		}
 	});
 	const onRenameSubjectClicked = createRenameClickHandler({
 		dialog, space, group, subject,
 		asFullName: () => group ? `${space.name} / ${group.name} / ${subject.name}` : `${space.name} / ${subject.name}`,
 		renameObject: (options, newName) => subject.name = newName,
-		onRenamed: () => {
+		onRenamed: async () => {
 			subjectRenamed({ space, group, subject });
+			saveSubject();
 			forceUpdate();
 		}
 	});

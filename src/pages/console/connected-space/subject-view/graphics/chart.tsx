@@ -8,6 +8,7 @@ import Button, { ButtonType } from '../../../../component/button';
 import { LinkButton } from '../../../../component/console/link-button';
 import { useDialog } from '../../../../context/dialog';
 import { ChartDiagram } from '../../../chart/chart-diagram';
+import { useSubjectContext } from '../context';
 import { ChartSettingsPanel } from './chart-settings-panel';
 import { ChartRect } from './types';
 import { CHART_MIN_HEIGHT, CHART_MIN_WIDTH, generateChartRect } from './utils';
@@ -279,16 +280,16 @@ export const Chart = (props: {
 	chart: ConsoleSpaceSubjectChart;
 	locked: boolean;
 	onDeleteChart: (chart: ConsoleSpaceSubjectChart) => void;
-	save: () => void;
 }) => {
 	const {
 		containerRef,
 		space, subject, chart,
 		locked,
-		onDeleteChart, save
+		onDeleteChart
 	} = props;
 
 	const dialog = useDialog();
+	const { save: saveSubject } = useSubjectContext();
 	const chartRef = useRef<HTMLDivElement>(null);
 	const headerRef = useRef<HTMLDivElement>(null);
 	const headerButtonsRef = useRef<HTMLDivElement>(null);
@@ -388,7 +389,7 @@ export const Chart = (props: {
 			}
 			setDragState({ top: 0, left: 0, width: 0, height: 0, type: DragType.NONE, startX: 0, startY: 0 });
 			window.getSelection()?.removeAllRanges();
-			save();
+			saveSubject();
 		}
 	};
 	const onMouseUp = () => releaseDraggingIfCan();
@@ -485,8 +486,8 @@ export const Chart = (props: {
 	};
 	const onCloseSettings = () => {
 		setSettingsVisible(false);
-		save();
-	};
+		saveSubject();
+	}
 	const onDeleteConfirmClicked = () => {
 		onDeleteChart(chart);
 		dialog.hide();

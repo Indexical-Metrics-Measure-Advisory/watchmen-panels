@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { useForceUpdate } from '../../../../../common/utils';
-import { saveSubject } from '../../../../../services/console/space';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
@@ -12,6 +11,7 @@ import {
 	ConsoleSpaceSubjectChartType
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
+import { useSubjectContext } from '../context';
 import { Chart } from './chart';
 import { generateChartRect } from './utils';
 
@@ -87,10 +87,10 @@ export const Graphics = (props: {
 	const { dataset = {}, graphics: charts = [] } = subject;
 	const { columns = [] } = dataset;
 
+	const { save: saveSubject } = useSubjectContext();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [ buttonsPosition, setButtonsPosition ] = useState({ top: 0, right: 0 });
 	const [ locked, setLocked ] = useState(true);
-	const [ saveTimeoutHandle, setSaveTimeoutHandle ] = useState<number | null>(null);
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		const resetButtonsPosition = () => {
@@ -121,17 +121,6 @@ export const Graphics = (props: {
 		return () => resizeObserver.disconnect();
 	});
 
-	const doSave = () => {
-		if (saveTimeoutHandle) {
-			clearTimeout(saveTimeoutHandle);
-
-		}
-		setSaveTimeoutHandle(setTimeout(async () => {
-			setSaveTimeoutHandle(null);
-			await saveSubject(subject);
-		}, 10000));
-	};
-
 	const onLockClicked = () => setLocked(true);
 	const onUnlockClicked = () => setLocked(false);
 	const onCreateChartClicked = () => {
@@ -150,7 +139,7 @@ export const Graphics = (props: {
 		} else {
 			forceUpdate();
 		}
-		doSave();
+		saveSubject();
 	};
 	const onDeleteChart = (chart: ConsoleSpaceSubjectChart) => {
 		const index = charts.indexOf(chart);
@@ -158,12 +147,9 @@ export const Graphics = (props: {
 			charts.splice(index, 1);
 		}
 		forceUpdate();
-		doSave();
+		saveSubject();
 	};
-	const onToDefClicked = async () => {
-		await saveSubject(subject);
-		switchToDefinition();
-	};
+	const onToDefClicked = async () => switchToDefinition();
 
 	const hasColumns = columns.length !== 0;
 	const hasCharts = charts.length !== 0;
@@ -202,7 +188,7 @@ export const Graphics = (props: {
 						}
 						return <Chart containerRef={containerRef}
 						              space={space} subject={subject} chart={chart} locked={locked}
-						              onDeleteChart={onDeleteChart} save={doSave}
+						              onDeleteChart={onDeleteChart}
 						              key={chart.chartId}/>;
 					})
 					: <NoDef>

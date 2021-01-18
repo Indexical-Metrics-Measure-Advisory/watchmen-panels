@@ -329,7 +329,8 @@ export const connectSpace = async (spaceId: string, name: string, type: ConsoleS
 	});
 
 };
-
+export const renameConnectedSpace = async (connectId: string, name: string): Promise<void> => {
+};
 export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promise<void> => {
 };
 
@@ -340,6 +341,8 @@ export const createGroup = async (data: { space: ConnectedConsoleSpace, group: C
 	data.group.groupId = `${newGroupId++}`;
 };
 export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {
+};
+export const renameGroup = async (groupId: string, name: string): Promise<void> => {
 };
 
 export const createSubject = async (data: { space: ConnectedConsoleSpace, group?: ConsoleSpaceGroup, subject: ConsoleSpaceSubject }): Promise<void> => {

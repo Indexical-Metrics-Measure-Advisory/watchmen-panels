@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { saveSubject } from '../../../../services/console/space';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpace,
@@ -24,6 +25,7 @@ interface SpaceDefs {
 
 export interface SubjectContext {
 	defs: SpaceDefs;
+	save: () => void;
 }
 
 const Context = React.createContext<SubjectContext>({} as SubjectContext);
@@ -74,17 +76,26 @@ export const SubjectContextProvider = (props: {
 	subject: ConsoleSpaceSubject;
 	children?: ((props: any) => React.ReactNode) | React.ReactNode;
 }) => {
-	const { space, children } = props;
+	const { space, subject, children } = props;
 
 	const { spaces: { available } } = useConsoleContext();
 	const [ defs, setDefs ] = useState<SpaceDefs>(computeSpaceDefs(available, space));
+	const [ saveTimeoutHandle, setSaveTimeoutHandle ] = useState<number | null>(null);
 	useEffect(() => {
 		setDefs(computeSpaceDefs(available, space));
 	}, [ space, available ]);
 
-	return <Context.Provider value={{
-		defs
-	}}>{children}</Context.Provider>;
+	const save = () => {
+		if (saveTimeoutHandle) {
+			clearTimeout(saveTimeoutHandle);
+		}
+		setSaveTimeoutHandle(setTimeout(async () => {
+			setSaveTimeoutHandle(null);
+			await saveSubject(subject);
+		}, 10000));
+	};
+
+	return <Context.Provider value={{ defs, save }}>{children}</Context.Provider>;
 };
 
 export const useSubjectContext = () => {
