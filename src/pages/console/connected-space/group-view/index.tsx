@@ -278,7 +278,7 @@ export const GroupView = (props: {
 		}
 	});
 	const onAddClicked = async () => {
-		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
+		const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 		const newSubject = {
 			subjectId: '',
 			name: 'Noname',

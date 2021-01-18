@@ -232,7 +232,7 @@ export const Group = (props: {
 	const onOpenGroupClicked = () => openGroupIfCan({ space, group });
 	const onToggleExpand = () => setCollapsed(!collapsed);
 	const onAddSubjectClicked = async () => {
-		const now = dayjs().format('YYYY/MM/DD HH:mm:ss');
+		const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 		const newSubject = {
 			subjectId: '',
 			name: 'Noname',
