@@ -19,7 +19,6 @@ import { DataSetTableDragColumn } from './dataset-table-drag-column';
 import { DataTableScrollShade } from './dataset-table-scroll-shade';
 import { DataSetTableSelection } from './dataset-table-selection';
 import { ColumnDefs, ColumnSortBy, FactorColumnDef, SelectionRef } from './types';
-import { buildFactorMap, filterColumns } from './utils';
 
 enum Behavior {
 	NONE = 'none',
@@ -203,9 +202,10 @@ const useDecorateFixStyle = (options: {
 export const DataSetTableWrapper = (props: {
 	space: ConnectedConsoleSpace;
 	subject: ConsoleSpaceSubject;
+	columnDefs: ColumnDefs;
 	data: DataPage<Array<any>>;
 }) => {
-	const { space, subject, data } = props;
+	const { columnDefs, data } = props;
 
 	const {
 		fixColumnChange, repaintSelection, selectionChange,
@@ -217,12 +217,6 @@ export const DataSetTableWrapper = (props: {
 	const dataTableRef = useRef<HTMLDivElement>(null);
 	const selectionRef = useRef<SelectionRef>(null);
 	const [ rowNoColumnWidth ] = useState(40);
-	const [ columnDefs ] = useState<ColumnDefs>(() => {
-		return {
-			fixed: [],
-			data: filterColumns({ columns: subject.dataset?.columns || [], factorMap: buildFactorMap(space.topics) })
-		};
-	});
 	const [ behavior, setBehavior ] = useState<Behavior>(Behavior.NONE);
 	const [ pickedColumn, setPickedColumn ] = useState<PickedColumn | null>(null);
 	const forceUpdate = useForceUpdate();

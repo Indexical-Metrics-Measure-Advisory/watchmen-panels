@@ -8,6 +8,8 @@ import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../servi
 import { DataSetHeader } from './dataset-header';
 import { DataSetTableContextProvider } from './dataset-table-context';
 import { DataSetTableWrapper } from './dataset-table-wrapper';
+import { ColumnDefs } from './types';
+import { buildFactorMap, filterColumns } from './utils';
 
 const DataSetContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-dataset'
@@ -116,11 +118,23 @@ export const DataSet = (props: {
 			}
 		})();
 	};
+	const [ columnDefs, setColumnDefs ] = useState<ColumnDefs>(() => {
+		return {
+			fixed: [],
+			data: filterColumns({ columns: subject.dataset?.columns || [], factorMap: buildFactorMap(space.topics) })
+		};
+	});
+
 	// fetch data
 	useEffect(() => {
 		if (!visible) {
 			return;
 		}
+		// rebuild columns in case of definition was changed
+		setColumnDefs({
+			fixed: [],
+			data: filterColumns({ columns: subject.dataset?.columns || [], factorMap: buildFactorMap(space.topics) })
+		});
 		fetchData();
 		// eslint-disable-next-line
 	}, [ visible ]);
@@ -135,7 +149,9 @@ export const DataSet = (props: {
 			               onHide={() => onVisibleChanged(false)}
 			               fetchData={fetchData}/>
 			{hasColumns
-				? <DataSetTableWrapper space={space} subject={subject} data={data}/>
+				? <DataSetTableWrapper space={space} subject={subject}
+				                       columnDefs={columnDefs}
+				                       data={data}/>
 				: <DataSetNoDef>
 					<span>No column defined yet, switch to <span onClick={onToDefClicked}>definition</span>?</span>
 				</DataSetNoDef>}
