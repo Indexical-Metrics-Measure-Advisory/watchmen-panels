@@ -12,7 +12,7 @@ import {
 	ConsoleTopic,
 	ConsoleTopicFactorType,
 	ConsoleTopicRelationship,
-	ConsoleTopicRelationshipType
+	ConsoleTopicRelationshipType,
 } from "./types";
 
 const demoTopics: Array<ConsoleTopic> = [
@@ -397,7 +397,7 @@ export const connectSpace = async (
 	} else {
 		// console.log(mock_flag);
 		const token = findToken();
-		const response = await fetch(`${getServiceHost()}space/connect?space_id=${spaceId}&name=${type}`, {
+		const response = await fetch(`${getServiceHost()}space/connect?space_id=${spaceId}&name=${name}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -409,8 +409,7 @@ export const connectSpace = async (
 	}
 };
 
-export const renameConnectedSpace = async (connectId: string, name: string): Promise<void> => {
-};
+export const renameConnectedSpace = async (connectId: string, name: string): Promise<void> => {};
 
 export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promise<void> => {};
 
@@ -435,10 +434,8 @@ export const createGroup = async (data: { space: ConnectedConsoleSpace; group: C
 		data.group.groupId = result.groupId;
 	}
 };
-export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {
-};
-export const renameGroup = async (groupId: string, name: string): Promise<void> => {
-};
+export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {};
+export const renameGroup = async (groupId: string, name: string): Promise<void> => {};
 
 export const createSubject = async (data: {
 	space: ConnectedConsoleSpace;
@@ -496,36 +493,53 @@ export const fetchSubjectData = async (options: {
 	pageSize?: number;
 }): Promise<DataPage<Array<any>>> => {
 	const { pageNumber = 1, pageSize = 100 } = options;
+	if (isMockService()) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve({
+					itemCount: 223,
+					pageNumber,
+					pageSize,
+					pageCount: 3,
+					data: new Array(pageNumber === 3 ? 23 : 100).fill(1).map((row, rowIndex) => {
+						const index = `${(pageNumber - 1) * pageSize + rowIndex + 1}`.padStart(5, "0");
+						const quoteDate = dayjs()
+							.subtract(1, "year")
+							.subtract(Math.floor(Math.random() * 30), "day");
+						const issueDate = quoteDate.add(Math.floor(Math.random() * 30), "day");
+						return [
+							`Q${index}`,
+							quoteDate.format("YYYY/MM/DD"),
+							true,
+							`P${index}`,
+							issueDate.format("YYYY/MM/DD"),
+							10000,
+							"John Doe",
+							"1985/02/13",
+							"M",
+							"AU",
+						];
+					}),
+				});
+			}, 1000);
+		});
+	} else {
+		const token = findToken();
+		const response = await fetch(
+			`${getServiceHost()}console_space/subject/dataset?subject_id=${options.subjectId}`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+				body: JSON.stringify({ pageNumber: options.pageNumber, pageSize: options.pageSize }),
+			}
+		);
 
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve({
-				itemCount: 223,
-				pageNumber,
-				pageSize,
-				pageCount: 3,
-				data: new Array(pageNumber === 3 ? 23 : 100).fill(1).map((row, rowIndex) => {
-					const index = `${(pageNumber - 1) * pageSize + rowIndex + 1}`.padStart(5, "0");
-					const quoteDate = dayjs()
-						.subtract(1, "year")
-						.subtract(Math.floor(Math.random() * 30), "day");
-					const issueDate = quoteDate.add(Math.floor(Math.random() * 30), "day");
-					return [
-						`Q${index}`,
-						quoteDate.format("YYYY/MM/DD"),
-						true,
-						`P${index}`,
-						issueDate.format("YYYY/MM/DD"),
-						10000,
-						"John Doe",
-						"1985/02/13",
-						"M",
-						"AU",
-					];
-				}),
-			});
-		}, 1000);
-	});
+		const result = await response.json();
+		return result;
+	}
 };
 
 export const fetchCountChartData = async (
