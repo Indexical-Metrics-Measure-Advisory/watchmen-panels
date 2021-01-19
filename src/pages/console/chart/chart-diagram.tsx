@@ -136,6 +136,7 @@ export const ChartDiagram = (props: {
 	useEffect(() => {
 		if (visible && rootRef.current) {
 			const ret = validate(chart);
+			console.log(chart.type, ret.pass);
 			if (!ret.pass) {
 				setValidation(ret);
 			} else if (chart.type === ConsoleSpaceSubjectChartType.COUNT) {
@@ -144,6 +145,7 @@ export const ChartDiagram = (props: {
 					const data = await fetchCountChartData(subject.subjectId, chart.chartId!);
 					setChartInstance(null);
 					setData(data);
+					setValidation(ret);
 				})();
 			} else {
 				(async () => {
@@ -156,6 +158,7 @@ export const ChartDiagram = (props: {
 						chartInstance.setOption(options, true);
 						setChartInstance(chartInstance);
 						setData(data);
+						setValidation(ret);
 					} catch (e) {
 						console.error(e);
 						setValidation({
