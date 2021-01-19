@@ -8,7 +8,7 @@ const ColumnFactorContainer = styled.div`
 	background-color: var(--console-subject-topic-bg-color);
 	flex-grow: 1;
 	flex-basis: 0;
-	max-width: calc(50% - 15px);
+	//max-width: calc(50% - 15px);
 	> div,
 	> div[data-widget=dropdown]:focus {
 		font-size: 0.8em;
@@ -21,14 +21,17 @@ const ColumnFactorContainer = styled.div`
 export const ColumnFactor = (props: {
 	column: ConsoleSpaceSubjectDataSetColumn;
 	onFactorChanged: () => void;
+	propNames: [ 'topicId', 'factorId' ] | [ 'secondaryTopicId', 'secondaryFactorId' ]
 }) => {
-	const { column, onFactorChanged } = props;
-	const { topicId, factorId } = column;
+	const { column, onFactorChanged, propNames: [ topicPropName, factorPropName ] } = props;
+
+	const topicId = column[topicPropName];
+	const factorId = column[factorPropName];
 
 	const { defs: { factors: factorOptions } } = useSubjectContext();
 
 	const onColumnFactorChanged = async ({ value }: DropdownOption) => {
-		column.factorId = value as string;
+		column[factorPropName] = value as string;
 		onFactorChanged();
 	};
 

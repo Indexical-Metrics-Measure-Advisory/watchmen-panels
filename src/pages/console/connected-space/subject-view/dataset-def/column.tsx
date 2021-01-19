@@ -6,6 +6,7 @@ import { useForceUpdate } from '../../../../../common/utils';
 import { ColumnExpressionOperator, ConsoleSpaceSubjectDataSetColumn } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
+import Input from '../../../../component/input';
 import { ColumnFactor } from './column-factor';
 import { ColumnTopic } from './column-topic';
 
@@ -19,37 +20,62 @@ const ColumnRowContainer = styled.div.attrs({
 		margin-bottom: calc(var(--margin) / 4);
 	}
 	&[data-show-factor=false] {
-		> div[data-widget=dropdown]:nth-child(2),
-		> div[data-widget=dropdown]:nth-child(3) {
+		> div:nth-child(2),
+		> div:nth-child(2) > div[data-widget=dropdown] {
+			flex-grow: 0;
 			width: 0;
 			border: 0;
 			padding: 0;
 		}
 	}
 	&[data-show-factor=true] {
-		> div[data-widget=dropdown]:nth-child(2) {
+		> div:nth-child(2) {
+			flex-grow: 1;
+		}
+	}
+	&[data-show-secondary-topic=false] {
+		> div:nth-child(4),
+		> div:nth-child(4) > div[data-widget=dropdown],
+		> div:nth-child(5),
+		> div:nth-child(5) > div[data-widget=dropdown] {
+			flex-grow: 0;
+			width: 0;
+			border: 0;
+			padding: 0;
+		}
+	}
+	&[data-show-secondary-topic=true] {
+		> div:nth-child(4) {
+			flex-grow: 1;
+		}
+	}
+	&[data-show-secondary-factor=false] {
+		> div:nth-child(5),
+		> div:nth-child(5) > div[data-widget=dropdown] {
+			flex-grow: 0;
+			width: 0;
+			border: 0;
+			padding: 0;
+		}
+	}
+	&[data-show-secondary-factor=true] {
+		> div:nth-child(5) {
 			flex-grow: 1;
 		}
 	}
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
-		flex-grow: 1;
-		&:first-child {
-			background-color: var(--console-subject-topic-bg-color);
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-			min-width: 150px;
-		}
-		&:nth-child(2),
-		&:nth-child(3) {
-			flex-grow: 0;
-			border-radius: 0;
-			border-left-color: transparent;
-			margin-left: -1px;
-		}
-		&:nth-child(3) {
-			max-width: 100px;
-		}
+		flex-grow: 0;
+		border-radius: 0;
+		border-left-color: transparent;
+		margin-left: -1px;
+		max-width: 100px;
+	}
+	> input {
+		border-radius: 0;
+		border-left-color: transparent;
+		margin-left: -1px;
+		font-size: 0.8em;
 	}
 	> button {
 		min-width: 32px;
@@ -86,15 +112,32 @@ export const Column = (props: {
 		column.operator = option.value as ColumnExpressionOperator;
 		forceUpdate();
 	};
+	const onAliasChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+		column.alias = event.target.value;
+		forceUpdate();
+	};
 	const onColumnRemoveClicked = () => removeColumn(column);
 
 	const showFactor = !!column.topicId;
 
-	return <ColumnRowContainer data-show-factor={showFactor}>
-		<ColumnTopic column={column} onTopicChanged={forceUpdate}/>
-		<ColumnFactor column={column} onFactorChanged={forceUpdate}/>
+	const showSecondTopic = !!column.operator && column.operator !== ColumnExpressionOperator.NONE;
+	const showSecondFactor = showSecondTopic && !!column.secondaryTopicId;
+
+	return <ColumnRowContainer data-show-factor={showFactor}
+	                           data-show-secondary-topic={showSecondTopic}
+	                           data-show-secondary-factor={showSecondFactor}>
+		<ColumnTopic column={column} propNames={[ 'topicId', 'factorId' ]}
+		             onTopicChanged={forceUpdate}/>
+		<ColumnFactor column={column} propNames={[ 'topicId', 'factorId' ]}
+		              onFactorChanged={forceUpdate}/>
 		<Dropdown value={column.operator || ColumnExpressionOperator.NONE} options={ExpressionOperators}
 		          onChange={onOperatorChanged}/>
+		<ColumnTopic column={column} propNames={[ 'secondaryTopicId', 'secondaryFactorId' ]}
+		             onTopicChanged={forceUpdate}/>
+		<ColumnFactor column={column} propNames={[ 'secondaryTopicId', 'secondaryFactorId' ]}
+		              onFactorChanged={forceUpdate}/>
+		<Input placeholder='Alias'
+		       value={column.alias || ''} onChange={onAliasChanged}/>
 		<LinkButton onClick={onColumnRemoveClicked} ignoreHorizontalPadding={true}
 		            tooltip={'Remove Column'} center={true}>
 			<FontAwesomeIcon icon={faTimes}/>
