@@ -32,9 +32,7 @@ export const login = async (account: Account): Promise<LoginResponse> => {
 			}),
 		});
 
-		//TODO add token to session storage
 		const result = await response.json();
-		console.log(result);
 
 		setToken(result["access_token"]);
 

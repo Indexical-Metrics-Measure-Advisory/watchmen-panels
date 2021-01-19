@@ -536,10 +536,6 @@ export const fetchTopic = async (topicId: string): Promise<{ topic: Topic }> => 
 
 export const saveTopic = async (topic: Topic): Promise<void> => {
 	if (topic.topicId) {
-		// console.log("hahaah");
-
-		//TODO update topic
-
 		const response = await fetch(`${getServiceHost()}update/topic?topic_id=${topic.topicId}`, {
 			method: "POST",
 			headers: {

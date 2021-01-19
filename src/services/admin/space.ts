@@ -1,4 +1,4 @@
-import { findToken } from "../account/account-session";
+// import { findToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import {
 	DataPage,
@@ -156,8 +156,6 @@ export const fetchSpace = async (
 		});
 
 		const group_list = await group_response.json();
-
-		//TODO: load groups and topics
 
 		return { space, groups: group_list, topics: topic_list };
 	}

@@ -226,8 +226,6 @@ export const fetchUser = async (
 		} else {
 			return { user, groups: [] };
 		}
-
-		//TODO load groups
 	}
 };
 
@@ -338,7 +336,6 @@ export const fetchUserGroup = async (
 
 		const space_list = await space_response.json();
 
-		//TODO load space and  user
 		return { group, users: user_list, spaces: space_list };
 	}
 };
