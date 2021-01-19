@@ -7,12 +7,14 @@ import {
 	ConsoleSpace,
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectChart,
-	ConsoleSpaceSubjectChartDimension
+	ConsoleSpaceSubjectChartDimension,
+	ConsoleSpaceSubjectDataSetColumn
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { isDimensionCanRemove } from '../../../chart/chart-defender';
 import { SettingsSegmentRowLabel } from './components';
+import { transformColumnsToDropdownOptions, transformColumnToDropdownValue } from './utils';
 
 const DimensionEditor = styled.div`
 	display: flex;
@@ -75,30 +77,21 @@ export const ChartDimension = (props: {
 	const forceUpdate = useForceUpdate();
 
 	const onChange = async (option: DropdownOption) => {
-		const value = option.value as string;
-		const [ topicId, factorId ] = value.split('-');
-		dimension.topicId = topicId;
-		dimension.factorId = factorId;
+		const column: ConsoleSpaceSubjectDataSetColumn = (option as any).column;
+		dimension.topicId = column.topicId;
+		dimension.factorId = column.factorId;
+		dimension.operator = column.operator;
+		dimension.secondaryTopicId = column.secondaryTopicId;
+		dimension.secondaryFactorId = column.secondaryFactorId;
+		dimension.alias = column.alias;
 		forceUpdate();
 	};
 	const onDimensionRemoveClicked = () => onRemove(dimension);
 
 	const index = dimensions.indexOf(dimension);
-	const options = columns.map(column => {
-		// eslint-disable-next-line
-		const topic = space.topics.find(topic => topic.topicId == column.topicId);
-		if (!topic) {
-			return null;
-		}
-		// eslint-disable-next-line
-		const factor = topic.factors.find(factor => factor.factorId == column.factorId);
-		if (!factor) {
-			return null;
-		}
-		return { label: factor.label || factor.name, value: `${topic.topicId}-${factor.factorId}` };
-	}).filter(x => x != null) as Array<DropdownOption>;
+	const options = transformColumnsToDropdownOptions(space, columns);
 	const canRemove = isDimensionCanRemove(chart);
-	const value = `${dimension.topicId}-${dimension.factorId}`;
+	const value = transformColumnToDropdownValue(dimension);
 
 	return <Fragment>
 		<SettingsSegmentRowLabel>{index === 0 ? 'On:' : 'And On:'}</SettingsSegmentRowLabel>

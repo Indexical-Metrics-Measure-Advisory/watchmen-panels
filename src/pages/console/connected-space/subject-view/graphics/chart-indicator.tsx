@@ -9,12 +9,14 @@ import {
 	ConsoleSpaceSubjectChart,
 	ConsoleSpaceSubjectChartIndicator,
 	ConsoleSpaceSubjectChartIndicatorAggregator,
+	ConsoleSpaceSubjectDataSetColumn,
 	ConsoleTopicFactorType
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { isIndicatorCanRemove } from '../../../chart/chart-defender';
 import { SettingsSegmentRowLabel } from './components';
+import { transformColumnsToDropdownOptions, transformColumnToDropdownValue } from './utils';
 
 const IndicatorEditor = styled.div`
 	display: flex;
@@ -101,10 +103,13 @@ export const ChartIndicator = (props: {
 	const forceUpdate = useForceUpdate();
 
 	const onChange = async (option: DropdownOption) => {
-		const value = option.value as string;
-		const [ topicId, factorId ] = value.split('-');
-		indicator.topicId = topicId;
-		indicator.factorId = factorId;
+		const column: ConsoleSpaceSubjectDataSetColumn = (option as any).column;
+		indicator.topicId = column.topicId;
+		indicator.factorId = column.factorId;
+		indicator.operator = column.operator;
+		indicator.secondaryTopicId = column.secondaryTopicId;
+		indicator.secondaryFactorId = column.secondaryFactorId;
+		indicator.alias = column.alias;
 		forceUpdate();
 	};
 	const onAggregatorChange = async (option: DropdownOption) => {
@@ -114,21 +119,9 @@ export const ChartIndicator = (props: {
 	const onIndicatorRemoveClicked = () => onRemove(indicator);
 
 	const index = indicators.indexOf(indicator);
-	const options = columns.map(column => {
-		// eslint-disable-next-line
-		const topic = space.topics.find(topic => topic.topicId == column.topicId);
-		if (!topic) {
-			return null;
-		}
-		// eslint-disable-next-line
-		const factor = topic.factors.find(factor => factor.factorId == column.factorId);
-		if (!factor) {
-			return null;
-		}
-		return { label: factor.label || factor.name, value: `${topic.topicId}-${factor.factorId}` };
-	}).filter(x => x != null) as Array<DropdownOption>;
+	const options = transformColumnsToDropdownOptions(space, columns);
 	const canRemove = isIndicatorCanRemove(chart);
-	const value = `${indicator.topicId}-${indicator.factorId}`;
+	const value = transformColumnToDropdownValue(indicator);
 	const aggregateOptions: Array<DropdownOption> = [
 		{ label: 'As Is', value: ConsoleSpaceSubjectChartIndicatorAggregator.NONE },
 		{ label: 'Count', value: ConsoleSpaceSubjectChartIndicatorAggregator.COUNT }
