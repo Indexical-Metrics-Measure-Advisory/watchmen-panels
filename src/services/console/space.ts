@@ -12,7 +12,7 @@ import {
 	ConsoleTopic,
 	ConsoleTopicFactorType,
 	ConsoleTopicRelationship,
-	ConsoleTopicRelationshipType,
+	ConsoleTopicRelationshipType
 } from "./types";
 
 const demoTopics: Array<ConsoleTopic> = [
