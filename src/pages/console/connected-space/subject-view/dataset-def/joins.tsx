@@ -1,26 +1,23 @@
-import {
-	faCompressAlt,
-	faExchangeAlt,
-	faExpandAlt,
-	faPlus,
-	faSortAlphaDown,
-	faTimes
-} from '@fortawesome/free-solid-svg-icons';
+import { faCompressAlt, faExpandAlt, faPlus, faSortAlphaDown, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 import { useForceUpdate } from '../../../../../common/utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpaceSubject,
 	ConsoleSpaceSubjectDataSetJoin,
 	ConsoleTopic,
-	ConsoleTopicFactor
+	ConsoleTopicFactor,
+	TopicJoinType
 } from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { SubjectPanelBody, SubjectPanelBodyWrapper, SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
+import { ColumnFactor } from './column-factor';
+import { ColumnTopic } from './column-topic';
 
 const JoinRowContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-join-row'
@@ -34,12 +31,9 @@ const JoinRowContainer = styled.div.attrs({
 	}
 	> div[data-widget=dropdown] {
 		font-size: 0.8em;
-		flex-grow: 1;
-		max-width: calc(100% - 31px);
-		&:first-child {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-		}
+		max-width: 130px;
+		border-radius: 0;
+		margin-left: -1px;
 		> span:first-child,
 		> div:last-child > span {
 			> span {
@@ -69,44 +63,77 @@ const JoinRowContainer = styled.div.attrs({
 	}
 `;
 
+const JoinTypes = [
+	{ value: TopicJoinType.INNER, label: 'Complete Match' },
+	{ value: TopicJoinType.RIGHT, label: 'Right First' },
+	{ value: TopicJoinType.LEFT, label: 'Left First' }
+];
+
 export const JoinRow = (props: {
 	join: ConsoleSpaceSubjectDataSetJoin;
 	removeJoin: (join: ConsoleSpaceSubjectDataSetJoin) => void;
 }) => {
 	const { join, removeJoin } = props;
 
-	const { defs: { relations } } = useSubjectContext();
 	const forceUpdate = useForceUpdate();
 
-	const onRelationChanged = async ({ value }: DropdownOption) => {
-		join.relationId = value as string;
+	const onTypeChanged = async (option: DropdownOption) => {
+		join.type = option.value as TopicJoinType;
 		forceUpdate();
 	};
 	const onJoinRemoveClicked = () => removeJoin(join);
 
-	const relationOptions =
-		relations.map(({
-			               value,
-			               source: { topic: sourceTopic, factors: sourceFactors },
-			               target: { topic: targetTopic, factors: targetFactors }
-		               }) => {
-			return {
-				value,
-				label: <Fragment>
-					<span>{sourceTopic.name}[{sourceFactors.map(f => f.label).join(', ')}]</span>
-					<FontAwesomeIcon icon={faExchangeAlt}/>
-					<span>{targetTopic.name}[{targetFactors.map(f => f.label).join(', ')}]</span>
-				</Fragment>
-			};
-		});
-
 	return <JoinRowContainer>
-		<Dropdown options={relationOptions} onChange={onRelationChanged} value={join.relationId}/>
+		<ColumnTopic column={join} propNames={[ 'topicId', 'factorId' ]}
+		             onTopicChanged={forceUpdate}/>
+		<ColumnFactor column={join} propNames={[ 'topicId', 'factorId' ]}
+		              onFactorChanged={forceUpdate}/>
+		<Dropdown value={join.type || TopicJoinType.INNER} options={JoinTypes}
+		          onChange={onTypeChanged}/>
+		<ColumnTopic column={join} propNames={[ 'secondaryTopicId', 'secondaryFactorId' ]}
+		             onTopicChanged={forceUpdate}/>
+		<ColumnFactor column={join} propNames={[ 'secondaryTopicId', 'secondaryFactorId' ]}
+		              onFactorChanged={forceUpdate}/>
 		<LinkButton onClick={onJoinRemoveClicked} ignoreHorizontalPadding={true}
 		            tooltip={'Remove Join'} center={true}>
 			<FontAwesomeIcon icon={faTimes}/>
 		</LinkButton>
 	</JoinRowContainer>;
+};
+
+const asLabel = (
+	join: ConsoleSpaceSubjectDataSetJoin,
+	factors: { [key in string]: Array<DropdownOption & { topic: ConsoleTopic, factor: ConsoleTopicFactor }> }
+) => {
+	const { topicId, factorId, type, secondaryTopicId, secondaryFactorId } = join;
+	let topicName = '?', factorName = '?', typeName, secondaryTopicName = '?', secondaryFactorName = '?';
+	if (topicId) {
+		const factorsOfTopic = factors[topicId] || [];
+		if (factorsOfTopic.length > 0) {
+			topicName = factorsOfTopic[0].topic.name;
+		} else if (factorId) {
+			// eslint-disable-next-line
+			const { factor } = factorsOfTopic.find(({ factor }) => factor.factorId == factorId) || {};
+			if (factor) {
+				factorName = factor.label || factor.name;
+			}
+		}
+	}
+	typeName = type || TopicJoinType.INNER;
+	if (secondaryTopicId) {
+		const factorsOfTopic = factors[secondaryTopicId] || [];
+		if (factorsOfTopic.length > 0) {
+			secondaryTopicName = factorsOfTopic[0].topic.name;
+		} else if (factorId) {
+			// eslint-disable-next-line
+			const { factor } = factorsOfTopic.find(({ factor }) => factor.factorId == secondaryFactorId) || {};
+			if (factor) {
+				secondaryFactorName = factor.label || factor.name;
+			}
+		}
+	}
+
+	return `${topicName}.${factorName}${typeName}${secondaryTopicName}.${secondaryFactorName}`;
 };
 
 export const SubjectJoins = (props: {
@@ -123,37 +150,11 @@ export const SubjectJoins = (props: {
 	const { dataset = {} } = subject;
 	const { joins = [] } = dataset;
 
-	const { defs: { relations } } = useSubjectContext();
+	const { defs: { factors } } = useSubjectContext();
 	const forceUpdate = useForceUpdate();
 
 	const onSortClicked = () => {
-		const asLabel = ({
-			                 source: { topic: sourceTopic, factors: sourceFactors },
-			                 target: { topic: targetTopic, factors: targetFactors }
-		                 }: {
-			source: { topic: ConsoleTopic, factors: Array<ConsoleTopicFactor> },
-			target: { topic: ConsoleTopic, factors: Array<ConsoleTopicFactor> },
-		}) => {
-			return `${sourceTopic.name}[${sourceFactors.map(f => f.label).join(', ')}];${targetTopic.name}[${targetFactors.map(f => f.label).join(', ')}]`;
-		};
-		joins.sort((j1, j2) => {
-			if (!j1.relationId) {
-				return !j2.relationId ? 0 : 1;
-			} else if (!j2.relationId) {
-				return -1;
-				// eslint-disable-next-line
-			} else if (j1.relationId == j2.relationId) {
-				return 0;
-			}
-
-			// eslint-disable-next-line
-			const r1 = relations.find(r => r.value == j1.relationId)!;
-			// eslint-disable-next-line
-			const r2 = relations.find(r => r.value == j2.relationId)!;
-			const l1 = asLabel(r1);
-			const l2 = asLabel(r2);
-			return l1.localeCompare(l2);
-		});
+		joins.sort((j1, j2) => asLabel(j1, factors).toLowerCase().localeCompare(asLabel(j2, factors).toLowerCase()));
 	};
 	const onAddJoinClicked = () => {
 		const join = {};
@@ -188,9 +189,8 @@ export const SubjectJoins = (props: {
 		</SubjectPanelHeader>
 		<SubjectPanelBody data-visible={!collapsed}>
 			<SubjectPanelBodyWrapper>
-				{joins.map((join, index) => {
-					return <JoinRow join={join} key={`${join.relationId}-${index}`}
-					                removeJoin={onRemoveJoin}/>;
+				{joins.map((join) => {
+					return <JoinRow join={join} key={v4()} removeJoin={onRemoveJoin}/>;
 				})}
 			</SubjectPanelBodyWrapper>
 		</SubjectPanelBody>

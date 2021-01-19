@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ConsoleSpaceSubjectDataSetColumn } from '../../../../../services/console/types';
+import {
+	ConsoleSpaceSubjectDataSetColumn,
+	ConsoleSpaceSubjectDataSetJoin
+} from '../../../../../services/console/types';
 import Dropdown, { DropdownOption } from '../../../../component/dropdown';
 import { useSubjectContext } from '../context';
 
@@ -29,7 +32,7 @@ const ColumnTopicContainer = styled.div`
 `;
 
 export const ColumnTopic = (props: {
-	column: ConsoleSpaceSubjectDataSetColumn;
+	column: ConsoleSpaceSubjectDataSetColumn | ConsoleSpaceSubjectDataSetJoin;
 	onTopicChanged: () => void;
 	propNames: [ 'topicId', 'factorId' ] | [ 'secondaryTopicId', 'secondaryFactorId' ];
 }) => {

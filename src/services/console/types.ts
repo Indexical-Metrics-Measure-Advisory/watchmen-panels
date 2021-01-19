@@ -152,12 +152,18 @@ export interface ConsoleSpaceSubjectDataSetColumn {
 	alias?: string;
 }
 
+export enum TopicJoinType {
+	LEFT = 'left',
+	RIGHT = 'right',
+	INNER = 'inner'
+}
+
 export interface ConsoleSpaceSubjectDataSetJoin {
-	relationId?: string;
-	fromTopicId?: string;
-	fromFactorId?: string;
-	toTopicId?: string;
-	toFactorId?: string;
+	topicId?: string;
+	factorId?: string;
+	secondaryTopicId?: string;
+	secondaryFactorId?: string;
+	type?: TopicJoinType;
 }
 
 export enum ConsoleSpaceSubjectChartType {
