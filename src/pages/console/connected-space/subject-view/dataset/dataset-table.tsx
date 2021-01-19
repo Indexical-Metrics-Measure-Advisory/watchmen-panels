@@ -40,7 +40,7 @@ const HeaderCell = (props: {
 	                               data-dragging={dragging}
 	                               data-last-column={last}
 	                               ref={cellRef}>
-		<span>{column.factor.label || column.factor.name}</span>
+		<span>{column.alias || column.factor.label || column.factor.name}</span>
 		<HeaderCellButtons>
 			<LinkButton ignoreHorizontalPadding={true} tooltip='Sort Ascending'
 			            right={true} offsetX={-6} offsetY={6}

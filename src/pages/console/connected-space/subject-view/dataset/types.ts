@@ -1,4 +1,4 @@
-import { ConsoleTopic, ConsoleTopicFactor } from '../../../../../services/console/types';
+import { ColumnExpressionOperator, ConsoleTopic, ConsoleTopicFactor } from '../../../../../services/console/types';
 
 export type FactorMap = Map<string, { topic: ConsoleTopic, factor: ConsoleTopicFactor }>;
 
@@ -17,6 +17,10 @@ export interface ColumnDef {
 export interface FactorColumnDef extends ColumnDef {
 	topic: ConsoleTopic;
 	factor: ConsoleTopicFactor;
+	operator?: ColumnExpressionOperator;
+	secondaryTopic?: ConsoleTopic;
+	secondaryFactor?: ConsoleTopicFactor;
+	alias?: string;
 }
 
 export interface SequenceColumnDef extends ColumnDef {
