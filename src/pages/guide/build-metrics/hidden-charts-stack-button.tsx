@@ -1,9 +1,9 @@
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import Button, { ButtonType } from '../../component/button';
-import { HideChart, useHideOnPrintContext } from './hide-on-print-context';
+import Button, {ButtonType} from '../../component/button';
+import {HideChart, useHideOnPrintContext} from './hide-on-print-context';
 
 const TrashButton = styled(Button).attrs({
 	'data-widget': 'chart-hide-on-print-btn'
@@ -23,32 +23,32 @@ const TrashButton = styled(Button).attrs({
 		display: block;
 	    position: absolute;
 	    font-size: var(--font-size);
-	    font-weight: var(--font-boldest);
-	    top: calc(var(--font-size) - 2px);
-	    right: calc(var(--font-size) - 2px);
-	    line-height: 0.8em;
+		font-weight: var(--font-boldest);
+		top: calc(var(--font-size) - 2px);
+		right: calc(var(--font-size) - 2px);
+		line-height: 0.8em;
 	}
 	&:before {
 		content: '';
-	    position: absolute;
-	    top: 40px;
-	    left: -23px;
-	    width: 30px;
-	    height: 30px;
-	    border-radius: 50%;
-	    border: 24px solid var(--primary-color);
-	    overflow: hidden;
-	    clip: rect(0, 0, 0, 0);
-	    transition: clip 300ms ease-in-out;
-	    opacity: 0;
-    }
+		position: absolute;
+		top: 40px;
+		left: -23px;
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		border: 24px solid var(--primary-color);
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		transition: clip 300ms ease-in-out;
+		opacity: 0;
+	}
 	&:hover {
 		border-top-left-radius: 0;
 		border-bottom-left-radius: 0;
 		width: 72px;
 		&:before {
-			 clip: ${({ count }) => count > 2 ? 'rect(0, 39px, 39px, 0)' : 'rect(0, 0, 0, 0)'};
-			 opacity: 1;
+			clip: ${({count}) => count > 2 ? 'rect(0, 30px, 30px, 0)' : 'rect(0, 0, 0, 0)'};
+			opacity: 1;
 		}
 		> div {
 			opacity: 1;
@@ -56,8 +56,8 @@ const TrashButton = styled(Button).attrs({
 			border: var(--border);
 			border-color: var(--primary-color);
 			width: 200px;
-			height: calc(${({ count }) => count} * 28px + 5px);
-			border-bottom-right-radius: ${({ count }) => count > 2 ? 'var(--border-radius)' : 0};
+			height: calc(${({count}) => count} * 28px + 5px);
+			border-bottom-right-radius: ${({count}) => count > 2 ? 'var(--border-radius)' : 0};
 		}
 	}
 `;
