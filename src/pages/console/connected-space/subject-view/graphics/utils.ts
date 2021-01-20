@@ -5,23 +5,23 @@ import {
 	ConsoleTopic,
 	ConsoleTopicFactor
 } from '../../../../../services/console/types';
-import { DropdownOption } from '../../../../component/dropdown';
+import {DropdownOption} from '../../../../component/dropdown';
 
 export const CHART_MARGIN = 32;
 export const CHART_COLUMN_GAP = 32;
 export const INIT_TOP = CHART_MARGIN;
 export const INIT_LEFT = CHART_MARGIN;
-export const INIT_MIN_WIDTH = 300;
+export const INIT_MIN_WIDTH = 400;
 export const CHART_HEADER_HEIGHT = 40;
-export const CHART_ASPECT_RATIO = 3 / 4;
+export const CHART_ASPECT_RATIO = 9 / 16;
 export const CHART_MIN_HEIGHT = 200 + CHART_HEADER_HEIGHT;
 export const CHART_MIN_WIDTH = CHART_MIN_HEIGHT / CHART_ASPECT_RATIO + CHART_HEADER_HEIGHT;
 
 export const generateChartRect = (container: HTMLDivElement) => {
-	const { clientWidth } = container;
+	const {clientWidth} = container;
 	const width = Math.max(INIT_MIN_WIDTH, (clientWidth - CHART_MARGIN * 2 - CHART_COLUMN_GAP * 2) / 3);
-	const height = (width - CHART_HEADER_HEIGHT) * CHART_ASPECT_RATIO;
-	return { top: INIT_TOP, left: INIT_LEFT, width, height, max: false };
+	const height = width * CHART_ASPECT_RATIO + CHART_HEADER_HEIGHT;
+	return {top: INIT_TOP, left: INIT_LEFT, width, height, max: false};
 };
 
 export const transformColumnToDropdownValue = (column: ConsoleSpaceSubjectDataSetColumn) => {
@@ -44,8 +44,8 @@ export const transformColumnsToDropdownOptions = (space: ConsoleSpace, columns: 
 		}
 
 		const operator = column.operator;
-		let secondaryTopic: ConsoleTopic | { topicId: undefined } | undefined = { topicId: (void 0) };
-		let secondaryFactor: ConsoleTopicFactor | { factorId: undefined } | undefined = { factorId: (void 0) };
+		let secondaryTopic: ConsoleTopic | { topicId: undefined } | undefined = {topicId: (void 0)};
+		let secondaryFactor: ConsoleTopicFactor | { factorId: undefined } | undefined = {factorId: (void 0)};
 		if (!!operator && operator !== ColumnExpressionOperator.NONE) {
 			// eslint-disable-next-line
 			secondaryTopic = space.topics.find(topic => topic.topicId == column.secondaryTopicId);

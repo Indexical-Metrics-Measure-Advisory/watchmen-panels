@@ -1,17 +1,17 @@
-import { faCog, faCompressArrowsAlt, faExpandArrowsAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, RefObject, useEffect, useRef, useState } from 'react';
+import {faCog, faCompressArrowsAlt, faExpandArrowsAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, {Fragment, RefObject, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
-import { useForceUpdate } from '../../../../../common/utils';
-import { ConsoleSpace, ConsoleSpaceSubject, ConsoleSpaceSubjectChart } from '../../../../../services/console/types';
-import Button, { ButtonType } from '../../../../component/button';
-import { LinkButton } from '../../../../component/console/link-button';
-import { useDialog } from '../../../../context/dialog';
-import { ChartDiagram } from '../../../chart/chart-diagram';
-import { useSubjectContext } from '../context';
-import { ChartSettingsPanel } from './chart-settings-panel';
-import { ChartRect } from './types';
-import { CHART_MIN_HEIGHT, CHART_MIN_WIDTH, generateChartRect } from './utils';
+import {useForceUpdate} from '../../../../../common/utils';
+import {ConsoleSpace, ConsoleSpaceSubject, ConsoleSpaceSubjectChart} from '../../../../../services/console/types';
+import Button, {ButtonType} from '../../../../component/button';
+import {LinkButton} from '../../../../component/console/link-button';
+import {useDialog} from '../../../../context/dialog';
+import {ChartDiagram} from '../../../chart/chart-diagram';
+import {useSubjectContext} from '../context';
+import {ChartSettingsPanel} from './chart-settings-panel';
+import {ChartRect} from './types';
+import {CHART_MIN_HEIGHT, CHART_MIN_WIDTH, generateChartRect} from './utils';
 
 enum DragType {
 	NONE = 'none',
@@ -38,7 +38,7 @@ interface DragState {
 
 const ChartContainer = styled.div
 	.attrs<{ 'data-max': boolean, rect: ChartRect | null }>(
-		({ 'data-max': max, rect }
+		({'data-max': max, rect}
 		) => {
 			return {
 				'data-widget': 'console-subject-view-chart',
@@ -206,7 +206,7 @@ const resizeFromTop = (top: number, height: number, clientY: number, startY: num
 		newHeight = CHART_MIN_HEIGHT;
 		newTop = Math.max(top + clientY - startY, 0);
 	}
-	return { top: newTop, height: newHeight };
+	return {top: newTop, height: newHeight};
 };
 
 const resizeFromBottom = (top: number, height: number, clientY: number, startY: number) => {
@@ -228,7 +228,7 @@ const resizeFromBottom = (top: number, height: number, clientY: number, startY: 
 		newHeight = CHART_MIN_HEIGHT;
 		newTop = Math.max(top - (startY - clientY - (height - CHART_MIN_HEIGHT)), 0);
 	}
-	return { top: newTop, height: newHeight };
+	return {top: newTop, height: newHeight};
 };
 
 const resizeFromLeft = (left: number, width: number, clientX: number, startX: number) => {
@@ -248,7 +248,7 @@ const resizeFromLeft = (left: number, width: number, clientX: number, startX: nu
 		newWidth = CHART_MIN_WIDTH;
 		newLeft = Math.max(left + clientX - startX, 0);
 	}
-	return { left: newLeft, width: newWidth };
+	return {left: newLeft, width: newWidth};
 };
 
 const resizeFromRight = (left: number, width: number, clientX: number, startX: number) => {
@@ -270,7 +270,7 @@ const resizeFromRight = (left: number, width: number, clientX: number, startX: n
 		newWidth = CHART_MIN_WIDTH;
 		newLeft = Math.max(left - (startX - clientX - (width - CHART_MIN_WIDTH)), 0);
 	}
-	return { left: newLeft, width: newWidth };
+	return {left: newLeft, width: newWidth};
 };
 
 export const Chart = (props: {
@@ -279,23 +279,24 @@ export const Chart = (props: {
 	subject: ConsoleSpaceSubject;
 	chart: ConsoleSpaceSubjectChart;
 	locked: boolean;
+	settings?: boolean;
 	onDeleteChart: (chart: ConsoleSpaceSubjectChart) => void;
 }) => {
 	const {
 		containerRef,
 		space, subject, chart,
-		locked,
+		locked, settings = true,
 		onDeleteChart
 	} = props;
 
 	const dialog = useDialog();
-	const { save: saveSubject } = useSubjectContext();
+	const {save: saveSubject} = useSubjectContext();
 	const chartRef = useRef<HTMLDivElement>(null);
 	const headerRef = useRef<HTMLDivElement>(null);
 	const headerButtonsRef = useRef<HTMLDivElement>(null);
-	const [ max, setMax ] = useState(false);
-	const [ settingsVisible, setSettingsVisible ] = useState(false);
-	const [ dragState, setDragState ] = useState<DragState>({
+	const [max, setMax] = useState(false);
+	const [settingsVisible, setSettingsVisible] = useState(false);
+	const [dragState, setDragState] = useState<DragState>({
 		top: 0,
 		left: 0,
 		width: 0,
@@ -320,9 +321,9 @@ export const Chart = (props: {
 				return;
 			}
 			const chartContainer = chartRef.current;
-			const { top: currentTop, left: currentLeft } = chartContainer.getBoundingClientRect();
-			const { clientWidth: currentWidth, clientHeight: currentHeight } = chartContainer;
-			const { top, left, width, height } = maxChart();
+			const {top: currentTop, left: currentLeft} = chartContainer.getBoundingClientRect();
+			const {clientWidth: currentWidth, clientHeight: currentHeight} = chartContainer;
+			const {top, left, width, height} = maxChart();
 			if (top === currentTop && left === currentLeft && width === currentWidth && height === currentHeight) {
 				return;
 			}
@@ -337,8 +338,8 @@ export const Chart = (props: {
 	}
 
 	const maxChart = () => {
-		const { top, left } = containerRef.current!.getBoundingClientRect();
-		const { offsetWidth, offsetHeight } = containerRef.current!;
+		const {top, left} = containerRef.current!.getBoundingClientRect();
+		const {offsetWidth, offsetHeight} = containerRef.current!;
 		return {
 			top: top - 1,
 			left: left - 1,
@@ -353,7 +354,7 @@ export const Chart = (props: {
 		}
 
 		// start dnd
-		const { clientX, clientY } = event;
+		const {clientX, clientY} = event;
 		const top = parseFloat(chartRef.current.style.top);
 		const left = parseFloat(chartRef.current.style.left);
 		const width = parseFloat(chartRef.current.style.width);
@@ -364,12 +365,12 @@ export const Chart = (props: {
 			// sides and corners
 			chartRef.current.style.transition = 'none';
 			chartRef.current.style.boxShadow = 'var(--console-primary-hover-shadow)';
-			setDragState({ top, left, width, height, type: position as DragType, startX: clientX, startY: clientY });
+			setDragState({top, left, width, height, type: position as DragType, startX: clientX, startY: clientY});
 		} else if (headerRef.current?.contains(target) && !headerButtonsRef.current?.contains(target)) {
 			// in header, but not in header buttons
 			chartRef.current.style.transition = 'none';
 			chartRef.current.style.boxShadow = 'var(--console-primary-hover-shadow)';
-			setDragState({ top, left, width, height, type: DragType.DND, startX: clientX, startY: clientY });
+			setDragState({top, left, width, height, type: DragType.DND, startX: clientX, startY: clientY});
 		}
 	};
 	const releaseDraggingIfCan = () => {
@@ -379,7 +380,7 @@ export const Chart = (props: {
 				const chartContainer = chartRef.current;
 				chartContainer.style.transition = '';
 				chartContainer.style.boxShadow = '';
-				const { width, height } = chartContainer.getBoundingClientRect();
+				const {width, height} = chartContainer.getBoundingClientRect();
 				chart.rect = {
 					top: parseInt(chartContainer.style.top),
 					left: parseInt(chartContainer.style.left),
@@ -387,7 +388,7 @@ export const Chart = (props: {
 					height
 				};
 			}
-			setDragState({ top: 0, left: 0, width: 0, height: 0, type: DragType.NONE, startX: 0, startY: 0 });
+			setDragState({top: 0, left: 0, width: 0, height: 0, type: DragType.NONE, startX: 0, startY: 0});
 			window.getSelection()?.removeAllRanges();
 			saveSubject();
 		}
@@ -399,11 +400,11 @@ export const Chart = (props: {
 			return;
 		}
 
-		const { clientX, clientY } = event;
+		const {clientX, clientY} = event;
 		const chartContainer = chartRef.current;
 		const chartStyle = chartContainer.style;
-		const { top, left, width, height, type } = dragState;
-		const { startX, startY } = dragState;
+		const {top, left, width, height, type} = dragState;
+		const {startX, startY} = dragState;
 
 		switch (type) {
 			case DragType.DND: {
@@ -413,32 +414,32 @@ export const Chart = (props: {
 				break;
 			}
 			case DragType.RESIZE_TOP: {
-				const { top: newTop, height: newHeight } = resizeFromTop(top, height, clientY, startY);
+				const {top: newTop, height: newHeight} = resizeFromTop(top, height, clientY, startY);
 				chartStyle.top = `${newTop}px`;
 				chartStyle.height = `${newHeight}px`;
 				break;
 			}
 			case DragType.RESIZE_BOTTOM: {
-				const { top: newTop, height: newHeight } = resizeFromBottom(top, height, clientY, startY);
+				const {top: newTop, height: newHeight} = resizeFromBottom(top, height, clientY, startY);
 				chartStyle.top = `${newTop}px`;
 				chartStyle.height = `${newHeight}px`;
 				break;
 			}
 			case DragType.RESIZE_LEFT: {
-				const { left: newLeft, width: newWidth } = resizeFromLeft(left, width, clientX, startX);
+				const {left: newLeft, width: newWidth} = resizeFromLeft(left, width, clientX, startX);
 				chartStyle.left = `${newLeft}px`;
 				chartStyle.width = `${newWidth}px`;
 				break;
 			}
 			case DragType.RESIZE_RIGHT: {
-				const { left: newLeft, width: newWidth } = resizeFromRight(left, width, clientX, startX);
+				const {left: newLeft, width: newWidth} = resizeFromRight(left, width, clientX, startX);
 				chartStyle.left = `${newLeft}px`;
 				chartStyle.width = `${newWidth}px`;
 				break;
 			}
 			case DragType.RESIZE_TOP_LEFT: {
-				const { top: newTop, height: newHeight } = resizeFromTop(top, height, clientY, startY);
-				const { left: newLeft, width: newWidth } = resizeFromLeft(left, width, clientX, startX);
+				const {top: newTop, height: newHeight} = resizeFromTop(top, height, clientY, startY);
+				const {left: newLeft, width: newWidth} = resizeFromLeft(left, width, clientX, startX);
 				chartStyle.top = `${newTop}px`;
 				chartStyle.left = `${newLeft}px`;
 				chartStyle.width = `${newWidth}px`;
@@ -446,8 +447,8 @@ export const Chart = (props: {
 				break;
 			}
 			case DragType.RESIZE_TOP_RIGHT: {
-				const { top: newTop, height: newHeight } = resizeFromTop(top, height, clientY, startY);
-				const { left: newLeft, width: newWidth } = resizeFromRight(left, width, clientX, startX);
+				const {top: newTop, height: newHeight} = resizeFromTop(top, height, clientY, startY);
+				const {left: newLeft, width: newWidth} = resizeFromRight(left, width, clientX, startX);
 				chartStyle.top = `${newTop}px`;
 				chartStyle.left = `${newLeft}px`;
 				chartStyle.width = `${newWidth}px`;
@@ -455,8 +456,8 @@ export const Chart = (props: {
 				break;
 			}
 			case DragType.RESIZE_BOTTOM_LEFT: {
-				const { top: newTop, height: newHeight } = resizeFromBottom(top, height, clientY, startY);
-				const { left: newLeft, width: newWidth } = resizeFromLeft(left, width, clientX, startX);
+				const {top: newTop, height: newHeight} = resizeFromBottom(top, height, clientY, startY);
+				const {left: newLeft, width: newWidth} = resizeFromLeft(left, width, clientX, startX);
 				chartStyle.top = `${newTop}px`;
 				chartStyle.left = `${newLeft}px`;
 				chartStyle.width = `${newWidth}px`;
@@ -464,8 +465,8 @@ export const Chart = (props: {
 				break;
 			}
 			case DragType.RESIZE_BOTTOM_RIGHT: {
-				const { top: newTop, height: newHeight } = resizeFromBottom(top, height, clientY, startY);
-				const { left: newLeft, width: newWidth } = resizeFromRight(left, width, clientX, startX);
+				const {top: newTop, height: newHeight} = resizeFromBottom(top, height, clientY, startY);
+				const {left: newLeft, width: newWidth} = resizeFromRight(left, width, clientX, startX);
 				chartStyle.top = `${newTop}px`;
 				chartStyle.left = `${newLeft}px`;
 				chartStyle.width = `${newWidth}px`;
@@ -487,7 +488,7 @@ export const Chart = (props: {
 	const onCloseSettings = () => {
 		setSettingsVisible(false);
 		saveSubject();
-	}
+	};
 	const onDeleteConfirmClicked = () => {
 		onDeleteChart(chart);
 		dialog.hide();
@@ -500,7 +501,7 @@ export const Chart = (props: {
 				<span>Are you sure to delete this chart?</span>
 			</div>,
 			<Fragment>
-				<div style={{ flexGrow: 1 }}/>
+				<div style={{flexGrow: 1}}/>
 				<Button inkType={ButtonType.PRIMARY} onClick={onDeleteConfirmClicked}>Yes</Button>
 				<Button inkType={ButtonType.DEFAULT} onClick={dialog.hide}>Cancel</Button>
 			</Fragment>
@@ -521,10 +522,12 @@ export const Chart = (props: {
 					            onClick={onToggleMaxClicked}>
 						<FontAwesomeIcon icon={max ? faCompressArrowsAlt : faExpandArrowsAlt}/>
 					</LinkButton>
-					<LinkButton ignoreHorizontalPadding={true} tooltip='Open Settings' center={true}
-					            onClick={onOpenSettingsClicked}>
-						<FontAwesomeIcon icon={faCog}/>
-					</LinkButton>
+					{settings
+						? <LinkButton ignoreHorizontalPadding={true} tooltip='Open Settings' center={true}
+						              onClick={onOpenSettingsClicked}>
+							<FontAwesomeIcon icon={faCog}/>
+						</LinkButton>
+						: null}
 					<LinkButton ignoreHorizontalPadding={true} tooltip='Delete Chart' center={true}
 					            onClick={onDeleteClicked}>
 						<FontAwesomeIcon icon={faTimes}/>

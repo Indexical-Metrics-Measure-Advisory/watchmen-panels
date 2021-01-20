@@ -32,7 +32,8 @@ export interface ConsoleNotification extends ConsoleMessage {
 
 export type ConsoleNotifications = Array<ConsoleNotification>;
 
-export interface ConsoleMail extends ConsoleMessage {}
+export interface ConsoleMail extends ConsoleMessage {
+}
 
 export type ConsoleMails = Array<ConsoleMail>;
 
@@ -93,7 +94,8 @@ export interface ConsoleSpace {
 	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
-export interface ConsoleSpaceSubjectDataSetFilter {}
+export interface ConsoleSpaceSubjectDataSetFilter {
+}
 
 export enum FilterJointType {
 	AND = "and",
@@ -191,7 +193,8 @@ export interface ConsoleSpaceSubjectChartIndicator extends ConsoleSpaceSubjectDa
 	aggregator: ConsoleSpaceSubjectChartIndicatorAggregator;
 }
 
-export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {}
+export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {
+}
 
 export type ConsoleSpaceSubjectChartDataSetRow = Array<any>;
 export type ConsoleSpaceSubjectChartDataSetGrid = Array<ConsoleSpaceSubjectChartDataSetRow>;
@@ -252,11 +255,25 @@ export interface ConnectedConsoleSpace extends ConsoleSpace {
 	subjects: Array<ConsoleSpaceSubject>;
 }
 
+export interface ConsoleDashboardChart {
+	spaceId: string;
+	connectId: string;
+	subjectId: string;
+	chartId: string;
+	rect?: {
+		top: number;
+		left: number;
+		width: number;
+		height: number;
+	};
+}
+
 export interface ConsoleDashboard {
 	dashboardId: string;
 	name: string;
 	lastVisitTime: string;
 	current?: boolean;
+	graphics: Array<ConsoleDashboardChart>;
 }
 
 export enum ConsoleFavoriteType {

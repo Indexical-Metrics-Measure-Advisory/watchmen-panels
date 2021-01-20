@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { ConsoleDashboard } from "./types";
+import {ConsoleDashboard} from "./types";
 
 export const fetchDashboards = async (): Promise<Array<ConsoleDashboard>> => {
 	return [
@@ -7,6 +7,7 @@ export const fetchDashboards = async (): Promise<Array<ConsoleDashboard>> => {
 			dashboardId: "1",
 			name: "Sales Statistics",
 			lastVisitTime: "2020/10/20 09:36:46",
+			graphics: []
 		},
 	];
 };
@@ -21,6 +22,7 @@ export const createDashboard = async (name: string): Promise<ConsoleDashboard> =
 				name,
 				lastVisitTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
 				current: true,
+				graphics: []
 			});
 		}, 1000);
 	});

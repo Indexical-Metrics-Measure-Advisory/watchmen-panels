@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import styled from 'styled-components';
 import BackgroundImage from '../../../assets/console-dashboard-background.png';
-import { useForceUpdate } from '../../../common/utils';
-import { NarrowPageTitle } from '../../component/console/narrow-page-title';
-import { PageContainer } from '../../component/console/page-container';
-import { useDialog } from '../../context/dialog';
-import { useConsoleContext } from '../context/console-context';
-import { createCreateDashboardClickHandler } from './create-dashboard-handler';
-import { Dashboard } from './dashboard';
+import {useForceUpdate} from '../../../common/utils';
+import {NarrowPageTitle} from '../../component/console/narrow-page-title';
+import {PageContainer} from '../../component/console/page-container';
+import {useDialog} from '../../context/dialog';
+import {useConsoleContext} from '../context/console-context';
+import {createCreateDashboardClickHandler} from './create-dashboard-handler';
+import {Dashboard} from './dashboard';
 
 const Container = styled(PageContainer)`
 	flex-grow: 1;
@@ -20,6 +20,7 @@ const DashboardsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-row-gap: var(--margin);
+	flex-grow: 1;
 `;
 const Reminder = styled.div`
 	display: block;

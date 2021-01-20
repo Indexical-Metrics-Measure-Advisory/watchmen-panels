@@ -1,8 +1,8 @@
-import { EventEmitter } from 'events';
-import { useEffect, useState } from 'react';
-import { useForceUpdate } from '../../../common/utils';
-import { fetchAvailableSpaces, fetchConnectedSpaces } from '../../../services/console/space';
-import { ConnectedConsoleSpace, ConsoleSpace } from '../../../services/console/types';
+import {EventEmitter} from 'events';
+import {useEffect, useState} from 'react';
+import {useForceUpdate} from '../../../common/utils';
+import {fetchAvailableSpaces, fetchConnectedSpaces} from '../../../services/console/space';
+import {ConnectedConsoleSpace, ConsoleSpace} from '../../../services/console/types';
 
 export enum ConsoleSpacesEvent {
 	SPACE_ADDED = 'space-added',
@@ -70,6 +70,9 @@ export const useConsoleSpaces = () => {
 
 	// TODO simulate data for demo purpose
 	useEffect(() => {
+		if (state.initialized) {
+			return;
+		}
 		(async () => {
 			try {
 				const connected = await fetchConnectedSpaces();
