@@ -1,127 +1,170 @@
-import { faPenSquare, faPoll, faSatelliteDish, faTachometerAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import {
+    faPenSquare,
+    faPoll,
+    faSatelliteDish,
+    faShare,
+    faTachometerAlt,
+    faTrashAlt
+} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, {Fragment} from 'react';
 import styled from 'styled-components';
-import { useForceUpdate } from '../../../common/utils';
-import { ConsoleDashboard } from '../../../services/console/types';
-import { LinkButton } from '../../component/console/link-button';
-import { useDialog } from '../../context/dialog';
-import { useConsoleContext } from '../context/console-context';
-import { createCreateDashboardClickHandler } from './create-dashboard-handler';
-import { createDeleteDashboardClickHandler } from './delete-dashboard-handler';
-import { createRenameDashboardClickHandler } from './rename-dashboard-handler';
-import { createSwitchDashboardClickHandler } from './switch-dashboard-handler';
+import {useForceUpdate} from '../../../common/utils';
+import {ConsoleDashboard} from '../../../services/console/types';
+import {LinkButton} from '../../component/console/link-button';
+import {useDialog} from '../../context/dialog';
+import {useConsoleContext} from '../context/console-context';
+import {createCreateDashboardClickHandler} from './create-dashboard-handler';
+import {createDeleteDashboardClickHandler} from './delete-dashboard-handler';
+import {createRenameDashboardClickHandler} from './rename-dashboard-handler';
+import {createSwitchDashboardClickHandler} from './switch-dashboard-handler';
+import Button, {ButtonType} from "../../component/button";
 
 const DashboardContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	&[data-visible=false] {
-		display: none;
-	}
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &[data-visible=false] {
+    display: none;
+  }
 `;
 const DashboardHeader = styled.div`
-	display: flex;
-	align-items: center;
-	border-bottom: var(--border);
-	> button {
-		align-self: flex-end;
-		width: 28px;
-		height: 28px;
-		font-size: 1.2em;
-	}
+  display: flex;
+  align-items: center;
+  border-bottom: var(--border);
+
+  > button {
+    align-self: flex-end;
+    width: 28px;
+    height: 28px;
+    font-size: 1.2em;
+  }
 `;
 const DashboardTitle = styled.div`
-	font-size: 3em;
-	font-family: var(--console-title-font-family);
-	flex-grow: 1;
+  font-size: 3em;
+  font-family: var(--console-title-font-family);
+  flex-grow: 1;
+  display: flex;
+
+  > button {
+    margin-left: calc(var(--margin) / 2);
+    font-size: 0.7em;
+    padding: 0 calc(var(--margin) / 2);
+  }
 `;
 
 export const Dashboard = () => {
-	const dialog = useDialog();
-	const {
-		dashboards: {
-			items: dashboards,
-			addDashboard, deleteDashboard
-		}
-	} = useConsoleContext();
-	const forceUpdate = useForceUpdate();
+    const dialog = useDialog();
+    const {
+        dashboards: {
+            items: dashboards,
+            addDashboard, deleteDashboard
+        }
+    } = useConsoleContext();
+    const forceUpdate = useForceUpdate();
 
-	const onRenameClicked = (dashboard: ConsoleDashboard) => createRenameDashboardClickHandler({
-		dashboard,
-		dialog,
-		onRenamed: (dashboard) => forceUpdate()
-	});
-	const onAddChartClicked = () => {
-	};
-	const onDeleteClicked = (dashboard: ConsoleDashboard) => createDeleteDashboardClickHandler({
-		dashboard,
-		dialog,
-		onDeleted: (dashboard) => {
-			deleteDashboard(dashboard);
-			if (dashboards.length >= 1) {
-				forceUpdate();
-			}
-		}
-	});
-	const onCreateClicked = createCreateDashboardClickHandler({
-		dialog,
-		onCreated: (dashboard) => {
-			dashboards.forEach(dashboard => dashboard.current = false);
-			addDashboard(dashboard);
-			forceUpdate();
-		}
-	});
-	const onSwitchClicked = (dashboard: ConsoleDashboard) => createSwitchDashboardClickHandler({
-		dashboard,
-		dashboards,
-		dialog,
-		onSwitched: (dashboard) => {
-			dashboards.forEach(d => d.current = d === dashboard);
-			forceUpdate();
-		}
-	});
+    const onCopyClicked = (url: string) => () => {
+        navigator.clipboard.writeText(url);
+    }
+    const onShareClicked = (dashboard: ConsoleDashboard) => () => {
+        const url = `${window.location.href}/share/${dashboard.dashboardId}`;
+        dialog.show(
+            <div data-widget='dialog-console-loading'>
+                <span>
+                    <span>Copy following URL and share:</span><br/>
+                    <span data-widget='dialog-console-object'>{url}</span>
+                </span>
+            </div>,
+            <Fragment>
+                <div style={{flexGrow: 1}}/>
+                <Button inkType={ButtonType.PRIMARY} onClick={onCopyClicked(url)}>Copy</Button>
+                <Button inkType={ButtonType.PRIMARY} onClick={dialog.hide}>Close</Button>
+            </Fragment>
+        )
+    }
+    const onRenameClicked = (dashboard: ConsoleDashboard) => createRenameDashboardClickHandler({
+        dashboard,
+        dialog,
+        onRenamed: (dashboard) => forceUpdate()
+    });
+    const onAddChartClicked = () => {
+    };
+    const onDeleteClicked = (dashboard: ConsoleDashboard) => createDeleteDashboardClickHandler({
+        dashboard,
+        dialog,
+        onDeleted: (dashboard) => {
+            deleteDashboard(dashboard);
+            if (dashboards.length >= 1) {
+                forceUpdate();
+            }
+        }
+    });
+    const onCreateClicked = createCreateDashboardClickHandler({
+        dialog,
+        onCreated: (dashboard) => {
+            dashboards.forEach(dashboard => dashboard.current = false);
+            addDashboard(dashboard);
+            forceUpdate();
+        }
+    });
+    const onSwitchClicked = (dashboard: ConsoleDashboard) => createSwitchDashboardClickHandler({
+        dashboard,
+        dashboards,
+        dialog,
+        onSwitched: (dashboard) => {
+            dashboards.forEach(d => d.current = d === dashboard);
+            forceUpdate();
+        }
+    });
 
-	let currentDashboard = dashboards.find(dashboard => dashboard.current);
-	if (!currentDashboard && dashboards.length > 0) {
-		// current not found
-		currentDashboard = dashboards[0];
-	}
+    let currentDashboard = dashboards.find(dashboard => dashboard.current);
+    if (!currentDashboard && dashboards.length > 0) {
+        // current not found
+        currentDashboard = dashboards[0];
+    }
 
-	return <DashboardContainer data-visible={!!currentDashboard}>
-		<DashboardHeader>
-			<DashboardTitle>{currentDashboard?.name}</DashboardTitle>
-			{currentDashboard
-				? <LinkButton ignoreHorizontalPadding={true} tooltip='Rename this dashboard'
-				              right={true} offsetX={-4} offsetY={6}
-				              onClick={onRenameClicked(currentDashboard)}>
-					<FontAwesomeIcon icon={faPenSquare}/>
-				</LinkButton>
-				: null}
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Add chart'
-			            right={true} offsetX={-4} offsetY={6}
-			            onClick={onAddChartClicked}>
-				<FontAwesomeIcon icon={faPoll}/>
-			</LinkButton>
-			{currentDashboard
-				? <LinkButton ignoreHorizontalPadding={true} tooltip='Delete this dashboard'
-				              right={true} offsetX={-4} offsetY={6}
-				              onClick={onDeleteClicked(currentDashboard)}>
-					<FontAwesomeIcon icon={faTrashAlt}/>
-				</LinkButton>
-				: null}
-			<LinkButton ignoreHorizontalPadding={true} tooltip='Create new dashboard'
-			            right={true} offsetX={-4} offsetY={6}
-			            onClick={onCreateClicked}>
-				<FontAwesomeIcon icon={faTachometerAlt}/>
-			</LinkButton>
-			{dashboards.length > 1 && currentDashboard
-				? <LinkButton ignoreHorizontalPadding={true} tooltip='Switch to another dashboard'
-				              right={true} offsetX={-4} offsetY={6}
-				              onClick={onSwitchClicked(currentDashboard)}>
-					<FontAwesomeIcon icon={faSatelliteDish}/>
-				</LinkButton>
-				: null}
-		</DashboardHeader>
-	</DashboardContainer>;
+    return <DashboardContainer data-visible={!!currentDashboard}>
+        <DashboardHeader>
+            <DashboardTitle>
+                <span>{currentDashboard?.name}</span>
+                {currentDashboard
+                    ? <LinkButton ignoreHorizontalPadding={true} onClick={onShareClicked(currentDashboard)}>
+                        <FontAwesomeIcon icon={faShare}/>
+                    </LinkButton>
+                    : null}
+            </DashboardTitle>
+            {currentDashboard
+                ? <LinkButton ignoreHorizontalPadding={true} tooltip='Rename this dashboard'
+                              right={true} offsetX={-4} offsetY={6}
+                              onClick={onRenameClicked(currentDashboard)}>
+                    <FontAwesomeIcon icon={faPenSquare}/>
+                </LinkButton>
+                : null}
+            <LinkButton ignoreHorizontalPadding={true} tooltip='Add chart'
+                        right={true} offsetX={-4} offsetY={6}
+                        onClick={onAddChartClicked}>
+                <FontAwesomeIcon icon={faPoll}/>
+            </LinkButton>
+            {currentDashboard
+                ? <LinkButton ignoreHorizontalPadding={true} tooltip='Delete this dashboard'
+                              right={true} offsetX={-4} offsetY={6}
+                              onClick={onDeleteClicked(currentDashboard)}>
+                    <FontAwesomeIcon icon={faTrashAlt}/>
+                </LinkButton>
+                : null}
+            <LinkButton ignoreHorizontalPadding={true} tooltip='Create new dashboard'
+                        right={true} offsetX={-4} offsetY={6}
+                        onClick={onCreateClicked}>
+                <FontAwesomeIcon icon={faTachometerAlt}/>
+            </LinkButton>
+            {dashboards.length > 1 && currentDashboard
+                ? <LinkButton ignoreHorizontalPadding={true} tooltip='Switch to another dashboard'
+                              right={true} offsetX={-4} offsetY={6}
+                              onClick={onSwitchClicked(currentDashboard)}>
+                    <FontAwesomeIcon icon={faSatelliteDish}/>
+                </LinkButton>
+                : null}
+        </DashboardHeader>
+    </DashboardContainer>;
 };
