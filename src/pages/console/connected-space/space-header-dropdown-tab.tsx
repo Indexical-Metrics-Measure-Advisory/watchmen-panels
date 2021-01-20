@@ -1,23 +1,23 @@
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faCube, faEllipsisH, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react';
-import { matchPath, useLocation } from 'react-router-dom';
+import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import {faCube, faEllipsisH, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, {ForwardedRef, forwardRef, useEffect, useRef, useState} from 'react';
+import {matchPath, useLocation} from 'react-router-dom';
 import styled from 'styled-components';
 import Path from '../../../common/path';
-import { useForceUpdate } from '../../../common/utils';
-import { ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject } from '../../../services/console/types';
-import { LinkButton } from '../../component/console/link-button';
-import { hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu } from './components';
-import { useSpaceContext } from './space-context';
-import { TabContainer } from './tabs';
+import {useForceUpdate} from '../../../common/utils';
+import {ConnectedConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject} from '../../../services/console/types';
+import {LinkButton} from '../../component/console/link-button';
+import {hideMenu, Menu, MenuItem, MenuState, MenuStateAlignment, showMenu, useMenu} from './components';
+import {useSpaceContext} from './space-context';
+import {TabContainer} from './tabs';
 
 interface SubjectItem {
 	group?: ConsoleSpaceGroup;
 	subject: ConsoleSpaceSubject;
 }
 
-const offset = { offsetX: 0, offsetY: -1 };
+const offset = {offsetX: 0, offsetY: -1};
 
 const DropdownTabContainer = styled(TabContainer)`
 	&:hover {
@@ -287,16 +287,25 @@ export const SubjectTab = (props: { space: ConnectedConsoleSpace }) => {
 
 	const location = useLocation();
 	const {
-		store: { activeSubjectId },
+		store: {activeSubjectId},
 		isSubjectOpened, openSubjectIfCan, closeSubjectIfCan,
+		addSubjectRenamedListener, removeSubjectRenamedListener,
 		addSubjectClosedListener, removeSubjectClosedListener
 	} = useSpaceContext();
 	const forceUpdate = useForceUpdate();
 	useEffect(() => {
 		// subject already be removed from active stack, force update is only option here
 		addSubjectClosedListener(forceUpdate);
-		return () => removeSubjectClosedListener(forceUpdate);
-	}, [ addSubjectClosedListener, removeSubjectClosedListener, forceUpdate ]);
+		addSubjectRenamedListener(forceUpdate);
+		return () => {
+			removeSubjectClosedListener(forceUpdate);
+			removeSubjectRenamedListener(forceUpdate);
+		}
+	}, [
+		addSubjectClosedListener, removeSubjectClosedListener,
+		addSubjectRenamedListener, removeSubjectRenamedListener,
+		forceUpdate
+	]);
 
 	// eslint-disable-next-line
 	const allSubjects = getAllSubjects(space, isSubjectOpened);
