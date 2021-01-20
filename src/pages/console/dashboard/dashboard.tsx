@@ -180,6 +180,7 @@ export const Dashboard = () => {
 	};
 	const doSaveChart = (dashboard: ConsoleDashboard, chart: ConsoleSpaceSubjectChart) => async (subject: ConsoleSpaceSubject) => {
 		const {rect, chartId} = chart;
+		// eslint-disable-next-line
 		const graph = dashboard.graphics.find(chart => chart.chartId == chartId)!;
 		graph.rect = rect;
 		if (saveHandle.handle) {
