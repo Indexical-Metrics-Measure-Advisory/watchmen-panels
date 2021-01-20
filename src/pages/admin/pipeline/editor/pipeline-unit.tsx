@@ -1,4 +1,4 @@
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import {
 	faCompressArrowsAlt,
 	faEraser,
@@ -6,22 +6,22 @@ import {
 	faMicrochip,
 	faPencilRuler
 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Fragment, useState } from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, {Fragment, useState} from 'react';
 import styled from 'styled-components';
-import { useForceUpdate } from '../../../../common/utils';
-import Button, { ButtonType } from '../../../component/button';
-import { DangerObjectButton, PrimaryObjectButton, WaiveObjectButton } from '../../../component/object-button';
-import { DialogContext, useDialog } from '../../../context/dialog';
-import { ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction } from '../types';
-import { DropdownButton } from './components/dropdown-button';
-import { usePipelineEditContext } from './pipeline-edit-context';
-import { PipelineUnitActionContextProvider } from './pipeline-unit-action-context';
-import { UnitActionNodes } from './pipeline-unit-actions';
-import { PipelineUnitCondition } from './pipeline-unit-condition';
-import { ActionLead } from './unit-actions/action-lead';
-import { ActionSelect } from './unit-actions/action-select';
-import { createAlarmAction } from './utils';
+import {useForceUpdate} from '../../../../common/utils';
+import Button, {ButtonType} from '../../../component/button';
+import {DangerObjectButton, PrimaryObjectButton, WaiveObjectButton} from '../../../component/object-button';
+import {DialogContext, useDialog} from '../../../context/dialog';
+import {ArrangedProcessUnit, ArrangedStage, ArrangedUnitAction} from '../types';
+import {DropdownButton} from './components/dropdown-button';
+import {usePipelineEditContext} from './pipeline-edit-context';
+import {PipelineUnitActionContextProvider} from './pipeline-unit-action-context';
+import {UnitActionNodes} from './pipeline-unit-actions';
+import {PipelineUnitCondition} from './pipeline-unit-condition';
+import {ActionLead} from './unit-actions/action-lead';
+import {ActionSelect} from './unit-actions/action-select';
+import {createAlarmAction} from './utils';
 
 const UnitContainer = styled.div.attrs({
 	'data-widget': 'stage-unit'
@@ -165,13 +165,17 @@ const UnitActionNode = (props: {
 	action: ArrangedUnitAction;
 	deleteAction: (action: ArrangedUnitAction) => void;
 }) => {
-	const { unit, action, deleteAction } = props;
-	const { type } = action;
+	const {unit, action, deleteAction} = props;
+	const {type} = action;
 
 	const dialog = useDialog();
-	const { firePipelineContentChange } = usePipelineEditContext();
+	const {firePipelineContentChange} = usePipelineEditContext();
 	const forceUpdate = useForceUpdate();
 
+	const onActionTypeChanged = () => {
+		firePipelineContentChange();
+		forceUpdate();
+	}
 	const onActionDeleteConfirmClicked = () => {
 		deleteAction(action);
 		dialog.hide();
@@ -205,7 +209,7 @@ const UnitActionNode = (props: {
 	return <PipelineUnitActionContextProvider>
 		<UnitActionContainer>
 			<ActionLead/>
-			<ActionSelect action={action} onTypeChanged={forceUpdate}/>
+			<ActionSelect action={action} onTypeChanged={onActionTypeChanged}/>
 			<DangerObjectButton onClick={onDeleteActionClicked}>
 				<FontAwesomeIcon icon={faTrashAlt}/>
 				<span>Delete This Action</span>
