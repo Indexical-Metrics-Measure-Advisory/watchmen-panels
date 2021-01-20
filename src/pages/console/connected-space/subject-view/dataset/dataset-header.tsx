@@ -1,12 +1,22 @@
-import { faAngleLeft, faAngleRight, faCompressAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faAngleLeft,
+	faAngleRight,
+	faArrowAltCircleDown,
+	faCloudDownloadAlt,
+	faCompressAlt,
+	faTimes
+} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import { DataPage } from '../../../../../services/admin/types';
-import { ConsoleSpaceSubject } from '../../../../../services/console/types';
-import { LinkButton } from '../../../../component/console/link-button';
-import { SubjectPanelHeader } from '../components';
-import { useDataSetTableContext } from './dataset-table-context';
+import {DataPage} from '../../../../../services/admin/types';
+import {ConsoleSpaceSubject} from '../../../../../services/console/types';
+import {LinkButton} from '../../../../component/console/link-button';
+import {SubjectPanelHeader} from '../components';
+import {useDataSetTableContext} from './dataset-table-context';
+import {ColumnDefs} from "./types";
+import {fetchSubjectData} from "../../../../../services/console/space";
+import dayjs from "dayjs";
 
 const DataSetHeaderContainer = styled(SubjectPanelHeader)`
 	> div:first-child {
@@ -47,13 +57,14 @@ const DataSetHeaderContainer = styled(SubjectPanelHeader)`
 
 export const DataSetHeader = (props: {
 	subject: ConsoleSpaceSubject;
+	columnDefs: ColumnDefs;
 	data: DataPage<Array<any>>;
 	onHide: () => void;
 	fetchData: (pageNumber: number) => void;
 }) => {
-	const { subject, data, onHide, fetchData } = props;
+	const {subject, columnDefs, data, onHide, fetchData} = props;
 
-	const { selectionChange, compressColumnWidth } = useDataSetTableContext();
+	const {selectionChange, compressColumnWidth} = useDataSetTableContext();
 	const onPreviousPageClicked = () => {
 		fetchData(data.pageNumber - 1);
 		selectionChange(false, -1, -1);
@@ -61,6 +72,30 @@ export const DataSetHeader = (props: {
 	const onNextPageClicked = () => {
 		fetchData(data.pageNumber + 1);
 		selectionChange(false, -1, -1);
+	};
+
+	const download = (data: DataPage<Array<any>>) => {
+		const header = [
+			'',
+			...columnDefs.fixed.map(column => column.alias || column.factor.label || column.factor.name),
+			...columnDefs.data.map(column => column.alias || column.factor.label || column.factor.name)
+		].join('\t');
+		const body = data.data.map((row, rowIndex) => `${rowIndex + 1}\t${row.join('\t')}`).join('\n');
+		const content = `${header}\n${body}\n`;
+		const link = document.createElement('a');
+		link.href = 'data:text/csv;charset=utf-8,' + encodeURI(content);
+		link.target = '_blank';
+		//provide the name for the CSV file to be downloaded
+		link.download = `${subject.name}-Page${data.pageNumber}-TotalItemCount${data.data.length}-${dayjs().format('YYYYMMDDHHmmss')}.csv`;
+		link.click();
+	};
+
+	const onDownloadCurrentClicked = () => {
+		download(data);
+	};
+	const onDownloadAllClicked = async () => {
+		const data = await fetchSubjectData({subjectId: subject.subjectId, pageNumber: 1, pageSize: 50000});
+		download(data);
 	};
 
 	return <DataSetHeaderContainer>
@@ -86,7 +121,15 @@ export const DataSetHeader = (props: {
 		</div>
 		<LinkButton onClick={compressColumnWidth} ignoreHorizontalPadding={true} tooltip='Compress Columns'
 		            right={true} offsetX={-6}>
-			<FontAwesomeIcon icon={faCompressAlt} transform={{ rotate: 45 }}/>
+			<FontAwesomeIcon icon={faCompressAlt} transform={{rotate: 45}}/>
+		</LinkButton>
+		<LinkButton onClick={onDownloadCurrentClicked} ignoreHorizontalPadding={true} tooltip='Download Current Page'
+		            right={true} offsetX={-6}>
+			<FontAwesomeIcon icon={faArrowAltCircleDown}/>
+		</LinkButton>
+		<LinkButton onClick={onDownloadAllClicked} ignoreHorizontalPadding={true} tooltip='Download All Pages'
+		            right={true} offsetX={-6}>
+			<FontAwesomeIcon icon={faCloudDownloadAlt}/>
 		</LinkButton>
 		<LinkButton onClick={onHide} ignoreHorizontalPadding={true} tooltip='Minimize'
 		            right={true} offsetX={-6}>

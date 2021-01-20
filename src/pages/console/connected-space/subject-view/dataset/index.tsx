@@ -1,15 +1,15 @@
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import { DataPage } from '../../../../../services/admin/types';
-import { fetchSubjectData } from '../../../../../services/console/space';
-import { ConnectedConsoleSpace, ConsoleSpaceSubject } from '../../../../../services/console/types';
-import { DataSetHeader } from './dataset-header';
-import { DataSetTableContextProvider } from './dataset-table-context';
-import { DataSetTableWrapper } from './dataset-table-wrapper';
-import { ColumnDefs } from './types';
-import { buildFactorMap, filterColumns } from './utils';
+import {DataPage} from '../../../../../services/admin/types';
+import {fetchSubjectData} from '../../../../../services/console/space';
+import {ConnectedConsoleSpace, ConsoleSpaceSubject} from '../../../../../services/console/types';
+import {DataSetHeader} from './dataset-header';
+import {DataSetTableContextProvider} from './dataset-table-context';
+import {DataSetTableWrapper} from './dataset-table-wrapper';
+import {ColumnDefs} from './types';
+import {buildFactorMap, filterColumns} from './utils';
 
 const DataSetContainer = styled.div.attrs({
 	'data-widget': 'console-subject-view-dataset'
@@ -146,6 +146,7 @@ export const DataSet = (props: {
 	return <DataSetTableContextProvider>
 		<DataSetContainer data-visible={visible}>
 			<DataSetHeader subject={subject} data={data}
+			               columnDefs={columnDefs}
 			               onHide={() => onVisibleChanged(false)}
 			               fetchData={fetchData}/>
 			{hasColumns
