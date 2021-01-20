@@ -465,7 +465,23 @@ export const createSubject = async (data: {
 		data.subject.subjectId = result.subjectId;
 	}
 };
-export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {};
+export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
+	if (isMockService()) {
+		console.log("delete mock subject");
+	} else {
+		const token = findToken();
+		await fetch(`${getServiceHost()}console_space/subject/delete?subject_id=${subject.subjectId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + token,
+			},
+		});
+
+		// const result = await response.json();
+		// console.log(result);
+	}
+};
 export const saveSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
 	if (isMockService()) {
 		return new Promise((resolve) => {
