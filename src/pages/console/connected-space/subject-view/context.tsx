@@ -92,7 +92,7 @@ export const SubjectContextProvider = (props: {
 		setSaveTimeoutHandle(setTimeout(async () => {
 			setSaveTimeoutHandle(null);
 			await saveSubject(subject);
-		}, 10000));
+		}, 3000));
 	};
 
 	return <Context.Provider value={{ defs, save }}>{children}</Context.Provider>;
