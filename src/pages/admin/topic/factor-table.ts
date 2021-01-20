@@ -22,9 +22,10 @@ export const FactorTable = styled.div.attrs<{ expanded: boolean, factorCount: nu
 	font-size: 0.8em;
 	margin: 0 -40px 24px ${0 - FACTOR_BUTTONS_WIDTH}px;
 	padding: 0 40px 0 ${FACTOR_BUTTONS_WIDTH}px;
-	overflow-x: visible;
+	overflow-x: hidden;
 	overflow-y: hidden;
 	transition: all 300ms ease-in-out;
+
 	&[data-max=true] {
 		// editor in grid layout, 30% 70%, column gap is 32px, table is second column in editor.
 		margin-left: calc((100% + 32px) / 0.7 * 0.3 * -1 - 32px - ${FACTOR_BUTTONS_WIDTH}px);
