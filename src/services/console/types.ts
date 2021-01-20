@@ -32,8 +32,7 @@ export interface ConsoleNotification extends ConsoleMessage {
 
 export type ConsoleNotifications = Array<ConsoleNotification>;
 
-export interface ConsoleMail extends ConsoleMessage {
-}
+export interface ConsoleMail extends ConsoleMessage {}
 
 export type ConsoleMails = Array<ConsoleMail>;
 
@@ -94,8 +93,7 @@ export interface ConsoleSpace {
 	topicRelations?: Array<ConsoleTopicRelationship>;
 }
 
-export interface ConsoleSpaceSubjectDataSetFilter {
-}
+export interface ConsoleSpaceSubjectDataSetFilter {}
 
 export enum FilterJointType {
 	AND = "and",
@@ -135,12 +133,12 @@ export interface ConsoleSpaceSubjectDataSetFilterExpression extends ConsoleSpace
 }
 
 export enum ColumnExpressionOperator {
-	NONE = 'none',
-	ADD = 'add',
-	SUBTRACT = 'subtract',
-	MULTIPLY = 'multiply',
-	DIVIDE = 'divide',
-	MODULUS = 'modulus'
+	NONE = "none",
+	ADD = "add",
+	SUBTRACT = "subtract",
+	MULTIPLY = "multiply",
+	DIVIDE = "divide",
+	MODULUS = "modulus",
 }
 
 export interface ConsoleSpaceSubjectDataSetColumn {
@@ -153,9 +151,9 @@ export interface ConsoleSpaceSubjectDataSetColumn {
 }
 
 export enum TopicJoinType {
-	LEFT = 'left',
-	RIGHT = 'right',
-	INNER = 'inner'
+	LEFT = "left",
+	RIGHT = "right",
+	INNER = "inner",
 }
 
 export interface ConsoleSpaceSubjectDataSetJoin {
@@ -193,8 +191,7 @@ export interface ConsoleSpaceSubjectChartIndicator extends ConsoleSpaceSubjectDa
 	aggregator: ConsoleSpaceSubjectChartIndicatorAggregator;
 }
 
-export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {
-}
+export interface ConsoleSpaceSubjectChartDimension extends ConsoleSpaceSubjectDataSetColumn {}
 
 export type ConsoleSpaceSubjectChartDataSetRow = Array<any>;
 export type ConsoleSpaceSubjectChartDataSetGrid = Array<ConsoleSpaceSubjectChartDataSetRow>;

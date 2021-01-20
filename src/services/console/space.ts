@@ -559,14 +559,31 @@ export const fetchCountChartData = async (
 };
 
 export const fetchChartData = async (subjectId: string, chartId: string): Promise<ConsoleSpaceSubjectChartDataSet> => {
-	return new Promise((resolve) => {
-		setTimeout(
-			() =>
-				resolve({
-					meta: [],
-					data: [],
-				} as ConsoleSpaceSubjectChartDataSet),
-			500
+	if (isMockService()) {
+		return new Promise((resolve) => {
+			setTimeout(
+				() =>
+					resolve({
+						meta: [],
+						data: [],
+					} as ConsoleSpaceSubjectChartDataSet),
+				500
+			);
+		});
+	} else {
+		const token = findToken();
+		const response = await fetch(
+			`${getServiceHost()}console_space/dataset/chart?subject_id=${subjectId}&chart_id=${chartId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+			}
 		);
-	});
+
+		const result = await response.json();
+		return result;
+	}
 };
