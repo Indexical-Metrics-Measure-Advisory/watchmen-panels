@@ -7,7 +7,7 @@ import {
 	faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import React, {Fragment, useRef} from 'react';
+import React, {Fragment, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {useForceUpdate} from '../../../common/utils';
 import {
@@ -30,6 +30,7 @@ import {CHART_ASPECT_RATIO, CHART_HEADER_HEIGHT, INIT_MIN_WIDTH} from "../connec
 import {v4} from "uuid";
 import {Chart} from "../connected-space/subject-view/graphics/chart";
 import {SubjectContextProvider} from "../connected-space/subject-view/context";
+import {saveDashboard} from "../../../services/console/dashboard";
 
 const DashboardContainer = styled.div`
 	display: flex;
@@ -92,6 +93,7 @@ export const Dashboard = () => {
 		}
 	} = useConsoleContext();
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [saveHandle, setSaveHandle] = useState<{ handle?: number, dashboard?: ConsoleDashboard }>({});
 	const forceUpdate = useForceUpdate();
 
 	const onCopyClicked = (url: string) => () => {
@@ -180,7 +182,21 @@ export const Dashboard = () => {
 		const {rect, chartId} = chart;
 		const graph = dashboard.graphics.find(chart => chart.chartId == chartId)!;
 		graph.rect = rect;
-		// TODO save dashboard
+		if (saveHandle.handle) {
+			// another dashboard was in saving queue
+			clearTimeout(saveHandle.handle);
+			if (saveHandle.dashboard !== dashboard) {
+				// not current, simply save, don't wait
+				saveDashboard(saveHandle.dashboard!);
+			}
+		}
+		setSaveHandle({
+			handle: setTimeout(async () => {
+				setSaveHandle({});
+				await saveDashboard(dashboard);
+			}, 10000),
+			dashboard
+		});
 	};
 
 	let currentDashboard = dashboards.find(dashboard => dashboard.current);

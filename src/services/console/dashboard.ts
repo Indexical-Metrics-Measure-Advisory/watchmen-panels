@@ -28,6 +28,12 @@ export const createDashboard = async (name: string): Promise<ConsoleDashboard> =
 	});
 };
 
+export const saveDashboard = async (dashboard: ConsoleDashboard): Promise<void> => {
+	return new Promise((resolve) => {
+		setTimeout(() => resolve(), 500);
+	});
+};
+
 export const renameDashboard = async (dashboardId: string, name: string): Promise<void> => {
 	return new Promise((resolve) => {
 		setTimeout(() => resolve(), 500);
