@@ -409,9 +409,35 @@ export const connectSpace = async (
 	}
 };
 
-export const renameConnectedSpace = async (connectId: string, name: string): Promise<void> => {};
+export const renameConnectedSpace = async (connectId: string, name: string): Promise<void> => {
+	if (isMockService()) {
+		console.log("rename mock service");
+	} else {
+		const token = findToken();
+		await fetch(`${getServiceHost()}console_space/rename?connect_id=${connectId}&name=${name}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + token,
+			},
+		});
+	}
+};
 
-export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promise<void> => {};
+export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promise<void> => {
+	if (isMockService()) {
+		console.log("detele connect space mock service");
+	} else {
+		const token = findToken();
+		await fetch(`${getServiceHost()}console_space/delete?connect_id=${space.connectId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + token,
+			},
+		});
+	}
+};
 
 // TODO demo purpose
 let newGroupId = 10000;
@@ -435,7 +461,20 @@ export const createGroup = async (data: { space: ConnectedConsoleSpace; group: C
 	}
 };
 export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {};
-export const renameGroup = async (groupId: string, name: string): Promise<void> => {};
+export const renameGroup = async (groupId: string, name: string): Promise<void> => {
+	if (isMockService()) {
+		console.log("rename mock service");
+	} else {
+		const token = findToken();
+		await fetch(`${getServiceHost()}console_space/group/rename?group_id=${groupId}&name=${name}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + token,
+			},
+		});
+	}
+};
 
 export const createSubject = async (data: {
 	space: ConnectedConsoleSpace;
@@ -477,9 +516,6 @@ export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void>
 				Authorization: "Bearer " + token,
 			},
 		});
-
-		// const result = await response.json();
-		// console.log(result);
 	}
 };
 export const saveSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
