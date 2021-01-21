@@ -434,8 +434,22 @@ export const createGroup = async (data: { space: ConnectedConsoleSpace; group: C
 		data.group.groupId = result.groupId;
 	}
 };
-export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {};
-export const renameGroup = async (groupId: string, name: string): Promise<void> => {};
+export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {
+
+
+
+
+
+
+};
+export const renameGroup = async (groupId: string, name: string): Promise<void> => {
+
+
+
+
+
+	
+};
 
 export const createSubject = async (data: {
 	space: ConnectedConsoleSpace;
