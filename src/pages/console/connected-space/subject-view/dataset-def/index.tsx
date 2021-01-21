@@ -2,7 +2,12 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ConnectedConsoleSpace, ConsoleSpaceSubject, FilterJointType } from '../../../../../services/console/types';
+import {
+	ConnectedConsoleSpace,
+	ConsoleSpaceSubject,
+	ConsoleSpaceSubjectDataSetFilterJoint,
+	FilterJointType
+} from '../../../../../services/console/types';
 import { LinkButton } from '../../../../component/console/link-button';
 import { SubjectPanelHeader } from '../components';
 import { useSubjectContext } from '../context';
@@ -19,36 +24,36 @@ interface Collapsed {
 const DataSetDefinition = styled.div.attrs({
 	'data-widget': 'console-subject-view-dataset-def'
 })`
-	display: flex;
-	position: relative;
-	flex-direction: column;
-	width: 60%;
-	min-width: 500px;
-	height: 100%;
-	border-right: var(--border);
-	box-shadow: var(--console-hover-shadow);
-	background-color: var(--bg-color);
-	transition: all 300ms ease-in-out;
-	overflow: hidden;
+	display          : flex;
+	position         : relative;
+	flex-direction   : column;
+	width            : 60%;
+	min-width        : 500px;
+	height           : 100%;
+	border-right     : var(--border);
+	box-shadow       : var(--console-hover-shadow);
+	background-color : var(--bg-color);
+	transition       : all 300ms ease-in-out;
+	overflow         : hidden;
 	&[data-visible=false] {
-		opacity: 0;
-		width: 0;
-		border-right: 0;
-		min-width: 0;
-		pointer-events: none;
+		opacity        : 0;
+		width          : 0;
+		border-right   : 0;
+		min-width      : 0;
+		pointer-events : none;
 	}
 	div[data-widget=dropdown] > div:last-child {
 		&::-webkit-scrollbar {
-			background-color: transparent;
-			width: 4px;
+			background-color : transparent;
+			width            : 4px;
 		}
 		&::-webkit-scrollbar-track {
-			background-color: transparent;
-			border-radius: 2px;
+			background-color : transparent;
+			border-radius    : 2px;
 		}
 		&::-webkit-scrollbar-thumb {
-			background-color: var(--console-favorite-color);
-			border-radius: 2px;
+			background-color : var(--console-favorite-color);
+			border-radius    : 2px;
 		}
 	}
 `;
@@ -84,6 +89,13 @@ export const DataSetDef = (props: {
 	}
 	if (subject.dataset.filters.length === 0) {
 		subject.dataset.filters.push({ jointType: FilterJointType.AND, filters: [] });
+	}
+	const topFilter = subject.dataset.filters![0] as ConsoleSpaceSubjectDataSetFilterJoint;
+	if (!topFilter.jointType) {
+		topFilter.jointType = FilterJointType.AND;
+	}
+	if (!topFilter.filters) {
+		topFilter.filters = [];
 	}
 	if (!subject.dataset.columns) {
 		subject.dataset.columns = [];
