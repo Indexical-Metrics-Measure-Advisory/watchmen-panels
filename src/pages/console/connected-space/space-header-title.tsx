@@ -117,8 +117,8 @@ export const SpaceHeaderTitle = (props: { space: ConnectedConsoleSpace }) => {
 				console.groupEnd();
 			}
 			dialog.hide();
-			history.replace(Path.CONSOLE_HOME);
 			deleteSpaceFromMemory(space);
+			history.replace(Path.CONSOLE_HOME);
 		};
 		dialog.show(
 			<div data-widget='dialog-console-delete'>
