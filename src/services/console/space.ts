@@ -17,320 +17,320 @@ import {
 
 const demoTopics: Array<ConsoleTopic> = [
 	{
-		topicId: "1",
-		code: "quotation",
-		name: "Quotation",
+		topicId: '1',
+		code: 'quotation',
+		name: 'Quotation',
 		factors: [
 			{
-				factorId: "101",
-				name: "quotationId",
-				label: "Quotation Sequence",
-				type: ConsoleTopicFactorType.SEQUENCE,
+				factorId: '101',
+				name: 'quotationId',
+				label: 'Quotation Sequence',
+				type: ConsoleTopicFactorType.SEQUENCE
 			},
-			{ factorId: "102", name: "quoteNo", label: "Quotation No.", type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '102', name: 'quoteNo', label: 'Quotation No.', type: ConsoleTopicFactorType.TEXT },
 			{
-				factorId: "103",
-				name: "quoteDate",
-				label: "Quotation Create Date",
-				type: ConsoleTopicFactorType.DATETIME,
+				factorId: '103',
+				name: 'quoteDate',
+				label: 'Quotation Create Date',
+				type: ConsoleTopicFactorType.DATETIME
 			},
 			{
-				factorId: "104",
-				name: "policyHolderId",
-				label: "Policy Holder Id",
-				type: ConsoleTopicFactorType.SEQUENCE,
+				factorId: '104',
+				name: 'policyHolderId',
+				label: 'Policy Holder Id',
+				type: ConsoleTopicFactorType.SEQUENCE
 			},
-			{ factorId: "105", name: "premium", label: "Premium", type: ConsoleTopicFactorType.NUMBER },
-			{ factorId: "106", name: "issued", label: "Issued", type: ConsoleTopicFactorType.BOOLEAN },
-		],
+			{ factorId: '105', name: 'premium', label: 'Premium', type: ConsoleTopicFactorType.NUMBER },
+			{ factorId: '106', name: 'issued', label: 'Issued', type: ConsoleTopicFactorType.BOOLEAN }
+		]
 	},
 	{
-		topicId: "2",
-		code: "policy",
-		name: "Policy",
+		topicId: '2',
+		code: 'policy',
+		name: 'Policy',
 		factors: [
-			{ factorId: "201", name: "policyId", label: "Policy Sequence", type: ConsoleTopicFactorType.SEQUENCE },
-			{ factorId: "202", name: "quotationNo", label: "Quotation No.", type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '201', name: 'policyId', label: 'Policy Sequence', type: ConsoleTopicFactorType.SEQUENCE },
+			{ factorId: '202', name: 'quotationNo', label: 'Quotation No.', type: ConsoleTopicFactorType.TEXT },
 			{
-				factorId: "203",
-				name: "quoteDate",
-				label: "Quotation Create Date",
-				type: ConsoleTopicFactorType.DATETIME,
+				factorId: '203',
+				name: 'quoteDate',
+				label: 'Quotation Create Date',
+				type: ConsoleTopicFactorType.DATETIME
 			},
-			{ factorId: "204", name: "policyNo", label: "Policy No.", type: ConsoleTopicFactorType.TEXT },
-			{ factorId: "205", name: "issueDate", label: "Policy Issue Date", type: ConsoleTopicFactorType.DATETIME },
+			{ factorId: '204', name: 'policyNo', label: 'Policy No.', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '205', name: 'issueDate', label: 'Policy Issue Date', type: ConsoleTopicFactorType.DATETIME },
 			{
-				factorId: "206",
-				name: "policyHolderId",
-				label: "Policy Holder Id",
-				type: ConsoleTopicFactorType.SEQUENCE,
+				factorId: '206',
+				name: 'policyHolderId',
+				label: 'Policy Holder Id',
+				type: ConsoleTopicFactorType.SEQUENCE
 			},
-			{ factorId: "207", name: "premium", label: "Premium", type: ConsoleTopicFactorType.NUMBER },
-		],
+			{ factorId: '207', name: 'premium', label: 'Premium', type: ConsoleTopicFactorType.NUMBER }
+		]
 	},
 	{
-		topicId: "3",
-		code: "participant",
-		name: "Participant",
+		topicId: '3',
+		code: 'participant',
+		name: 'Participant',
 		factors: [
 			{
-				factorId: "301",
-				name: "participantId",
-				label: "Participant Sequence",
-				type: ConsoleTopicFactorType.SEQUENCE,
+				factorId: '301',
+				name: 'participantId',
+				label: 'Participant Sequence',
+				type: ConsoleTopicFactorType.SEQUENCE
 			},
-			{ factorId: "302", name: "firstName", label: "First Name", type: ConsoleTopicFactorType.TEXT },
-			{ factorId: "303", name: "lastName", label: "Last Name", type: ConsoleTopicFactorType.TEXT },
-			{ factorId: "304", name: "fullName", label: "Full Name", type: ConsoleTopicFactorType.TEXT },
-			{ factorId: "305", name: "dateOfBirth", label: "Birth Date", type: ConsoleTopicFactorType.DATETIME },
+			{ factorId: '302', name: 'firstName', label: 'First Name', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '303', name: 'lastName', label: 'Last Name', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '304', name: 'fullName', label: 'Full Name', type: ConsoleTopicFactorType.TEXT },
+			{ factorId: '305', name: 'dateOfBirth', label: 'Birth Date', type: ConsoleTopicFactorType.DATETIME },
 			{
-				factorId: "306",
-				name: "gender",
-				label: "Gender",
+				factorId: '306',
+				name: 'gender',
+				label: 'Gender',
 				type: ConsoleTopicFactorType.ENUM,
 				enum: JSON.stringify([
-					{ value: "F", label: "Female" },
-					{ value: "M", label: "Male" },
-				]),
+					{ value: 'F', label: 'Female' },
+					{ value: 'M', label: 'Male' }
+				])
 			},
 			{
-				factorId: "307",
-				name: "city",
-				label: "City",
+				factorId: '307',
+				name: 'city',
+				label: 'City',
 				type: ConsoleTopicFactorType.ENUM,
 				enum: JSON.stringify([
-					{ value: "AU", label: "Augusta" },
-					{ value: "BO", label: "Boston" },
-					{ value: "CO", label: "Concord" },
-					{ value: "HA", label: "Hartford" },
-					{ value: "MO", label: "Montpelier" },
-					{ value: "NY", label: "New York" },
-					{ value: "PR", label: "Providence" },
-				]),
-			},
-		],
-	},
+					{ value: 'AU', label: 'Augusta' },
+					{ value: 'BO', label: 'Boston' },
+					{ value: 'CO', label: 'Concord' },
+					{ value: 'HA', label: 'Hartford' },
+					{ value: 'MO', label: 'Montpelier' },
+					{ value: 'NY', label: 'New York' },
+					{ value: 'PR', label: 'Providence' }
+				])
+			}
+		]
+	}
 ];
 const demoTopicRelations: Array<ConsoleTopicRelationship> = [
 	{
-		relationId: "1",
-		sourceTopicId: "2",
-		sourceFactorNames: ["quotationNo"],
-		targetTopicId: "1",
-		targetFactorNames: ["quoteNo"],
+		relationId: '1',
+		sourceTopicId: '2',
+		sourceFactorNames: [ 'quotationNo' ],
+		targetTopicId: '1',
+		targetFactorNames: [ 'quoteNo' ],
 		type: ConsoleTopicRelationshipType.ONE_2_ONE,
 		strictToTarget: true,
-		strictToSource: false,
+		strictToSource: false
 	},
 	{
-		relationId: "2",
-		sourceTopicId: "2",
-		sourceFactorNames: ["policyHolderId"],
-		targetTopicId: "3",
-		targetFactorNames: ["participantId"],
+		relationId: '2',
+		sourceTopicId: '2',
+		sourceFactorNames: [ 'policyHolderId' ],
+		targetTopicId: '3',
+		targetFactorNames: [ 'participantId' ],
 		type: ConsoleTopicRelationshipType.MANY_2_ONE,
 		strictToTarget: true,
-		strictToSource: false,
+		strictToSource: false
 	},
 	{
-		relationId: "3",
-		sourceTopicId: "1",
-		sourceFactorNames: ["policyHolderId"],
-		targetTopicId: "3",
-		targetFactorNames: ["participantId"],
+		relationId: '3',
+		sourceTopicId: '1',
+		sourceFactorNames: [ 'policyHolderId' ],
+		targetTopicId: '3',
+		targetFactorNames: [ 'participantId' ],
 		type: ConsoleTopicRelationshipType.MANY_2_ONE,
 		strictToTarget: true,
-		strictToSource: false,
-	},
+		strictToSource: false
+	}
 ];
 export const fetchConnectedSpaces = async (): Promise<Array<ConnectedConsoleSpace>> => {
 	if (isMockService()) {
 		return [
 			{
-				spaceId: "1",
-				connectId: "1",
-				name: "Sales Statistics",
+				spaceId: '1',
+				connectId: '1',
+				name: 'Sales Statistics',
 				type: ConsoleSpaceType.PUBLIC,
-				lastVisitTime: "2020/10/31 14:23:07",
+				lastVisitTime: '2020/10/31 14:23:07',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
+				subjects: []
 			},
 			{
-				spaceId: "1",
-				connectId: "2",
-				name: "Sales Statistics in New York",
+				spaceId: '1',
+				connectId: '2',
+				name: 'Sales Statistics in New York',
 				type: ConsoleSpaceType.PRIVATE,
-				lastVisitTime: "2020/11/05 15:14:11",
+				lastVisitTime: '2020/11/05 15:14:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				subjects: [
 					{
-						subjectId: "1",
-						name: "Premium Summary",
+						subjectId: '1',
+						name: 'Premium Summary',
 						topicCount: 3,
 						graphicsCount: 2,
-						lastVisitTime: "2020/11/12 20:20:01",
-						createdAt: "2020/11/12 19:20:02",
+						lastVisitTime: '2020/11/12 20:20:01',
+						createdAt: '2020/11/12 19:20:02',
 						dataset: {
 							columns: [
-								{ topicId: "1", factorId: "102" },
-								{ topicId: "1", factorId: "103" },
-								{ topicId: "1", factorId: "106" },
-								{ topicId: "2", factorId: "204" },
-								{ topicId: "2", factorId: "205" },
-								{ topicId: "2", factorId: "207" },
-								{ topicId: "3", factorId: "304" },
-								{ topicId: "3", factorId: "305" },
-								{ topicId: "3", factorId: "306" },
-								{ topicId: "3", factorId: "307" },
-							],
-						},
+								{ topicId: '1', factorId: '102' },
+								{ topicId: '1', factorId: '103' },
+								{ topicId: '1', factorId: '106' },
+								{ topicId: '2', factorId: '204' },
+								{ topicId: '2', factorId: '205' },
+								{ topicId: '2', factorId: '207' },
+								{ topicId: '3', factorId: '304' },
+								{ topicId: '3', factorId: '305' },
+								{ topicId: '3', factorId: '306' },
+								{ topicId: '3', factorId: '307' }
+							]
+						}
 					},
 					{
-						subjectId: "2",
-						name: "District Summary",
+						subjectId: '2',
+						name: 'District Summary',
 						topicCount: 2,
 						graphicsCount: 1,
-						lastVisitTime: "2020/11/02 20:25:01",
-						createdAt: "2020/11/01 19:25:02",
-					},
+						lastVisitTime: '2020/11/02 20:25:01',
+						createdAt: '2020/11/01 19:25:02'
+					}
 				],
 				groups: [
 					{
-						groupId: "1",
-						name: "All About Money",
+						groupId: '1',
+						name: 'All About Money',
 						subjects: [
 							{
-								subjectId: "101",
-								name: "Premium Summary",
+								subjectId: '101',
+								name: 'Premium Summary',
 								topicCount: 1,
 								graphicsCount: 1,
-								lastVisitTime: "2020/11/12 20:25:01",
-								createdAt: "2020/11/12 19:25:02",
-							},
-						],
+								lastVisitTime: '2020/11/12 20:25:01',
+								createdAt: '2020/11/12 19:25:02'
+							}
+						]
 					},
 					{
-						groupId: "2",
-						name: "All About Time",
+						groupId: '2',
+						name: 'All About Time',
 						subjects: [
 							{
-								subjectId: "201",
-								name: "Premium Summary",
+								subjectId: '201',
+								name: 'Premium Summary',
 								topicCount: 2,
 								graphicsCount: 1,
-								lastVisitTime: "2020/11/12 20:25:01",
-								createdAt: "2020/11/12 19:25:02",
-							},
-						],
+								lastVisitTime: '2020/11/12 20:25:01',
+								createdAt: '2020/11/12 19:25:02'
+							}
+						]
 					},
 					{
-						groupId: "3",
-						name: "All About Gender",
+						groupId: '3',
+						name: 'All About Gender',
 						subjects: [
 							{
-								subjectId: "301",
-								name: "Premium Summary",
+								subjectId: '301',
+								name: 'Premium Summary',
 								topicCount: 2,
 								graphicsCount: 1,
-								lastVisitTime: "2020/8/31 20:25:01",
-								createdAt: "2020/8/21 19:25:02",
-							},
-						],
+								lastVisitTime: '2020/8/31 20:25:01',
+								createdAt: '2020/8/21 19:25:02'
+							}
+						]
 					},
 					{
-						groupId: "4",
-						name: "All About Age",
+						groupId: '4',
+						name: 'All About Age',
 						subjects: [
 							{
-								subjectId: "401",
-								name: "Premium Summary",
+								subjectId: '401',
+								name: 'Premium Summary',
 								topicCount: 2,
 								graphicsCount: 1,
-								lastVisitTime: "2019/11/12 20:25:01",
-								createdAt: "2019/11/12 19:25:02",
-							},
-						],
-					},
-				],
+								lastVisitTime: '2019/11/12 20:25:01',
+								createdAt: '2019/11/12 19:25:02'
+							}
+						]
+					}
+				]
 			},
 			{
-				spaceId: "1",
-				connectId: "3",
-				name: "Sales Statistics in Maine",
+				spaceId: '1',
+				connectId: '3',
+				name: 'Sales Statistics in Maine',
 				type: ConsoleSpaceType.PRIVATE,
-				lastVisitTime: "2020/11/05 14:13:11",
+				lastVisitTime: '2020/11/05 14:13:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
+				subjects: []
 			},
 			{
-				spaceId: "1",
-				connectId: "4",
-				name: "Sales Statistics in New Hampshire",
+				spaceId: '1',
+				connectId: '4',
+				name: 'Sales Statistics in New Hampshire',
 				type: ConsoleSpaceType.PUBLIC,
-				lastVisitTime: "2020/11/05 13:12:11",
+				lastVisitTime: '2020/11/05 13:12:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
+				subjects: []
 			},
 			{
-				spaceId: "1",
-				connectId: "5",
-				name: "Sales Statistics in Vermont",
+				spaceId: '1',
+				connectId: '5',
+				name: 'Sales Statistics in Vermont',
 				type: ConsoleSpaceType.PUBLIC,
-				lastVisitTime: "2020/11/05 12:11:11",
+				lastVisitTime: '2020/11/05 12:11:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
+				subjects: []
 			},
 			{
-				spaceId: "1",
-				connectId: "6",
-				name: "Sales Statistics in Rhode Island",
+				spaceId: '1',
+				connectId: '6',
+				name: 'Sales Statistics in Rhode Island',
 				type: ConsoleSpaceType.PRIVATE,
-				lastVisitTime: "2020/11/05 11:10:11",
+				lastVisitTime: '2020/11/05 11:10:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
+				subjects: []
 			},
 			{
-				spaceId: "1",
-				connectId: "7",
-				name: "Sales Statistics in Connecticut",
+				spaceId: '1',
+				connectId: '7',
+				name: 'Sales Statistics in Connecticut',
 				type: ConsoleSpaceType.PRIVATE,
-				lastVisitTime: "2020/11/05 10:09:11",
+				lastVisitTime: '2020/11/05 10:09:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
+				subjects: []
 			},
 			{
-				spaceId: "1",
-				connectId: "8",
-				name: "Sales Statistics in Massachusetts",
+				spaceId: '1',
+				connectId: '8',
+				name: 'Sales Statistics in Massachusetts',
 				type: ConsoleSpaceType.PUBLIC,
-				lastVisitTime: "2020/11/05 09:08:11",
+				lastVisitTime: '2020/11/05 09:08:11',
 				topics: demoTopics,
 				topicRelations: demoTopicRelations,
 				groups: [],
-				subjects: [],
-			},
+				subjects: []
+			}
 		];
 	} else {
 		const token = findToken();
 		const response = await fetch(`${getServiceHost()}console_space/connected/me`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 
 		return await response.json();
@@ -341,16 +341,16 @@ export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 	if (isMockService()) {
 		return [
 			{
-				spaceId: "1",
-				name: "Sales Statistics",
+				spaceId: '1',
+				name: 'Sales Statistics',
 				topics: demoTopics,
-				topicRelations: demoTopicRelations,
+				topicRelations: demoTopicRelations
 			},
 			{
-				spaceId: "2",
-				name: "Claim Trend",
-				topics: demoTopics,
-			},
+				spaceId: '2',
+				name: 'Claim Trend',
+				topics: demoTopics
+			}
 		];
 
 		// const account = Storage.findAccount();
@@ -358,11 +358,11 @@ export const fetchAvailableSpaces = async (): Promise<Array<ConsoleSpace>> => {
 		// console.log(mock_flag);
 		const token = findToken();
 		const response = await fetch(`${getServiceHost()}space/available`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 
 		return await response.json();
@@ -384,11 +384,11 @@ export const connectSpace = async (
 					connectId: `${newConnectedSpaceId++}`,
 					name,
 					type,
-					lastVisitTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+					lastVisitTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
 					topics: demoTopics,
 					topicRelations: demoTopicRelations,
 					groups: [],
-					subjects: [],
+					subjects: []
 				});
 			}, 1000);
 		});
@@ -398,11 +398,11 @@ export const connectSpace = async (
 		// console.log(mock_flag);
 		const token = findToken();
 		const response = await fetch(`${getServiceHost()}space/connect?space_id=${spaceId}&name=${name}`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 
 		return await response.json();
@@ -411,30 +411,30 @@ export const connectSpace = async (
 
 export const renameConnectedSpace = async (connectId: string, name: string): Promise<void> => {
 	if (isMockService()) {
-		console.log("rename mock service");
+		console.log('rename mock service');
 	} else {
 		const token = findToken();
 		await fetch(`${getServiceHost()}console_space/rename?connect_id=${connectId}&name=${name}`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 	}
 };
 
 export const deleteConnectedSpace = async (space: ConnectedConsoleSpace): Promise<void> => {
 	if (isMockService()) {
-		console.log("detele connect space mock service");
+		console.log('detele connect space mock service');
 	} else {
 		const token = findToken();
 		await fetch(`${getServiceHost()}console_space/delete?connect_id=${space.connectId}`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 	}
 };
@@ -448,30 +448,31 @@ export const createGroup = async (data: { space: ConnectedConsoleSpace; group: C
 	} else {
 		const token = findToken();
 		const response = await fetch(`${getServiceHost()}console_space/group?connect_id=${data.space.connectId}`, {
-			method: "POST",
+			method: 'POST',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
 			},
-			body: JSON.stringify(data.group),
+			body: JSON.stringify(data.group)
 		});
 
 		const result = await response.json();
 		data.group.groupId = result.groupId;
 	}
 };
-export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {};
+export const deleteGroup = async (group: ConsoleSpaceGroup): Promise<void> => {
+};
 export const renameGroup = async (groupId: string, name: string): Promise<void> => {
 	if (isMockService()) {
-		console.log("rename mock service");
+		console.log('rename mock service');
 	} else {
 		const token = findToken();
 		await fetch(`${getServiceHost()}console_space/group/rename?group_id=${groupId}&name=${name}`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 	}
 };
@@ -490,12 +491,12 @@ export const createSubject = async (data: {
 				data.group?.groupId
 			}`,
 			{
-				method: "POST",
+				method: 'POST',
 				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + token,
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer ' + token
 				},
-				body: JSON.stringify(data.subject),
+				body: JSON.stringify(data.subject)
 			}
 		);
 
@@ -506,15 +507,15 @@ export const createSubject = async (data: {
 };
 export const deleteSubject = async (subject: ConsoleSpaceSubject): Promise<void> => {
 	if (isMockService()) {
-		console.log("delete mock subject");
+		console.log('delete mock subject');
 	} else {
 		const token = findToken();
 		await fetch(`${getServiceHost()}console_space/subject/delete?subject_id=${subject.subjectId}`, {
-			method: "GET",
+			method: 'GET',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
-			},
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
+			}
 		});
 	}
 };
@@ -526,12 +527,12 @@ export const saveSubject = async (subject: ConsoleSpaceSubject): Promise<void> =
 	} else {
 		const token = findToken();
 		const response = await fetch(`${getServiceHost()}console_space/subject/save`, {
-			method: "POST",
+			method: 'POST',
 			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + token,
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token
 			},
-			body: JSON.stringify(subject),
+			body: JSON.stringify(subject)
 		});
 
 		const result = await response.json();
@@ -554,24 +555,24 @@ export const fetchSubjectData = async (options: {
 					pageSize,
 					pageCount: 3,
 					data: new Array(pageNumber === 3 ? 23 : 100).fill(1).map((row, rowIndex) => {
-						const index = `${(pageNumber - 1) * pageSize + rowIndex + 1}`.padStart(5, "0");
+						const index = `${(pageNumber - 1) * pageSize + rowIndex + 1}`.padStart(5, '0');
 						const quoteDate = dayjs()
-							.subtract(1, "year")
-							.subtract(Math.floor(Math.random() * 30), "day");
-						const issueDate = quoteDate.add(Math.floor(Math.random() * 30), "day");
+							.subtract(1, 'year')
+							.subtract(Math.floor(Math.random() * 30), 'day');
+						const issueDate = quoteDate.add(Math.floor(Math.random() * 30), 'day');
 						return [
 							`Q${index}`,
-							quoteDate.format("YYYY/MM/DD"),
+							quoteDate.format('YYYY/MM/DD'),
 							true,
 							`P${index}`,
-							issueDate.format("YYYY/MM/DD"),
+							issueDate.format('YYYY/MM/DD'),
 							10000,
-							"John Doe",
-							"1985/02/13",
-							"M",
-							"AU",
+							'John Doe',
+							'1985/02/13',
+							'M',
+							'AU'
 						];
-					}),
+					})
 				});
 			}, 1000);
 		});
@@ -580,12 +581,12 @@ export const fetchSubjectData = async (options: {
 		const response = await fetch(
 			`${getServiceHost()}console_space/subject/dataset?subject_id=${options.subjectId}`,
 			{
-				method: "POST",
+				method: 'POST',
 				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + token,
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer ' + token
 				},
-				body: JSON.stringify({ pageNumber: options.pageNumber, pageSize: options.pageSize }),
+				body: JSON.stringify({ pageNumber: options.pageNumber, pageSize: options.pageSize })
 			}
 		);
 
@@ -603,16 +604,161 @@ export const fetchCountChartData = async (
 			() =>
 				resolve({
 					meta: [],
-					data: [[1234]],
+					data: [ [ 1234 ] ]
 				} as ConsoleSpaceSubjectChartDataSet),
 			500
 		);
 	});
 };
 
+const fetchTop10SQL = (data?: Array<{ query: string, executionTime: string }>): Promise<ConsoleSpaceSubjectChartDataSet> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve({
+			meta: [],
+			data: (data || [
+				{
+					'query': 'SELECT * FROM monitor_pipeline ORDER BY complete_time DESC LIMIT 10',
+					'state': 'FINISHED',
+					'executionTime': '944.49ms',
+					'rawInputPositions': 95
+				},
+				{
+					'query': 'SELECT * FROM monitor_pipeline ORDER BY complete_time DESC LIMIT 10',
+					'state': 'FINISHED',
+					'executionTime': '174.35ms',
+					'rawInputPositions': 95
+				},
+				{
+					'query': 'SELECT COUNT(*) FROM "topic_gi_policy"',
+					'state': 'FINISHED',
+					'executionTime': '225.28ms',
+					'rawInputPositions': 163
+				},
+				{
+					'query': 'SELECT * FROM monitor_pipeline ORDER BY complete_time DESC LIMIT 10',
+					'state': 'FINISHED',
+					'executionTime': '156.01ms',
+					'rawInputPositions': 95
+				},
+				{
+					'query': 'SELECT MAX("beforeVatPremium") FROM "topic_gi_policy" GROUP BY "orgCode"',
+					'state': 'FINISHED',
+					'executionTime': '644.57ms',
+					'rawInputPositions': 163
+				},
+				{
+					'query': 'SELECT * FROM monitor_pipeline ORDER BY complete_time DESC LIMIT 10',
+					'state': 'FINISHED',
+					'executionTime': '103.83ms',
+					'rawInputPositions': 95
+				},
+				{
+					'query': 'SELECT "adjustedPremium","commission","beforeVatPremium","duePremium","commissionRate","agentCode","productCode","effDateMonth" FROM "topic_gi_policy" OFFSET 1 LIMIT 100',
+					'state': 'FINISHED',
+					'executionTime': '329.57ms',
+					'rawInputPositions': 163
+				},
+				{
+					'query': 'SELECT MAX("beforeVatPremium") FROM "topic_gi_policy" GROUP BY "orgCode"',
+					'state': 'FINISHED',
+					'executionTime': '127.72ms',
+					'rawInputPositions': 163
+				},
+				{
+					'query': 'SELECT * FROM monitor_pipeline ORDER BY complete_time DESC LIMIT 10',
+					'state': 'FINISHED',
+					'executionTime': '95.80ms',
+					'rawInputPositions': 95
+				}
+			]).filter(x => !x.query.toUpperCase().startsWith('SELECT * FROM MONITOR_PIPELINE'))
+				.map(x => [ x.query, x.executionTime ])
+				.map(([ query, executionTime ]) => {
+					const parts = query.split(' ');
+					const fromWordIndex = parts.findIndex(part => part.toLowerCase() === 'from');
+					const topicName = parts[fromWordIndex + 1].replace(/"/g, '').trim().toUpperCase();
+					return [ parseFloat(executionTime), topicName ];
+				})
+				.sort(([ aTime ], [ bTime ]) => {
+					return (bTime as number) - (aTime as number);
+				})
+		}), 500);
+	});
+};
+
+const fetchTop10Pipeline = (data?: Array<[ number, string, string ]>): Promise<ConsoleSpaceSubjectChartDataSet> => {
+	return new Promise(resolve => {
+		setTimeout(() => resolve({
+			meta: [],
+			data: (data || [
+				[
+					18.886,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					18.351,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					18.141,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					15.892,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					14.99,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					14.92,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					14.67,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					14.418,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					14.321,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				],
+				[
+					13.876,
+					'FINISHED',
+					'Raw_gi_poliocy'
+				]
+			]).map(([ time, , name ]) => [ time, name.toUpperCase() ])
+				.sort(([ aTime ], [ bTime ]) => {
+					return (bTime as number) - (aTime as number);
+				})
+		}), 500);
+	});
+};
+
 export const fetchChartData = async (subjectId: string, chartId: string): Promise<ConsoleSpaceSubjectChartDataSet> => {
-	console.log(subjectId, chartId);
+	// console.log(subjectId, chartId);
 	if (isMockService()) {
+		if (subjectId === 'SYS_001' && chartId === 'TOP_10_SQL') {
+			// admin dashboard top-slow-sql
+			return fetchTop10SQL();
+		} else if (subjectId === 'SYS_001' && chartId === 'TOP_10_SLOW_PIPELINE') {
+			// admin dashboard top-slow-pipeline
+			return fetchTop10Pipeline();
+		}
+
 		return new Promise((resolve) => {
 			setTimeout(
 				() =>
@@ -628,15 +774,22 @@ export const fetchChartData = async (subjectId: string, chartId: string): Promis
 		const response = await fetch(
 			`${getServiceHost()}console_space/dataset/chart?subject_id=${subjectId}&chart_id=${chartId}`,
 			{
-				method: "GET",
+				method: 'GET',
 				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + token,
-				},
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer ' + token
+				}
 			}
 		);
 
-		const result = await response.json();
+		let result = await response.json();
+		if (subjectId === 'SYS_001' && chartId === 'TOP_10_SQL') {
+			// admin dashboard top-slow-sql
+			result = await fetchTop10SQL(result.data);
+		} else if (subjectId === 'SYS_001' && chartId === 'TOP_10_SLOW_PIPELINE') {
+			// admin dashboard top-slow-pipeline
+			result = await fetchTop10Pipeline(result.data);
+		}
 		return result;
 	}
 };

@@ -43,10 +43,16 @@ const Title = styled.div`
 	}
 `;
 const Body = styled.div`
-	display   : block;
-	position  : relative;
-	flex-grow : 1;
-	overflow  : auto;
+	display               : grid;
+	position              : relative;
+	flex-grow             : 1;
+	grid-template-columns : repeat(12, 1fr);
+	grid-column-gap       : var(--margin);
+	grid-auto-rows        : 400px;
+	grid-row-gap          : var(--margin);
+	overflow              : auto;
+	padding               : calc(var(--margin) / 2) var(--margin) var(--margin);
+	margin-bottom         : var(--margin);
 	&::-webkit-scrollbar {
 		background-color : transparent;
 		height           : 4px;
@@ -60,13 +66,20 @@ const Body = styled.div`
 		background-color : var(--console-favorite-color);
 		border-radius    : 2px;
 	}
+	> div {
+		position    : relative;
+		grid-column : span 6;
+		> div {
+			width  : 100%;
+			height : 100%;
+		}
+	}
 `;
 
 const onChartDelete = (chart: ConsoleSpaceSubjectChart) => (void 0);
 const onChartSave = async (subject: ConsoleSpaceSubject) => (void 0);
 
-const TopSlowSQL = (props: { containerRef: RefObject<HTMLDivElement> }) => {
-	const { containerRef } = props;
+const createDef = (subjectId: string, chartId: string, chartName: string, dimensionName: string) => {
 	const space: ConsoleSpace = {
 		spaceId: 'demo-admin-dashboard',
 		name: 'Demo Admin Dashboard Space',
@@ -75,15 +88,15 @@ const TopSlowSQL = (props: { containerRef: RefObject<HTMLDivElement> }) => {
 			code: 'top-slow-sql',
 			name: 'Top Slow SQL',
 			factors: [
-				{ factorId: '1', name: 'sql', label: 'SQL', type: ConsoleTopicFactorType.TEXT },
+				{ factorId: '1', name: 'sql', label: dimensionName, type: ConsoleTopicFactorType.TEXT },
 				{ factorId: '2', name: 'time', label: 'Time', type: ConsoleTopicFactorType.NUMBER }
 			]
 		} ],
 		topicRelations: []
 	};
-	const subjectChart: ConsoleSpaceSubjectChart = {
-		chartId: 'top-slow-sql',
-		name: 'Top Slow SQL',
+	const chart: ConsoleSpaceSubjectChart = {
+		chartId,
+		name: chartName,
 		type: ConsoleSpaceSubjectChartType.BAR,
 		indicators: [ {
 			topicId: '1',
@@ -96,15 +109,10 @@ const TopSlowSQL = (props: { containerRef: RefObject<HTMLDivElement> }) => {
 			factorId: '1',
 			alias: 'Topic'
 		} ],
-		rect: {
-			top: 32,
-			left: 16,
-			width: 500,
-			height: 400
-		}
+		rect: { top: -1, left: -1, width: -1, height: -1 }
 	};
 	const subject: ConsoleSpaceSubject = {
-		subjectId: 'top-slow-sql',
+		subjectId,
 		name: 'Top Slow SQL',
 		topicCount: 1,
 		graphicsCount: 1,
@@ -115,7 +123,7 @@ const TopSlowSQL = (props: { containerRef: RefObject<HTMLDivElement> }) => {
 			columns: [],
 			joins: []
 		},
-		graphics: [ subjectChart ]
+		graphics: [ chart ]
 	};
 	const connectedSpace: ConnectedConsoleSpace = {
 		connectId: 'demo-admin-dashboard',
@@ -129,14 +137,27 @@ const TopSlowSQL = (props: { containerRef: RefObject<HTMLDivElement> }) => {
 		topics: space.topics,
 		topicRelations: space.topicRelations
 	};
+	return { connectedSpace, space, subject, chart };
+};
+const TopX = (props: {
+	containerRef: RefObject<HTMLDivElement>;
+	subjectId: string;
+	chartId: string;
+	chartName: string;
+	dimensionName: string;
+}) => {
+	const { containerRef, subjectId, chartId, chartName, dimensionName } = props;
+	const { connectedSpace, space, subject, chart } = createDef(subjectId, chartId, chartName, dimensionName);
 
-	return <SubjectContextProvider space={connectedSpace} subject={subject}
-	                               doSave={onChartSave}>
-		<Chart containerRef={containerRef}
-		       space={space} subject={subject} chart={subjectChart} locked={true}
-		       settings={false}
-		       onDeleteChart={onChartDelete}/>
-	</SubjectContextProvider>;
+	return <div>
+		<SubjectContextProvider space={connectedSpace} subject={subject}
+		                        doSave={onChartSave}>
+			<Chart containerRef={containerRef}
+			       space={space} subject={subject} chart={chart} locked={true}
+			       settings={false}
+			       onDeleteChart={onChartDelete}/>
+		</SubjectContextProvider>
+	</div>;
 };
 
 export const Home = () => {
@@ -149,7 +170,10 @@ export const Home = () => {
 			</Title>
 		</Header>
 		<Body ref={bodyRef}>
-			<TopSlowSQL containerRef={bodyRef}/>
+			<TopX containerRef={bodyRef} subjectId='SYS_001' chartId='TOP_10_SQL' chartName='Top Slow SQL'
+			      dimensionName='SQL'/>
+			<TopX containerRef={bodyRef} subjectId='SYS_001' chartId='TOP_10_SLOW_PIPELINE'
+			      chartName='Top Slow Pipeline' dimensionName='Pipeline'/>
 		</Body>
 	</Container>;
 };
