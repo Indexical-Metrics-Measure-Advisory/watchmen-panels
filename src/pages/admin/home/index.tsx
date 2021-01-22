@@ -48,11 +48,9 @@ const Body = styled.div`
 	flex-grow             : 1;
 	grid-template-columns : repeat(12, 1fr);
 	grid-column-gap       : var(--margin);
-	grid-auto-rows        : 400px;
 	grid-row-gap          : var(--margin);
 	overflow              : auto;
 	padding               : calc(var(--margin) / 2) var(--margin) var(--margin);
-	margin-bottom         : var(--margin);
 	&::-webkit-scrollbar {
 		background-color : transparent;
 		height           : 4px;
@@ -67,8 +65,19 @@ const Body = styled.div`
 		border-radius    : 2px;
 	}
 	> div {
-		position    : relative;
-		grid-column : span 6;
+		position : relative;
+		height   : 400px;
+		&:nth-child(2n + 1) {
+			grid-column : 1 / span 6;
+		}
+		&:nth-child(2n) {
+			grid-column : 7 / span 6;
+		}
+		&:last-child {
+			height      : var(--margin);
+			min-height  : var(--margin);
+			grid-column : 1 / span 12;
+		}
 		> div {
 			width  : 100%;
 			height : 100%;
@@ -153,8 +162,8 @@ const TopX = (props: {
 		<SubjectContextProvider space={connectedSpace} subject={subject}
 		                        doSave={onChartSave}>
 			<Chart containerRef={containerRef}
-			       space={space} subject={subject} chart={chart} locked={true}
-			       settings={false}
+			       space={space} subject={subject} chart={chart}
+			       locked={true} relative={true} settings={false}
 			       onDeleteChart={onChartDelete}/>
 		</SubjectContextProvider>
 	</div>;
@@ -174,6 +183,7 @@ export const Home = () => {
 			      dimensionName='SQL'/>
 			<TopX containerRef={bodyRef} subjectId='SYS_001' chartId='TOP_10_SLOW_PIPELINE'
 			      chartName='Top Slow Pipeline' dimensionName='Pipeline'/>
+			<div/>
 		</Body>
 	</Container>;
 };
