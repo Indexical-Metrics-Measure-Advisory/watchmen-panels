@@ -1,5 +1,6 @@
 import {
 	faGlobe,
+	faHome,
 	faImages,
 	faTags,
 	faTasks,
@@ -22,25 +23,25 @@ import { useAdminContext } from '../context/admin-context';
 const MenuContainer = styled.div.attrs({
 	'data-widget': 'menu-container'
 })<{ width: number }>`
-	display: flex;
-	position: relative;
-	flex-direction: column;
-	align-items: flex-start;
-	width: ${({ width }) => `${width}px`};
-	min-width: var(--console-menu-width);
-	height: 100vh;
-	top: 0;
-	left: 0;
-	border-right: var(--border);
-	background-color: var(--invert-color);
-	overflow: hidden;
+	display          : flex;
+	position         : relative;
+	flex-direction   : column;
+	align-items      : flex-start;
+	width            : ${({ width }) => `${width}px`};
+	min-width        : var(--console-menu-width);
+	height           : 100vh;
+	top              : 0;
+	left             : 0;
+	border-right     : var(--border);
+	background-color : var(--invert-color);
+	overflow         : hidden;
 	// TODO hide tasks button
 	> div:nth-child(10) {
-		display: none;
+		display : none;
 	}
 `;
 const Placeholder = styled.div`
-	flex-grow: 1;
+	flex-grow : 1;
 `;
 
 export const AdminMenu = () => {
@@ -67,6 +68,9 @@ export const AdminMenu = () => {
 
 	return <MenuContainer width={menuWidth}>
 		<MenuLogo title='Watchmen Admin'/>
+		<MenuItem icon={faHome} label='Home' iconSize={1.2} showTooltip={showMenuItemTooltip}
+		          active={!!matchPath(location.pathname, Path.ADMIN_HOME)}
+		          onClick={onMenuClicked(Path.ADMIN_HOME)}/>
 		<MenuItem icon={faTags} label='Topics' iconSize={1.2} showTooltip={showMenuItemTooltip}
 		          active={!!matchPath(location.pathname, Path.ADMIN_TOPICS)}
 		          onClick={onMenuClicked(Path.ADMIN_TOPICS)}/>

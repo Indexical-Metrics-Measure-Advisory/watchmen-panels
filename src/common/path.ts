@@ -32,6 +32,7 @@ const Paths = {
 	CONSOLE_SETTINGS_NOTIFICATION: '/console/settings/notification',
 
 	ADMIN: '/admin',
+	ADMIN_HOME: '/admin/home',
 	ADMIN_TASKS: '/admin/task',
 	ADMIN_TASK: '/admin/task/:taskId',
 	ADMIN_SPACES: '/admin/space',

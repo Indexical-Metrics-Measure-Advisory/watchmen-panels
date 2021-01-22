@@ -1,7 +1,7 @@
-import dayjs from "dayjs";
-import { findToken } from "../account/account-session";
-import { DataPage } from "../admin/types";
-import { getServiceHost, isMockService } from "../service_utils";
+import dayjs from 'dayjs';
+import { findToken } from '../account/account-session';
+import { DataPage } from '../admin/types';
+import { getServiceHost, isMockService } from '../service_utils';
 import {
 	ConnectedConsoleSpace,
 	ConsoleSpace,
@@ -12,8 +12,8 @@ import {
 	ConsoleTopic,
 	ConsoleTopicFactorType,
 	ConsoleTopicRelationship,
-	ConsoleTopicRelationshipType,
-} from "./types";
+	ConsoleTopicRelationshipType
+} from './types';
 
 const demoTopics: Array<ConsoleTopic> = [
 	{
@@ -611,13 +611,14 @@ export const fetchCountChartData = async (
 };
 
 export const fetchChartData = async (subjectId: string, chartId: string): Promise<ConsoleSpaceSubjectChartDataSet> => {
+	console.log(subjectId, chartId);
 	if (isMockService()) {
 		return new Promise((resolve) => {
 			setTimeout(
 				() =>
 					resolve({
 						meta: [],
-						data: [],
+						data: []
 					} as ConsoleSpaceSubjectChartDataSet),
 				500
 			);

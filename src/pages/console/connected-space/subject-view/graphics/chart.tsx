@@ -328,8 +328,8 @@ export const Chart = (props: {
 				height: currentHeight
 			} = chartContainer.getBoundingClientRect();
 			const { top, left, width, height } = maxChart();
-			console.log(top, left, width, height);
-			console.log(currentTop, currentLeft, currentWidth, currentHeight);
+			// console.log(top, left, width, height);
+			// console.log(currentTop, currentLeft, currentWidth, currentHeight);
 			if (top === currentTop && left === currentLeft && width === currentWidth && height === currentHeight) {
 				return;
 			}
