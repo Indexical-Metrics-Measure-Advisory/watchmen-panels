@@ -13,7 +13,7 @@ import 'echarts/lib/component/dataZoom';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/tooltip';
 import echarts from 'echarts/lib/echarts';
-import React, { RefObject, useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { BaseColors24 } from '../../../charts/color-theme';
 import { fetchChartData, fetchCountChartData } from '../../../services/console/space';
@@ -28,38 +28,38 @@ import { buildEChartsOptions, validate } from './chart-defender';
 import { ValidationFailure, ValidationSuccess } from './types';
 
 const ChartDiagramContainer = styled.div`
-	display: flex;
-	position: absolute;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
+	display         : flex;
+	position        : absolute;
+	align-items     : center;
+	justify-content : center;
+	width           : 100%;
+	height          : 100%;
 `;
 const Error = styled.div`
-	display: none;
-	font-family: var(--console-title-font-family);
+	display     : none;
+	font-family : var(--console-title-font-family);
 	&[data-visible=true] {
-		display: block;
+		display : block;
 	}
 `;
 const Chart = styled.div`
-	flex-grow: 1;
-	height: 100%;
-	overflow: hidden;
+	flex-grow : 1;
+	height    : 100%;
+	overflow  : hidden;
 	&[data-visible=false] {
-		display: none;
+		display : none;
 	}
 `;
 const CountChart = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--console-title-font-family);
-	color: ${BaseColors24[4]};
-	width: 100%;
-	height: 100%;
+	display         : flex;
+	align-items     : center;
+	justify-content : center;
+	font-family     : var(--console-title-font-family);
+	color           : ${BaseColors24[4]};
+	width           : 100%;
+	height          : 100%;
 	&[data-visible=false] {
-		display: none;
+		display : none;
 	}
 `;
 
@@ -151,7 +151,7 @@ export const ChartDiagram = (props: {
 				(async () => {
 					const chartInstance = echarts.init(rootRef.current!);
 					try {
-						// TODO fetch data remotely
+						//  fetch data remotely
 						const data = await fetchChartData(subject.subjectId, chart.chartId!);
 						const options = buildEChartsOptions(chart, space, data)!;
 						// console.log(options);
