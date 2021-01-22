@@ -1,17 +1,17 @@
-import {faCog, faCompressArrowsAlt, faExpandArrowsAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import React, {Fragment, RefObject, useEffect, useRef, useState} from 'react';
+import { faCog, faCompressArrowsAlt, faExpandArrowsAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { Fragment, RefObject, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import {useForceUpdate} from '../../../../../common/utils';
-import {ConsoleSpace, ConsoleSpaceSubject, ConsoleSpaceSubjectChart} from '../../../../../services/console/types';
-import Button, {ButtonType} from '../../../../component/button';
-import {LinkButton} from '../../../../component/console/link-button';
-import {useDialog} from '../../../../context/dialog';
-import {ChartDiagram} from '../../../chart/chart-diagram';
-import {useSubjectContext} from '../context';
-import {ChartSettingsPanel} from './chart-settings-panel';
-import {ChartRect} from './types';
-import {CHART_MIN_HEIGHT, CHART_MIN_WIDTH, generateChartRect} from './utils';
+import { useForceUpdate } from '../../../../../common/utils';
+import { ConsoleSpace, ConsoleSpaceSubject, ConsoleSpaceSubjectChart } from '../../../../../services/console/types';
+import Button, { ButtonType } from '../../../../component/button';
+import { LinkButton } from '../../../../component/console/link-button';
+import { useDialog } from '../../../../context/dialog';
+import { ChartDiagram } from '../../../chart/chart-diagram';
+import { useSubjectContext } from '../context';
+import { ChartSettingsPanel } from './chart-settings-panel';
+import { ChartRect } from './types';
+import { CHART_MIN_HEIGHT, CHART_MIN_WIDTH, generateChartRect } from './utils';
 
 enum DragType {
 	NONE = 'none',
@@ -321,9 +321,15 @@ export const Chart = (props: {
 				return;
 			}
 			const chartContainer = chartRef.current;
-			const {top: currentTop, left: currentLeft} = chartContainer.getBoundingClientRect();
-			const {clientWidth: currentWidth, clientHeight: currentHeight} = chartContainer;
-			const {top, left, width, height} = maxChart();
+			const {
+				top: currentTop,
+				left: currentLeft,
+				width: currentWidth,
+				height: currentHeight
+			} = chartContainer.getBoundingClientRect();
+			const { top, left, width, height } = maxChart();
+			console.log(top, left, width, height);
+			console.log(currentTop, currentLeft, currentWidth, currentHeight);
 			if (top === currentTop && left === currentLeft && width === currentWidth && height === currentHeight) {
 				return;
 			}
@@ -510,7 +516,6 @@ export const Chart = (props: {
 
 	const rect = max ? maxChart() : chart.rect;
 
-	// console.log(chart)
 	return <ChartContainer data-max={max} rect={rect}
 	                       ref={chartRef}>
 		<ChartDragHandle onMouseDown={onMouseDown} onMouseUp={onMouseUp}
