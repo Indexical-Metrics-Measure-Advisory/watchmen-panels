@@ -2,7 +2,7 @@ import { setToken } from "../account/account-session";
 import { getServiceHost, isMockService } from "../service_utils";
 import { Account, LoginResponse } from "./types";
 
-const ADMIN = "imma-admin";
+const ADMIN = "admin";
 const USER = "imma-user";
 
 export const login = async (account: Account): Promise<LoginResponse> => {
@@ -36,6 +36,6 @@ export const login = async (account: Account): Promise<LoginResponse> => {
 
 		setToken(result["access_token"]);
 
-		return { pass: true, admin: account.name === ADMIN };
+		return { pass: true, admin: result["role"] === ADMIN };
 	}
 };
