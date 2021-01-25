@@ -32,3 +32,12 @@ export const findFactorByIndicator = (space: ConsoleSpace, indicator: ConsoleSpa
 	const { topicId, factorId } = indicator;
 	return findFactorInSpace(topicId, factorId, space, 'indicator');
 };
+
+const format = new Intl.NumberFormat(undefined, { useGrouping: false, maximumFractionDigits: 2 }).format;
+export const formatNumber = (value: any): any => {
+	if (typeof value === 'number') {
+		return format(value);
+	} else {
+		return value;
+	}
+};

@@ -7,7 +7,8 @@ import {
 } from '../../../services/console/types';
 import { buildDescartesByDimensions } from './chart-utils';
 import { ChartTypeDefinition } from './types';
-import { findFactorByIndicator } from './utils';
+import { findFactorByIndicator, formatNumber } from './utils';
+
 
 export const PIE: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.PIE,
@@ -35,7 +36,7 @@ export const PIE: ChartTypeDefinition = {
 				data: groups.map(({ value, row }) => {
 					return {
 						name: value,
-						value: row[0] || 0
+						value: formatNumber(row[0] || 0)
 					};
 				})
 			} ]

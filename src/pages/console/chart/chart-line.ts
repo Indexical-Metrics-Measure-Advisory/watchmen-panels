@@ -7,7 +7,7 @@ import {
 } from '../../../services/console/types';
 import { buildDescartesByDimensions } from './chart-utils';
 import { ChartTypeDefinition } from './types';
-import { findFactorByIndicator } from './utils';
+import { findFactorByIndicator, formatNumber } from './utils';
 
 export const LINE: ChartTypeDefinition = {
 	type: ConsoleSpaceSubjectChartType.LINE,
@@ -47,7 +47,7 @@ export const LINE: ChartTypeDefinition = {
 						verticalAlign: 'middle',
 						rotate: 0
 					},
-					data: groups.map(({ row }) => row[indicatorIndex])
+					data: groups.map(({ row }) => formatNumber(row[indicatorIndex]))
 				};
 			})
 		};
