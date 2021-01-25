@@ -494,9 +494,9 @@ export const Chart = (props: {
 		event.stopPropagation();
 		setSettingsVisible(true);
 	};
-	const onCloseSettings = () => {
+	const onCloseSettings = async () => {
+		await saveSubject(true);
 		setSettingsVisible(false);
-		saveSubject();
 	};
 	const onDeleteConfirmClicked = () => {
 		onDeleteChart(chart);

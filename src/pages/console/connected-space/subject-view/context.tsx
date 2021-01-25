@@ -25,7 +25,7 @@ interface SpaceDefs {
 
 export interface SubjectContext {
 	defs: SpaceDefs;
-	save: () => void;
+	save: (immediately?: boolean) => Promise<void>;
 }
 
 const Context = React.createContext<SubjectContext>({} as SubjectContext);
@@ -89,18 +89,27 @@ export const SubjectContextProvider = (props: {
 		setDefs(computeSpaceDefs(available, space));
 	}, [ space, available ]);
 
-	const save = () => {
+	const save = async (immediately: boolean = false) => {
 		if (saveTimeoutHandle) {
 			clearTimeout(saveTimeoutHandle);
 		}
-		setSaveTimeoutHandle(setTimeout(async () => {
+		if (immediately) {
 			setSaveTimeoutHandle(null);
 			if (doSave) {
 				await doSave(subject);
 			} else {
 				await saveSubject(subject);
 			}
-		}, 3000));
+		} else {
+			setSaveTimeoutHandle(setTimeout(async () => {
+				setSaveTimeoutHandle(null);
+				if (doSave) {
+					await doSave(subject);
+				} else {
+					await saveSubject(subject);
+				}
+			}, 3000));
+		}
 	};
 
 	return <Context.Provider value={{ defs, save }}>{children}</Context.Provider>;
