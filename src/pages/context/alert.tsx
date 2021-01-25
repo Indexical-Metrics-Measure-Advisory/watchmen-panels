@@ -26,7 +26,6 @@ const AlertContainer = styled.div.attrs({
 	background-color: transparent;
 	opacity: 0;
 	pointer-events: none;
-	user-select: none;
 	transition: all 300ms ease-in-out;
 	z-index: 99999;
 	&[data-visible=true] {
