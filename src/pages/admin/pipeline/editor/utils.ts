@@ -46,6 +46,8 @@ export const createAlarmAction = (): ArrangedUnitAction => {
 };
 
 const OperatorLabels: { [key in ConditionOperator]: string } = {
+	[ConditionOperator.EMPTY]: 'Is Empty',
+	[ConditionOperator.NOT_EMPTY]: 'Is Not Empty',
 	[ConditionOperator.EQUALS]: '=',
 	[ConditionOperator.NOT_EQUALS]: '≠',
 	[ConditionOperator.LESS]: '<',

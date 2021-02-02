@@ -12,37 +12,37 @@ interface DropdownRect {
 	atTop: boolean;
 }
 
-const DropdownHeight = 116;
+const DropdownHeight = 28 * 5 + 4;
 
 const ConditionOperatorSelectContainer = styled.div`
-	display: flex;
-	position: relative;
-	align-items: center;
-	justify-self: flex-start;
-	border-radius: var(--border-radius);
-	background-color: var(--pipeline-bg-color);
-	box-shadow: 0 0 0 1px var(--border-color);
-	height: 22px;
-	outline: none;
-	appearance: none;
-	white-space: nowrap;
-	cursor: pointer;
-	transition: all 300ms ease-in-out;
+	display          : flex;
+	position         : relative;
+	align-items      : center;
+	justify-self     : flex-start;
+	border-radius    : var(--border-radius);
+	background-color : var(--pipeline-bg-color);
+	box-shadow       : 0 0 0 1px var(--border-color);
+	height           : 22px;
+	outline          : none;
+	appearance       : none;
+	white-space      : nowrap;
+	cursor           : pointer;
+	transition       : all 300ms ease-in-out;
 	&[data-expanded=true],
 	&:hover {
-		box-shadow: var(--console-primary-hover-shadow);
+		box-shadow : var(--console-primary-hover-shadow);
 	}
 	> div:first-child {
-		position: relative;
-		padding-left: calc(var(--margin) / 2);
-		font-variant: petite-caps;
-		font-weight: var(--font-demi-bold);
-		border-top-left-radius: 12px;
-		border-bottom-left-radius: 12px;
+		position                  : relative;
+		padding-left              : calc(var(--margin) / 2);
+		font-variant              : petite-caps;
+		font-weight               : var(--font-demi-bold);
+		border-top-left-radius    : 12px;
+		border-bottom-left-radius : 12px;
 	}
 	> div:last-child {
-		position: relative;
-		padding: 0 calc(var(--margin) / 3);
+		position : relative;
+		padding  : 0 calc(var(--margin) / 3);
 	}
 `;
 const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTop }) => {
@@ -56,74 +56,74 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 		}
 	};
 })<DropdownRect>`
-	display: flex;
-	position: fixed;
-	flex-direction: column;
-	z-index: 1000;
-	height: ${DropdownHeight}px;
-	transform: scaleY(0);
-	transition: transform 300ms ease-in-out;
-	pointer-events: none;
-	background-color: var(--bg-color);
-	border-radius: 12px;
-	box-shadow: var(--console-primary-hover-shadow);
+	display          : flex;
+	position         : fixed;
+	flex-direction   : column;
+	z-index          : 1000;
+	height           : ${DropdownHeight}px;
+	transform        : scaleY(0);
+	transition       : transform 300ms ease-in-out;
+	pointer-events   : none;
+	background-color : var(--bg-color);
+	border-radius    : 12px;
+	box-shadow       : var(--console-primary-hover-shadow);
 	&[data-expanded=true] {
-		transform: scaleY(1);
-		pointer-events: auto;
+		transform      : scaleY(1);
+		pointer-events : auto;
 		&:before {
-			content: '';
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			border-radius: 12px;
-			background-color: var(--pipeline-bg-color);
-			z-index: -1;
+			content          : '';
+			display          : block;
+			position         : absolute;
+			top              : 0;
+			left             : 0;
+			width            : 100%;
+			height           : 100%;
+			border-radius    : 12px;
+			background-color : var(--pipeline-bg-color);
+			z-index          : -1;
 		}
 	}
 	> div {
-		min-height: 28px;
-		padding: 0 calc(var(--margin) / 2);
+		min-height : 28px;
+		padding    : 0 calc(var(--margin) / 2);
 	}
 	> div[data-role='operators'] {
-		display: flex;
-		flex-wrap: wrap;
-		grid-column-gap: calc(var(--margin) / 4);
-		grid-row-gap: calc(var(--margin) / 8);
-		background-color: var(--bg-color);
-		padding: 0 calc(var(--margin) / 2);
-		cursor: default;
+		display          : flex;
+		flex-wrap        : wrap;
+		grid-column-gap  : calc(var(--margin) / 4);
+		grid-row-gap     : calc(var(--margin) / 8);
+		background-color : var(--bg-color);
+		padding          : 0 calc(var(--margin) / 2);
+		cursor           : default;
 		&:first-child {
-			border-top-left-radius: 12px;
-			border-top-right-radius: 12px;
-			padding-top: calc(var(--margin) / 8);
-			padding-bottom: calc(var(--margin) / 8);
+			border-top-left-radius  : 12px;
+			border-top-right-radius : 12px;
+			padding-top             : calc(var(--margin) / 8);
+			padding-bottom          : calc(var(--margin) / 8);
 		}
 		&:last-child {
-			border-bottom-left-radius: 12px;
-			border-bottom-right-radius: 12px;
-			padding-bottom: calc(var(--margin) / 8);
+			border-bottom-left-radius  : 12px;
+			border-bottom-right-radius : 12px;
+			padding-bottom             : calc(var(--margin) / 8);
 		}
 		> div {
-			display: flex;
-			align-items: center;
-			height: 24px;
-			line-height: 22px;
-			border-radius: 12px;
-			border: var(--border);
-			padding: 0 calc(var(--margin) / 2);
-			transition: all 300ms ease-in-out;
-			cursor: pointer;
+			display       : flex;
+			align-items   : center;
+			height        : 24px;
+			line-height   : 22px;
+			border-radius : 12px;
+			border        : var(--border);
+			padding       : 0 calc(var(--margin) / 2);
+			transition    : all 300ms ease-in-out;
+			cursor        : pointer;
 			&:hover,
 			&[data-current=true] {
-				border-color: var(--console-favorite-color);
-				color: var(--invert-color);
-				background-color: var(--console-favorite-color);
+				border-color     : var(--console-favorite-color);
+				color            : var(--invert-color);
+				background-color : var(--console-favorite-color);
 			}
 			&[data-current=true] {
-				cursor: default;
+				cursor : default;
 			}
 		}
 	}
@@ -131,6 +131,10 @@ const Dropdown = styled.div.attrs<DropdownRect>(({ top, left, right, width, atTo
 
 const asDisplayOperator = (operator: ConditionOperator): string => {
 	switch (operator) {
+		case ConditionOperator.EMPTY:
+			return 'Is Empty';
+		case ConditionOperator.NOT_EMPTY:
+			return 'Is Not Empty';
 		// date part
 		case ConditionOperator.EQUALS:
 			return 'Equals';
@@ -224,6 +228,12 @@ export const ConditionOperatorSelect = (props: {
 	                                         onClick={onExpandClick} onBlur={collapse}>
 		<div>{asDisplayOperator(condition.operator)}</div>
 		<Dropdown ref={dropdownRef} data-expanded={expanded} {...dropdownRect}>
+			<div data-role='operators'>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.EMPTY}
+				                onClick={onOperatorClicked}/>
+				<OperatorButton current={condition.operator} operator={ConditionOperator.NOT_EMPTY}
+				                onClick={onOperatorClicked}/>
+			</div>
 			<div data-role='operators'>
 				<OperatorButton current={condition.operator} operator={ConditionOperator.EQUALS}
 				                onClick={onOperatorClicked}/>
